@@ -1,0 +1,21 @@
+{
+  "description": "Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack",
+  "errors": [],
+  "increment": "sandbox-encounter",
+  "milestone": "F1",
+  "passed": true,
+  "result": {
+    "assets": [
+      "cave_01",
+      "hero_kael",
+      "enemy_emberling"
+    ],
+    "hits": 6,
+    "increment": "sandbox-encounter",
+    "outcome": "victory",
+    "player_hp": 36,
+    "sim_ms": 28.14,
+    "state_hash": "3e46758e21ee3980",
+    "ticks": 388
+  }
+}

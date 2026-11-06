@@ -1,0 +1,11 @@
+{
+  "id": "sandbox",
+  "tilemap": "cave_01",
+  "party": [
+    {"id": "kael", "sprite": "hero_kael", "stats": {"hp": 40, "atk": 6, "def": 1, "speed": 1.4, "range": 18, "cooldown": 24, "windup": 5}}
+  ],
+  "hostiles": [
+    {"id": "emberling_1", "sprite": "enemy_emberling", "stats": {"hp": 24, "atk": 3, "def": 0, "speed": 0.8, "range": 14, "cooldown": 40, "windup": 10, "aggro": 112}}
+  ],
+  "tick_limit": 7200
+}

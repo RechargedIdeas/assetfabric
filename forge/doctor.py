@@ -56,5 +56,5 @@ def run_doctor(root: Path | None = None) -> dict[str, Any]:
     return {
         "ok": all(c["ok"] for c in checks if c["name"] != "godot_binary"),
         "checks": checks,
-        "note": "godot_binary is advisory in F0 when project.godot structure smoke passes.",
+        "note": "godot_binary is advisory for unit tests; `forge accept <F>` needs it.",
     }

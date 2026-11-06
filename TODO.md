@@ -1,68 +1,61 @@
 # TODO.md — Actionable Tasks
 
-Last updated: 2026-11-05 ~20:45 America/New_York
+Last updated: 2026-11-05 ~21:10 America/New_York
 
-## Current sprint (F0 — Foundation) — closing
+## Current sprint — F2 Codegen + G1-Audio
 
-- [x] **F0.1** `forge.yaml` project manifest schema (`docs/schemas/forge.project.schema.json`)
-- [x] **F0.2** Telemetry event schema v1 (`docs/schemas/telemetry.event.schema.json`)
-- [x] **F0.3** Empty Godot project + `forge status` healthy
-- [x] **F0.4** `forge doctor` environment checks
-- [x] **F0.5** Job orchestrator + asset store scaffolding (build target skeleton deferred — status/store/job cover F0)
-- [x] **F0.6** Test harness (`pytest`) for status / schema / store / godot structure
-- [x] **F0.7** Doc suite per SPEC §11
-- [x] **F0.8** Hardware fleet registered in `forge.yaml` cluster + `docs/hardware-fleet.md`
-- [x] **F0.9** Optional: install Godot binary on box and run true headless smoke (`REQUIRE_GODOT=1`)
+- [ ] Character / ability / stat schema (`docs/schemas/`) + YAML sources in `content/`
+- [ ] Codegen: YAML → game data (`games/game-zero/data/generated/`) + GDScript ability table
+- [ ] 4 base fighters, 3 starter pets, enemy tiers `[INFERENCE: names/stats pending GAME_SPEC §10]`
+- [ ] Sprites for all roster entries via G1-Sprite briefs
+- [ ] G1-Audio: chiptune stems (square/triangle/noise) → WAV, macro states ambient/combat
+- [ ] Party combat sim: followers + pets act independently; abilities with cooldowns
+- [ ] Game F2 increment: party of 4 + pets vs. enemies, headless victory
+- [ ] Docs + acceptance `docs/acceptance-tests/F2.md`
 
-## Acceptance checklist (F0)
+## Done
 
-- [x] Doc suite present
-- [x] `forge status` healthy
-- [x] One-milestone offset documented; F1 blocked
-- [x] Tests green
-- [ ] Human / Producer sign-off on F0 acceptance (this session stops for acceptance)
+- [x] F0 Foundation (accepted 2026-11-05)
+- [x] F1 Content Pipeline (accepted 2026-11-05): G1-Sprite, G1-Tile, DyeWorks procedural; gates; PatternVault; SwatchStudio CLI; Godot binding; sandbox encounter
+- [x] Private repo + proprietary license (D-003, D-004)
 
-## Backlog (F1-ready — DO NOT START until F0 accepted)
+## Backlog (later milestones)
 
-- [ ] G1-Sprite Tiny procedural/ONNX path + palette gate
-- [ ] G1-Tile NCA + solvability gate
-- [ ] DyeWorks procedural backend + SwatchStudio stub
-- [ ] PatternVault
-- [ ] Godot import presets / EditorImportPlugin
-- [ ] Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack
-- [ ] `forge build --target godot-desktop` real pipeline
-- [ ] Studio PySide6 shell (beyond stub)
+- F3 GIRT, CascadeHub, callout cache, party AI, swap overlay
+- F4 sandbox (process tier), hot reload, snapshots, statecharts
+- F5 Monte Carlo balance, soft-lock, save migration, first boss
+- F6 quest SM, farming, loot, adaptive music, vertical slice
+- F7 packaging (desktop/Android/Web), ShuttleLine multi, BoltPack
+- Studio PySide6 shell; SwatchStudio GUI
+- ONNX G1-Sprite Tiny, NCA G1-Tile, diffusion DyeWorks backends
+
+## Companion / cluster (parallel)
+
+- [ ] C1 PocketLoom FabricCore (Kotlin) — JobExecutor contract, local store
+- [ ] C7 LoomCluster node registry + scheduler; C8 GroundWeave fallback ladder
 
 ## Blockers
 
-| ID | Description | Filed by | Owner | Status |
-|---|---|---|---|---|
-| — | none open for F0 core | — | — | — |
+| ID | Description | Owner | Status |
+|---|---|---|---|
+| — | none | — | — |
 
 ## Bugs
 
 | ID | Description | Severity | Notes |
 |---|---|---|---|
-| — | none filed | — | WSL2 doctor false-warning from chat template N/A on this Linux box |
+| — | none filed | — | — |
 
 ## Decisions needed
 
 | ID | Question | Owner | By |
 |---|---|---|---|
 | D-001 | Web export single-threaded fallback strategy? | Factory Lead | before F7 |
-| D-002 | Confirm Android reference = Redmi Note 12 Pro 5G | Producer | F1 |
-
-## Done (repo setup)
-
-- [x] D-003 License → proprietary (ADR-0001 accepted)
-- [x] D-004 Private remote `RechargedIdeas/assetfabric` created and pushed
+| D-002 | Confirm Android reference = Redmi Note 12 Pro 5G | Producer | F7 |
+| D-005 | Final names/stats of 4 fighters + 3 starter pets (GAME_SPEC §10) | Game Design | before content lock |
 
 ## Infrastructure
 
-- [ ] Provision CI runners (Linux primary; Windows for DirectML later)
-- [ ] Model artifact storage backend (content-addressed — local `store/` for now)
-- [ ] Optional Godot 4.3+ binary cache under `godot-bin/` (gitignored)
-
-## Deferred (see PLAN.md §Out-of-Scope)
-
-Do not open implementation tasks for deferred items without a scope change.
+- [x] CI on GitHub Actions with Godot 4.3 headless
+- [ ] Windows runner (DirectML) — later
+- [ ] Model artifact storage backend beyond local `store/`

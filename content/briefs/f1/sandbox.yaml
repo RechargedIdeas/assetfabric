@@ -1,0 +1,39 @@
+# F1 sandbox encounter briefs — 1 character, 1 tilemap, 1 enemy (+ materials).
+# Consumed by `forge build`; output lands in games/game-zero/assets/generated/.
+briefs:
+  - id: hero_kael
+    kind: sprite
+    archetype: humanoid
+    palette: hero_teal
+    size: 16
+    seed: 7
+    tags: [character, starter]
+  - id: enemy_emberling
+    kind: sprite
+    archetype: beast
+    palette: enemy_ember
+    size: 16
+    seed: 3
+    tags: [enemy, tier1]
+  - id: cave_01
+    kind: tilemap
+    seed: 11
+    tile_size: 16
+    constraints:   # narrative constraint vector
+      width: 40
+      height: 22
+      density: 0.45
+      smoothing: 5
+      min_path: 30
+      enemies: 1
+    tags: [biome:cave]
+  - id: mat_cave_stone
+    kind: material
+    palette: cave_stone
+    style: stone
+    size: 32
+    ramp: [1, 5]
+    cells: 4
+    octaves: 2
+    seed: 1
+    tags: [material]

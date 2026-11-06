@@ -21,11 +21,14 @@ def test_repo_forge_yaml_validates(root: Path) -> None:
     assert errors == []
 
 
-def test_load_manifest_milestone_f0(root: Path) -> None:
+def test_manifest_milestone_matches_package_and_increment(root: Path) -> None:
+    import forge
+    from forge.milestones import INCREMENTS
+
     m = load_manifest(root / "forge.yaml", root)
-    assert m.fabric.milestone == "F0"
+    assert m.fabric.milestone == forge.__milestone__
     assert m.game.id == "game-zero"
-    assert m.game.increment == "env-boots"
+    assert m.game.increment == INCREMENTS[m.fabric.milestone].increment
     assert any(t.renderer == "compatibility" for t in m.targets)
 
 

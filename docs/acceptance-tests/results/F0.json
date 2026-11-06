@@ -1,0 +1,8 @@
+{
+  "description": "Empty Godot boots; forge status healthy",
+  "errors": [],
+  "increment": "env-boots",
+  "milestone": "F0",
+  "passed": true,
+  "result": {}
+}

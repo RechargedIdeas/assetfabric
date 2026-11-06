@@ -15,8 +15,8 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 
 | ID | Weeks (indicative) | Fabric delivers | Game proves | Gate |
 |---|---|---|---|---|
-| **F0** | 1–4 | Manifest, `forge` CLI, asset store, orchestrator, telemetry schema | Empty Godot boots; `forge status` healthy | CLI + schema + env |
-| **F1** | 5–10 | Sprite/tile/DyeWorks procedural, gates, Godot presets, PatternVault, SwatchStudio | Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack | **Blocked until F0 green** |
+| **F0** | 1–4 | Manifest, `forge` CLI, asset store, orchestrator, telemetry schema | Empty Godot boots; `forge status` healthy | ✅ |
+| **F1** | 5–10 | Sprite/tile/DyeWorks procedural, gates, Godot presets, PatternVault, SwatchStudio | Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack | ✅ |
 | **F2** | 11–14 | Codegen (chars/abilities/stats), G1-Audio | First combat: party of 4 + pets + enemies | |
 | **F3** | 15–20 | GIRT, CascadeHub, micro LM, callouts | Party AI, swap, dialogue, callouts | |
 | **F4** | 21–25 | Sandbox/micro-VM, hot reload, snapshots, statecharts | Live tune without full rebuild | |
@@ -26,25 +26,19 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 | **F8** | optional | Retro/console-style | Confirm scope first | |
 | **F9** | post | LiveOps foundation | Readiness only | |
 
-### F0 detail (this session)
+### Progress
 
-- [x] Doc suite  
-- [x] `forge.yaml` + JSON Schema  
-- [x] Telemetry event schema v1  
-- [x] `forge status` / `forge doctor` / validate / store / job stubs  
-- [x] Asset store scaffolding  
-- [x] Job orchestrator stub  
-- [x] Empty Godot 4 Compatibility project  
-- [x] Tests green  
-- [x] Godot 4.3 headless smoke (structure smoke always in CI)
+Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checklists: `docs/acceptance-tests/F*.md`.
 
-### F1 entry criteria (do not start early)
+- **F0** ✅ accepted 2026-11-05.
+- **F1** ✅ accepted 2026-11-05 — procedural G1-Sprite / G1-Tile / DyeWorks, gates, Godot binding, PatternVault, SwatchStudio CLI; sandbox encounter playable and headless-proven.
 
-1. `forge status` exits 0 on acceptance hardware class (≥2 cores, no GPU required for F0 tools).  
-2. `pytest` green.  
-3. Godot project structure smoke green (`scripts/smoke_godot.sh`).  
-4. `HANDOVER.md` records F0 acceptance.  
-5. Milestone bump PR: `fabric.milestone: F1` only after game increment advances past `env-boots` **or** Producer explicitly opens F1 Fabric prep with Game still proving F0 — still **no generator implementation** until env gate signed off.
+### Entry criteria for any F(n+1)
+
+1. `forge accept F(n)` passes and `docs/acceptance-tests/results/F(n).json` is committed.
+2. `pytest` green, `forge status` exit 0 (offset guard ok).
+3. HANDOVER/TODO/CHANGELOG/STATUS updated.
+4. Milestone bump commit: `forge.yaml` (`fabric.milestone`, `game.increment`) + `forge.__milestone__`.
 
 ---
 

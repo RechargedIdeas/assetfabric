@@ -1,0 +1,10 @@
+{
+  "game.title": "Game Zero",
+  "hud.hp": "HP",
+  "hud.enemy": "Enemy",
+  "hud.objective.defeat": "Defeat the enemy",
+  "hud.objective.exit": "Reach the exit",
+  "hud.victory": "Encounter cleared!",
+  "hud.defeat": "You were defeated",
+  "hud.hint.controls": "WASD/Arrows move · J/Space attack · R restart"
+}

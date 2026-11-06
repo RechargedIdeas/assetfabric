@@ -1,0 +1,128 @@
+{
+  "assets": {
+    "cave_01": {
+      "files": {
+        "cave_01.json": {
+          "res": "res://assets/generated/tilemap/cave_01.json",
+          "sha256": "4c5b62ab15e976d8241ebeb54631b7ff17b1f687eeab67a4e0a0c0a2944bd35a"
+        },
+        "cave_01_tiles.png": {
+          "res": "res://assets/generated/tilemap/cave_01_tiles.png",
+          "sha256": "a6472bad30884155595eec01de71f570ad84c76fb9d1b2ea29a6827b3bd769b2"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 54,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:cave"
+      ]
+    },
+    "enemy_emberling": {
+      "files": {
+        "enemy_emberling.png": {
+          "res": "res://assets/generated/sprite/enemy_emberling.png",
+          "sha256": "d59c3f2e6ce91f364cac4d08fa8f51fe38c745d2c536ef2ec56f6e265c5871ee"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "eye_gap": 2,
+          "rx": 6,
+          "ry": 4,
+          "spikes": 2
+        }
+      },
+      "tags": [
+        "enemy",
+        "tier1"
+      ]
+    },
+    "hero_kael": {
+      "files": {
+        "hero_kael.png": {
+          "res": "res://assets/generated/sprite/hero_kael.png",
+          "sha256": "3b9e58ab4cfe9897fa7f834c6d42d90b728234b30bdbefc0a2dcd4171e9377ef"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_teal@1",
+        "params": {
+          "belt": true,
+          "body_w": 3,
+          "hair": false,
+          "head_w": 3,
+          "leg_gap": 1,
+          "weapon_len": 3
+        }
+      },
+      "tags": [
+        "character",
+        "starter"
+      ]
+    },
+    "mat_cave_stone": {
+      "files": {
+        "mat_cave_stone_albedo.png": {
+          "res": "res://assets/generated/material/mat_cave_stone_albedo.png",
+          "sha256": "041d6985df185b9b0a52717508c7b24f3baf4ca66ddc9b9311155724bbf77368"
+        },
+        "mat_cave_stone_normal.png": {
+          "res": "res://assets/generated/material/mat_cave_stone_normal.png",
+          "sha256": "7ddd1189ba1b320877c4a538fbd41c23bedf67aade4abe89db728f6b5c6192a9"
+        }
+      },
+      "kind": "material",
+      "meta": {
+        "kind": "material",
+        "model_id": "DyeWorks",
+        "model_version": "procedural-1",
+        "palette": "cave_stone@1",
+        "size": 32
+      },
+      "tags": [
+        "material"
+      ]
+    }
+  },
+  "generator": "assetfabric-forge",
+  "schema_version": "1.0"
+}

@@ -20,7 +20,7 @@ def root() -> Path:
 def test_collect_status_healthy(root: Path) -> None:
     report = collect_status(root)
     assert report["healthy"] is True
-    assert report["milestone"] == "F0"
+    assert report["milestone"] == __import__("forge").__milestone__
     assert report["components"]["godot"]["healthy"] is True
     assert report["components"]["godot"]["renderer"] == "gl_compatibility"
     assert "one milestone ahead" in report["one_milestone_offset"]["rule"].lower() or \

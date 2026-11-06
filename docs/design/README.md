@@ -15,6 +15,6 @@ These are the **source-of-truth design documents** for AssetFabric and Game Zero
 ## Rules for using these specs
 
 1. **Prefer these specs over invention.** If a spec decides something, follow it.
-2. If you must fill a gap, mark the text **`[INFERENCE]`** and register it in [`docs/F0_INFERENCES.md`](../F0_INFERENCES.md) (or the milestone's inference register).
+2. If you must fill a gap, mark the text **`[INFERENCE]`** and register it in [`docs/INFERENCES.md`](../INFERENCES.md) (or the milestone's inference register).
 3. These files are **frozen imports** — do not edit them to match the implementation. When the implementation intentionally diverges, record an ADR in [`docs/adr/`](../adr/) and index it in [`DECISIONS.md`](../../DECISIONS.md). ADRs + `ARCHITECTURE.md` supersede the specs where they conflict.
 4. Paths in the specs such as `/workspace/chatgrab-output/…` refer to the original grab location on the shared build box; inside this repo the canonical copies are here.

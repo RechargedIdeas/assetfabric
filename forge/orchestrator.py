@@ -118,3 +118,38 @@ class JobOrchestrator:
         with sqlite3.connect(self.db_path) as conn:
             (n,) = conn.execute("SELECT COUNT(*) FROM jobs").fetchone()
         return {"db": str(self.db_path.relative_to(self.root)), "job_count": int(n)}
+
+
+def _update(orch: "JobOrchestrator", job_id: str, state: JobState, error: str | None = None) -> None:
+    now = datetime.now(timezone.utc).isoformat()
+    with sqlite3.connect(orch.db_path) as conn:
+        conn.execute("UPDATE jobs SET state=?, updated_at=?, error=? WHERE id=?", (state.value, now, error, job_id))
+        conn.commit()
+
+
+def run_pending(orch: "JobOrchestrator", handler: Any, kinds: set[str] | None = None) -> list[tuple[Job, Any]]:
+    """F1 worker: run QUEUED jobs in FIFO order through `handler(job) -> result`.
+
+    Single-process, in-order (deterministic). LoomCluster fans this out later.
+    """
+    with sqlite3.connect(orch.db_path) as conn:
+        rows = conn.execute(
+            "SELECT id, kind, state, payload_json, created_at, updated_at, error FROM jobs WHERE state=? ORDER BY created_at, rowid",
+            (JobState.QUEUED.value,),
+        ).fetchall()
+    results = []
+    for r in rows:
+        job = Job(r[0], r[1], JobState(r[2]), json.loads(r[3]), r[4], r[5], r[6])
+        if kinds and job.kind not in kinds:
+            continue
+        _update(orch, job.id, JobState.RUNNING)
+        try:
+            res = handler(job)
+        except Exception as exc:  # noqa: BLE001
+            _update(orch, job.id, JobState.FAILED, str(exc))
+            results.append((job, exc))
+            continue
+        ok = getattr(res, "ok", True)
+        _update(orch, job.id, JobState.SUCCEEDED if ok else JobState.FAILED, None if ok else "gate failure")
+        results.append((job, res))
+    return results

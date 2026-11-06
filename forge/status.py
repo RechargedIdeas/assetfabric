@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from forge import __milestone__, __version__
+from forge.milestones import offset_report
 from forge.manifest import load_manifest, validate_manifest_file
 from forge.orchestrator import JobOrchestrator
 from forge.paths import find_repo_root, schema_dir
@@ -84,7 +85,7 @@ def collect_status(root: Path | None = None) -> dict[str, Any]:
             "Fabric may be at most one milestone ahead of the Game. "
             "F(n+1) Fabric work is blocked until F(n) game/env gate passes."
         ),
-        "f1_blocked_until": "F0 game/env gate: empty Godot boots + forge status healthy",
+        **offset_report(root, manifest.fabric.milestone if manifest else "F0"),
     }
 
     components = {
@@ -101,6 +102,7 @@ def collect_status(root: Path | None = None) -> dict[str, Any]:
             components["asset_store"]["ok"],
             components["orchestrator"]["ok"],
             components["godot"]["healthy"],
+            offset_rule["ok"],
         ]
     )
     return {

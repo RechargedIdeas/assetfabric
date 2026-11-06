@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "vault_version": 1,
+  "palettes": {
+    "hero_teal": {
+      "version": 1,
+      "description": "Game Zero default hero ramp (outline, shadow, base, highlight, skin, accent).",
+      "colours": ["#10141f", "#1d5c63", "#3fa7a0", "#9be3c9", "#f2c6a0", "#f5e663"]
+    },
+    "enemy_ember": {
+      "version": 1,
+      "description": "Hostile ramp for tier-1 enemies.",
+      "colours": ["#160d13", "#6b1d2a", "#c2413a", "#f08a4b", "#ffd6a5", "#fff1e6"]
+    },
+    "cave_stone": {
+      "version": 1,
+      "description": "Cave floor/wall material ramp (dark→light).",
+      "colours": ["#0d0f14", "#1f2430", "#343b4d", "#4f5a70", "#76829a", "#a6b1c4"]
+    },
+    "cave_moss": {
+      "version": 1,
+      "description": "Floor accents.",
+      "colours": ["#13201a", "#1f3a2b", "#2f5a3d", "#4a8352", "#79b26a"]
+    },
+    "ui_retro": {
+      "version": 1,
+      "description": "UI text/bars.",
+      "colours": ["#0b0b10", "#f4f4f4", "#e04040", "#40c060", "#f0c040"]
+    }
+  },
+  "colorblind_variants": {
+    "deuteranopia": {"enemy_ember": ["#160d13", "#3b2a6b", "#6a5acd", "#f0a04b", "#ffe0a5", "#fff1e6"]},
+    "protanopia": {"enemy_ember": ["#160d13", "#2a3b6b", "#4a7acd", "#f0c04b", "#ffe8a5", "#fff1e6"]}
+  }
+}

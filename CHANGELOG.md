@@ -4,6 +4,27 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.1.0+f1] — 2026-11-05 — F1 Content Pipeline
+
+### Added
+- `forge/imaging.py` dependency-free PNG codec; `forge/patternvault.py` + `content/patternvault/palettes.json` (5 palettes, colour-blind variants).
+- Generators: G1-Sprite (procedural humanoid/beast, 6-frame sheets), G1-Tile (cellular-automata caves with entry/exit/spawns), DyeWorks (seamless albedo + normal).
+- Gates: palette, dims, seamless, solvability, floor ratio, BudgetGate.
+- `forge/pipeline.py`: briefs (`content/briefs/`) → orchestrator → generators → gates → store → `games/game-zero/assets/generated/` + `fabric_assets.json`.
+- CLI: `forge build`, `forge gen`, `forge palette`, `forge accept`, `forge report`.
+- `forge/milestones.py`: increment registry, headless acceptance, offset guard in `forge status`; `STATUS.md` generator.
+- Game Zero: `Fabric` autoload (registry, runtime loading, input schema, locales, headless watchdog), deterministic sim (`sim/`), playable sandbox scene, autoplay acceptance.
+- Tests: pipeline, gates, determinism gate, headless Godot increments (23 total).
+- CI: `.github/workflows/ci.yml` with Godot 4.3 download/cache; `scripts/capture.sh` (Movie Maker frames).
+- Docs: F1 acceptance, INFERENCES §F1, STATUS.md, screenshot.
+
+### Changed
+- `docs/F0_INFERENCES.md` → `docs/INFERENCES.md` (per-milestone sections).
+- `scripts/smoke_godot.sh` uses `--boot-only`.
+- AGENTS/BUILD_ORDER offset rules generalised to "accept F(n) before F(n+1)".
+
+## [0.0.1+f0] — 2026-11-05 — Private repository setup
+
 ### Added
 - Private GitHub repository `RechargedIdeas/assetfabric` and first push of `main`.
 - Root `LICENSE` (proprietary, All Rights Reserved) and `THIRD_PARTY_NOTICES.md`.

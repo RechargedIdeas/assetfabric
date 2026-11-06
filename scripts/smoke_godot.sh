@@ -43,7 +43,7 @@ fi
 if [[ -z "$GODOT_BIN" ]]; then
   echo "Godot binary not found on PATH or godot-bin/."
   echo "Documented command:"
-  echo "  godot --path games/game-zero --headless --quit-after 1"
+  echo "  godot --headless --path games/game-zero -- --boot-only"
   if [[ "$REQUIRE_GODOT" == "1" ]]; then
     exit 1
   fi
@@ -55,5 +55,5 @@ if [[ -z "$GODOT_BIN" ]]; then
 fi
 
 echo "Using Godot: $GODOT_BIN"
-"$GODOT_BIN" --path "$PROJECT" --headless --quit-after 1
+"$GODOT_BIN" --path "$PROJECT" --headless -- --boot-only
 echo "headless smoke OK"

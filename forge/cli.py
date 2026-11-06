@@ -77,9 +77,8 @@ def status_cmd(as_json: bool, root: Path | None) -> None:
         )
         console.print(table)
         console.print("[dim]One-milestone offset:[/dim]", report["one_milestone_offset"]["rule"])
-        console.print(
-            f"[dim]F1 blocked until:[/dim] {report['one_milestone_offset']['f1_blocked_until']}"
-        )
+        off = report["one_milestone_offset"]
+        console.print(f"[dim]Offset guard:[/dim] {'ok' if off['ok'] else 'UNPROVEN ' + str(off['unproven_prior_milestones'])}")
     sys.exit(0 if report["healthy"] else 1)
 
 
@@ -162,6 +161,87 @@ def store_cmd(action: str, file_path: Path | None, root: Path | None) -> None:
     data = file_path.read_bytes()
     bundle = store.put(data, media_type="application/octet-stream", provenance={"source_path_key": "cli.put"})
     click.echo(json.dumps({"digest": bundle.digest, "size": bundle.size}))
+
+
+@main.command("build")
+@click.option("--brief", "pattern", default="**/*.yaml", help="Glob under content/briefs/.")
+@click.option("--no-export", is_flag=True, help="Generate + gate + store only; do not write into the game.")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def build_cmd(pattern: str, no_export: bool, root: Path | None) -> None:
+    """Run content briefs through generators → gates → store → Godot export."""
+    from forge.pipeline import build_all
+
+    report = build_all(root or find_repo_root(), pattern, export=not no_export)
+    click.echo(json.dumps(report, indent=2))
+    sys.exit(0 if report["ok"] else 1)
+
+
+@main.command("gen")
+@click.argument("brief_id")
+@click.option("--seed", type=int, default=None, help="Override the brief seed (exploration).")
+@click.option("--no-export", is_flag=True)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def gen_cmd(brief_id: str, seed: int | None, no_export: bool, root: Path | None) -> None:
+    """Generate a single brief by id."""
+    from forge.pipeline import Context, load_briefs, run_brief
+
+    ctx = Context.create(root)
+    briefs = {b["id"]: b for b in load_briefs(ctx.root)}
+    if brief_id not in briefs:
+        console.print(f"[red]unknown brief {brief_id!r}[/red]; known: {sorted(briefs)}")
+        sys.exit(2)
+    b = dict(briefs[brief_id])
+    if seed is not None:
+        b["seed"] = seed
+    out = run_brief(b, ctx, export=not no_export)
+    click.echo(json.dumps({"ok": out.ok, "gates": [g.__dict__ for g in out.gates], "files": out.meta.get("files")}, indent=2, default=str))
+    sys.exit(0 if out.ok else 1)
+
+
+@main.command("palette")
+@click.argument("name", required=False)
+@click.option("--variant", default=None, help="Colour-blind variant (deuteranopia, protanopia).")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def palette_cmd(name: str | None, variant: str | None, root: Path | None) -> None:
+    """PatternVault: list palettes or show one as swatches (SwatchStudio CLI echo)."""
+    from forge.imaging import rgba_to_hex
+    from forge.patternvault import PatternVault
+
+    vault = PatternVault(root or find_repo_root())
+    if not name:
+        for n in vault.names():
+            p = vault.get(n)
+            console.print(f"{p.ref:20s} " + " ".join(f"[on {rgba_to_hex(c)}]  [/]" for c in p.colours) + f"  {p.description}")
+        console.print(f"[dim]variants: {', '.join(vault.variants())}[/dim]")
+        return
+    p = vault.get(name, variant)
+    for i, c in enumerate(p.colours):
+        console.print(f"[on {rgba_to_hex(c)}]      [/] {i}: {rgba_to_hex(c)}")
+
+
+@main.command("accept")
+@click.argument("milestone")
+@click.option("--no-write", is_flag=True, help="Do not record docs/acceptance-tests/results/<F>.json.")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def accept_cmd(milestone: str, no_write: bool, root: Path | None) -> None:
+    """Run the Game Zero headless acceptance for a Fabric milestone (needs Godot)."""
+    from forge.milestones import INCREMENTS, accept
+
+    if milestone not in INCREMENTS:
+        console.print(f"[red]unknown milestone {milestone}; known {sorted(INCREMENTS)}[/red]")
+        sys.exit(2)
+    report = accept(milestone, root or find_repo_root(), write=not no_write)
+    click.echo(json.dumps(report, indent=2))
+    sys.exit(0 if report["passed"] else 1)
+
+
+@main.command("report")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def report_cmd(root: Path | None) -> None:
+    """Regenerate STATUS.md (milestone dashboard) from recorded acceptance results."""
+    from forge.report import write
+
+    click.echo(str(write(root or find_repo_root())))
 
 
 if __name__ == "__main__":

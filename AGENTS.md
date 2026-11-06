@@ -62,9 +62,10 @@ Fabric:  F0 → F1 → F2 → …
 Game:         G0 → G1 → …
 ```
 
-- If Game is at the F0 env-boots gate, Fabric may finish F0 and prepare F1 design — **but must not implement F1 generators** until F0’s game/env gate is green.
-- **F1 is blocked** until F0 acceptance: empty Godot boots + `forge status` healthy + tests green.
-- CI / agents: refuse to merge F1 generator code while `forge.yaml` `fabric.milestone` is `F0` and `game.increment` is still `env-boots` without an explicit milestone bump PR.
+- Fabric F(n+1) work may not start until `forge accept F(n)` passes and its result is recorded in `docs/acceptance-tests/results/F(n).json`.
+- `forge status` is **unhealthy** if any milestone before `forge.yaml` `fabric.milestone` lacks a passing recorded acceptance (offset guard).
+- A milestone bump (`fabric.milestone`, `game.increment`, `forge.__milestone__`) is its own commit, made only after the previous acceptance is green.
+- Producer go-ahead past F0 was given 2026-11-05 (build the complete project milestone-by-milestone).
 
 ### 3.3 Scope change protocol
 
@@ -88,7 +89,7 @@ Game:         G0 → G1 → …
 ## 5. Testing discipline
 
 - Every change needs an acceptance test that fails before and passes after.
-- F0 bar: `pytest` + `forge status` exit 0 + Godot structure smoke (`scripts/smoke_godot.sh`).
+- Bar for every milestone: `pytest` green + `forge status` exit 0 + `forge accept <F>` passes headless in Godot.
 - Do not merge a change that only passes on one machine.
 
 ---
@@ -130,7 +131,7 @@ Scopes: `fabric`, `forge`, `game`, `studio`, `substrate`, `docs`, `cluster`, `po
 
 Do not build: quantum hardware backends, fantasy-console targets, modern CertPacks, mod marketplace, P2P >2, dedicated servers, M1-Architect as ship gate, LiveOps content (hooks OK later).
 
-Do not deeply implement PocketLoom / LoomCluster in an F0 Fabric session beyond placeholders.
+Companion track (C1–C12) runs in parallel but must never block or delay the current Fabric milestone.
 
 Do not edit Sophonts or unrelated repos under this handoff.
 

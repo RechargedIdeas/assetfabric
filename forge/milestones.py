@@ -1,0 +1,126 @@
+"""Milestone ↔ Game Zero increment registry + headless acceptance runner.
+
+Enforces the one-milestone offset (ADR-0016): Fabric F(n) is accepted only when
+its Game increment passes a headless Godot acceptance run. Results are written
+to `docs/acceptance-tests/results/<F>.json` (tracked) as evidence.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Callable
+
+from forge.paths import find_repo_root
+
+
+@dataclass(frozen=True)
+class Increment:
+    milestone: str
+    increment: str
+    godot_args: tuple[str, ...]
+    check: Callable[[dict[str, Any]], list[str]] = field(compare=False)
+    description: str = ""
+
+
+def _need(cond: bool, msg: str, errs: list[str]) -> None:
+    if not cond:
+        errs.append(msg)
+
+
+def _f0(r: dict[str, Any]) -> list[str]:
+    return [] if r.get("_boot_ok") else ["boot line missing"]
+
+
+def _f1(r: dict[str, Any]) -> list[str]:
+    errs: list[str] = []
+    _need(r.get("outcome") == "victory", f"outcome={r.get('outcome')}", errs)
+    _need(len(r.get("assets", [])) >= 3, "needs 1 tilemap + 1 character + 1 enemy from Fabric", errs)
+    _need(r.get("hits", 0) >= 1, "at least one attack must land", errs)
+    return errs
+
+
+INCREMENTS: dict[str, Increment] = {
+    "F0": Increment("F0", "env-boots", ("--boot-only",), _f0, "Empty Godot boots; forge status healthy"),
+    "F1": Increment("F1", "sandbox-encounter", ("--scene=sandbox", "--autoplay"), _f1,
+                    "Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack"),
+}
+ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
+
+
+def register(inc: Increment) -> None:
+    INCREMENTS[inc.milestone] = inc
+
+
+def godot_binary(root: Path) -> str | None:
+    env = os.environ.get("GODOT_BIN")
+    if env and Path(env).exists():
+        return env
+    for c in ("godot", "godot4"):
+        p = shutil.which(c)
+        if p:
+            return p
+    local = root / "godot-bin" / "godot"
+    return str(local) if local.exists() else None
+
+
+def parse_output(text: str) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for line in text.splitlines():
+        if line.startswith("FABRIC_RESULT "):
+            result.update(json.loads(line[len("FABRIC_RESULT "):]))
+    result["_boot_ok"] = "Game Zero F0 boot OK" in text
+    return result
+
+
+def run_godot(root: Path, args: tuple[str, ...], timeout: int = 180) -> tuple[int, str]:
+    gb = godot_binary(root)
+    if not gb:
+        raise FileNotFoundError("Godot binary not found (GODOT_BIN, PATH, or godot-bin/godot)")
+    from forge.manifest import load_manifest
+
+    project = root / load_manifest(None, root).game.project_path
+    proc = subprocess.run([gb, "--headless", "--path", str(project), "--", *args],
+                          capture_output=True, text=True, timeout=timeout)
+    return proc.returncode, proc.stdout + proc.stderr
+
+
+def accept(milestone: str, root: Path | None = None, write: bool = True) -> dict[str, Any]:
+    root = root or find_repo_root()
+    inc = INCREMENTS[milestone]
+    code, out = run_godot(root, inc.godot_args)
+    result = parse_output(out)
+    errs = inc.check(result)
+    if code != 0:
+        errs.append(f"godot exit code {code}")
+    report = {
+        "milestone": milestone, "increment": inc.increment, "description": inc.description,
+        "passed": not errs, "errors": errs,
+        "result": {k: v for k, v in result.items() if not k.startswith("_")},
+    }
+    if write:
+        d = root / "docs" / "acceptance-tests" / "results"
+        d.mkdir(parents=True, exist_ok=True)
+        (d / f"{milestone}.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return report
+
+
+def recorded(root: Path, milestone: str) -> dict[str, Any] | None:
+    p = root / "docs" / "acceptance-tests" / "results" / f"{milestone}.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+
+def offset_report(root: Path, fabric_milestone: str) -> dict[str, Any]:
+    """Fabric may be at most one milestone ahead: all milestones before the current
+    one must have a passing recorded Game acceptance."""
+    idx = ORDER.index(fabric_milestone) if fabric_milestone in ORDER else 0
+    missing = []
+    for m in ORDER[:idx]:
+        rec = recorded(root, m)
+        if m != "F0" and not (rec and rec.get("passed")):
+            missing.append(m)
+    return {"ok": not missing, "unproven_prior_milestones": missing}

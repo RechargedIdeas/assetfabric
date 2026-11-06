@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "assetfabric-forge"
-version = "0.0.0+f0.0"
+version = "0.1.0+f1"
 description = "AssetFabric Content Forge — CLI, schemas, store, orchestrator"
 readme = "README.md"
 requires-python = ">=3.11"

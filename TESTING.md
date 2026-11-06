@@ -8,8 +8,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 |---|---|---|---|
 | Unit | schemas, pure functions | `tests/` | F0 ✅ |
 | Component | store, orchestrator, CLI | `tests/` | F0 ✅ |
-| Integration | Forge → Godot import, generators → store | `tests/integration/` | F1+ |
-| Headless game | Godot `--headless` scripted runs | `scripts/smoke_godot.sh`, `games/game-zero/tests/` | F0 boot ✅ |
+| Integration | generators → gates → store → registry; determinism | `tests/test_f1_pipeline.py` | F1 ✅ |
+| Headless game | Godot `--headless` autoplay per increment | `tests/test_game_increments.py`, `forge accept` | F0, F1 ✅ |
 | Acceptance | milestone gates | `docs/acceptance-tests/F*.md` | F0 ✅ |
 | Perf / fidelity | GroundWeave 2-core budgets, retro authenticity (V1) | later | F1+ |
 | Hybrid QA | AI agent playtests + human playtesters | later | F5+ |
@@ -41,16 +41,25 @@ REQUIRE_GODOT=1 ./scripts/smoke_godot.sh   # fail if Godot is missing
 
 Checklist form: [`docs/acceptance-tests/F0.md`](docs/acceptance-tests/F0.md).
 
+## 3b. Milestone acceptance
+
+Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executable increment in `forge/milestones.py`. `forge accept F<n>` runs Godot headless with the increment's args, parses the `FABRIC_RESULT` JSON line, checks criteria, and records `docs/acceptance-tests/results/F<n>.json`. `forge status` fails if a prior milestone lacks a passing record (offset guard).
+
+| Milestone | Checklist | Increment |
+|---|---|---|
+| F0 | [F0.md](docs/acceptance-tests/F0.md) | env-boots |
+| F1 | [F1.md](docs/acceptance-tests/F1.md) | sandbox-encounter |
+
 ## 4. CI gates
 
-Workflow: `.github/workflows/f0-ci.yml` (Ubuntu, `uv`). On every push to `main` and every PR:
+Workflow: `.github/workflows/ci.yml` (Ubuntu, `uv`, cached Godot 4.3 download). On every push to `main` and every PR:
 
 1. Install `.[dev]` into a venv.
-2. `forge status` (must exit 0).
-3. `pytest -q`.
-4. `scripts/smoke_godot.sh` in structure-only mode (no Godot binary on hosted runners in F0).
+2. `forge status` (must exit 0 — includes the offset guard).
+3. `pytest -q` — unit, pipeline, **determinism gate** (regenerated assets == committed), and **headless Godot increments** for every registered milestone.
+4. `REQUIRE_GODOT=1 scripts/smoke_godot.sh`.
 
-Planned (not yet implemented): Godot headless boot in CI, Windows runner for DirectML, scope guard enforcing the one-milestone offset, SBOM/license audit (F7). `[INFERENCE: workflow shape]`
+Planned: Windows runner for DirectML, SBOM/license audit (F7). `[INFERENCE: workflow shape]`
 
 ## 5. Performance & fidelity contracts
 

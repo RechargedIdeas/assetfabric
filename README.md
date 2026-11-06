@@ -12,12 +12,14 @@
 
 | | |
 |---|---|
-| Fabric milestone | **F0 — Foundation** (implemented; awaiting Producer acceptance) |
-| Game increment | `env-boots` — empty Godot project boots headless |
-| Version | `0.0.0+f0.0` |
-| Next | F1 Content Pipeline → playable sandbox (1 char, 1 tilemap, 1 enemy, 1 attack) |
+| Fabric milestone | **F1 — Content Pipeline** ✅ accepted (`forge accept F1`) |
+| Game increment | `sandbox-encounter` — 1 character, 1 generated cave, 1 enemy, 1 attack; playable + headless-proven |
+| Version | `0.1.0+f1` |
+| Next | F2 Codegen + G1-Audio → first full combat (party of 4 + pets + enemies) |
 
-What exists today: `forge` CLI (`status`, `doctor`, `validate`, `job`, `store`), project manifest + telemetry JSON Schemas, content-addressed asset store, SQLite job orchestrator, telemetry JSONL emitter, Game Zero Godot project, pytest suite. Studio, PocketLoom and LoomCluster are placeholders. Details: [HANDOVER.md](HANDOVER.md).
+Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
+
+![F1 sandbox](docs/media/f1-sandbox.png)
 
 ## Quick start
 
@@ -32,9 +34,11 @@ forge doctor          # environment checks
 forge status          # exit 0 == healthy
 pytest -q
 ./scripts/smoke_godot.sh
+forge build           # regenerate content from content/briefs/ (deterministic)
+forge accept F1       # headless Godot acceptance (needs Godot 4.3)
 ```
 
-Open Game Zero: `godot --path games/game-zero --headless --quit-after 1`, or open `games/game-zero/` in the Godot editor. More: [docs/setup/README.md](docs/setup/README.md).
+Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in the Godot editor. More: [docs/setup/README.md](docs/setup/README.md).
 
 ## Repository layout
 
@@ -42,6 +46,7 @@ Open Game Zero: `godot --path games/game-zero --headless --quit-after 1`, or ope
 |---|---|
 | `forge/` | Content Forge Python package and `forge` CLI |
 | `forge.yaml` | Project manifest (milestone, targets, profiles, fleet) |
+| `content/` | Content briefs + PatternVault palettes (inputs to `forge build`) |
 | `docs/design/` | **Authoritative design specs** imported from the design chat |
 | `docs/adr/` | Architecture Decision Records |
 | `docs/schemas/` | JSON Schemas (manifest, telemetry) |
@@ -71,10 +76,11 @@ Open Game Zero: `godot --path games/game-zero --headless --quit-after 1`, or ope
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, workflow, PR checklist |
 | [GLOSSARY.md](GLOSSARY.md) | Terms |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
+| [STATUS.md](STATUS.md) | Generated milestone dashboard |
 | [docs/design/](docs/design/README.md) | ASSETFABRIC_SPEC, GAME_SPEC, ML/AI features, chat summary |
 | [docs/tool-catalog.md](docs/tool-catalog.md) | Fabric tools and their milestones |
 | [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first node inventory |
-| [docs/F0_INFERENCES.md](docs/F0_INFERENCES.md) | Register of `[INFERENCE]` decisions |
+| [docs/INFERENCES.md](docs/INFERENCES.md) | Register of `[INFERENCE]` decisions |
 
 Design source: https://chat.deepseek.com/share/g90tn4mss3265u0xm3 — prefer the specs over invention; extrapolations are marked **`[INFERENCE]`**.
 

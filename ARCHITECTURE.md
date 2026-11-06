@@ -30,19 +30,37 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## F0 code map (what exists now)
+## Code map (current)
 
-| Path | Role |
-|---|---|
-| `forge/` | Content Forge Python package + CLI |
-| `forge.yaml` | Project manifest |
-| `docs/schemas/` | JSON Schemas (manifest, telemetry) |
-| `store/` | Content-addressed asset store root |
-| `.fabric/` | Jobs DB + telemetry JSONL (gitignored data) |
-| `games/game-zero/` | Empty Godot 4 project |
-| `studio/` | PySide6 stub |
-| `companions/pocketloom/` | Placeholder |
-| `cluster/loomcluster/` | Placeholder |
+| Path | Role | Since |
+|---|---|---|
+| `forge/cli.py` | `forge` CLI: status, doctor, validate, job, store, build, gen, palette, accept, report | F0/F1 |
+| `forge/manifest.py`, `forge.yaml` | Project manifest + schema validation | F0 |
+| `forge/store.py` | Content-addressed blob store + provenance manifests (ADR-0012) | F0 |
+| `forge/orchestrator.py` | SQLite job queue + in-order worker (`run_pending`) | F0/F1 |
+| `forge/telemetry.py` | Telemetry schema + JSONL emitter | F0 |
+| `forge/imaging.py` | Dependency-free RGBA/PNG codec | F1 |
+| `forge/patternvault.py`, `content/patternvault/` | Versioned palettes + colour-blind variants | F1 |
+| `forge/gates.py` | palette / dims / seamless / solvability / floor-ratio / BudgetGate | F1 |
+| `forge/generators/` | Generator registry: `sprite` (G1-Sprite), `tilemap` (G1-Tile), `material` (DyeWorks) | F1 |
+| `forge/pipeline.py`, `content/briefs/` | brief → generator → gates → store → Godot export + `fabric_assets.json` | F1 |
+| `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
+| `forge/report.py` | STATUS.md generator | F1 |
+| `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
+| `games/game-zero/sim/` | Deterministic fixed-step sim (grid, entity, sandbox) | F1 |
+| `games/game-zero/scenes/` | boot (router), sandbox (render + input) | F0/F1 |
+| `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
+
+### Content flow (F1)
+
+```
+content/briefs/*.yaml ─► forge build ─► JobOrchestrator ─► generator (CPU procedural)
+        ─► gates (palette, seamless, solvability, budget) ─► AssetStore (sha256 + provenance)
+        ─► games/game-zero/assets/generated/<kind>/ + fabric_assets.json
+        ─► Fabric autoload (runtime load) ─► sim + scenes
+```
+
+The sim is separated from rendering so it can run headless (acceptance, balance, RL) at thousands of ticks per second and stay deterministic (state hash).
 
 ## Core technical decisions
 
