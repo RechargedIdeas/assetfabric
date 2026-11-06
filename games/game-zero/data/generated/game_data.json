@@ -1,0 +1,791 @@
+{
+ "abilities": {
+  "arrow": {
+   "cooldown": 30,
+   "id": "arrow",
+   "name_key": "ability.arrow",
+   "power": 0.9,
+   "range": 88,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/arrow.tres",
+   "type": "ranged",
+   "windup": 8
+  },
+  "bite": {
+   "cooldown": 34,
+   "id": "bite",
+   "name_key": "ability.bite",
+   "power": 1.0,
+   "range": 14,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/bite.tres",
+   "type": "melee",
+   "windup": 6
+  },
+  "claw": {
+   "cooldown": 40,
+   "id": "claw",
+   "name_key": "ability.claw",
+   "power": 1.0,
+   "range": 14,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/claw.tres",
+   "type": "melee",
+   "windup": 10
+  },
+  "hex_bolt": {
+   "cooldown": 70,
+   "id": "hex_bolt",
+   "name_key": "ability.hex_bolt",
+   "power": 1.2,
+   "range": 84,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/hex_bolt.tres",
+   "type": "ranged",
+   "windup": 12
+  },
+  "lunge": {
+   "cooldown": 60,
+   "id": "lunge",
+   "name_key": "ability.lunge",
+   "power": 1.3,
+   "range": 24,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/lunge.tres",
+   "type": "melee",
+   "windup": 6
+  },
+  "mend": {
+   "cooldown": 110,
+   "id": "mend",
+   "name_key": "ability.mend",
+   "power": 2.2,
+   "range": 72,
+   "target": "ally",
+   "threshold": 0.65,
+   "tres": "res://data/generated/abilities/mend.tres",
+   "type": "heal",
+   "windup": 16
+  },
+  "shield_bash": {
+   "cooldown": 120,
+   "id": "shield_bash",
+   "name_key": "ability.shield_bash",
+   "power": 1.8,
+   "range": 18,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/shield_bash.tres",
+   "type": "melee",
+   "windup": 10
+  },
+  "slam": {
+   "cooldown": 90,
+   "id": "slam",
+   "name_key": "ability.slam",
+   "power": 1.1,
+   "radius": 28,
+   "range": 20,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/slam.tres",
+   "type": "aoe",
+   "windup": 12
+  },
+  "slash": {
+   "cooldown": 24,
+   "id": "slash",
+   "name_key": "ability.slash",
+   "power": 1.0,
+   "range": 18,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/slash.tres",
+   "type": "melee",
+   "windup": 5
+  },
+  "smash": {
+   "cooldown": 100,
+   "id": "smash",
+   "name_key": "ability.smash",
+   "power": 1.4,
+   "radius": 22,
+   "range": 18,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/smash.tres",
+   "type": "aoe",
+   "windup": 18
+  },
+  "spark": {
+   "cooldown": 28,
+   "id": "spark",
+   "name_key": "ability.spark",
+   "power": 0.7,
+   "range": 72,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/spark.tres",
+   "type": "ranged",
+   "windup": 8
+  },
+  "spit": {
+   "cooldown": 60,
+   "id": "spit",
+   "name_key": "ability.spit",
+   "power": 0.8,
+   "range": 60,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/spit.tres",
+   "type": "ranged",
+   "windup": 14
+  },
+  "taunt": {
+   "cooldown": 300,
+   "duration": 180,
+   "id": "taunt",
+   "name_key": "ability.taunt",
+   "power": 0.0,
+   "range": 64,
+   "target": "self",
+   "tres": "res://data/generated/abilities/taunt.tres",
+   "type": "taunt",
+   "windup": 4
+  },
+  "volley": {
+   "cooldown": 150,
+   "id": "volley",
+   "name_key": "ability.volley",
+   "power": 0.7,
+   "radius": 26,
+   "range": 80,
+   "target": "enemy",
+   "tres": "res://data/generated/abilities/volley.tres",
+   "type": "aoe",
+   "windup": 14
+  }
+ },
+ "enemies": {
+  "cave_mite": {
+   "abilities": [
+    "spit",
+    "claw"
+   ],
+   "sprite_id": "spr_cave_mite",
+   "stats": {
+    "aggro": 120,
+    "atk": 3.0,
+    "def": 0.0,
+    "hp": 16.0,
+    "speed": 1.1
+   },
+   "tier": 1,
+   "weakness": "fire"
+  },
+  "emberling": {
+   "abilities": [
+    "claw"
+   ],
+   "sprite_id": "spr_emberling",
+   "stats": {
+    "aggro": 112,
+    "atk": 4.0,
+    "def": 0.0,
+    "hp": 24.0,
+    "speed": 0.8
+   },
+   "tier": 1,
+   "weakness": "water"
+  },
+  "rock_brute": {
+   "abilities": [
+    "smash",
+    "claw"
+   ],
+   "sprite_id": "spr_rock_brute",
+   "stats": {
+    "aggro": 100,
+    "atk": 8.0,
+    "def": 3.2,
+    "hp": 64.0,
+    "speed": 0.7
+   },
+   "tier": 2,
+   "weakness": "arcane"
+  }
+ },
+ "fighters": {
+  "bram": {
+   "abilities": [
+    "taunt",
+    "slam",
+    "slash"
+   ],
+   "base": true,
+   "levels": [
+    {
+     "atk": 5.0,
+     "def": 4.0,
+     "hp": 78,
+     "level": 1,
+     "speed": 1.1
+    },
+    {
+     "atk": 5.6,
+     "def": 4.24,
+     "hp": 87,
+     "level": 2,
+     "speed": 1.1
+    },
+    {
+     "atk": 6.2,
+     "def": 4.48,
+     "hp": 97,
+     "level": 3,
+     "speed": 1.1
+    },
+    {
+     "atk": 6.8,
+     "def": 4.72,
+     "hp": 106,
+     "level": 4,
+     "speed": 1.1
+    },
+    {
+     "atk": 7.4,
+     "def": 4.96,
+     "hp": 115,
+     "level": 5,
+     "speed": 1.1
+    },
+    {
+     "atk": 8.0,
+     "def": 5.2,
+     "hp": 125,
+     "level": 6,
+     "speed": 1.1
+    },
+    {
+     "atk": 8.6,
+     "def": 5.44,
+     "hp": 134,
+     "level": 7,
+     "speed": 1.1
+    },
+    {
+     "atk": 9.2,
+     "def": 5.68,
+     "hp": 144,
+     "level": 8,
+     "speed": 1.1
+    },
+    {
+     "atk": 9.8,
+     "def": 5.92,
+     "hp": 153,
+     "level": 9,
+     "speed": 1.1
+    },
+    {
+     "atk": 10.4,
+     "def": 6.16,
+     "hp": 162,
+     "level": 10,
+     "speed": 1.1
+    }
+   ],
+   "role": "warden",
+   "sprite_id": "spr_bram",
+   "unlock": null
+  },
+  "kael": {
+   "abilities": [
+    "shield_bash",
+    "slash"
+   ],
+   "base": true,
+   "levels": [
+    {
+     "atk": 7.0,
+     "def": 3.0,
+     "hp": 60,
+     "level": 1,
+     "speed": 1.3
+    },
+    {
+     "atk": 7.84,
+     "def": 3.18,
+     "hp": 67,
+     "level": 2,
+     "speed": 1.3
+    },
+    {
+     "atk": 8.68,
+     "def": 3.36,
+     "hp": 74,
+     "level": 3,
+     "speed": 1.3
+    },
+    {
+     "atk": 9.52,
+     "def": 3.54,
+     "hp": 82,
+     "level": 4,
+     "speed": 1.3
+    },
+    {
+     "atk": 10.36,
+     "def": 3.72,
+     "hp": 89,
+     "level": 5,
+     "speed": 1.3
+    },
+    {
+     "atk": 11.2,
+     "def": 3.9,
+     "hp": 96,
+     "level": 6,
+     "speed": 1.3
+    },
+    {
+     "atk": 12.04,
+     "def": 4.08,
+     "hp": 103,
+     "level": 7,
+     "speed": 1.3
+    },
+    {
+     "atk": 12.88,
+     "def": 4.26,
+     "hp": 110,
+     "level": 8,
+     "speed": 1.3
+    },
+    {
+     "atk": 13.72,
+     "def": 4.44,
+     "hp": 118,
+     "level": 9,
+     "speed": 1.3
+    },
+    {
+     "atk": 14.56,
+     "def": 4.62,
+     "hp": 125,
+     "level": 10,
+     "speed": 1.3
+    }
+   ],
+   "role": "vanguard",
+   "sprite_id": "spr_kael",
+   "unlock": null
+  },
+  "nyra": {
+   "abilities": [
+    "volley",
+    "arrow"
+   ],
+   "base": true,
+   "levels": [
+    {
+     "atk": 6.0,
+     "def": 1.0,
+     "hp": 40,
+     "level": 1,
+     "speed": 1.4
+    },
+    {
+     "atk": 6.72,
+     "def": 1.06,
+     "hp": 45,
+     "level": 2,
+     "speed": 1.4
+    },
+    {
+     "atk": 7.44,
+     "def": 1.12,
+     "hp": 50,
+     "level": 3,
+     "speed": 1.4
+    },
+    {
+     "atk": 8.16,
+     "def": 1.18,
+     "hp": 54,
+     "level": 4,
+     "speed": 1.4
+    },
+    {
+     "atk": 8.88,
+     "def": 1.24,
+     "hp": 59,
+     "level": 5,
+     "speed": 1.4
+    },
+    {
+     "atk": 9.6,
+     "def": 1.3,
+     "hp": 64,
+     "level": 6,
+     "speed": 1.4
+    },
+    {
+     "atk": 10.32,
+     "def": 1.36,
+     "hp": 69,
+     "level": 7,
+     "speed": 1.4
+    },
+    {
+     "atk": 11.04,
+     "def": 1.42,
+     "hp": 74,
+     "level": 8,
+     "speed": 1.4
+    },
+    {
+     "atk": 11.76,
+     "def": 1.48,
+     "hp": 78,
+     "level": 9,
+     "speed": 1.4
+    },
+    {
+     "atk": 12.48,
+     "def": 1.54,
+     "hp": 83,
+     "level": 10,
+     "speed": 1.4
+    }
+   ],
+   "role": "ranger",
+   "sprite_id": "spr_nyra",
+   "unlock": null
+  },
+  "orrin": {
+   "abilities": [
+    "hex_bolt",
+    "spark"
+   ],
+   "base": false,
+   "levels": [
+    {
+     "atk": 7.0,
+     "def": 1.0,
+     "hp": 36,
+     "level": 1,
+     "speed": 1.2
+    },
+    {
+     "atk": 7.84,
+     "def": 1.06,
+     "hp": 40,
+     "level": 2,
+     "speed": 1.2
+    },
+    {
+     "atk": 8.68,
+     "def": 1.12,
+     "hp": 45,
+     "level": 3,
+     "speed": 1.2
+    },
+    {
+     "atk": 9.52,
+     "def": 1.18,
+     "hp": 49,
+     "level": 4,
+     "speed": 1.2
+    },
+    {
+     "atk": 10.36,
+     "def": 1.24,
+     "hp": 53,
+     "level": 5,
+     "speed": 1.2
+    },
+    {
+     "atk": 11.2,
+     "def": 1.3,
+     "hp": 58,
+     "level": 6,
+     "speed": 1.2
+    },
+    {
+     "atk": 12.04,
+     "def": 1.36,
+     "hp": 62,
+     "level": 7,
+     "speed": 1.2
+    },
+    {
+     "atk": 12.88,
+     "def": 1.42,
+     "hp": 66,
+     "level": 8,
+     "speed": 1.2
+    },
+    {
+     "atk": 13.72,
+     "def": 1.48,
+     "hp": 71,
+     "level": 9,
+     "speed": 1.2
+    },
+    {
+     "atk": 14.56,
+     "def": 1.54,
+     "hp": 75,
+     "level": 10,
+     "speed": 1.2
+    }
+   ],
+   "role": "arcanist",
+   "sprite_id": "spr_orrin",
+   "unlock": {
+    "after": "cave_exit"
+   }
+  },
+  "sola": {
+   "abilities": [
+    "mend",
+    "spark"
+   ],
+   "base": true,
+   "levels": [
+    {
+     "atk": 5.0,
+     "def": 1.0,
+     "hp": 38,
+     "level": 1,
+     "speed": 1.3
+    },
+    {
+     "atk": 5.6,
+     "def": 1.06,
+     "hp": 43,
+     "level": 2,
+     "speed": 1.3
+    },
+    {
+     "atk": 6.2,
+     "def": 1.12,
+     "hp": 47,
+     "level": 3,
+     "speed": 1.3
+    },
+    {
+     "atk": 6.8,
+     "def": 1.18,
+     "hp": 52,
+     "level": 4,
+     "speed": 1.3
+    },
+    {
+     "atk": 7.4,
+     "def": 1.24,
+     "hp": 56,
+     "level": 5,
+     "speed": 1.3
+    },
+    {
+     "atk": 8.0,
+     "def": 1.3,
+     "hp": 61,
+     "level": 6,
+     "speed": 1.3
+    },
+    {
+     "atk": 8.6,
+     "def": 1.36,
+     "hp": 65,
+     "level": 7,
+     "speed": 1.3
+    },
+    {
+     "atk": 9.2,
+     "def": 1.42,
+     "hp": 70,
+     "level": 8,
+     "speed": 1.3
+    },
+    {
+     "atk": 9.8,
+     "def": 1.48,
+     "hp": 74,
+     "level": 9,
+     "speed": 1.3
+    },
+    {
+     "atk": 10.4,
+     "def": 1.54,
+     "hp": 79,
+     "level": 10,
+     "speed": 1.3
+    }
+   ],
+   "role": "mender",
+   "sprite_id": "spr_sola",
+   "unlock": null
+  },
+  "vex": {
+   "abilities": [
+    "lunge",
+    "slash"
+   ],
+   "base": false,
+   "levels": [
+    {
+     "atk": 8.0,
+     "def": 2.0,
+     "hp": 46,
+     "level": 1,
+     "speed": 1.6
+    },
+    {
+     "atk": 8.96,
+     "def": 2.12,
+     "hp": 52,
+     "level": 2,
+     "speed": 1.6
+    },
+    {
+     "atk": 9.92,
+     "def": 2.24,
+     "hp": 57,
+     "level": 3,
+     "speed": 1.6
+    },
+    {
+     "atk": 10.88,
+     "def": 2.36,
+     "hp": 63,
+     "level": 4,
+     "speed": 1.6
+    },
+    {
+     "atk": 11.84,
+     "def": 2.48,
+     "hp": 68,
+     "level": 5,
+     "speed": 1.6
+    },
+    {
+     "atk": 12.8,
+     "def": 2.6,
+     "hp": 74,
+     "level": 6,
+     "speed": 1.6
+    },
+    {
+     "atk": 13.76,
+     "def": 2.72,
+     "hp": 79,
+     "level": 7,
+     "speed": 1.6
+    },
+    {
+     "atk": 14.72,
+     "def": 2.84,
+     "hp": 85,
+     "level": 8,
+     "speed": 1.6
+    },
+    {
+     "atk": 15.68,
+     "def": 2.96,
+     "hp": 90,
+     "level": 9,
+     "speed": 1.6
+    },
+    {
+     "atk": 16.64,
+     "def": 3.08,
+     "hp": 96,
+     "level": 10,
+     "speed": 1.6
+    }
+   ],
+   "role": "duelist",
+   "sprite_id": "spr_vex",
+   "unlock": {
+    "after": "first_boss"
+   }
+  }
+ },
+ "pet_rules": {
+  "ally_share": 0.25,
+  "bonus_caps": {
+   "atk_pct": 0.3,
+   "def_flat": 4,
+   "hp_pct": 0.3
+  },
+  "max_pets_per_character": 2
+ },
+ "pets": {
+  "dusk_owl": {
+   "abilities": [
+    "bite"
+   ],
+   "bonus": {
+    "atk_pct": 0.1
+   },
+   "sprite_id": "spr_dusk_owl",
+   "starter": false,
+   "stats": {
+    "atk": 5,
+    "def": 0,
+    "hp": 20,
+    "speed": 1.7
+   },
+   "style": "scout"
+  },
+  "ember_fox": {
+   "abilities": [
+    "bite"
+   ],
+   "bonus": {
+    "atk_pct": 0.15
+   },
+   "sprite_id": "spr_ember_fox",
+   "starter": true,
+   "stats": {
+    "atk": 4,
+    "def": 0,
+    "hp": 22,
+    "speed": 1.6
+   },
+   "style": "skirmisher"
+  },
+  "lumen_wisp": {
+   "abilities": [
+    "spark"
+   ],
+   "bonus": {
+    "hp_pct": 0.15
+   },
+   "sprite_id": "spr_lumen_wisp",
+   "starter": true,
+   "stats": {
+    "atk": 4,
+    "def": 0,
+    "hp": 18,
+    "speed": 1.4
+   },
+   "style": "caster"
+  },
+  "stone_tortle": {
+   "abilities": [
+    "bite"
+   ],
+   "bonus": {
+    "def_flat": 2
+   },
+   "sprite_id": "spr_stone_tortle",
+   "starter": true,
+   "stats": {
+    "atk": 3,
+    "def": 3,
+    "hp": 40,
+    "speed": 0.9
+   },
+   "style": "guardian"
+  }
+ },
+ "schema_version": "1.0"
+}

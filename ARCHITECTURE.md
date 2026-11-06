@@ -44,11 +44,14 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/gates.py` | palette / dims / seamless / solvability / floor-ratio / BudgetGate | F1 |
 | `forge/generators/` | Generator registry: `sprite` (G1-Sprite), `tilemap` (G1-Tile), `material` (DyeWorks) | F1 |
 | `forge/pipeline.py`, `content/briefs/` | brief → generator → gates → store → Godot export + `fabric_assets.json` | F1 |
+| `forge/generators/codegen.py`, `content/roster/` | Roster YAML → `game_data.json` + ability `.tres`; derived sprite briefs | F2 |
+| `forge/generators/audio.py` | G1-Audio chiptune stems + SFX (WAV) | F2 |
 | `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
 | `forge/report.py` | STATUS.md generator | F1 |
 | `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
-| `games/game-zero/sim/` | Deterministic fixed-step sim (grid, entity, sandbox) | F1 |
-| `games/game-zero/scenes/` | boot (router), sandbox (render + input) | F0/F1 |
+| `games/game-zero/sim/` | Deterministic fixed-step sim: grid, entity, `combat_sim` (abilities, party, pets, taunt), `encounter_builder` (roster refs → entities, pet bonuses) | F1/F2 |
+| `games/game-zero/data/` | `ability.gd` Resource, encounters, `generated/` (codegen output) | F2 |
+| `games/game-zero/scenes/` | boot (router), `encounter.gd` (render, input, music) used by sandbox/combat scenes | F0–F2 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)

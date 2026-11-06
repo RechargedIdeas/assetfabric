@@ -4,6 +4,19 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.2.0+f2] — 2026-11-05 — F2 Codegen + G1-Audio
+
+### Added
+- `content/roster/` (abilities, fighters, pets, enemies) + `docs/schemas/roster.schema.json`.
+- Codegen generator: schema, cross-ref, roster-shape, stat-sanity gates → `data/generated/game_data.json` + 14 ability `.tres` Resources; one derived G1-Sprite brief per roster unit (13 sprites); new `pet` sprite archetype; 3 new hero palettes.
+- G1-Audio generator: NES-style pulse/triangle/noise stems for ambient/tension/combat/boss + 4 SFX; no-clipping, duration and loop-seam gates.
+- Game Zero: `combat_sim.gd` (abilities: melee/ranged/aoe/heal/taunt, cooldowns/windups, follower + pet brains, separation), `encounter_builder.gd` (roster refs, pet bonuses with diminishing returns), generic `encounter.gd` scene, `combat.tscn`, runtime WAV loader, `skill` input.
+- F2 increment `first-combat` + acceptance; tests for codegen/audio (29 total).
+
+### Changed
+- Sandbox encounter now built from roster refs through the same combat sim.
+- Pipeline supports `export_base` (codegen writes to `data/generated/`) and brief expansion.
+
 ## [0.1.0+f1] — 2026-11-05 — F1 Content Pipeline
 
 ### Added

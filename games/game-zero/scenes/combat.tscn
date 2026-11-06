@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/encounter.gd" id="1_enc"]
+
+[node name="Combat" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_enc")
+default_encounter = "first_combat"

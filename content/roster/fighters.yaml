@@ -1,0 +1,42 @@
+# [INFERENCE] Names, roles and numbers are placeholders pending GAME_SPEC §10 (D-005).
+schema_version: "1.0"
+growth_default: 0.12
+fighters:
+  - id: kael
+    role: vanguard
+    base: true
+    stats: {hp: 60, atk: 7, def: 3, speed: 1.3}
+    abilities: [shield_bash, slash]
+    sprite: {archetype: humanoid, palette: hero_teal, seed: 7}
+  - id: nyra
+    role: ranger
+    base: true
+    stats: {hp: 40, atk: 6, def: 1, speed: 1.4}
+    abilities: [volley, arrow]
+    sprite: {archetype: humanoid, palette: hero_violet, seed: 21}
+  - id: bram
+    role: warden
+    base: true
+    stats: {hp: 78, atk: 5, def: 4, speed: 1.1}
+    abilities: [taunt, slam, slash]
+    sprite: {archetype: humanoid, palette: hero_amber, seed: 33}
+  - id: sola
+    role: mender
+    base: true
+    stats: {hp: 38, atk: 5, def: 1, speed: 1.3}
+    abilities: [mend, spark]
+    sprite: {archetype: humanoid, palette: hero_rose, seed: 45}
+  - id: vex
+    role: duelist
+    base: false
+    unlock: {after: first_boss}
+    stats: {hp: 46, atk: 8, def: 2, speed: 1.6}
+    abilities: [lunge, slash]
+    sprite: {archetype: humanoid, palette: hero_violet, seed: 58}
+  - id: orrin
+    role: arcanist
+    base: false
+    unlock: {after: cave_exit}
+    stats: {hp: 36, atk: 7, def: 1, speed: 1.2}
+    abilities: [hex_bolt, spark]
+    sprite: {archetype: humanoid, palette: hero_amber, seed: 64}

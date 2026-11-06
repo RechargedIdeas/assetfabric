@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FabricAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/ability.gd" id="1_ab"]
+
+[resource]
+script = ExtResource("1_ab")
+id = "spit"
+kind = "ranged"
+target = "enemy"
+power = 0.8
+range = 60.0
+radius = 0.0
+cooldown = 60
+windup = 14
+duration = 0
+threshold = 0.0
+name_key = "ability.spit"

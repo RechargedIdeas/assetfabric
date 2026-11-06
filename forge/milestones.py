@@ -44,10 +44,32 @@ def _f1(r: dict[str, Any]) -> list[str]:
     return errs
 
 
+def _f2(r: dict[str, Any]) -> list[str]:
+    errs: list[str] = []
+    ents = r.get("entities", {})
+    fighters = {k: v for k, v in ents.items() if v["kind"] == "fighter"}
+    pets = {k: v for k, v in ents.items() if v["kind"] == "pet"}
+    enemies = {k: v for k, v in ents.items() if v["kind"] == "enemy"}
+    _need(r.get("outcome") == "victory", f"outcome={r.get('outcome')}", errs)
+    _need(len(fighters) == 4, f"party of 4 required, got {len(fighters)}", errs)
+    _need(len(pets) >= 1, "at least one pet", errs)
+    _need(len(enemies) >= 5, f"enemy group >=5, got {len(enemies)}", errs)
+    idle = [k for k, v in fighters.items() if v["damage"] + v["healing"] == 0]
+    _need(not idle, f"followers must act independently; idle: {idle}", errs)
+    idle_pets = [k for k, v in pets.items() if v["damage"] == 0]
+    _need(not idle_pets, f"pets must fight; idle: {idle_pets}", errs)
+    _need(len(r.get("abilities_used", [])) >= 6, f"codegen abilities used: {r.get('abilities_used')}", errs)
+    _need(r.get("abilities_loaded", 0) > 0 and r.get("tres_loaded") == r.get("abilities_loaded"), "ability .tres must all load", errs)
+    _need(bool(r.get("music_loaded")), "G1-Audio combat stem must load", errs)
+    return errs
+
+
 INCREMENTS: dict[str, Increment] = {
     "F0": Increment("F0", "env-boots", ("--boot-only",), _f0, "Empty Godot boots; forge status healthy"),
     "F1": Increment("F1", "sandbox-encounter", ("--scene=sandbox", "--autoplay"), _f1,
                     "Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack"),
+    "F2": Increment("F2", "first-combat", ("--scene=combat", "--autoplay"), _f2,
+                    "First combat: party of 4 + pets + enemies, codegen data, G1-Audio stems"),
 }
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 

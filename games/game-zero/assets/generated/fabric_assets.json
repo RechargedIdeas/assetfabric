@@ -29,6 +29,36 @@
         "biome:cave"
       ]
     },
+    "cave_02": {
+      "files": {
+        "cave_02.json": {
+          "res": "res://assets/generated/tilemap/cave_02.json",
+          "sha256": "f45e6dbfd5c18a5195baa9124b79f988a815accc992cab3535ce015ec25a5b19"
+        },
+        "cave_02_tiles.png": {
+          "res": "res://assets/generated/tilemap/cave_02_tiles.png",
+          "sha256": "4c6602fe17f3ec78a49ba043b48f9dd1dab573931bad6eeba7b457dcadea3675"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 56,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:cave",
+        "encounter:first_combat"
+      ]
+    },
     "enemy_emberling": {
       "files": {
         "enemy_emberling.png": {
@@ -120,6 +150,600 @@
       },
       "tags": [
         "material"
+      ]
+    },
+    "music_cave": {
+      "files": {
+        "music_cave_ambient.wav": {
+          "res": "res://assets/generated/audio/music_cave_ambient.wav",
+          "sha256": "04fd3db0ed5eafeaaab49d70037ba0404e39bbf185f4992c3424eb69963f50ee"
+        },
+        "music_cave_boss.wav": {
+          "res": "res://assets/generated/audio/music_cave_boss.wav",
+          "sha256": "1356731d26991a63a323f1587a6254fdc2ea4e8a088db4b239a2df8373679449"
+        },
+        "music_cave_combat.wav": {
+          "res": "res://assets/generated/audio/music_cave_combat.wav",
+          "sha256": "8feef37fba81096d79b8906406c76e962b876073b0f7e1343db1dc99f1dcd4b5"
+        },
+        "music_cave_tension.wav": {
+          "res": "res://assets/generated/audio/music_cave_tension.wav",
+          "sha256": "61d344881e41f2abef35b1bac9fd50b4ea07b8b1cf1ea57ef1c323797f096ad2"
+        },
+        "sfx_defeat.wav": {
+          "res": "res://assets/generated/audio/sfx_defeat.wav",
+          "sha256": "2350edfa7f85ac597808328a3b1da8d05007e03693840f676c37774f4aa85e83"
+        },
+        "sfx_heal.wav": {
+          "res": "res://assets/generated/audio/sfx_heal.wav",
+          "sha256": "277e5d8250de5f723c07e64b7838b65931b6a23d43dce06f19ab08d6eb31288a"
+        },
+        "sfx_hit.wav": {
+          "res": "res://assets/generated/audio/sfx_hit.wav",
+          "sha256": "7584e972b2452d5ff43c40c4ab7686a807d1599019fd87c78525399301a01e4a"
+        },
+        "sfx_swing.wav": {
+          "res": "res://assets/generated/audio/sfx_swing.wav",
+          "sha256": "b7504a1c0066a9e5233c641b87c55e422293495117f5ccb50db9dbb16fa28339"
+        }
+      },
+      "kind": "audio",
+      "meta": {
+        "kind": "audio",
+        "model_id": "G1-Audio",
+        "model_version": "chiptune-1",
+        "rate": 22050,
+        "seconds": 4.0,
+        "stems": [
+          "ambient",
+          "tension",
+          "combat",
+          "boss"
+        ]
+      },
+      "tags": [
+        "audio",
+        "biome:cave"
+      ]
+    },
+    "roster": {
+      "files": {
+        "abilities/arrow.tres": {
+          "res": "res://data/generated/abilities/arrow.tres",
+          "sha256": "f5f66e3f931a61f9c99e6f395764fcd0a1e9a210490b45c8442c15355331c64a"
+        },
+        "abilities/bite.tres": {
+          "res": "res://data/generated/abilities/bite.tres",
+          "sha256": "66856d4b34193cb0fc741b01e6a39a3015c604da2e92166eea1e3dd9ef12a4f6"
+        },
+        "abilities/claw.tres": {
+          "res": "res://data/generated/abilities/claw.tres",
+          "sha256": "106a430bde408641ee7df1fdf8f9e123b2f38d2c6320dc92e8c2ba29c6b382ff"
+        },
+        "abilities/hex_bolt.tres": {
+          "res": "res://data/generated/abilities/hex_bolt.tres",
+          "sha256": "e0d194afd54c7968b61f1de09d42904e97fb1d50a33caa7b13d6c5fb1fb98a3a"
+        },
+        "abilities/lunge.tres": {
+          "res": "res://data/generated/abilities/lunge.tres",
+          "sha256": "bbfb18813d1142d22f34f1939e415fdf40b641ce9889b915e322a762a4795fb6"
+        },
+        "abilities/mend.tres": {
+          "res": "res://data/generated/abilities/mend.tres",
+          "sha256": "97d04915dfb18a53a36ebe5439dc092e81d701110cc1ee51be2495faddad6644"
+        },
+        "abilities/shield_bash.tres": {
+          "res": "res://data/generated/abilities/shield_bash.tres",
+          "sha256": "bc90d2a26d3e82291483f588a9d915ca47ec997fe9ff7eb31aa491562d76d2b2"
+        },
+        "abilities/slam.tres": {
+          "res": "res://data/generated/abilities/slam.tres",
+          "sha256": "b8831f96665cb99fa73af4373f1848af89f191d91fb37cb473f52b7658116764"
+        },
+        "abilities/slash.tres": {
+          "res": "res://data/generated/abilities/slash.tres",
+          "sha256": "7a348978a7f1c700b0e52ce0d8454a4302244e427c3e23a73f4261a23599c61a"
+        },
+        "abilities/smash.tres": {
+          "res": "res://data/generated/abilities/smash.tres",
+          "sha256": "a413ac9ee6335f2b4e828656762577dfdc350cb9ce58c8cf79976ecf1ab9030e"
+        },
+        "abilities/spark.tres": {
+          "res": "res://data/generated/abilities/spark.tres",
+          "sha256": "97ec9d0382bb05b8bf4c0aa23b58b75e7af5f3f22000db65e575a0ed08e3a9c6"
+        },
+        "abilities/spit.tres": {
+          "res": "res://data/generated/abilities/spit.tres",
+          "sha256": "94bcdc3b34e98410af5f50410428f7e07dcb007d366d3159da9113789c3b383b"
+        },
+        "abilities/taunt.tres": {
+          "res": "res://data/generated/abilities/taunt.tres",
+          "sha256": "bee1cfbc8d23bd15c7a7e9aff7ae006356f42965c142a0f7454942570ff15bbc"
+        },
+        "abilities/volley.tres": {
+          "res": "res://data/generated/abilities/volley.tres",
+          "sha256": "da80ae447f462312a748aa6e4dfa0629007416e749ebb7e3438ba90152d30722"
+        },
+        "game_data.json": {
+          "res": "res://data/generated/game_data.json",
+          "sha256": "832cae72f4f382b044c8675b5abaddb5d46d019855f879120b6ea2c9ed0a32eb"
+        }
+      },
+      "kind": "codegen",
+      "meta": {
+        "counts": {
+          "abilities": 14,
+          "enemies": 3,
+          "fighters": 6,
+          "pets": 4
+        },
+        "kind": "codegen",
+        "model_id": "Codegen",
+        "model_version": "1"
+      },
+      "tags": [
+        "data"
+      ]
+    },
+    "spr_bram": {
+      "files": {
+        "spr_bram.png": {
+          "res": "res://assets/generated/sprite/spr_bram.png",
+          "sha256": "531540f7d1512b2815aa0f8adb2ef60622c696fbd6e8148575c19ef614e4a5d2"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_amber@1",
+        "params": {
+          "belt": false,
+          "body_w": 4,
+          "hair": true,
+          "head_w": 2,
+          "leg_gap": 0,
+          "weapon_len": 5
+        }
+      },
+      "tags": [
+        "character",
+        "roster:bram"
+      ]
+    },
+    "spr_cave_mite": {
+      "files": {
+        "spr_cave_mite.png": {
+          "res": "res://assets/generated/sprite/spr_cave_mite.png",
+          "sha256": "17afc225a38b138cbcf3f8b366efd10e0e44d55abad44c7e937af9d0a73307b8"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "ears": true,
+          "eye_gap": 1,
+          "rx": 3,
+          "ry": 2,
+          "spikes": 0
+        }
+      },
+      "tags": [
+        "enemy",
+        "roster:cave_mite"
+      ]
+    },
+    "spr_dusk_owl": {
+      "files": {
+        "spr_dusk_owl.png": {
+          "res": "res://assets/generated/sprite/spr_dusk_owl.png",
+          "sha256": "89c6e4947dced452157eeb7d1b37793d3eb2539d50a426eed7527a1433a01f59"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_violet@1",
+        "params": {
+          "ears": true,
+          "eye_gap": 1,
+          "rx": 3,
+          "ry": 2,
+          "spikes": 2
+        }
+      },
+      "tags": [
+        "pet",
+        "roster:dusk_owl"
+      ]
+    },
+    "spr_ember_fox": {
+      "files": {
+        "spr_ember_fox.png": {
+          "res": "res://assets/generated/sprite/spr_ember_fox.png",
+          "sha256": "17afc225a38b138cbcf3f8b366efd10e0e44d55abad44c7e937af9d0a73307b8"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "ears": true,
+          "eye_gap": 1,
+          "rx": 3,
+          "ry": 2,
+          "spikes": 0
+        }
+      },
+      "tags": [
+        "pet",
+        "roster:ember_fox"
+      ]
+    },
+    "spr_emberling": {
+      "files": {
+        "spr_emberling.png": {
+          "res": "res://assets/generated/sprite/spr_emberling.png",
+          "sha256": "d59c3f2e6ce91f364cac4d08fa8f51fe38c745d2c536ef2ec56f6e265c5871ee"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "eye_gap": 2,
+          "rx": 6,
+          "ry": 4,
+          "spikes": 2
+        }
+      },
+      "tags": [
+        "enemy",
+        "roster:emberling"
+      ]
+    },
+    "spr_kael": {
+      "files": {
+        "spr_kael.png": {
+          "res": "res://assets/generated/sprite/spr_kael.png",
+          "sha256": "3b9e58ab4cfe9897fa7f834c6d42d90b728234b30bdbefc0a2dcd4171e9377ef"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_teal@1",
+        "params": {
+          "belt": true,
+          "body_w": 3,
+          "hair": false,
+          "head_w": 3,
+          "leg_gap": 1,
+          "weapon_len": 3
+        }
+      },
+      "tags": [
+        "character",
+        "roster:kael"
+      ]
+    },
+    "spr_lumen_wisp": {
+      "files": {
+        "spr_lumen_wisp.png": {
+          "res": "res://assets/generated/sprite/spr_lumen_wisp.png",
+          "sha256": "a48cc167704ae1b337bfbb6d8914076569676bd4b8ee2f1bdbfe99b2eef08b5e"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_teal@1",
+        "params": {
+          "ears": false,
+          "eye_gap": 1,
+          "rx": 4,
+          "ry": 2,
+          "spikes": 1
+        }
+      },
+      "tags": [
+        "pet",
+        "roster:lumen_wisp"
+      ]
+    },
+    "spr_nyra": {
+      "files": {
+        "spr_nyra.png": {
+          "res": "res://assets/generated/sprite/spr_nyra.png",
+          "sha256": "607d8d9203a0afcd04253997acb72fe51cbede4dee84b2649be149e583a13790"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_violet@1",
+        "params": {
+          "belt": true,
+          "body_w": 3,
+          "hair": true,
+          "head_w": 2,
+          "leg_gap": 0,
+          "weapon_len": 3
+        }
+      },
+      "tags": [
+        "character",
+        "roster:nyra"
+      ]
+    },
+    "spr_orrin": {
+      "files": {
+        "spr_orrin.png": {
+          "res": "res://assets/generated/sprite/spr_orrin.png",
+          "sha256": "a9e1147eaeb9509acc33f82824074ba1fddfd0ebd649de8f1cd2a9b70a935e05"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_amber@1",
+        "params": {
+          "belt": true,
+          "body_w": 3,
+          "hair": true,
+          "head_w": 2,
+          "leg_gap": 0,
+          "weapon_len": 4
+        }
+      },
+      "tags": [
+        "character",
+        "roster:orrin"
+      ]
+    },
+    "spr_rock_brute": {
+      "files": {
+        "spr_rock_brute.png": {
+          "res": "res://assets/generated/sprite/spr_rock_brute.png",
+          "sha256": "b9372c29989fac0960d0cfbc2a86c66bfae3b251baaa7bf8a7cc79a1c81677b5"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "belt": true,
+          "body_w": 4,
+          "hair": true,
+          "head_w": 3,
+          "leg_gap": 1,
+          "weapon_len": 5
+        }
+      },
+      "tags": [
+        "enemy",
+        "roster:rock_brute"
+      ]
+    },
+    "spr_sola": {
+      "files": {
+        "spr_sola.png": {
+          "res": "res://assets/generated/sprite/spr_sola.png",
+          "sha256": "a76e2eaf73ede470cd544e50d61087d0595c47e7dc0ab2b6a50c32f588069c74"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_rose@1",
+        "params": {
+          "belt": true,
+          "body_w": 4,
+          "hair": true,
+          "head_w": 2,
+          "leg_gap": 1,
+          "weapon_len": 5
+        }
+      },
+      "tags": [
+        "character",
+        "roster:sola"
+      ]
+    },
+    "spr_stone_tortle": {
+      "files": {
+        "spr_stone_tortle.png": {
+          "res": "res://assets/generated/sprite/spr_stone_tortle.png",
+          "sha256": "14a9a7608f6063e555d77ce359762619ac27bc24c28de102773913cd980e657d"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "cave_moss@1",
+        "params": {
+          "ears": true,
+          "eye_gap": 1,
+          "rx": 4,
+          "ry": 3,
+          "spikes": 1
+        }
+      },
+      "tags": [
+        "pet",
+        "roster:stone_tortle"
+      ]
+    },
+    "spr_vex": {
+      "files": {
+        "spr_vex.png": {
+          "res": "res://assets/generated/sprite/spr_vex.png",
+          "sha256": "6fb6252d9418979a809b6ebfb154af728323b987ad87c28056f611fbc86aa058"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "hero_violet@1",
+        "params": {
+          "belt": true,
+          "body_w": 4,
+          "hair": true,
+          "head_w": 3,
+          "leg_gap": 0,
+          "weapon_len": 4
+        }
+      },
+      "tags": [
+        "character",
+        "roster:vex"
       ]
     }
   },

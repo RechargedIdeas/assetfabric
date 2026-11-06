@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FabricAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/ability.gd" id="1_ab"]
+
+[resource]
+script = ExtResource("1_ab")
+id = "taunt"
+kind = "taunt"
+target = "self"
+power = 0.0
+range = 64.0
+radius = 0.0
+cooldown = 300
+windup = 4
+duration = 180
+threshold = 0.0
+name_key = "ability.taunt"

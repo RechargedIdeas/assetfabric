@@ -39,3 +39,15 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 25. **Sandbox encounter stats** (`data/encounters/sandbox.json`) hand-authored for F1; F2 codegen replaces them.
 26. **Autoplay agent + `FABRIC_RESULT` line** as the headless acceptance protocol; recorded in `docs/acceptance-tests/results/`.
 27. **Hero/enemy names** (Kael, Emberling) are placeholders pending GAME_SPEC §10 decisions.
+
+## F2 — Codegen + G1-Audio
+
+28. **Roster content** (Kael/Nyra/Bram/Sola base fighters, Vex/Orrin unlockables, Ember Fox/Stone Tortle/Lumen Wisp starter pets, Emberling/Cave Mite/Rock Brute enemies) and every number in `content/roster/` — placeholders pending GAME_SPEC §10 (D-005).
+29. **Ability model**: types melee / ranged (hitscan) / aoe / heal / taunt; damage = max(1, round(atk × power − def)); priority = list order.
+30. **Growth curve**: linear 12 %/level on hp/atk, 6 % on def, 10 levels.
+31. **Tier scaling**: multiplier 1.0 / 1.6 / 3.2 on hp/atk/def.
+32. **Pet stacking formula**: cap × (1 − e^(−sum/cap)), plus a 25 % party share — chat required "diminishing returns + hard cap", not the curve.
+33. **Codegen output** = JSON game data + `.tres` ability Resources (not generated GDScript classes) — data-driven abilities keep hot reload (F4) simple.
+34. **G1-Audio arrangement** (NES-style pulse/triangle/noise, 4 s loops, per-state tempo/scale/density) is original; chat only required chiptune stems remixable by macro state.
+35. **Follower rule brains** (target nearest to leader, ranged hold at 80 % range, regroup leash) are the F2 stand-in for F3 BT + ONNX policies.
+36. **Autoplay leader** hunts the nearest hostile when none is in range (acceptance driver only).

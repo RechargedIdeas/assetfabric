@@ -32,6 +32,7 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 
 - **F0** ✅ accepted 2026-11-05.
 - **F1** ✅ accepted 2026-11-05 — procedural G1-Sprite / G1-Tile / DyeWorks, gates, Godot binding, PatternVault, SwatchStudio CLI; sandbox encounter playable and headless-proven.
+- **F2** ✅ accepted 2026-11-05 — codegen (roster → game data + ability `.tres`), derived sprites, G1-Audio stems; first combat with party of 4 + pets.
 
 ### Entry criteria for any F(n+1)
 

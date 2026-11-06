@@ -6,6 +6,7 @@ extends Node
 
 const REGISTRY_PATH := "res://assets/generated/fabric_assets.json"
 const LOCALE_DIR := "res://locale"
+const GAME_DATA_PATH := "res://data/generated/game_data.json"
 
 ## Abstract input schema (GAME_SPEC §3): one map for keyboard + controller.
 const INPUT_SCHEMA := {
@@ -14,6 +15,7 @@ const INPUT_SCHEMA := {
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
 	"attack": [KEY_J, KEY_SPACE],
+	"skill": [KEY_K],
 	"swap": [KEY_TAB],
 	"interact": [KEY_E],
 	"tactic_menu": [KEY_Q],
@@ -23,6 +25,9 @@ const INPUT_SCHEMA := {
 var registry: Dictionary = {}
 var args: Dictionary = {}
 var _tex_cache: Dictionary = {}
+var game_data: Dictionary = {}
+var abilities: Dictionary = {}   # id -> Dictionary, loaded from codegen .tres resources
+var _audio_cache: Dictionary = {}
 
 
 func _ready() -> void:
@@ -31,7 +36,7 @@ func _ready() -> void:
 	_load_locales()
 	reload_registry()
 	if flag("autoplay") and DisplayServer.get_name() == "headless":
-		_start_watchdog(float(arg("watchdog", "60")))
+		_start_watchdog(float(arg("watchdog", "30")))
 
 
 ## Headless runs must never hang CI: quit(3) if no result after N seconds.
@@ -105,6 +110,57 @@ func reload_registry() -> void:
 	var data = read_json(REGISTRY_PATH)
 	registry = data if typeof(data) == TYPE_DICTIONARY else {"assets": {}}
 	_tex_cache.clear()
+	_audio_cache.clear()
+	_load_game_data()
+
+
+func _load_game_data() -> void:
+	game_data = {}
+	abilities = {}
+	if not FileAccess.file_exists(GAME_DATA_PATH):
+		return
+	game_data = read_json(GAME_DATA_PATH)
+	for id in game_data.get("abilities", {}):
+		var res = load(game_data["abilities"][id]["tres"])
+		if res == null:
+			push_error("Fabric: missing ability resource %s" % id)
+			abilities[id] = game_data["abilities"][id]
+		else:
+			abilities[id] = res.to_dict()
+
+
+## Runtime WAV loader (Godot 4.3 has no AudioStreamWAV.load_from_file).
+func audio(id: String, file_name: String) -> AudioStreamWAV:
+	var path := file_path(id, file_name)
+	if path == "":
+		return null
+	if _audio_cache.has(path):
+		return _audio_cache[path]
+	var bytes := FileAccess.get_file_as_bytes(path)
+	if bytes.size() < 44 or bytes.slice(0, 4).get_string_from_ascii() != "RIFF":
+		return null
+	var pos := 12
+	var rate := 22050
+	var channels := 1
+	var bits := 16
+	var pcm := PackedByteArray()
+	while pos + 8 <= bytes.size():
+		var tag := bytes.slice(pos, pos + 4).get_string_from_ascii()
+		var size := bytes.decode_u32(pos + 4)
+		if tag == "fmt ":
+			channels = bytes.decode_u16(pos + 10)
+			rate = bytes.decode_u32(pos + 12)
+			bits = bytes.decode_u16(pos + 22)
+		elif tag == "data":
+			pcm = bytes.slice(pos + 8, pos + 8 + size)
+		pos += 8 + size + (size % 2)
+	var s := AudioStreamWAV.new()
+	s.format = AudioStreamWAV.FORMAT_16_BITS if bits == 16 else AudioStreamWAV.FORMAT_8_BITS
+	s.mix_rate = rate
+	s.stereo = channels == 2
+	s.data = pcm
+	_audio_cache[path] = s
+	return s
 
 
 func asset(id: String) -> Dictionary:

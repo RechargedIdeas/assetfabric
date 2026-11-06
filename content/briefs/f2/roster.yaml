@@ -1,0 +1,31 @@
+# F2 briefs — codegen (roster → game data + ability .tres) and G1-Audio stems.
+briefs:
+  - id: roster
+    kind: codegen
+    source: content/roster
+    derive_sprites: true        # one G1-Sprite brief per fighter / pet / enemy
+    export_base: data
+    export_dir: generated
+    tags: [data]
+  - id: music_cave
+    kind: audio
+    bpm: 132
+    root_midi: 45               # A2
+    seconds: 4.0
+    rate: 22050
+    seed: 1
+    stems: [ambient, tension, combat, boss]
+    sfx: [hit, swing, defeat, heal]
+    tags: [audio, biome:cave]
+  - id: cave_02
+    kind: tilemap
+    seed: 23
+    tile_size: 16
+    constraints:
+      width: 40
+      height: 22
+      density: 0.42
+      smoothing: 5
+      min_path: 30
+      enemies: 3
+    tags: [biome:cave, encounter:first_combat]

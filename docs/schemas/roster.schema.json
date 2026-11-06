@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://assetfabric.local/schemas/roster.schema.json",
+  "title": "AssetFabric roster sources (abilities, fighters, pets, enemies)",
+  "type": "object",
+  "$defs": {
+    "stats": {
+      "type": "object",
+      "required": ["hp", "atk", "def", "speed"],
+      "properties": {
+        "hp": {"type": "number", "minimum": 1},
+        "atk": {"type": "number", "minimum": 0},
+        "def": {"type": "number", "minimum": 0},
+        "speed": {"type": "number", "exclusiveMinimum": 0},
+        "aggro": {"type": "number", "minimum": 0}
+      }
+    },
+    "sprite": {
+      "type": "object",
+      "required": ["archetype", "palette", "seed"],
+      "properties": {"archetype": {"enum": ["humanoid", "beast", "pet"]}, "palette": {"type": "string"}, "seed": {"type": "integer"}}
+    },
+    "ability": {
+      "type": "object",
+      "required": ["id", "type", "target", "power", "range", "cooldown", "windup"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "type": {"enum": ["melee", "ranged", "aoe", "heal", "taunt"]},
+        "target": {"enum": ["enemy", "ally", "self"]},
+        "power": {"type": "number", "minimum": 0},
+        "range": {"type": "number", "minimum": 0},
+        "radius": {"type": "number", "minimum": 0},
+        "cooldown": {"type": "integer", "minimum": 1},
+        "windup": {"type": "integer", "minimum": 1},
+        "duration": {"type": "integer", "minimum": 1},
+        "threshold": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "unit": {
+      "type": "object",
+      "required": ["id", "stats", "abilities", "sprite"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "stats": {"$ref": "#/$defs/stats"},
+        "abilities": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "sprite": {"$ref": "#/$defs/sprite"}
+      }
+    }
+  },
+  "properties": {
+    "abilities": {"type": "array", "items": {"$ref": "#/$defs/ability"}},
+    "fighters": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
+    "pets": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
+    "enemies": {"type": "array", "items": {"allOf": [{"$ref": "#/$defs/unit"}, {"required": ["tier"]}]}}
+  }
+}

@@ -90,6 +90,20 @@ def _beast(rng: random.Random, s: int) -> dict[str, Any]:
     return {"rx": rng.choice([4, 5, 6]), "ry": rng.choice([3, 4]), "spikes": rng.randint(1, 3), "eye_gap": rng.choice([1, 2])}
 
 
+def _pet(rng: random.Random, s: int) -> dict[str, Any]:
+    return {"rx": rng.choice([3, 4]), "ry": rng.choice([2, 3]), "spikes": rng.randint(0, 2), "eye_gap": 1, "ears": rng.random() < 0.6}
+
+
+def _draw_pet(p: dict[str, Any], pose: str, s: int) -> dict[tuple[int, int], int]:
+    px = _draw_beast(p, pose, s)
+    if p.get("ears"):
+        top = min(y for (_, y) in px) if px else 0
+        c = s // 2
+        for dx in (-p["rx"] + 1, p["rx"] - 2):
+            px[(c + dx, top - 1)] = SHADOW
+    return px
+
+
 def _draw_beast(p: dict[str, Any], pose: str, s: int) -> dict[tuple[int, int], int]:
     c = s // 2
     px: dict[tuple[int, int], int] = {}
@@ -139,8 +153,11 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
     archetype = brief.get("archetype", "humanoid")
     palette: Palette = ctx.vault.get(brief["palette"])
     rng = random.Random(f"G1-Sprite:{archetype}:{seed}")
-    params = _humanoid(rng, s) if archetype == "humanoid" else _beast(rng, s)
-    draw = _draw_humanoid if archetype == "humanoid" else _draw_beast
+    makers = {"humanoid": (_humanoid, _draw_humanoid), "beast": (_beast, _draw_beast), "pet": (_pet, _draw_pet)}
+    if archetype not in makers:
+        raise ValueError(f"unknown sprite archetype {archetype!r}")
+    make, draw = makers[archetype]
+    params = make(rng, s)
     sheet = Image(s * len(FRAMES), s)
     for i, pose in enumerate(FRAMES):
         frame = _outline(draw(params, pose, s), s)

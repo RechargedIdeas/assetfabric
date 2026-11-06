@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FabricAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/ability.gd" id="1_ab"]
+
+[resource]
+script = ExtResource("1_ab")
+id = "slam"
+kind = "aoe"
+target = "enemy"
+power = 1.1
+range = 20.0
+radius = 28.0
+cooldown = 90
+windup = 12
+duration = 0
+threshold = 0.0
+name_key = "ability.slam"

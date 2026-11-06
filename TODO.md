@@ -1,27 +1,27 @@
 # TODO.md — Actionable Tasks
 
-Last updated: 2026-11-05 ~21:10 America/New_York
+Last updated: 2026-11-05 ~21:20 America/New_York
 
-## Current sprint — F2 Codegen + G1-Audio
+## Current sprint — F3 GIRT + CascadeHub + callouts
 
-- [ ] Character / ability / stat schema (`docs/schemas/`) + YAML sources in `content/`
-- [ ] Codegen: YAML → game data (`games/game-zero/data/generated/`) + GDScript ability table
-- [ ] 4 base fighters, 3 starter pets, enemy tiers `[INFERENCE: names/stats pending GAME_SPEC §10]`
-- [ ] Sprites for all roster entries via G1-Sprite briefs
-- [ ] G1-Audio: chiptune stems (square/triangle/noise) → WAV, macro states ambient/combat
-- [ ] Party combat sim: followers + pets act independently; abilities with cooldowns
-- [ ] Game F2 increment: party of 4 + pets vs. enemies, headless victory
-- [ ] Docs + acceptance `docs/acceptance-tests/F2.md`
+- [ ] GIRT facade: model registry, backend selection (CPU always), per-call latency budget + telemetry
+- [ ] Tiny policy format (JSON MLP weights, ONNX-exportable) evaluated in GDScript; trainer in Python (CPU)
+- [ ] Behaviour trees for fighters / pets / enemies (data-driven)
+- [ ] CascadeHub typed message bus (intents, callouts, dialogue) — never on the tick's critical path
+- [ ] Callout cache: generated offline per character × event, safety-gated; zero LM in tick (G-AI-03)
+- [ ] Time-freeze swap: pause, overlay, ranked swap recommendations via forward sim (<50 ms)
+- [ ] Dialogue: templated micro-LM stand-in with LoRA-style persona tables `[INFERENCE]`
+- [ ] Game F3 increment + docs
 
 ## Done
 
 - [x] F0 Foundation (accepted 2026-11-05)
 - [x] F1 Content Pipeline (accepted 2026-11-05): G1-Sprite, G1-Tile, DyeWorks procedural; gates; PatternVault; SwatchStudio CLI; Godot binding; sandbox encounter
+- [x] F2 Codegen + G1-Audio (accepted 2026-11-05): roster → game data + .tres; derived sprites; chiptune stems; first combat party of 4 + pets
 - [x] Private repo + proprietary license (D-003, D-004)
 
 ## Backlog (later milestones)
 
-- F3 GIRT, CascadeHub, callout cache, party AI, swap overlay
 - F4 sandbox (process tier), hot reload, snapshots, statecharts
 - F5 Monte Carlo balance, soft-lock, save migration, first boss
 - F6 quest SM, farming, loot, adaptive music, vertical slice

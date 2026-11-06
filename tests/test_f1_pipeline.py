@@ -73,7 +73,7 @@ def test_all_briefs_pass_gates_and_match_committed_registry(root: Path) -> None:
         for art in out.artifacts:
             committed = reg["assets"][brief["id"]]["files"][art.name]["sha256"]
             assert ctx.store.digest_bytes(art.data) == committed, f"{brief['id']}/{art.name} drifted"
-            on_disk = ctx.export_root / committed and (root / "games/game-zero" / reg["assets"][brief["id"]]["files"][art.name]["res"].removeprefix("res://"))
+            on_disk = root / "games/game-zero" / reg["assets"][brief["id"]]["files"][art.name]["res"].removeprefix("res://")
             assert on_disk.read_bytes() == art.data
 
 

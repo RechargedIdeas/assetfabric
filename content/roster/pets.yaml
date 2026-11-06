@@ -1,0 +1,35 @@
+# Pets: starter choice 1-of-3 + unlockables. Bonus stacking uses diminishing returns
+# with a hard cap (GAME_SPEC §4.2): effective = cap * (1 - exp(-sum / cap)).
+schema_version: "1.0"
+max_pets_per_character: 2
+bonus_caps: {atk_pct: 0.30, def_flat: 4, hp_pct: 0.30}
+ally_share: 0.25   # fraction of a pet's bonus also granted to the owner's party
+pets:
+  - id: ember_fox
+    starter: true
+    style: skirmisher
+    stats: {hp: 22, atk: 4, def: 0, speed: 1.6}
+    abilities: [bite]
+    bonus: {atk_pct: 0.15}
+    sprite: {archetype: pet, palette: enemy_ember, seed: 5}
+  - id: stone_tortle
+    starter: true
+    style: guardian
+    stats: {hp: 40, atk: 3, def: 3, speed: 0.9}
+    abilities: [bite]
+    bonus: {def_flat: 2}
+    sprite: {archetype: pet, palette: cave_moss, seed: 9}
+  - id: lumen_wisp
+    starter: true
+    style: caster
+    stats: {hp: 18, atk: 4, def: 0, speed: 1.4}
+    abilities: [spark]
+    bonus: {hp_pct: 0.15}
+    sprite: {archetype: pet, palette: hero_teal, seed: 13}
+  - id: dusk_owl
+    starter: false
+    style: scout
+    stats: {hp: 20, atk: 5, def: 0, speed: 1.7}
+    abilities: [bite]
+    bonus: {atk_pct: 0.10}
+    sprite: {archetype: pet, palette: hero_violet, seed: 17}

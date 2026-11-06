@@ -1,0 +1,22 @@
+# Tier system: stats scale by tier multiplier; tiers add weaknesses/abilities (GAME_SPEC §4.4).
+schema_version: "1.0"
+tier_scale: {1: 1.0, 2: 1.6, 3: 3.2}
+enemies:
+  - id: emberling
+    tier: 1
+    stats: {hp: 24, atk: 4, def: 0, speed: 0.8, aggro: 112}
+    abilities: [claw]
+    weakness: water
+    sprite: {archetype: beast, palette: enemy_ember, seed: 3}
+  - id: cave_mite
+    tier: 1
+    stats: {hp: 16, atk: 3, def: 0, speed: 1.1, aggro: 120}
+    abilities: [spit, claw]
+    weakness: fire
+    sprite: {archetype: pet, palette: enemy_ember, seed: 27}
+  - id: rock_brute
+    tier: 2
+    stats: {hp: 40, atk: 5, def: 2, speed: 0.7, aggro: 100}
+    abilities: [smash, claw]
+    weakness: arcane
+    sprite: {archetype: humanoid, palette: enemy_ember, seed: 40}

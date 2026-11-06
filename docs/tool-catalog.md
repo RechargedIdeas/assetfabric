@@ -9,8 +9,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **DyeWorks** | Dyeing | PBR materials; procedural / diffusion / optional API | F1 | **procedural real** (`kind: material`, albedo+normal, seamless gate); diffusion later |
 | **G1-Sprite** | — | 8-bit palette sprites + anim sheets | F1 | **procedural real** (`kind: sprite`, 6-frame sheets); ONNX Tiny later |
 | **G1-Tile** | — | NCA tilemaps / caves + solvability | F1 | **CA real** (`kind: tilemap`, solvability + floor-ratio gates); NCA later |
-| **G1-Audio** | — | Chiptune stems | F2 | deferred |
-| **Codegen** | — | Stats/abilities/chars → GDScript/`.tres` | F2 | deferred |
+| **G1-Audio** | — | Chiptune stems | F2 | **procedural real** (`kind: audio`, 4 macro-state stems + SFX, WAV) |
+| **Codegen** | — | Stats/abilities/chars → GDScript/`.tres` | F2 | **real** (`kind: codegen`, game_data.json + ability `.tres`, derived sprite briefs) |
 | **SwatchStudio** | Swatch | Live material tuning + CLI echo | F1 | **CLI** (`forge palette`, `forge gen --seed`); GUI with Studio |
 | **ShuttleLine** | Shuttle | Multi-engine export | Godot@F1; multi@F7 | **Godot target real** (`fabric_assets.json`) |
 | **BoltPack** | Bolt | Signed SBOM packages | F7 | deferred |

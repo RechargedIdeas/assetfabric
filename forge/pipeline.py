@@ -59,6 +59,12 @@ def load_briefs(root: Path, pattern: str = "**/*.yaml") -> list[dict[str, Any]]:
             b = dict(b)
             b.setdefault("_source", str(path.relative_to(root)))
             briefs.append(b)
+    # Expansion: a codegen brief with `derive_sprites: true` yields one sprite brief per roster unit.
+    for b in list(briefs):
+        if b.get("kind") == "codegen" and b.get("derive_sprites"):
+            from forge.generators.codegen import sprite_briefs
+
+            briefs.extend(sprite_briefs(root, b.get("source", "content/roster")))
     ids = [b["id"] for b in briefs]
     dupes = {i for i in ids if ids.count(i) > 1}
     if dupes:
@@ -91,6 +97,7 @@ def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True) -> Gener
     files: dict[str, dict[str, str]] = {}
     if out.ok:
         sub = brief.get("export_dir", kind)
+        base = brief.get("export_base", "assets/generated")
         for art in out.artifacts:
             bundle = ctx.store.put(
                 art.data,
@@ -101,11 +108,12 @@ def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True) -> Gener
                     "seed": brief.get("seed"), "gates": [g.gate for g in out.gates],
                 },
             )
+            rel = f"{base}/{sub}/{art.name}" if sub else f"{base}/{art.name}"
             if export:
-                dest = ctx.export_root / sub / art.name
+                dest = ctx.game_root / rel
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.write_bytes(art.data)
-            files[art.name] = {"res": f"res://assets/generated/{sub}/{art.name}", "sha256": bundle.digest}
+            files[art.name] = {"res": f"res://{rel}", "sha256": bundle.digest}
         if export:
             reg = _read_registry(ctx)
             meta = {k: v for k, v in out.meta.items()}
