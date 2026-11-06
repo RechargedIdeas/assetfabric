@@ -1,0 +1,102 @@
+# AssetFabric project manifest — schema: docs/schemas/forge.project.schema.json
+schema_version: "1.0"
+name: assetfabric
+description: Universal content fabric + execution substrate; Game Zero is the first MVP product.
+
+fabric:
+  milestone: F0
+  version: "0.0.0+f0.0"
+
+game:
+  id: game-zero
+  increment: env-boots
+  project_path: games/game-zero
+
+targets:
+  - id: godot-desktop
+    kind: godot-desktop
+    renderer: compatibility
+    enabled: true
+  - id: studio-desktop
+    kind: studio
+    renderer: n/a
+    enabled: true
+
+profiles:
+  weakest_acceptance:
+    cpu_cores_min: 2
+    gpu_required: false
+    budget:
+      note: "GroundWeave — every GPU capability has a CPU software path."
+  t1_studio:
+    cpu_cores_min: 8
+    gpu_required: false
+
+dependencies:
+  - name: godot
+    kind: runtime
+    version: "4.3+"
+    optional: false
+  - name: python
+    kind: tool
+    version: ">=3.11"
+    optional: false
+
+briefs: []
+
+models: {}
+
+cluster:
+  nodes:
+    - id: main
+      tier: T1
+      role: Studio host / heavy gen-train
+      cpu_cores: 12
+      ram_gb: 64
+      gpus: ["RX 7900 XTX 24GB"]
+      os: linux
+      allocation_cap_pct: 80
+    - id: secondary
+      tier: T2
+      role: Batch gen / parallel inference (GPUs do not pool)
+      cpu_cores: 6
+      ram_gb: 32
+      gpus: ["Vega 64 8GB", "Vega 56 8GB"]
+      os: linux
+      allocation_cap_pct: 70
+    - id: redmi
+      tier: T3
+      role: PocketLoom reference
+      cpu_cores: 8
+      ram_gb: 8
+      gpus: ["Mali-G68"]
+      os: android
+      allocation_cap_pct: 50
+    - id: lemur
+      tier: T4
+      role: Portable Studio / warm cache
+      cpu_cores: 4
+      ram_gb: 40
+      gpus: ["UHD 620"]
+      os: windows
+      allocation_cap_pct: 60
+    - id: nokia
+      tier: T5
+      role: QR / client / review
+      cpu_cores: 2
+      ram_gb: 4
+      gpus: []
+      os: android
+      allocation_cap_pct: 30
+
+telemetry:
+  schema_version: "1.0"
+  store: sqlite
+  path: .fabric/telemetry
+  backpressure:
+    max_queue: 10000
+    drop_policy: oldest
+
+store:
+  root: store
+  content_addressed: true

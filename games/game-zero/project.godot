@@ -1,0 +1,38 @@
+; Engine configuration file.
+; Godot 4.x — AssetFabric Game Zero (F0 empty boot)
+; Target renderer: Compatibility (gl_compatibility) for 2D / mobile / Web.
+; Do not switch to Forward+ without an ADR.
+
+config_version=5
+
+[application]
+
+config/name="Game Zero"
+config/description="AssetFabric MVP — 8-bit fighter/farming hybrid (F0 empty project)"
+config/version="0.0.0+f0.0"
+run/main_scene="res://scenes/boot.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+
+[internationalization]
+
+locale/translations=PackedStringArray()
+
+[input]
+
+ui_accept={
+"deadzone": 0.5,
+"events": []
+}

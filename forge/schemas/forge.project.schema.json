@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://assetfabric.dev/schemas/forge.project.schema.json",
+  "title": "AssetFabric forge.yaml project manifest",
+  "description": "Root project manifest for Content Forge. [INFERENCE] field layout synthesized from chat requirements (targets, profiles, dependencies, briefs, cluster, models) — chat did not ship a frozen JSON Schema.",
+  "type": "object",
+  "required": ["schema_version", "name", "fabric", "game", "targets"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$",
+      "description": "Manifest schema version (semver major.minor)."
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "fabric": {
+      "type": "object",
+      "required": ["milestone"],
+      "additionalProperties": false,
+      "properties": {
+        "milestone": {
+          "type": "string",
+          "pattern": "^F[0-9]+$",
+          "description": "Current Fabric milestone id (e.g. F0)."
+        },
+        "version": { "type": "string" }
+      }
+    },
+    "game": {
+      "type": "object",
+      "required": ["id", "increment"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "const": "game-zero" },
+        "increment": {
+          "type": "string",
+          "description": "Current game increment label (e.g. env-boots, sandbox)."
+        },
+        "project_path": {
+          "type": "string",
+          "description": "Relative path to Godot project root."
+        }
+      }
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "renderer"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["godot-desktop", "godot-android", "godot-web", "studio", "headless-sim"]
+          },
+          "renderer": {
+            "type": "string",
+            "enum": ["compatibility", "forward_plus", "mobile", "n/a"]
+          },
+          "enabled": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "cpu_cores_min": { "type": "integer", "minimum": 1 },
+          "gpu_required": { "type": "boolean" },
+          "budget": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "kind"],
+        "properties": {
+          "name": { "type": "string" },
+          "kind": { "type": "string", "enum": ["tool", "model", "addon", "runtime"] },
+          "version": { "type": "string" },
+          "optional": { "type": "boolean" }
+        }
+      }
+    },
+    "briefs": {
+      "type": "array",
+      "description": "Generation briefs (empty at F0).",
+      "items": {
+        "type": "object",
+        "required": ["id", "asset_type"],
+        "properties": {
+          "id": { "type": "string" },
+          "asset_type": { "type": "string" },
+          "locale_keys": { "type": "object", "additionalProperties": { "type": "string" } },
+          "params": { "type": "object" }
+        }
+      }
+    },
+    "models": {
+      "type": "object",
+      "description": "Model bindings — declared here, never hard-coded in source.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "family": { "type": "string" },
+          "backend": { "type": "string" },
+          "path": { "type": "string" },
+          "device_profile": { "type": "string" }
+        }
+      }
+    },
+    "cluster": {
+      "type": "object",
+      "description": "LoomCluster node registry stub (populated by forge doctor).",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "tier"],
+            "properties": {
+              "id": { "type": "string" },
+              "tier": { "type": "string", "enum": ["T1", "T2", "T3", "T4", "T5"] },
+              "role": { "type": "string" },
+              "cpu_cores": { "type": "integer" },
+              "ram_gb": { "type": "number" },
+              "gpus": { "type": "array", "items": { "type": "string" } },
+              "os": { "type": "string" },
+              "allocation_cap_pct": { "type": "integer", "minimum": 0, "maximum": 100 }
+            }
+          }
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "schema_version": { "type": "string" },
+        "store": { "type": "string", "enum": ["sqlite", "duckdb"] },
+        "path": { "type": "string" },
+        "backpressure": {
+          "type": "object",
+          "properties": {
+            "max_queue": { "type": "integer", "minimum": 1 },
+            "drop_policy": { "type": "string", "enum": ["oldest", "newest", "block"] }
+          }
+        }
+      }
+    },
+    "store": {
+      "type": "object",
+      "properties": {
+        "root": { "type": "string" },
+        "content_addressed": { "type": "boolean" }
+      }
+    }
+  }
+}

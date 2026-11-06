@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://assetfabric.dev/schemas/telemetry.event.schema.json",
+  "title": "AssetFabric Telemetry Event v1",
+  "description": "Minimum structured event fields from ASSETFABRIC_SPEC §5.4. Encoding may be JSON (dev) or MessagePack/CBOR (prod) — schema is logical.",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "agent_id",
+    "agent_type",
+    "event_type"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 wall clock (UTC preferred)."
+    },
+    "agent_id": { "type": "string", "minLength": 1 },
+    "agent_type": {
+      "type": "string",
+      "enum": ["player", "character", "pet", "enemy", "boss", "system", "studio", "sandbox", "orchestrator", "generator"]
+    },
+    "event_type": { "type": "string", "minLength": 1 },
+    "state_before": { "type": ["object", "null"] },
+    "state_after": { "type": ["object", "null"] },
+    "action_taken": { "type": ["string", "object", "null"] },
+    "action_source": {
+      "type": ["string", "null"],
+      "enum": ["BT", "policy", "LLM", "player", "system", "generator", null]
+    },
+    "inference_latency_ms": { "type": ["number", "null"], "minimum": 0 },
+    "model_id": { "type": ["string", "null"] },
+    "model_version": { "type": ["string", "null"] },
+    "thought_stream": {
+      "type": ["string", "array", "object", "null"],
+      "description": "LLM tokens OR non-LLM intermediate decisions / attributions / policy logits summaries."
+    },
+    "sandbox_id": { "type": ["string", "null"] },
+    "profile": { "type": ["string", "null"] },
+    "sim_tick": { "type": ["integer", "null"], "minimum": 0 },
+    "state_hash": { "type": ["string", "null"] },
+    "locale_key": {
+      "type": ["string", "null"],
+      "description": "Optional localization key for user-visible event labels — never hard-coded display strings."
+    }
+  }
+}
