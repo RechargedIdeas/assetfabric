@@ -10,8 +10,11 @@ build/
 .fabric/telemetry/*.jsonl
 .fabric/jobs/*.sqlite
 .fabric/jobs/*.sqlite-*
-store/objects/
-store/manifests/*.json
+# Content-addressed blobs — keep directory scaffolding only
+store/objects/**
+!store/objects/.gitkeep
+store/manifests/**
+!store/manifests/.gitkeep
 store/index.sqlite
 store/index.sqlite-*
 games/game-zero/.godot/
