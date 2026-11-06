@@ -17,4 +17,4 @@ godot --path games/game-zero --headless --quit-after 1
 # or open games/game-zero in the Godot editor
 ```
 
-See `../../GAME_SPEC.md` (chatgrab) / repo `PLAN.md` / `BUILD_ORDER.md`.
+See [`docs/design/GAME_SPEC.md`](../../docs/design/GAME_SPEC.md), [`PLAN.md`](../../PLAN.md), [`BUILD_ORDER.md`](../../BUILD_ORDER.md).

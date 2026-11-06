@@ -1,10 +1,27 @@
-# 0014 — AMD-first inference
+# ADR-0014 — AMD-first backends: DirectML / ROCm / Vulkan (not CUDA-first)
 
-- **Status:** accepted
-- **Date:** 2026-11-05
-- **Deciders:** design chat / Recharged Ideas (recorded in F0)
-- **Context:** Locked in AssetFabric / Game Zero design chat and ASSETFABRIC_SPEC.
-- **Decision:** Fleet has no NVIDIA; prefer DirectML (Windows), ROCm 6.x (Linux 7900), Vulkan universal; Vega = DirectML/Vulkan only.
-- **Consequences:** Binding for v1 unless superseded by a later ADR + scope change.
-- **Alternatives considered:** See chatgrab transcript; rejected alternatives documented there.
-- **References:** ASSETFABRIC_SPEC.md; GAME_SPEC.md; chat share g90tn4mss3265u0xm3
+| Field | Value |
+|---|---|
+| Status | **accepted** |
+| Date | 2026-11-05 |
+| Deciders | Design chat / Recharged Ideas |
+
+## Context
+
+The fleet has no NVIDIA GPUs (RX 7900, Vega 64/56, Mali, UHD 620).
+
+## Decision
+
+Prefer **DirectML** on Windows, **ROCm 6.x** on Linux for the 7900, **Vulkan** universally; Vegas use DirectML/Vulkan only. No feature may require CUDA; CUDA-only trainers need an honest alternative with real ETAs.
+
+## Consequences
+
+- Every GPU path has a CPU (GroundWeave) fallback.
+
+## Alternatives considered
+
+- **CUDA-first:** rejected (no hardware).
+
+## References
+
+docs/design/ASSETFABRIC_SPEC.md; docs/design/GAME_SPEC.md; source chat https://chat.deepseek.com/share/g90tn4mss3265u0xm3

@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — Technical System Map
 
-Normative map for AssetFabric. Chatgrab design docs are historical; ADRs + this file supersede contradictions.
+Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this file supersede them where they conflict.
 
 ## High-level
 
@@ -62,7 +62,7 @@ Normative map for AssetFabric. Chatgrab design docs are historical; ADRs + this 
 ## Model families
 
 G1, D1, S1, H1, M1 (Architect deferred), C1, R2, O1, RealityCapture/RC, Substrate S-series.  
-New families require an ADR. See `ASSETFABRIC_ML_AI_FEATURES.md` (chatgrab).
+New families require an ADR. See `docs/design/ASSETFABRIC_ML_AI_FEATURES.md`.
 
 ## Protocol surfaces
 

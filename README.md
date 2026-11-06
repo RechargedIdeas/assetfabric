@@ -1,91 +1,95 @@
 # AssetFabric
 
-**Universal content fabric and execution substrate** for producing games and assets end-to-end: generation, validation, packaging, AI runtime, sandboxed execution, reconstruction, clustering, and companion tooling.
+> **Private & proprietary** — © 2026 Recharged Ideas. All Rights Reserved. See [LICENSE](LICENSE).
 
-**First product / MVP test:** [Game Zero](games/game-zero/) — offline-first 8-bit fighter/farming hybrid on **Godot 4 Compatibility**.
+**AssetFabric** is a universal content fabric and execution substrate for producing games and assets end-to-end: generation, validation, packaging, AI runtime, sandboxed execution, reconstruction, clustering, and companion tooling.
 
-> Prefer authoritative specs (chatgrab) over invention. Extrapolations are marked **`[INFERENCE]`**.
-> Rename: Asset Factory → **AssetFabric** (fabric metaphor; avoid third-party AssetFactory collision).
+**Game Zero** — an offline-first 8-bit fighter/farming hybrid on Godot 4 — is its **first product and MVP test**. Every Fabric milestone is proven by a playable Game Zero increment.
 
-Source design chat: https://chat.deepseek.com/share/g90tn4mss3265u0xm3
+**Architecture in one line:** Python/PySide6 **Studio** → **Content Forge** (generators · validators · orchestrator · BudgetGate) → **Substrate** (sandbox · hot reload · snapshots) → **Godot 4 Compatibility runtime** (GIRT · CascadeHub) — spread over equal **LoomCluster** nodes with **GroundWeave** CPU fallbacks, and a standalone Android companion, **PocketLoom**.
 
-## Current milestone
+## Status
 
-**F0 — Foundation** (in progress / acceptance this session)
-
-| Gate | Status |
+| | |
 |---|---|
-| Doc suite (§11) | shipped |
-| `forge` CLI + `forge status` healthy | shipped |
-| Manifest + telemetry schemas | shipped |
-| Asset store + orchestrator stubs | shipped |
-| Empty Godot project (Compatibility) | shipped |
-| F1 blocked until F0 game/env gate | enforced in AGENTS / BUILD_ORDER |
+| Fabric milestone | **F0 — Foundation** (implemented; awaiting Producer acceptance) |
+| Game increment | `env-boots` — empty Godot project boots headless |
+| Version | `0.0.0+f0.0` |
+| Next | F1 Content Pipeline → playable sandbox (1 char, 1 tilemap, 1 enemy, 1 attack) |
+
+What exists today: `forge` CLI (`status`, `doctor`, `validate`, `job`, `store`), project manifest + telemetry JSON Schemas, content-addressed asset store, SQLite job orchestrator, telemetry JSONL emitter, Game Zero Godot project, pytest suite. Studio, PocketLoom and LoomCluster are placeholders. Details: [HANDOVER.md](HANDOVER.md).
 
 ## Quick start
 
+Requires Python ≥ 3.11 and [`uv`](https://docs.astral.sh/uv/). Godot 4.3+ is optional (needed for the full headless boot).
+
 ```bash
-cd /workspace/assetfabric   # or your clone
+git clone https://github.com/RechargedIdeas/assetfabric.git
+cd assetfabric
 ./scripts/bootstrap.sh
 source .venv/bin/activate
-forge doctor
-forge status
-pytest
+forge doctor          # environment checks
+forge status          # exit 0 == healthy
+pytest -q
 ./scripts/smoke_godot.sh
 ```
 
-Optional Godot headless (if binary available):
+Open Game Zero: `godot --path games/game-zero --headless --quit-after 1`, or open `games/game-zero/` in the Godot editor. More: [docs/setup/README.md](docs/setup/README.md).
 
-```bash
-godot --path games/game-zero --headless --quit-after 1
-```
+## Repository layout
 
-## What AssetFabric is
+| Path | Contents |
+|---|---|
+| `forge/` | Content Forge Python package and `forge` CLI |
+| `forge.yaml` | Project manifest (milestone, targets, profiles, fleet) |
+| `docs/design/` | **Authoritative design specs** imported from the design chat |
+| `docs/adr/` | Architecture Decision Records |
+| `docs/schemas/` | JSON Schemas (manifest, telemetry) |
+| `docs/acceptance-tests/` | Milestone acceptance checklists |
+| `games/game-zero/` | Game Zero Godot 4 project ([README](games/game-zero/README.md)) |
+| `studio/` | Desktop Studio (PySide6) — stub |
+| `companions/pocketloom/` | Android companion — placeholder |
+| `cluster/loomcluster/` | Compute clustering — placeholder |
+| `store/` | Content-addressed asset store (blobs gitignored) |
+| `locales/` | Locale string tables (no hard-coded strings) |
+| `scripts/` | bootstrap and smoke scripts |
+| `tests/` | pytest suite |
 
-- Unified generation toolkit (GUI + CLI + REST + MCP + ACP + in-Studio terminal)
-- Godot 4 production toolkit (plugins, bridges, import contracts)
-- ML model mesh + metamodels + training/telemetry
-- Universal emulation / console-style layer + micro-VM sandbox + hot reload / snapshots
-- Android Kotlin companion (**PocketLoom**): standalone offline + optional desktop pairing
-- Heterogeneous compute clustering (**LoomCluster**) with CPU software fallbacks (**GroundWeave**)
-
-## What it is not (v1 hard deferrals)
-
-Quantum *hardware* backend (simulation OK), fantasy consoles (PICO-8/TIC-80), modern console CertPacks, community mod marketplace, P2P mesh beyond 2 players, dedicated servers, full M1-Architect as a ship gate.
-
-## Doc map
+## Documentation map
 
 | Doc | Role |
 |---|---|
-| [AGENTS.md](AGENTS.md) | Agent rules, one-milestone offset, scope |
-| [BUILD_ORDER.md](BUILD_ORDER.md) | F0–F7 + C1–C12 sequence |
-| [HANDOVER.md](HANDOVER.md) | Current state for next agent |
-| [PLAN.md](PLAN.md) | Vision, DoD, milestones, out-of-scope |
-| [TODO.md](TODO.md) | Sprint tasks / blockers |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Systems map |
+| [AGENTS.md](AGENTS.md) | Rules of engagement for agents and humans — **read first** |
+| [HANDOVER.md](HANDOVER.md) | Current state snapshot |
+| [TODO.md](TODO.md) | Sprint tasks, backlog, blockers, decisions needed |
+| [PLAN.md](PLAN.md) | Vision, pillars, Definition of Done, out-of-scope |
+| [BUILD_ORDER.md](BUILD_ORDER.md) | F0–F9 + C1–C12 sequence |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Systems map and code map |
 | [DECISIONS.md](DECISIONS.md) | ADR index |
-| [TESTING.md](TESTING.md) | QA / acceptance |
-| [SECURITY.md](SECURITY.md) | Threat model sketch |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Setup / PR checklist |
+| [TESTING.md](TESTING.md) | QA pyramid, acceptance, CI gates |
+| [SECURITY.md](SECURITY.md) | Threat model, vulnerability reporting, confidentiality |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, workflow, PR checklist |
 | [GLOSSARY.md](GLOSSARY.md) | Terms |
-| [CHANGELOG.md](CHANGELOG.md) | Versions |
-| [docs/tool-catalog.md](docs/tool-catalog.md) | Fabric tools |
-| [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first fleet |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+| [docs/design/](docs/design/README.md) | ASSETFABRIC_SPEC, GAME_SPEC, ML/AI features, chat summary |
+| [docs/tool-catalog.md](docs/tool-catalog.md) | Fabric tools and their milestones |
+| [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first node inventory |
+| [docs/F0_INFERENCES.md](docs/F0_INFERENCES.md) | Register of `[INFERENCE]` decisions |
 
-Authoritative condensed specs (outside repo, chatgrab): `ASSETFABRIC_SPEC.md`, `GAME_SPEC.md`, `ASSETFABRIC_ML_AI_FEATURES.md`.
+Design source: https://chat.deepseek.com/share/g90tn4mss3265u0xm3 — prefer the specs over invention; extrapolations are marked **`[INFERENCE]`**.
 
 ## Governing principle
 
-A Fabric milestone is **not complete** until a **game increment that depends on it ships, is playable, and passes its acceptance test.**
+> A Fabric milestone is **not complete** until a **game increment that depends on it ships, is playable, and passes its acceptance test.** (ADR-0016)
 
-## Publish
+## Hard constraints
 
-This repo is local-first (`git init` on the shared box). To publish:
+No LLM in the combat tick · no unsandboxed untrusted code · no client-authoritative multiplayer · no hard-coded strings/paths · every GPU path has a CPU fallback · weakest acceptance node is 2 cores, no GPU · AMD-first (DirectML/ROCm/Vulkan), never CUDA-required.
 
-```bash
-# after creating an empty GitHub repo you own:
-git remote add origin git@github.com:<org>/assetfabric.git
-git push -u origin main
-```
+## v1 non-goals
 
-Do not create public releases until license ADR-0001 is decided.
+Quantum hardware backends (simulation OK), fantasy consoles (PICO-8/TIC-80), modern console CertPacks, mod marketplace, P2P beyond 2 players, dedicated servers, M1-Architect as a ship gate.
+
+## License & distribution
+
+Proprietary — **All Rights Reserved** (ADR-0001). This repository is private; there are no public releases, packages, or open-source distributions. Third-party components keep their own licenses ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). Report security issues privately per [SECURITY.md](SECURITY.md).

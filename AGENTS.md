@@ -39,7 +39,7 @@ forge doctor
 forge status
 ```
 
-Prefer chatgrab specs over invention. Mark extrapolations **`[INFERENCE]`**.
+Prefer the specs in `docs/design/` over invention. Mark extrapolations **`[INFERENCE]`**.
 
 ---
 
@@ -134,7 +134,7 @@ Do not deeply implement PocketLoom / LoomCluster in an F0 Fabric session beyond 
 
 Do not edit Sophonts or unrelated repos under this handoff.
 
-Do not invent product requirements when the chatgrab specs already decide — mark `[INFERENCE]` if you must fill a gap.
+Do not invent product requirements when the `docs/design/` specs already decide — mark `[INFERENCE]` if you must fill a gap.
 
 ---
 

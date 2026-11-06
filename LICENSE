@@ -1,0 +1,27 @@
+Copyright (c) 2026 Recharged Ideas. All Rights Reserved.
+
+PROPRIETARY AND CONFIDENTIAL
+
+This repository and all of its contents — including source code, documentation,
+design specifications, schemas, scripts, models, generated assets, and any other
+materials (collectively, the "Software") — are the confidential and proprietary
+property of Recharged Ideas.
+
+No license, express or implied, is granted to any person or entity to use, copy,
+modify, merge, publish, distribute, sublicense, sell, or create derivative works
+of the Software, in whole or in part, except by Recharged Ideas or by parties who
+have received prior written permission from Recharged Ideas.
+
+Access to this repository does not constitute a grant of any license or right.
+Unauthorized copying, disclosure, or distribution of the Software, via any medium,
+is strictly prohibited.
+
+Third-party components bundled with or referenced by the Software (for example
+Godot Engine, Python packages, ONNX models) remain subject to their own licenses.
+Those licenses are not altered by this notice; see THIRD_PARTY_NOTICES.md.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL RECHARGED IDEAS
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

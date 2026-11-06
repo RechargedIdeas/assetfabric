@@ -1,6 +1,6 @@
 # BUILD_ORDER.md — Authoritative sequence
 
-Source: `ASSETFABRIC_SPEC.md` §13 + design chat. Weeks are indicative.
+Source: `docs/design/ASSETFABRIC_SPEC.md` §13 + design chat. Weeks are indicative.
 
 ## Parallel contract
 
@@ -36,7 +36,7 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 - [x] Job orchestrator stub  
 - [x] Empty Godot 4 Compatibility project  
 - [x] Tests green  
-- [ ] Optional: Godot binary headless smoke on this box (structure smoke always)
+- [x] Godot 4.3 headless smoke (structure smoke always in CI)
 
 ### F1 entry criteria (do not start early)
 

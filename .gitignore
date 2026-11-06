@@ -23,3 +23,10 @@ games/game-zero/export_presets.cfg
 .DS_Store
 godot-bin/
 *.zip
+
+# Secrets / env
+.env
+.env.*
+*.keystore
+*.jks
+*.pem

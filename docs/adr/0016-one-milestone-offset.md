@@ -1,10 +1,27 @@
-# 0016 — One-milestone offset
+# ADR-0016 — One-milestone offset between Fabric and Game
 
-- **Status:** accepted
-- **Date:** 2026-11-05
-- **Deciders:** design chat / Recharged Ideas (recorded in F0)
-- **Context:** Locked in AssetFabric / Game Zero design chat and ASSETFABRIC_SPEC.
-- **Decision:** Fabric at most one milestone ahead; F(n) incomplete until game increment ships.
-- **Consequences:** Binding for v1 unless superseded by a later ADR + scope change.
-- **Alternatives considered:** See chatgrab transcript; rejected alternatives documented there.
-- **References:** ASSETFABRIC_SPEC.md; GAME_SPEC.md; chat share g90tn4mss3265u0xm3
+| Field | Value |
+|---|---|
+| Status | **accepted** |
+| Date | 2026-11-05 |
+| Deciders | Design chat / Recharged Ideas |
+
+## Context
+
+Platform work tends to outrun the product. The chat made the game the Fabric's proof.
+
+## Decision
+
+Fabric may be **at most one milestone ahead** of Game Zero. Fabric milestone F(n) is incomplete until the Game increment that depends on it ships, is playable, and passes its acceptance test. F(n+1) generator code may not merge before that.
+
+## Consequences
+
+- `forge.yaml` tracks `fabric.milestone` and `game.increment`; CI/agents enforce the gate.
+
+## Alternatives considered
+
+- **Platform-first:** rejected. **Game-first with ad-hoc tools:** rejected.
+
+## References
+
+docs/design/ASSETFABRIC_SPEC.md; docs/design/GAME_SPEC.md; source chat https://chat.deepseek.com/share/g90tn4mss3265u0xm3

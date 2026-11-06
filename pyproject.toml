@@ -8,8 +8,10 @@ version = "0.0.0+f0.0"
 description = "AssetFabric Content Forge — CLI, schemas, store, orchestrator"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "LicenseRef-TBD" }
+license = { text = "LicenseRef-Proprietary" }
+license-files = ["LICENSE"]
 authors = [{ name = "Recharged Ideas" }]
+classifiers = ["Private :: Do Not Upload", "License :: Other/Proprietary License"]
 dependencies = [
   "pyyaml>=6",
   "pydantic>=2",

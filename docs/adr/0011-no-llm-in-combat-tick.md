@@ -1,10 +1,28 @@
-# 0011 — No LLM in combat tick
+# ADR-0011 — No LLM in the combat tick loop
 
-- **Status:** accepted
-- **Date:** 2026-11-05
-- **Deciders:** design chat / Recharged Ideas (recorded in F0)
-- **Context:** Locked in AssetFabric / Game Zero design chat and ASSETFABRIC_SPEC.
-- **Decision:** BT + ONNX policy decide; LM only for surface text / cached callouts.
-- **Consequences:** Binding for v1 unless superseded by a later ADR + scope change.
-- **Alternatives considered:** See chatgrab transcript; rejected alternatives documented there.
-- **References:** ASSETFABRIC_SPEC.md; GAME_SPEC.md; chat share g90tn4mss3265u0xm3
+| Field | Value |
+|---|---|
+| Status | **accepted** |
+| Date | 2026-11-05 |
+| Deciders | Design chat / Recharged Ideas |
+
+## Context
+
+LLM latency and nondeterminism would break frame budgets, determinism for RL/balance, and multiplayer authority.
+
+## Decision
+
+The combat tick uses only Behavior Trees, ONNX policies and deterministic rules. LMs produce dialogue/callouts asynchronously via CascadeHub semantic intents; their output never gates a tick.
+
+## Consequences
+
+- HeadlessSim stays deterministic and replayable.
+- Telemetry `action_source` distinguishes BT / policy / LLM / player.
+
+## Alternatives considered
+
+- **LLM-driven tactics per tick:** rejected.
+
+## References
+
+docs/design/ASSETFABRIC_SPEC.md; docs/design/GAME_SPEC.md; source chat https://chat.deepseek.com/share/g90tn4mss3265u0xm3

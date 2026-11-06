@@ -14,3 +14,12 @@ Extrapolations made while implementing F0 (chat did not freeze these verbatim):
 10. **`forge build --target godot-desktop`** — listed in chat F0.5; F0 ships status/store/job instead of a full build pipeline (noted in TODO).
 
 Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory, one-milestone offset, telemetry *field names* (SPEC §5.4), hard deferrals, F0/F1 gate pairing, tool catalog names.
+
+## Repository setup (2026-11-05)
+
+11. **License = proprietary, All Rights Reserved** (ADR-0001) — chosen by the Producer when requesting a private repo; not decided in chat.
+12. **THIRD_PARTY_NOTICES.md** list — derived from `pyproject.toml` dependencies; full SBOM is an F7 requirement.
+13. **Vulnerability-reporting SLA** in SECURITY.md (2/5 business days) — placeholder targets.
+14. **Branch naming, code style rules, issue/PR templates, CODEOWNERS** — conventional GitHub hygiene, not specified in chat.
+15. **RC family name** for reality-capture models (ADR-0010) — chat called it R1, clashing with the R1 Retro Render Compiler.
+16. **Process-sandbox fallback** when KVM/Firecracker is unavailable (ADR-0007 consequences).

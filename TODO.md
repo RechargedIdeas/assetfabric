@@ -51,8 +51,11 @@ Last updated: 2026-11-05 ~20:45 America/New_York
 |---|---|---|---|
 | D-001 | Web export single-threaded fallback strategy? | Factory Lead | before F7 |
 | D-002 | Confirm Android reference = Redmi Note 12 Pro 5G | Producer | F1 |
-| D-003 | License (ADR-0001) | Legal / Producer | before public push |
-| D-004 | Publish remote for this repo? | Producer | when ready |
+
+## Done (repo setup)
+
+- [x] D-003 License → proprietary (ADR-0001 accepted)
+- [x] D-004 Private remote `RechargedIdeas/assetfabric` created and pushed
 
 ## Infrastructure
 
