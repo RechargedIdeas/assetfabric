@@ -4,6 +4,7 @@
   "increment": "first-combat",
   "milestone": "F2",
   "passed": true,
+  "perf": {},
   "result": {
     "abilities_loaded": 14,
     "abilities_used": [
@@ -37,11 +38,11 @@
     "entities": {
       "bram": {
         "alive": true,
-        "casts": 8,
-        "damage": 18,
+        "casts": 9,
+        "damage": 10,
         "healing": 0,
-        "hits": 7,
-        "hp": 67,
+        "hits": 5,
+        "hp": 69,
         "kills": 0,
         "kind": "fighter",
         "max_hp": 81,
@@ -50,21 +51,21 @@
       "bram_stone_tortle": {
         "alive": true,
         "casts": 2,
-        "damage": 2,
+        "damage": 1,
         "healing": 0,
-        "hits": 2,
-        "hp": 32,
-        "kills": 1,
+        "hits": 1,
+        "hp": 40,
+        "kills": 0,
         "kind": "pet",
         "max_hp": 40,
         "team": 0
       },
       "cave_mite_4": {
         "alive": false,
-        "casts": 3,
-        "damage": 3,
+        "casts": 5,
+        "damage": 5,
         "healing": 0,
-        "hits": 2,
+        "hits": 4,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -85,10 +86,10 @@
       },
       "cave_mite_6": {
         "alive": false,
-        "casts": 5,
-        "damage": 6,
+        "casts": 4,
+        "damage": 4,
         "healing": 0,
-        "hits": 5,
+        "hits": 3,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -97,7 +98,7 @@
       },
       "emberling_1": {
         "alive": false,
-        "casts": 1,
+        "casts": 2,
         "damage": 4,
         "healing": 0,
         "hits": 1,
@@ -121,7 +122,7 @@
       },
       "emberling_3": {
         "alive": false,
-        "casts": 2,
+        "casts": 1,
         "damage": 4,
         "healing": 0,
         "hits": 1,
@@ -134,11 +135,11 @@
       "kael": {
         "alive": true,
         "casts": 12,
-        "damage": 85,
+        "damage": 90,
         "healing": 0,
-        "hits": 11,
+        "hits": 12,
         "hp": 43,
-        "kills": 2,
+        "kills": 4,
         "kind": "fighter",
         "max_hp": 62,
         "team": 0
@@ -146,9 +147,9 @@
       "kael_ember_fox": {
         "alive": true,
         "casts": 7,
-        "damage": 15,
+        "damage": 11,
         "healing": 0,
-        "hits": 6,
+        "hits": 5,
         "hp": 2,
         "kills": 0,
         "kind": "pet",
@@ -158,7 +159,7 @@
       "nyra": {
         "alive": true,
         "casts": 11,
-        "damage": 49,
+        "damage": 51,
         "healing": 0,
         "hits": 13,
         "hp": 46,
@@ -170,7 +171,7 @@
       "nyra_lumen_wisp": {
         "alive": true,
         "casts": 8,
-        "damage": 13,
+        "damage": 15,
         "healing": 0,
         "hits": 7,
         "hp": 18,
@@ -182,9 +183,9 @@
       "rock_brute_7": {
         "alive": false,
         "casts": 5,
-        "damage": 57,
+        "damage": 47,
         "healing": 0,
-        "hits": 9,
+        "hits": 7,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -194,23 +195,23 @@
       "sola": {
         "alive": true,
         "casts": 11,
-        "damage": 23,
+        "damage": 24,
         "healing": 22,
-        "hits": 8,
+        "hits": 9,
         "hp": 39,
-        "kills": 2,
+        "kills": 1,
         "kind": "fighter",
         "max_hp": 39,
         "team": 0
       }
     },
-    "hits": 75,
+    "hits": 71,
     "increment": "first-combat",
     "music_loaded": true,
     "outcome": "victory",
-    "sim_ms": 214,
-    "state_hash": "69d4a4959e4d284f",
-    "ticks": 563,
+    "sim_ms": 82.88,
+    "state_hash": "702c80032d2591e9",
+    "ticks": 561,
     "tres_loaded": 14
   }
 }

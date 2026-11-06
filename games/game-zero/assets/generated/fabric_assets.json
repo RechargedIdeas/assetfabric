@@ -1,5 +1,24 @@
 {
   "assets": {
+    "callouts": {
+      "files": {
+        "callouts.json": {
+          "res": "res://data/generated/ai/callouts.json",
+          "sha256": "ab7cd5a6ac259e9e7262cca726c4238e8fd25000e2003ec9d8a87c987fa869ad"
+        }
+      },
+      "kind": "callouts",
+      "meta": {
+        "kind": "callouts",
+        "lines": 60,
+        "model_id": "CalloutCache",
+        "model_version": "1"
+      },
+      "tags": [
+        "ai",
+        "callouts"
+      ]
+    },
     "cave_01": {
       "files": {
         "cave_01.json": {
@@ -204,6 +223,46 @@
       "tags": [
         "audio",
         "biome:cave"
+      ]
+    },
+    "persona_lm": {
+      "files": {
+        "persona_lm.json": {
+          "res": "res://data/generated/ai/persona_lm.json",
+          "sha256": "5f8503c738b9835a1f694fbd83d1e69a7ba46865d6859ed0d90a366d6f73a6e8"
+        }
+      },
+      "kind": "persona_lm",
+      "meta": {
+        "kind": "persona_lm",
+        "model_id": "M-PersonaLM",
+        "model_version": "bigram-1"
+      },
+      "tags": [
+        "ai",
+        "lm"
+      ]
+    },
+    "policy_target": {
+      "files": {
+        "policy_target.json": {
+          "res": "res://data/generated/ai/policy_target.json",
+          "sha256": "1e4ec6d6fa900cf0b24463220e21e45555194bc23d583e467e3edcca3a9c700f"
+        }
+      },
+      "kind": "policy",
+      "meta": {
+        "kind": "policy",
+        "metrics": {
+          "holdout_acc": 0.9875,
+          "train_acc": 0.9947
+        },
+        "model_id": "P-TargetSelect",
+        "model_version": "bc-1"
+      },
+      "tags": [
+        "ai",
+        "policy"
       ]
     },
     "roster": {

@@ -33,5 +33,6 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | F0 | env-boots | ✅ |
 | F1 | sandbox-encounter (1 char, 1 tilemap, 1 enemy, 1 attack) | ✅ |
 | F2 | first-combat (party of 4 + pets vs. 7 enemies) — `--scene=combat` | ✅ |
+| F3 | party-ai (BT + policy, time-freeze swap, intents, callouts, dialogue) — `--scene=party` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).

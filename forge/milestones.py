@@ -25,6 +25,7 @@ class Increment:
     godot_args: tuple[str, ...]
     check: Callable[[dict[str, Any]], list[str]] = field(compare=False)
     description: str = ""
+    perf: Callable[[dict[str, Any]], dict[str, Any]] | None = field(default=None, compare=False)
 
 
 def _need(cond: bool, msg: str, errs: list[str]) -> None:
@@ -64,12 +65,71 @@ def _f2(r: dict[str, Any]) -> list[str]:
     return errs
 
 
+SWAP_TARGET_MS = 50.0    # GAME_SPEC §4.1 target (soft; tracked in results "perf")
+SWAP_CEILING_MS = 150.0  # hard gate: never a multi-frame hitch beyond ~9 frames
+
+
+def _f3(r: dict[str, Any]) -> list[str]:
+    errs: list[str] = []
+    ai = r.get("ai", {})
+    girt = ai.get("girt", {})
+    _need(r.get("outcome") == "victory", f"outcome={r.get('outcome')}", errs)
+    _need(ai.get("brain") == "bt+policy", f"brain={ai.get('brain')}", errs)
+    _need(girt.get("policy_calls", 0) > 0, "P-TargetSelect policy never called", errs)
+    _need(girt.get("policy_fallbacks", 1) == 0, f"policy fallbacks={girt.get('policy_fallbacks')}", errs)
+    _need(girt.get("lm_refused_in_tick", 1) == 0, "LM was invoked inside the combat tick (ADR-0011)", errs)
+    _need(ai.get("callouts_total", 0) >= 5, f"callouts_total={ai.get('callouts_total')}", errs)
+    _need(len(ai.get("intents", [])) >= 1, "no player intent parsed", errs)
+    _need(len(ai.get("swaps", [])) >= 1, "no time-freeze swap happened", errs)
+    recs = ai.get("swap_recs", [])
+    _need(len(recs) == 4, f"swap advisor must rank 4 fighters, got {len(recs)}", errs)
+    _need(len({s for _, s in recs}) > 1, "swap advisor scores are all equal (no signal)", errs)
+    _need(ai.get("swap_parity") is True, "threaded swap ranking != serial ranking", errs)
+    _need(float(ai.get("swap_wall_ms", 1e9)) <= SWAP_CEILING_MS,
+          f"swap_wall_ms={ai.get('swap_wall_ms')} > ceiling {SWAP_CEILING_MS}", errs)
+    dlg = ai.get("dialogue", [])
+    _need(len(dlg) >= 1 and all(d.get("reply") for d in dlg), "dialogue replies missing/empty", errs)
+    probe = _policy_probe()
+    st = ai.get("selftest") or []
+    _need(bool(probe) and len(st) == len(probe) and all(abs(a - b) < 1e-3 for a, b in zip(st, probe)),
+          f"GDScript MLP != numpy probe: {st} vs {probe}", errs)
+    lm_probe = _generated("persona_lm.json").get("probes", {})
+    _need(bool(lm_probe) and ai.get("lm_selftest") == lm_probe, "GDScript LM sampler != Python sampler probes", errs)
+    return errs
+
+
+def _generated(name: str) -> dict[str, Any]:
+    try:
+        p = find_repo_root() / "games" / "game-zero" / "data" / "generated" / "ai" / name
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _f3_perf(r: dict[str, Any]) -> dict[str, Any]:
+    ai = r.get("ai", {})
+    ms = float(ai.get("swap_wall_ms", -1))
+    return {"swap_wall_ms": ms, "swap_target_ms": SWAP_TARGET_MS, "swap_target_met": 0 <= ms <= SWAP_TARGET_MS,
+            "swap_threaded": ai.get("swap_threaded"), "policy_p95_us": ai.get("girt", {}).get("policy_p95_us"),
+            "lm_p95_us": ai.get("girt", {}).get("lm_p95_us"), "field_warm_ms": ai.get("field_warm_ms")}
+
+
+def _policy_probe() -> list[float]:
+    try:
+        p = find_repo_root() / "games" / "game-zero" / "data" / "generated" / "ai" / "policy_target.json"
+        return [round(float(x), 4) for x in json.loads(p.read_text(encoding="utf-8"))["probe"]["scores"]]
+    except (OSError, KeyError, ValueError):
+        return []
+
+
 INCREMENTS: dict[str, Increment] = {
     "F0": Increment("F0", "env-boots", ("--boot-only",), _f0, "Empty Godot boots; forge status healthy"),
     "F1": Increment("F1", "sandbox-encounter", ("--scene=sandbox", "--autoplay"), _f1,
                     "Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack"),
     "F2": Increment("F2", "first-combat", ("--scene=combat", "--autoplay"), _f2,
                     "First combat: party of 4 + pets + enemies, codegen data, G1-Audio stems"),
+    "F3": Increment("F3", "party-ai", ("--scene=party", "--autoplay"), _f3,
+                    "Party AI: BT + GIRT policy, callouts, intents, dialogue, time-freeze swap advisor", _f3_perf),
 }
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
@@ -122,6 +182,7 @@ def accept(milestone: str, root: Path | None = None, write: bool = True) -> dict
     report = {
         "milestone": milestone, "increment": inc.increment, "description": inc.description,
         "passed": not errs, "errors": errs,
+        "perf": inc.perf(result) if inc.perf else {},
         "result": {k: v for k, v in result.items() if not k.startswith("_")},
     }
     if write:

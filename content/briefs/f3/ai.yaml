@@ -1,0 +1,23 @@
+# F3 briefs — GIRT models + callout cache (all CPU, offline, out of the combat tick).
+briefs:
+  - id: callouts
+    kind: callouts
+    export_base: data
+    export_dir: generated/ai
+    tags: [ai, callouts]
+  - id: persona_lm
+    kind: persona_lm
+    export_base: data
+    export_dir: generated/ai
+    tags: [ai, lm]
+  - id: policy_target
+    kind: policy
+    model_id: P-TargetSelect
+    seed: 4
+    samples: 4000
+    hidden: 12
+    epochs: 300
+    min_holdout_acc: 0.85
+    export_base: data
+    export_dir: generated/ai
+    tags: [ai, policy]

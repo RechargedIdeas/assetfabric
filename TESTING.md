@@ -8,8 +8,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 |---|---|---|---|
 | Unit | schemas, pure functions | `tests/` | F0 ✅ |
 | Component | store, orchestrator, CLI | `tests/` | F0 ✅ |
-| Integration | generators → gates → store → registry; determinism; codegen; audio | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py` | F1–F2 ✅ |
-| Headless game | Godot `--headless` autoplay per increment | `tests/test_game_increments.py`, `forge accept` | F0–F2 ✅ |
+| Integration | generators → gates → store → registry; determinism; codegen; audio; AI models | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py`, `tests/test_f3_ai.py` | F1–F3 ✅ |
+| Headless game | Godot `--headless` autoplay per increment (incl. GDScript↔Python model parity) | `tests/test_game_increments.py`, `forge accept` | F0–F3 ✅ |
 | Acceptance | milestone gates | `docs/acceptance-tests/F*.md` | F0 ✅ |
 | Perf / fidelity | GroundWeave 2-core budgets, retro authenticity (V1) | later | F1+ |
 | Hybrid QA | AI agent playtests + human playtesters | later | F5+ |
@@ -50,6 +50,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F0 | [F0.md](docs/acceptance-tests/F0.md) | env-boots |
 | F1 | [F1.md](docs/acceptance-tests/F1.md) | sandbox-encounter |
 | F2 | [F2.md](docs/acceptance-tests/F2.md) | first-combat |
+| F3 | [F3.md](docs/acceptance-tests/F3.md) | party-ai |
 
 ## 4. CI gates
 

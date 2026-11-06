@@ -16,8 +16,13 @@ var by_id: Dictionary = {}
 var tick: int = 0
 var events: Array = []
 var brain_override: Callable   # F3: BT/policy brains plug in here
-var _fields: Dictionary = {}
-var _field_tick: Dictionary = {}
+var leader_manual := false     # true while the player drives the leader
+var tactic := "aggressive"     # aggressive | defensive (CascadeHub intents)
+var focus_kind := ""           # focus intent: enemy roster id prefix
+var engaged := false
+var brain_ref: RefCounted = null   # strong ref for a brain_override target owned by this sim
+var forward := false           # true for swap-advisor clones: no global (GIRT) writes, thread-safe
+var think_interval := 1        # forward-sim LOD: brains think every N ticks (swap advisor uses 3)
 
 
 func _init(grid_) -> void:
@@ -28,6 +33,25 @@ func add(e) -> Variant:
 	entities.append(e)
 	by_id[e.id] = e
 	return e
+
+
+func set_leader(id_: String) -> void:
+	for e in entities:
+		e.is_leader = e.id == id_
+	events.append({"tick": tick, "type": "swap", "to": id_})
+
+
+func clone():
+	var c = get_script().new(grid)
+	for e in entities:
+		c.add(e.copy())
+	c.tick = tick
+	c.brain_override = brain_override
+	c.tactic = tactic
+	c.focus_kind = focus_kind
+	c.engaged = engaged
+	c.think_interval = think_interval
+	return c
 
 
 func leader():
@@ -45,22 +69,22 @@ func team_alive(team: int) -> Array:
 
 
 func outcome() -> String:
-	var party := entities.filter(func(e): return e.team == 0 and e.kind == "fighter" and e.alive())
-	if party.is_empty():
+	var party := 0
+	var foes := 0
+	for e in entities:
+		if e.hp > 0:
+			if e.team == 0 and e.kind == "fighter":
+				party += 1
+			elif e.team == 1:
+				foes += 1
+	if party == 0:
 		return "defeat"
-	if team_alive(1).is_empty():
+	if foes == 0:
 		return "victory"
 	return "running"
 
 
 # ---------------------------------------------------------------- movement
-
-func _field_to(e) -> Dictionary:
-	if not _fields.has(e.id) or tick - int(_field_tick.get(e.id, -999)) >= 10:
-		_fields[e.id] = grid.flow_field(grid.to_cell(e.pos))
-		_field_tick[e.id] = tick
-	return _fields[e.id]
-
 
 func move(e, dir: Vector2) -> void:
 	# separation from same-team neighbours (deterministic order)
@@ -74,6 +98,7 @@ func move(e, dir: Vector2) -> void:
 	e.moving = dir.length_squared() > 0.0001
 	if not e.moving:
 		return
+	e.last_dir = dir
 	var v: Vector2 = dir.normalized() * e.speed if dir.length() > 1.0 else dir * e.speed
 	if absf(v.x) > 0.05:
 		e.facing = 1 if v.x > 0 else -1
@@ -89,7 +114,7 @@ func move_toward_entity(e, target) -> void:
 	if e.pos.distance_to(target.pos) < 20.0:
 		move(e, target.pos - e.pos)
 	else:
-		var wp: Vector2 = grid.next_step(_field_to(target), e.pos)
+		var wp: Vector2 = grid.step_toward(grid.to_cell(target.pos), e.pos)
 		move(e, wp - e.pos)
 
 
@@ -156,7 +181,10 @@ func _damage(src, dst, power: float) -> void:
 	events.append({"tick": tick, "type": "hit", "by": src.id, "target": dst.id, "dmg": dmg, "hp": dst.hp})
 	if not dst.alive():
 		src.stats_dealt["kills"] += 1
-		events.append({"tick": tick, "type": "defeated", "target": dst.id, "by": src.id})
+		events.append({"tick": tick, "type": "defeated", "target": dst.id, "by": src.id, "target_team": dst.team, "target_kind": dst.kind})
+	elif dst.kind == "fighter" and not dst.low_hp_called and float(dst.hp) / dst.max_hp < 0.35:
+		dst.low_hp_called = true
+		events.append({"tick": tick, "type": "low_hp", "target": dst.id})
 
 
 func resolve_cast(e) -> void:
@@ -198,8 +226,12 @@ func choose_ability(e, target) -> Array:
 			if ally:
 				return [ab, ally]
 		elif kind == "taunt":
-			var threats := entities.filter(func(o): return o.team != e.team and o.alive() and e.pos.distance_to(o.pos) <= r)
-			if threats.size() >= 2 and e.taunt_left <= 0:
+			var threats := 0
+			if e.taunt_left <= 0:
+				for o in entities:
+					if o.team != e.team and o.hp > 0 and e.pos.distance_to(o.pos) <= r:
+						threats += 1
+			if threats >= 2:
 				return [ab, e]
 		elif target and e.pos.distance_to(target.pos) <= r + target.radius:
 			return [ab, target]
@@ -257,14 +289,27 @@ func step(input: Dictionary = {}) -> void:
 	if outcome() != "running":
 		return
 	tick += 1
+	if not forward:
+		GIRT.in_tick = true
+	leader_manual = not input.is_empty()
 	var l = leader()
+	if not engaged and l:
+		var foe = nearest(l, 1, 112.0)
+		if foe:
+			engaged = true
+			events.append({"tick": tick, "type": "battle_start", "by": l.id})
+	var idx := 0
 	for e in entities:
+		idx += 1
 		if not e.alive():
 			continue
 		if e == l and not input.is_empty():
 			_player_control(e, input)
-		else:
+		elif think_interval <= 1 or (tick + idx) % think_interval == 0:
+			e.last_dir = Vector2.ZERO
 			think(e)
+		elif e.moving and e.last_dir != Vector2.ZERO:
+			move(e, e.last_dir)
 	for e in entities:
 		if not e.alive():
 			e.anim = "dead"
@@ -281,6 +326,10 @@ func step(input: Dictionary = {}) -> void:
 		if e.hit_flash > 0:
 			e.hit_flash -= 1
 		_animate(e)
+	if outcome() == "victory" and think_interval <= 1:
+		events.append({"tick": tick, "type": "victory"})
+	if not forward:
+		GIRT.in_tick = false
 
 
 func _player_control(e, input: Dictionary) -> void:

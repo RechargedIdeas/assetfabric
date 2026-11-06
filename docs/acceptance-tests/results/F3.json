@@ -1,0 +1,443 @@
+{
+  "description": "Party AI: BT + GIRT policy, callouts, intents, dialogue, time-freeze swap advisor",
+  "errors": [],
+  "increment": "party-ai",
+  "milestone": "F3",
+  "passed": true,
+  "perf": {
+    "field_warm_ms": 77.19,
+    "lm_p95_us": 43,
+    "policy_p95_us": 16,
+    "swap_target_met": false,
+    "swap_target_ms": 50.0,
+    "swap_threaded": true,
+    "swap_wall_ms": 63.82
+  },
+  "result": {
+    "abilities_loaded": 14,
+    "abilities_used": [
+      "arrow",
+      "bite",
+      "claw",
+      "mend",
+      "shield_bash",
+      "slam",
+      "slash",
+      "smash",
+      "spark",
+      "spit",
+      "taunt",
+      "volley"
+    ],
+    "ai": {
+      "brain": "bt+policy",
+      "callouts": [
+        {
+          "event": "battle_start",
+          "line": "Shields up, friend.",
+          "tick": 256,
+          "who": "kael"
+        },
+        {
+          "event": "swap_in",
+          "line": "My turn to aim.",
+          "tick": 260,
+          "who": "nyra"
+        },
+        {
+          "event": "heal",
+          "line": "Hold still, friend.",
+          "tick": 355,
+          "who": "sola"
+        },
+        {
+          "event": "taunt",
+          "line": "Face me!",
+          "tick": 390,
+          "who": "bram"
+        },
+        {
+          "event": "heal",
+          "line": "Patched you up, friend.",
+          "tick": 465,
+          "who": "sola"
+        },
+        {
+          "event": "kill",
+          "line": "That's done.",
+          "tick": 490,
+          "who": "kael"
+        },
+        {
+          "event": "kill",
+          "line": "Gone.",
+          "tick": 545,
+          "who": "bram"
+        },
+        {
+          "event": "heal",
+          "line": "Hold still, friend.",
+          "tick": 575,
+          "who": "sola"
+        },
+        {
+          "event": "kill",
+          "line": "That's done.",
+          "tick": 610,
+          "who": "kael"
+        },
+        {
+          "event": "kill",
+          "line": "Rest now.",
+          "tick": 638,
+          "who": "bram"
+        },
+        {
+          "event": "kill",
+          "line": "Target down.",
+          "tick": 641,
+          "who": "nyra"
+        },
+        {
+          "event": "victory",
+          "line": "Not a single wasted arrow.",
+          "tick": 641,
+          "who": "nyra"
+        }
+      ],
+      "callouts_total": 12,
+      "cascade": {
+        "callout": 12,
+        "callout_request": 15,
+        "dialogue_request": 2,
+        "intent": 2
+      },
+      "decisions": {
+        "bt_ticks": 8678,
+        "policy": 109,
+        "rule": 2554
+      },
+      "dialogue": [
+        {
+          "e2e_ms": 0.07,
+          "persona": "kael",
+          "reply": "the old tunnels lead to the cave remembers every step we take"
+        },
+        {
+          "e2e_ms": 0.09,
+          "persona": "sola",
+          "reply": "the water"
+        }
+      ],
+      "field_warm_ms": 77.19,
+      "girt": {
+        "callouts_served": 12,
+        "lm_calls": 2,
+        "lm_p95_us": 43,
+        "lm_refused_in_tick": 0,
+        "policy_calls": 109,
+        "policy_fallbacks": 0,
+        "policy_p95_us": 16,
+        "registry": [
+          {
+            "arch": "mlp-7-12-1-tanh",
+            "backend": "mlp-gdscript",
+            "kind": "policy",
+            "model_id": "P-TargetSelect"
+          },
+          {
+            "backend": "persona-bigram",
+            "kind": "lm",
+            "model_id": "M-PersonaLM"
+          },
+          {
+            "backend": "callout-cache",
+            "kind": "cache",
+            "model_id": "CalloutCache"
+          }
+        ]
+      },
+      "intents": [
+        {
+          "intent": "focus",
+          "target_kind": "rock_brute",
+          "text": "everyone focus the brute",
+          "tick": 201
+        },
+        {
+          "intent": "aggressive",
+          "target_kind": "",
+          "text": "charge",
+          "tick": 421
+        }
+      ],
+      "lm_selftest": {
+        "bram": [
+          "i will carry what you cannot",
+          "slow steps still reach the stone is over",
+          "slow steps still reach the tunnel",
+          "the stone is over",
+          "the seeds and wait for rain"
+        ],
+        "kael": [
+          "a steady blade beats a",
+          "i trust the open fields",
+          "the old tunnels lead to the cave remembers every step we take",
+          "we move",
+          "stay close and then we take"
+        ],
+        "nyra": [
+          "every arrow counts in a quicker eye",
+          "keep them falling",
+          "keep them busy and a quicker eye",
+          "the open fields",
+          "the exit from here if you look up"
+        ],
+        "sola": [
+          "a long way down here",
+          "i keep the moss glows brighter near the water",
+          "i keep the farm in my pack",
+          "we are stronger when we",
+          "we stay together"
+        ]
+      },
+      "selftest": [
+        21.1046,
+        -28.5776,
+        22.5013
+      ],
+      "swap_parity": true,
+      "swap_recs": [
+        [
+          "nyra",
+          11
+        ],
+        [
+          "kael",
+          7.26
+        ],
+        [
+          "sola",
+          5
+        ],
+        [
+          "bram",
+          -17
+        ]
+      ],
+      "swap_threaded": true,
+      "swap_wall_ms": 63.82,
+      "swaps": [
+        {
+          "tick": 260,
+          "to": "nyra",
+          "wall_ms": 63.82
+        }
+      ]
+    },
+    "assets": [
+      "cave_02",
+      "spr_kael",
+      "spr_nyra",
+      "spr_bram",
+      "spr_sola",
+      "spr_ember_fox",
+      "spr_lumen_wisp",
+      "spr_stone_tortle",
+      "spr_emberling",
+      "spr_cave_mite",
+      "spr_rock_brute"
+    ],
+    "encounter": "party_ai",
+    "entities": {
+      "bram": {
+        "alive": true,
+        "casts": 12,
+        "damage": 104,
+        "healing": 0,
+        "hits": 24,
+        "hp": 35,
+        "kills": 3,
+        "kind": "fighter",
+        "max_hp": 81,
+        "team": 0
+      },
+      "bram_stone_tortle": {
+        "alive": true,
+        "casts": 4,
+        "damage": 6,
+        "healing": 0,
+        "hits": 4,
+        "hp": 22,
+        "kills": 1,
+        "kind": "pet",
+        "max_hp": 40,
+        "team": 0
+      },
+      "cave_mite_4": {
+        "alive": false,
+        "casts": 4,
+        "damage": 5,
+        "healing": 0,
+        "hits": 4,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_mite_5": {
+        "alive": false,
+        "casts": 10,
+        "damage": 12,
+        "healing": 0,
+        "hits": 10,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_mite_6": {
+        "alive": false,
+        "casts": 5,
+        "damage": 5,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "emberling_1": {
+        "alive": false,
+        "casts": 7,
+        "damage": 10,
+        "healing": 0,
+        "hits": 7,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_2": {
+        "alive": false,
+        "casts": 8,
+        "damage": 11,
+        "healing": 0,
+        "hits": 8,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_3": {
+        "alive": false,
+        "casts": 8,
+        "damage": 8,
+        "healing": 0,
+        "hits": 8,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "kael": {
+        "alive": true,
+        "casts": 15,
+        "damage": 91,
+        "healing": 0,
+        "hits": 14,
+        "hp": 26,
+        "kills": 3,
+        "kind": "fighter",
+        "max_hp": 62,
+        "team": 0
+      },
+      "kael_ember_fox": {
+        "alive": false,
+        "casts": 1,
+        "damage": 1,
+        "healing": 0,
+        "hits": 1,
+        "hp": 0,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 22,
+        "team": 0
+      },
+      "nyra": {
+        "alive": true,
+        "casts": 13,
+        "damage": 53,
+        "healing": 0,
+        "hits": 19,
+        "hp": 46,
+        "kills": 1,
+        "kind": "fighter",
+        "max_hp": 46,
+        "team": 0
+      },
+      "nyra_lumen_wisp": {
+        "alive": false,
+        "casts": 4,
+        "damage": 4,
+        "healing": 0,
+        "hits": 4,
+        "hp": 0,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 18,
+        "team": 0
+      },
+      "rock_brute_7": {
+        "alive": false,
+        "casts": 4,
+        "damage": 55,
+        "healing": 0,
+        "hits": 7,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 64,
+        "team": 1
+      },
+      "rock_brute_8": {
+        "alive": false,
+        "casts": 8,
+        "damage": 100,
+        "healing": 0,
+        "hits": 15,
+        "hp": 0,
+        "kills": 2,
+        "kind": "enemy",
+        "max_hp": 64,
+        "team": 1
+      },
+      "sola": {
+        "alive": true,
+        "casts": 13,
+        "damage": 8,
+        "healing": 33,
+        "hits": 8,
+        "hp": 20,
+        "kills": 0,
+        "kind": "fighter",
+        "max_hp": 39,
+        "team": 0
+      }
+    },
+    "hits": 138,
+    "increment": "party-ai",
+    "music_loaded": true,
+    "outcome": "victory",
+    "sim_ms": 281.39,
+    "state_hash": "1a4d499c041bf169",
+    "ticks": 641,
+    "tres_loaded": 14
+  }
+}

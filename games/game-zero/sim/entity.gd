@@ -26,6 +26,8 @@ var moving: bool = false
 var hit_flash: int = 0
 var stats_dealt := {"damage": 0, "healing": 0, "hits": 0, "kills": 0, "casts": 0}
 var last_ability: String = ""
+var low_hp_called := false
+var last_dir := Vector2.ZERO
 
 
 static func create(id_: String, team_: int, kind_: String, sprite: String, stats: Dictionary, abilities_: Array, at: Vector2):
@@ -59,6 +61,23 @@ func ready_abilities() -> Array:
 		if int(cooldowns.get(a["id"], 0)) <= 0:
 			out.append(a)
 	return out
+
+
+func copy():
+	var c = new()
+	for prop in ["id", "team", "kind", "sprite_id", "pos", "radius", "max_hp", "hp", "atk", "def", "speed", "aggro_range",
+			"owner_id", "is_leader", "tier", "taunt_left", "facing", "anim", "moving", "hit_flash", "last_ability"]:
+		c.set(prop, get(prop))
+	c.abilities = abilities
+	c.cooldowns = cooldowns.duplicate()
+	c.casting = casting.duplicate()
+	c.stats_dealt = stats_dealt.duplicate()
+	c.low_hp_called = low_hp_called
+	c.last_dir = last_dir
+	for m in ["bt_target", "bt_target_tick"]:   # brain memory (ids/ints only, never object refs)
+		if has_meta(m):
+			c.set_meta(m, get_meta(m))
+	return c
 
 
 func snapshot() -> Dictionary:

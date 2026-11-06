@@ -1,0 +1,147 @@
+{
+ "callouts": {
+  "bram": {
+   "ally_down": [
+    "%ALLY%! I am coming!"
+   ],
+   "battle_start": [
+    "Behind me.",
+    "Let them come."
+   ],
+   "heal": [
+    "Warm. Thank you."
+   ],
+   "kill": [
+    "Rest now.",
+    "Gone."
+   ],
+   "low_hp": [
+    "Still standing.",
+    "Hm. That stung."
+   ],
+   "swap_in": [
+    "Slow and sure."
+   ],
+   "taunt": [
+    "Face me!",
+    "Look here!"
+   ],
+   "victory": [
+    "Quiet again.",
+    "Everyone whole?"
+   ]
+  },
+  "kael": {
+   "ally_down": [
+    "%ALLY% is down! Cover!"
+   ],
+   "battle_start": [
+    "Shields up, friend.",
+    "Shields up, team.",
+    "Form on me.",
+    "Here they come."
+   ],
+   "heal": [
+    "Thanks, I'll hold."
+   ],
+   "kill": [
+    "One less beast.",
+    "One less thing.",
+    "That's done."
+   ],
+   "low_hp": [
+    "I'm cracked, not broken.",
+    "Need a patch, friend.",
+    "Need a patch, team."
+   ],
+   "swap_in": [
+    "I've got the lead.",
+    "Follow my line."
+   ],
+   "taunt": [
+    "Over here!"
+   ],
+   "victory": [
+    "Area clear. Breathe.",
+    "Good work, friend.",
+    "Good work, team."
+   ]
+  },
+  "nyra": {
+   "ally_down": [
+    "Lost %ALLY%! Pull back!"
+   ],
+   "battle_start": [
+    "Eyes up, I've got range.",
+    "Marking targets."
+   ],
+   "heal": [
+    "Owe you one."
+   ],
+   "kill": [
+    "Clean shot.",
+    "Target down."
+   ],
+   "low_hp": [
+    "Too close, too close!",
+    "Getting clipped here."
+   ],
+   "swap_in": [
+    "My turn to aim."
+   ],
+   "taunt": [
+    "Hey, ugly!"
+   ],
+   "victory": [
+    "Not a single wasted arrow.",
+    "Easy, hotshot.",
+    "Easy, partner."
+   ]
+  },
+  "sola": {
+   "ally_down": [
+    "%ALLY%, hold on!"
+   ],
+   "battle_start": [
+    "I'll keep you standing.",
+    "Light's ready."
+   ],
+   "heal": [
+    "Patched you up, dear.",
+    "Patched you up, friend.",
+    "Hold still, dear.",
+    "Hold still, friend."
+   ],
+   "kill": [
+    "Back to the dark.",
+    "Got it!"
+   ],
+   "low_hp": [
+    "I need cover!",
+    "Mend me, someone!"
+   ],
+   "swap_in": [
+    "Let me lead for a bit."
+   ],
+   "taunt": [
+    "Over here, shade!",
+    "Over here, creature!"
+   ],
+   "victory": [
+    "No one left behind.",
+    "Let's rest by the farm."
+   ]
+  }
+ },
+ "events": [
+  "battle_start",
+  "low_hp",
+  "kill",
+  "heal",
+  "taunt",
+  "swap_in",
+  "victory",
+  "ally_down"
+ ],
+ "schema_version": "1.0"
+}

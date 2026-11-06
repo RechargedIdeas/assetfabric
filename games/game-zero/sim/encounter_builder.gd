@@ -16,7 +16,7 @@ static func diminishing(total: float, cap: float) -> float:
 
 static func _free_cells_near(grid, origin: Vector2i, count: int, taken: Dictionary) -> Array:
 	var out := []
-	var field: Dictionary = grid.flow_field(origin)
+	var field: Dictionary = grid.field_dict(origin)
 	var cells := field.keys()
 	cells.sort_custom(func(a, b): return field[a] < field[b] or (field[a] == field[b] and (a.y < b.y or (a.y == b.y and a.x < b.x))))
 	for c in cells:

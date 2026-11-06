@@ -24,8 +24,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | principle only |
 | **MirrorWeave** | Mirror | Cross-device control/stream | C9 | deferred |
 | **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | deferred |
-| **GIRT** | — | Inference runtime | F3 | deferred |
-| **CascadeHub** | — | Multi-agent bus | F3 | deferred |
+| **GIRT** | — | Inference runtime | F3 | **real (CPU/GDScript)** — `autoload/girt.gd`: registry, latency budgets, telemetry, LM refusal inside tick; backends `mlp-gdscript`, `persona-bigram`. ONNX Runtime GDExtension deferred |
+| **CascadeHub** | — | Multi-agent bus | F3 | **real** — `autoload/cascade_hub.gd`: typed topics, drained after each tick |
 | **GodotIPC / PWAPipeline / …** | — | Platform toolkit layers | staged | deferred |
 
 ### CLI acceptance

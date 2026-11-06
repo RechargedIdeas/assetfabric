@@ -4,6 +4,7 @@
   "increment": "sandbox-encounter",
   "milestone": "F1",
   "passed": true,
+  "perf": {},
   "result": {
     "abilities_loaded": 14,
     "abilities_used": [
@@ -46,7 +47,7 @@
     "increment": "sandbox-encounter",
     "music_loaded": false,
     "outcome": "victory",
-    "sim_ms": 32.9,
+    "sim_ms": 7.34,
     "state_hash": "3b2bd97029c2a7fb",
     "ticks": 400,
     "tres_loaded": 14

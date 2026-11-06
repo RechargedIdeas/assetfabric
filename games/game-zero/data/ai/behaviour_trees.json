@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "note": "Data-driven behaviour trees (F3). Leaves are implemented in ai/brain.gd. [INFERENCE] structure.",
+  "trees": {
+    "fighter": {"type": "selector", "children": [
+      {"type": "condition", "name": "is_casting"},
+      {"type": "sequence", "children": [{"type": "condition", "name": "ally_needs_heal"}, {"type": "action", "name": "cast_heal"}]},
+      {"type": "sequence", "children": [{"type": "condition", "name": "should_taunt"}, {"type": "action", "name": "cast_taunt"}]},
+      {"type": "sequence", "children": [{"type": "condition", "name": "tactic_defensive"}, {"type": "condition", "name": "not_threatened"}, {"type": "action", "name": "regroup"}]},
+      {"type": "sequence", "children": [{"type": "action", "name": "select_target"}, {"type": "action", "name": "engage"}]},
+      {"type": "action", "name": "regroup"}
+    ]},
+    "pet": {"type": "selector", "children": [
+      {"type": "condition", "name": "is_casting"},
+      {"type": "sequence", "children": [{"type": "action", "name": "select_target"}, {"type": "action", "name": "engage"}]},
+      {"type": "action", "name": "regroup"}
+    ]},
+    "enemy": {"type": "selector", "children": [
+      {"type": "condition", "name": "is_casting"},
+      {"type": "sequence", "children": [{"type": "action", "name": "select_target"}, {"type": "action", "name": "engage"}]},
+      {"type": "action", "name": "idle"}
+    ]}
+  }
+}

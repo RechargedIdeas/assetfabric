@@ -46,12 +46,17 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/pipeline.py`, `content/briefs/` | brief → generator → gates → store → Godot export + `fabric_assets.json` | F1 |
 | `forge/generators/codegen.py`, `content/roster/` | Roster YAML → `game_data.json` + ability `.tres`; derived sprite briefs | F2 |
 | `forge/generators/audio.py` | G1-Audio chiptune stems + SFX (WAV) | F2 |
+| `forge/generators/policy.py` | P-TargetSelect: NumPy behaviour cloning → JSON MLP + parity probe | F3 |
+| `forge/generators/callouts.py`, `content/personas/` | Safety-gated callout cache; persona bigram LM stand-in + mirrored sampler | F3 |
 | `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
 | `forge/report.py` | STATUS.md generator | F1 |
 | `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
 | `games/game-zero/sim/` | Deterministic fixed-step sim: grid, entity, `combat_sim` (abilities, party, pets, taunt), `encounter_builder` (roster refs → entities, pet bonuses) | F1/F2 |
 | `games/game-zero/data/` | `ability.gd` Resource, encounters, `generated/` (codegen output) | F2 |
-| `games/game-zero/scenes/` | boot (router), `encounter.gd` (render, input, music) used by sandbox/combat scenes | F0–F2 |
+| `games/game-zero/scenes/` | boot (router), `encounter.gd` (render, input, music, freeze overlay, command box, dialogue) used by sandbox/combat/party scenes | F0–F3 |
+| `games/game-zero/autoload/girt.gd` | GIRT: model registry, budgets, telemetry, policy + LM backends; refuses LM inside tick | F3 |
+| `games/game-zero/autoload/cascade_hub.gd` | CascadeHub typed bus, drained after each tick | F3 |
+| `games/game-zero/ai/` | `brain.gd` (compiled BTs + policy targeting), `swap_advisor.gd` (threaded forward sim), `intent_grammar.gd` | F3 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)

@@ -44,7 +44,7 @@ def register(kind: str) -> Callable[[GeneratorFn], GeneratorFn]:
 def load_all() -> dict[str, GeneratorFn]:
     from forge.generators import dyeworks, sprite, tile  # noqa: F401
     try:
-        from forge.generators import codegen, audio  # noqa: F401  (F2+)
+        from forge.generators import audio, callouts, codegen, policy  # noqa: F401  (F2+)
     except ImportError:
         pass
     return REGISTRY

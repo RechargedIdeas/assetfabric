@@ -201,3 +201,8 @@ func json_asset(id: String, file_name: String = "") -> Variant:
 	if file_name == "":
 		file_name = id + ".json"
 	return read_json(file_path(id, file_name))
+
+
+func _exit_tree() -> void:
+	_tex_cache.clear()
+	_audio_cache.clear()

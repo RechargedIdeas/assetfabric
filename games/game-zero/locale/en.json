@@ -6,7 +6,7 @@
   "hud.objective.exit": "Reach the exit",
   "hud.victory": "Encounter cleared!",
   "hud.defeat": "You were defeated",
-  "hud.hint.controls": "WASD/Arrows move · J/Space attack · K skill · R restart",
+  "hud.hint.controls": "WASD move · J attack · K skill · Tab freeze/swap · Q tactic · / command · E talk · R restart",
   "hud.enemies_left": "Enemies",
   "roster.kael": "Kael",
   "roster.nyra": "Nyra",
@@ -27,5 +27,10 @@
   "ability.bite": "Bite",
   "ability.claw": "Claw",
   "ability.spit": "Spit",
-  "ability.smash": "Smash"
+  "ability.smash": "Smash",
+  "hud.freeze.title": "TIME FROZEN — ranked swaps",
+  "hud.freeze.threats": "Threats",
+  "hud.freeze.hint": "1-4 swap · Tab resume",
+  "hud.tactic": "Tactic",
+  "hud.command.placeholder": "Command: focus the brute / regroup / charge / swap to nyra"
 }

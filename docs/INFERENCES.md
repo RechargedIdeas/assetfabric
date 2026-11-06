@@ -51,3 +51,17 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 34. **G1-Audio arrangement** (NES-style pulse/triangle/noise, 4 s loops, per-state tempo/scale/density) is original; chat only required chiptune stems remixable by macro state.
 35. **Follower rule brains** (target nearest to leader, ranged hold at 80 % range, regroup leash) are the F2 stand-in for F3 BT + ONNX policies.
 36. **Autoplay leader** hunts the nearest hostile when none is in range (acceptance driver only).
+
+## F3 — GIRT + CascadeHub + micro-LM path + callouts
+
+37. **GIRT backend for F3 = pure GDScript** (`mlp-gdscript`, `persona-bigram`): no ONNX Runtime GDExtension yet. Model files are JSON so they stay ONNX-exportable; the facade (registry, budgets, telemetry, refusal in tick) is the contract ADR-0004 asks for.
+38. **P-TargetSelect** features (dist, hp ratio, hp, tier, atk, in-range, threatens-low-ally), K = 4 candidates, MLP 7→12→1 tanh, trained by behaviour cloning on a focus-fire teacher utility (NumPy, seed 4). Teacher weights are ours.
+39. **Persona "micro-LM" = per-persona bigram table + LCG sampler with a repetition guard** — a deterministic stand-in for the spec's LoRA micro-LMs until a real small LM backend exists. Exact Python ↔ GDScript parity is a gate.
+40. **Callout cache** = persona templates × ally/foe word slots, expanded offline and safety-gated (length, blocklist, unresolved slots); `%ALLY%` resolved at runtime. Personas and lines in `content/personas/personas.yaml` are ours.
+41. **Behaviour-tree vocabulary** (selector/sequence/condition/action; leaves is_casting, ally_needs_heal, should_taunt, tactic_defensive, not_threatened, cast_heal, cast_taunt, select_target, engage, regroup, idle) and tree shapes.
+42. **Retarget at 10 Hz** (every 6 ticks, or when target dies / focus intent changes) instead of every tick.
+43. **Swap advisor scoring**: Δfoe HP − 1.5·Δparty HP + 2·(candidate damage+healing) + 20·candidate HP ratio + 50 if victory; horizon 120 ticks (spec "~2 s"), forward-sim brains at 15 Hz (LOD 4), movement at 60 Hz.
+44. **Swap budget**: GAME_SPEC's "< 50 ms" is tracked as a soft target; hard gate is 150 ms. Parallel candidates on WorkerThreadPool with per-thread forks (brain, grid, abilities) — identical results to serial (tested).
+45. **Intent grammar** verbs (focus/target/attack/hit, regroup/fall back/retreat, defend/hold, charge/push/go, swap/switch) — closed vocabulary shared with the future Vosk path (ADR-0006).
+46. **CascadeHub** topics (`intent`, `callout_request`, `callout`, `dialogue_request`) drained once after each fixed tick, never inside it.
+47. **Demo/attract mode**: windowed `--autoplay` plays the encounter script and holds the freeze overlay 90 frames so it can be captured.

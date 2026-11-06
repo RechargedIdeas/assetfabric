@@ -1,0 +1,81 @@
+# Persona sources for callouts + the micro-LM stand-in (per-character "LoRA" table).
+# [INFERENCE] voices and lines are original placeholders (D-005).
+schema_version: "1.0"
+safety:
+  max_chars: 72
+  blocklist: [kill yourself, slur, hate, idiot, stupid, damn, hell]
+events: [battle_start, low_hp, kill, heal, taunt, swap_in, victory, ally_down]
+personas:
+  kael:
+    traits: [steady, protective, dry]
+    words: {ally: [friend, team, crew], foe: [beast, thing, brute]}
+    callouts:
+      battle_start: ["Shields up, {ally}.", "Form on me.", "Here they come."]
+      low_hp: ["I'm cracked, not broken.", "Need a patch, {ally}."]
+      kill: ["One less {foe}.", "That's done."]
+      heal: ["Thanks, I'll hold."]
+      taunt: ["Over here!"]
+      swap_in: ["I've got the lead.", "Follow my line."]
+      victory: ["Area clear. Breathe.", "Good work, {ally}."]
+      ally_down: ["{ally_name} is down! Cover!"]
+    corpus:
+      - the cave remembers every step we take
+      - stay close and keep your shield high
+      - i trust the team more than the map
+      - we hold the line and then we move
+      - the old tunnels lead to the open fields
+      - a steady blade beats a fast one
+  nyra:
+    traits: [sharp, quick, wry]
+    words: {ally: [hotshot, partner], foe: [target, pest]}
+    callouts:
+      battle_start: ["Eyes up, I've got range.", "Marking targets."]
+      low_hp: ["Too close, too close!", "Getting clipped here."]
+      kill: ["Clean shot.", "Target down."]
+      heal: ["Owe you one."]
+      taunt: ["Hey, ugly!"]
+      swap_in: ["My turn to aim."]
+      victory: ["Not a single wasted arrow.", "Easy, {ally}."]
+      ally_down: ["Lost {ally_name}! Pull back!"]
+    corpus:
+      - i can see the exit from here if you look up
+      - every arrow counts in a cave this dark
+      - the wind smells like the open fields
+      - keep them busy and i keep them falling
+      - quick feet and a quicker eye
+  bram:
+    traits: [huge, calm, kind]
+    words: {ally: [little one, friend], foe: [rock, lump]}
+    callouts:
+      battle_start: ["Behind me.", "Let them come."]
+      low_hp: ["Still standing.", "Hm. That stung."]
+      kill: ["Rest now.", "Gone."]
+      heal: ["Warm. Thank you."]
+      taunt: ["Face me!", "Look here!"]
+      swap_in: ["Slow and sure."]
+      victory: ["Quiet again.", "Everyone whole?"]
+      ally_down: ["{ally_name}! I am coming!"]
+    corpus:
+      - the stone is patient and so am i
+      - i will carry what you cannot
+      - plant the seeds and wait for rain
+      - the farm will feed us when this is over
+      - slow steps still reach the end of the tunnel
+  sola:
+    traits: [bright, careful, warm]
+    words: {ally: [dear, friend], foe: [shade, creature]}
+    callouts:
+      battle_start: ["I'll keep you standing.", "Light's ready."]
+      low_hp: ["I need cover!", "Mend me, someone!"]
+      kill: ["Back to the dark.", "Got it!"]
+      heal: ["Patched you up, {ally}.", "Hold still, {ally}."]
+      taunt: ["Over here, {foe}!"]
+      swap_in: ["Let me lead for a bit."]
+      victory: ["No one left behind.", "Let's rest by the farm."]
+      ally_down: ["{ally_name}, hold on!"]
+    corpus:
+      - a little light goes a long way down here
+      - i keep the herbs from the farm in my pack
+      - breathe in and let the hurt go
+      - we are stronger when we stay together
+      - the moss glows brighter near the water

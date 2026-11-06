@@ -4,6 +4,21 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.3.0+f3] — 2026-11-05 — F3 GIRT + CascadeHub + callouts
+
+### Added
+- Generators: `policy` (P-TargetSelect MLP via NumPy behaviour cloning, holdout-accuracy gate, parity probe), `callouts` (persona × event cache with coverage + safety gates), `persona_lm` (bigram tables + deterministic LCG sampler with repetition guard). `content/personas/personas.yaml`, `content/briefs/f3/ai.yaml`.
+- Game Zero: `GIRT` autoload (registry, latency budgets, telemetry, refuses LM inside the tick), `CascadeHub` autoload (typed bus drained after each tick), `ai/brain.gd` (data-driven BTs compiled to int opcodes + policy targeting), `ai/swap_advisor.gd` (forward-sim swap ranking, threaded with serial parity), `ai/intent_grammar.gd`, `data/ai/behaviour_trees.json`, `party_ai` encounter + `party.tscn`, freeze overlay, command box, callouts and dialogue HUD, demo-mode script playback.
+- F3 increment `party-ai` + acceptance (with GDScript↔Python MLP and LM parity, perf block); `tests/test_f3_ai.py`; `tools/profile.gd` dev profiler.
+
+### Changed
+- Grid: wall mask + all-pairs BFS path table (O(1), allocation-free pathing), `fork()` for worker threads; flow fields as `PackedInt32Array`.
+- Combat sim: leader swap, `clone()`, `forward` mode (no global writes), think LOD, battle_start/low_hp/victory/swap events, allocation-free hot paths. F2 first-combat now wins in 561 ticks (was 563) because paths are always fresh.
+- numpy added to dependencies.
+
+### Known
+- Swap advisor ≈ 50–80 ms on the reference box vs. GAME_SPEC target < 50 ms (hard ceiling 150 ms enforced; target tracked in `results/F3.json` `perf`).
+
 ## [0.2.0+f2] — 2026-11-05 — F2 Codegen + G1-Audio
 
 ### Added
