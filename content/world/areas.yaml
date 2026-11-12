@@ -7,14 +7,22 @@ areas:
   - id: field
     tilemap: field_01
     biome: field
-    links: {E: {to: cave_deep, arrive: S}}
+    links: {E: {to: tunnels, arrive: S}}
     nodes: {G: flint}
     packs:
       - {spawn: 0, units: [{ref: emberling, count: 2}]}
+  - id: tunnels                 # GAME_SPEC §4.4 biomes: caves, tunnels, open world
+    tilemap: tunnels_01
+    biome: cave
+    links: {S: {to: field, arrive: E}, E: {to: cave_deep, arrive: S}}
+    nodes: {G: flint}
+    packs:
+      - {spawn: 0, units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 1}]}
+      - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 1}]}
   - id: cave_deep
     tilemap: cave_deep
     biome: cave
-    links: {S: {to: field, arrive: E}, E: {to: warden_lair, arrive: S, requires: "stage:q_warden>=warden"}}
+    links: {S: {to: tunnels, arrive: E}, E: {to: warden_lair, arrive: S, requires: "stage:q_warden>=warden"}}
     nodes: {G: cave_moss}
     packs:
       - {spawn: 0, units: [{ref: cave_mite, count: 3}]}

@@ -1,0 +1,1477 @@
+{
+  "description": "Vertical slice (GAME_SPEC \u00a76.1): select \u2192 farm \u2192 tunnels \u2192 cave \u2192 craft \u2192 Cave Warden \u2192 open world \u2192 save; quit/reload parity, 12-selection matrix, quest/loot/save parity",
+  "errors": [],
+  "increment": "vertical-slice",
+  "milestone": "F6",
+  "passed": true,
+  "perf": {
+    "length_note": "QA autopilot plays at max efficiency (no exploration, reading, or menu time); human length needs a GUI playtest",
+    "length_within_target": false,
+    "matrix_game_minutes": [
+      2.92,
+      2.95,
+      2.92,
+      2.75,
+      2.8,
+      2.75,
+      3.34,
+      3.37,
+      3.35,
+      2.92,
+      2.93,
+      2.9
+    ],
+    "matrix_wipes": 0,
+    "slice_game_minutes": 2.92,
+    "slice_ticks": 10516,
+    "slice_wall_ms": 4854.9,
+    "swap_wall_ms": [
+      43.51,
+      41.51
+    ],
+    "target_minutes": [
+      15.0,
+      20.0
+    ]
+  },
+  "result": {
+    "locale": {
+      "keys_checked": 84,
+      "missing": [],
+      "ok": true
+    },
+    "matrix": {
+      "mode": "full",
+      "runs": [
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 805,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.92,
+          "leader": "kael",
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10516,
+          "wall_ms": 4314,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 789,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.95,
+          "leader": "kael",
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10615,
+          "wall_ms": 4245.3,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 778,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.92,
+          "leader": "kael",
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10511,
+          "wall_ms": 4406.1,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 799,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.75,
+          "leader": "nyra",
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 9912,
+          "wall_ms": 4115,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 820,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.8,
+          "leader": "nyra",
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10064,
+          "wall_ms": 4035.5,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 792,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.75,
+          "leader": "nyra",
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 9897,
+          "wall_ms": 4295.5,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 813,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 3.34,
+          "leader": "bram",
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 12027,
+          "wall_ms": 4345.7,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 818,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 3.37,
+          "leader": "bram",
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 12119,
+          "wall_ms": 4424.8,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 800,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 3.35,
+          "leader": "bram",
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 12070,
+          "wall_ms": 4545.4,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 810,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.92,
+          "leader": "sola",
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10512,
+          "wall_ms": 4136.7,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 833,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.93,
+          "leader": "sola",
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10556,
+          "wall_ms": 4239.9,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 812,
+          "completed": true,
+          "exit": 0,
+          "game_minutes": 2.9,
+          "leader": "sola",
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 10448,
+          "wall_ms": 4188.1,
+          "wipes": 0
+        }
+      ]
+    },
+    "parity": {
+      "loot_probe_equal": true,
+      "quest_events": 13,
+      "quest_mismatches": []
+    },
+    "save_quit_reload": {
+      "exit_codes": [
+        0,
+        0
+      ],
+      "final_checksum": "cfef517f0cf2f740bb49c3431c95035ab1ef53fd1c6a94c32a0e6b3bf38dd327",
+      "final_equal_uninterrupted": true,
+      "loaded_equal_saved": true,
+      "migration_parity": {
+        "v1": {
+          "checksum_equal": true,
+          "gd_errors": [],
+          "steps_gd": [
+            1,
+            2,
+            3
+          ],
+          "steps_py": [
+            1,
+            2,
+            3
+          ]
+        },
+        "v2": {
+          "checksum_equal": true,
+          "gd_errors": [],
+          "steps_gd": [
+            2,
+            3
+          ],
+          "steps_py": [
+            2,
+            3
+          ]
+        },
+        "v3": {
+          "checksum_equal": true,
+          "gd_errors": [],
+          "steps_gd": [
+            3
+          ],
+          "steps_py": [
+            3
+          ]
+        }
+      },
+      "python_validates_save": true,
+      "quit_area": "tunnels",
+      "quit_checkpoint": 4,
+      "quit_tick": 4672,
+      "resumed_completed": true,
+      "resumed_ticks": 10516,
+      "script_errors": 0
+    },
+    "script_errors": 0,
+    "slice": {
+      "areas": [
+        {
+          "area": "field",
+          "arrive": "S",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 2,
+          "tick": 0
+        },
+        {
+          "area": "tunnels",
+          "arrive": "S",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 5,
+          "tick": 1121
+        },
+        {
+          "area": "cave_deep",
+          "arrive": "S",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 9,
+          "tick": 2431
+        },
+        {
+          "area": "tunnels",
+          "arrive": "E",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 0,
+          "tick": 4672
+        },
+        {
+          "area": "field",
+          "arrive": "E",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 0,
+          "tick": 5354
+        },
+        {
+          "area": "tunnels",
+          "arrive": "S",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 0,
+          "tick": 7157
+        },
+        {
+          "area": "cave_deep",
+          "arrive": "S",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 0,
+          "tick": 7841
+        },
+        {
+          "area": "warden_lair",
+          "arrive": "S",
+          "boss": true,
+          "buffs": 1,
+          "hostiles": 3,
+          "tick": 8760
+        },
+        {
+          "area": "field",
+          "arrive": "E",
+          "boss": false,
+          "buffs": 0,
+          "hostiles": 0,
+          "tick": 9640
+        }
+      ],
+      "boss": {
+        "attempt": 1,
+        "defeated": true,
+        "id": "cave_warden_1",
+        "phases_reached": 3,
+        "ref": "cave_warden",
+        "summons": 2,
+        "ticks": 805,
+        "tier": 3
+      },
+      "buff_at_boss": {
+        "atk": 11.8,
+        "bonus": {
+          "atk_pct": 0.2399,
+          "def_flat": 0,
+          "hp_pct": 0
+        },
+        "buffs": [
+          {
+            "bonus": {
+              "atk_pct": 0.15
+            },
+            "item": "ember_tonic"
+          }
+        ],
+        "gear": {
+          "shared": [
+            "flint_edge"
+          ],
+          "unique": {}
+        },
+        "leader": "kael"
+      },
+      "callouts_total": 17,
+      "checkpoints": [
+        {
+          "area": "field",
+          "checksum": "96e8f43f00292d3199fab79497be50cb4a875017ea8bbffac2b17b154208955f",
+          "n": 1,
+          "tick": 0
+        },
+        {
+          "area": "tunnels",
+          "checksum": "69908cb1be70d9071899bf18386b7987fcdd548398c71faa44fa6507ed277525",
+          "n": 2,
+          "tick": 1121
+        },
+        {
+          "area": "cave_deep",
+          "checksum": "478e917789cb36484fefb975700907dfb05092f367dee275a9c96eebdb8ce3d5",
+          "n": 3,
+          "tick": 2431
+        },
+        {
+          "area": "tunnels",
+          "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+          "n": 4,
+          "tick": 4672
+        },
+        {
+          "area": "field",
+          "checksum": "634b920589fb6b293f806dfb03c777c362395bcf69c8cc809a5d8e8f8742c25c",
+          "n": 5,
+          "tick": 5354
+        },
+        {
+          "area": "tunnels",
+          "checksum": "bf56352aa5c68c65b41f7a4c7852a845b6076b4f4d68c4cb4f9fbc0c23f5b2a9",
+          "n": 6,
+          "tick": 7157
+        },
+        {
+          "area": "cave_deep",
+          "checksum": "907f533b2c56e0a276d8a328d936692528897849f710da502a03e4cf44a78dbe",
+          "n": 7,
+          "tick": 7841
+        },
+        {
+          "area": "warden_lair",
+          "checksum": "c17f654e43d27268d5b41e7f5aafc3e2cd78ccfbfe572b3525c70b956a7b910f",
+          "n": 8,
+          "tick": 8760
+        },
+        {
+          "area": "field",
+          "checksum": "7fb853f224f7c7c52c08e953402b330025f39471523c4c83ae4e2b32b2808da2",
+          "n": 9,
+          "tick": 9640
+        },
+        {
+          "area": "field",
+          "checksum": "479619da989ffce78c16f068b4568176c557d8c917d951322714e15d615fefd0",
+          "n": 10,
+          "tick": 10516
+        }
+      ],
+      "completed": true,
+      "farming": {
+        "counters": {
+          "crafted": 5,
+          "gathered": 11,
+          "harvested": 14,
+          "kills": 21,
+          "planted": 7,
+          "used_ember_tonic": 1
+        },
+        "crafted": [
+          "moss_salve",
+          "moss_salve",
+          "ember_tonic",
+          "flint_edge",
+          "warden_charm"
+        ],
+        "gathered": [
+          "flint",
+          "flint",
+          "flint",
+          "flint",
+          "flint",
+          "flint",
+          "flint",
+          "cave_moss",
+          "cave_moss",
+          "cave_moss",
+          "cave_moss"
+        ],
+        "gear": {
+          "shared": [
+            "flint_edge"
+          ],
+          "unique": {
+            "kael": [
+              "warden_charm"
+            ]
+          }
+        },
+        "harvested": [
+          [
+            "glowcap",
+            2
+          ],
+          [
+            "glowcap",
+            2
+          ],
+          [
+            "sunroot",
+            2
+          ],
+          [
+            "sunroot",
+            2
+          ],
+          [
+            "glowcap",
+            2
+          ],
+          [
+            "glowcap",
+            2
+          ],
+          [
+            "sunroot",
+            2
+          ]
+        ],
+        "inventory": {
+          "brute_hide": 4,
+          "cave_moss": 7,
+          "coin": 65,
+          "ember_shard": 4,
+          "flint": 4,
+          "glowcap": 5,
+          "moss_salve": 2,
+          "sunroot": 4
+        },
+        "planted": [
+          "glowcap",
+          "glowcap",
+          "sunroot",
+          "sunroot",
+          "glowcap",
+          "glowcap",
+          "sunroot"
+        ],
+        "salves": []
+      },
+      "fighters": {
+        "bram": {
+          "level": 4,
+          "xp": 320
+        },
+        "kael": {
+          "level": 4,
+          "xp": 320
+        },
+        "nyra": {
+          "level": 4,
+          "xp": 320
+        },
+        "sola": {
+          "level": 4,
+          "xp": 320
+        },
+        "vex": {
+          "level": 1,
+          "xp": 0
+        }
+      },
+      "fights": [
+        {
+          "area": "field",
+          "boss": false,
+          "end": 764,
+          "kills": 2,
+          "start": 651,
+          "swap": false
+        },
+        {
+          "area": "tunnels",
+          "boss": false,
+          "end": 1350,
+          "kills": 3,
+          "start": 1197,
+          "swap": false
+        },
+        {
+          "area": "tunnels",
+          "boss": false,
+          "end": 2105,
+          "kills": 2,
+          "start": 1921,
+          "swap": false
+        },
+        {
+          "area": "cave_deep",
+          "boss": false,
+          "end": 2703,
+          "kills": 3,
+          "start": 2571,
+          "swap": true
+        },
+        {
+          "area": "cave_deep",
+          "boss": false,
+          "end": 3564,
+          "kills": 3,
+          "start": 3371,
+          "swap": false
+        },
+        {
+          "area": "cave_deep",
+          "boss": false,
+          "end": 4105,
+          "kills": 3,
+          "start": 3965,
+          "swap": false
+        },
+        {
+          "area": "warden_lair",
+          "boss": false,
+          "end": 9078,
+          "kills": 2,
+          "start": 8990,
+          "swap": false
+        },
+        {
+          "area": "warden_lair",
+          "boss": true,
+          "end": 9565,
+          "kills": 3,
+          "start": 9184,
+          "swap": true
+        }
+      ],
+      "game_minutes": 2.92,
+      "intents": 1,
+      "level_ups": [
+        [
+          "bram",
+          3,
+          1986
+        ],
+        [
+          "kael",
+          3,
+          1986
+        ],
+        [
+          "nyra",
+          3,
+          1986
+        ],
+        [
+          "sola",
+          3,
+          1986
+        ],
+        [
+          "bram",
+          4,
+          4077
+        ],
+        [
+          "kael",
+          4,
+          4077
+        ],
+        [
+          "nyra",
+          4,
+          4077
+        ],
+        [
+          "sola",
+          4,
+          4077
+        ]
+      ],
+      "loot": {
+        "drops": [
+          [
+            "emberling",
+            1,
+            []
+          ],
+          [
+            "emberling",
+            1,
+            []
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "sunroot_seed",
+                1
+              ]
+            ]
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            []
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                3
+              ]
+            ]
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "brute_hide",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "cave_moss",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                3
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                3
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            []
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "glowcap_spore",
+                1
+              ],
+              [
+                "coin",
+                4
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                2
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ]
+          ],
+          [
+            "emberling",
+            1,
+            []
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ]
+          ],
+          [
+            "cave_warden",
+            3,
+            [
+              [
+                "warden_core",
+                1
+              ],
+              [
+                "coin",
+                29
+              ],
+              [
+                "brute_hide",
+                1
+              ],
+              [
+                "brute_hide",
+                2
+              ]
+            ]
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ]
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                3
+              ]
+            ]
+          ]
+        ],
+        "probe_rolls": [
+          [
+            [
+              "coin",
+              1
+            ]
+          ],
+          [
+            [
+              "ember_shard",
+              1
+            ]
+          ],
+          [
+            [
+              "coin",
+              5
+            ],
+            [
+              "coin",
+              4
+            ]
+          ],
+          [
+            [
+              "warden_core",
+              1
+            ],
+            [
+              "coin",
+              29
+            ],
+            [
+              "brute_hide",
+              1
+            ],
+            [
+              "ember_shard",
+              3
+            ]
+          ],
+          []
+        ],
+        "probe_seed": 12345,
+        "rng_final": 1775338818
+      },
+      "music": {
+        "stems_loaded": {
+          "music_cave": [
+            "ambient",
+            "tension",
+            "combat",
+            "boss"
+          ],
+          "music_field": [
+            "ambient",
+            "tension",
+            "combat"
+          ]
+        },
+        "trace": [
+          {
+            "biome": "field",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 0
+          },
+          {
+            "biome": "field",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 592
+          },
+          {
+            "biome": "field",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 651
+          },
+          {
+            "biome": "field",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 854
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 1121
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 1148
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 1197
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 1440
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 1494
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 1498
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 1841
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 1921
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 2195
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 2432
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 2508
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 2509
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 2571
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 2793
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 3050
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 3124
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 3217
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 3291
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 3328
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 3371
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 3654
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 3919
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 3965
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 4195
+          },
+          {
+            "biome": "field",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 5354
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 7157
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 8946
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 8990
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 9168
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 9170
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "boss",
+              "combat"
+            ],
+            "state": "boss",
+            "tick": 9184
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "combat",
+              "tension"
+            ],
+            "state": "combat",
+            "tick": 9531
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 9566
+          },
+          {
+            "biome": "field",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 9640
+          }
+        ]
+      },
+      "overlay": [
+        "TIME FROZEN \u2014 ranked swaps (41.5 ms)",
+        "1. Kael  HP 53/82  score 153.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
+        "2. Bram  HP 106/106  score 135.5  target cave_warden_1  cd Taunt 4.5s  @9,4",
+        "3. Nyra  HP 54/54  score 119.5  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
+        "4. Sola  HP 52/52  score 95.5  target cave_warden_1  cd Mend 0.9s, Spark 0.3s  @9,6",
+        "Threats: cave_warden 223 (110.1)",
+        "Pets: ember_fox\u2192Kael 0/22",
+        "1-4 swap \u00b7 Tab resume"
+      ],
+      "party_stats": {
+        "bram": {
+          "damage": 68,
+          "healing": 0,
+          "kills": 0
+        },
+        "kael": {
+          "damage": 419,
+          "healing": 0,
+          "kills": 9
+        },
+        "kael_ember_fox": {
+          "damage": 20,
+          "healing": 0,
+          "kills": 0,
+          "pet": true
+        },
+        "nyra": {
+          "damage": 278,
+          "healing": 0,
+          "kills": 7
+        },
+        "sola": {
+          "damage": 68,
+          "healing": 119,
+          "kills": 3
+        }
+      },
+      "quests": {
+        "q_forager": "done",
+        "q_warden": "done"
+      },
+      "resumed_from": {},
+      "seed": 1,
+      "selection": {
+        "leader": "kael",
+        "pet": "ember_fox"
+      },
+      "softlocks": [],
+      "stage_ticks": {
+        "q_forager.gather_any": 1677,
+        "q_warden.choose": 0,
+        "q_warden.clear_cave": 4106,
+        "q_warden.craft": 6341,
+        "q_warden.enter_cave": 2431,
+        "q_warden.forage": 562,
+        "q_warden.harvest": 6173,
+        "q_warden.moss": 2867,
+        "q_warden.open_world": 9640,
+        "q_warden.plant": 20,
+        "q_warden.rest": 10516,
+        "q_warden.return_farm": 5354,
+        "q_warden.warden": 9531
+      },
+      "swap_parity": [
+        true,
+        true
+      ],
+      "swaps": [
+        {
+          "area": "cave_deep",
+          "boss": false,
+          "recs": [
+            [
+              "sola",
+              18.3
+            ],
+            [
+              "nyra",
+              18
+            ],
+            [
+              "bram",
+              17.94
+            ],
+            [
+              "kael",
+              16.76
+            ]
+          ],
+          "tick": 2721,
+          "wall_ms": 43.51
+        },
+        {
+          "area": "warden_lair",
+          "boss": true,
+          "recs": [
+            [
+              "kael",
+              153.65
+            ],
+            [
+              "bram",
+              135.54
+            ],
+            [
+              "nyra",
+              119.5
+            ],
+            [
+              "sola",
+              95.5
+            ]
+          ],
+          "tick": 9334,
+          "wall_ms": 41.51
+        }
+      ],
+      "ticks": 10516,
+      "unlocked": [
+        "vex"
+      ],
+      "wall_ms": 4854.9,
+      "wipes": 0
+    },
+    "tilemaps": {
+      "cave_deep": {
+        "budget": true,
+        "floor_ratio": true,
+        "palette": true,
+        "solvability": true
+      },
+      "field_01": {
+        "budget": true,
+        "floor_ratio": true,
+        "palette": true,
+        "solvability": true
+      },
+      "tunnels_01": {
+        "budget": true,
+        "floor_ratio": true,
+        "palette": true,
+        "solvability": true
+      }
+    },
+    "world_gates": {
+      "budget": true,
+      "cross_refs": true,
+      "economy_solvable": true,
+      "loot_tables": true,
+      "music_rules": true,
+      "quest_chart": true,
+      "schema": true
+    },
+    "world_meta": {
+      "loot_ev": {
+        "1": {
+          "coin": 0.667,
+          "ember_shard": 0.333,
+          "sunroot_seed": 0.083
+        },
+        "2": {
+          "brute_hide": 0.5,
+          "coin": 3.0,
+          "ember_shard": 0.5,
+          "glowcap_spore": 0.333
+        },
+        "3": {
+          "brute_hide": 0.857,
+          "coin": 25.0,
+          "ember_shard": 2.143,
+          "glowcap_spore": 0.857,
+          "warden_core": 1.0
+        }
+      },
+      "node_counts": {
+        "cave_moss": 4,
+        "flint": 7
+      },
+      "quests": [
+        "q_warden",
+        "q_forager"
+      ],
+      "supply": {
+        "cave_moss": 4,
+        "coin": 38.0,
+        "ember_tonic": 3.0,
+        "flint": 7,
+        "flint_edge": 0,
+        "glowcap": 6.0,
+        "glowcap_spore": 3.0,
+        "moss_salve": 4,
+        "sunroot": 4.0,
+        "sunroot_seed": 2.0,
+        "warden_charm": 1,
+        "warden_core": 1
+      }
+    }
+  }
+}

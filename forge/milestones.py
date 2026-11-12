@@ -143,6 +143,11 @@ from forge.accept_f5 import f5_check, f5_perf, f5_run  # noqa: E402
 INCREMENTS["F5"] = Increment("F5", "first-boss", ("--scene=boss", "--autoplay"), f5_check,
                              "First boss + balance: tier-3 Cave Warden cleared, save/migrate round-trip, "
                              "G-BAL-01 Monte Carlo (2400 fights), soft-lock detection", f5_perf, f5_run)
+from forge.accept_f6 import f6_check, f6_perf, f6_run  # noqa: E402
+
+INCREMENTS["F6"] = Increment("F6", "vertical-slice", ("--scene=slice", "--autoplay"), f6_check,
+                             "Vertical slice (GAME_SPEC §6.1): select → farm → tunnels → cave → craft → Cave Warden → "
+                             "open world → save; quit/reload parity, 12-selection matrix, quest/loot/save parity", f6_perf, f6_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
 

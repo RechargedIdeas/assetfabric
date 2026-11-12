@@ -1,0 +1,226 @@
+"""F6 acceptance: "vertical slice" (SPEC §13, GAME_SPEC §6.1).
+
+One headless QA-autopilot playthrough of the whole slice (select → farm → tunnels → cave → farm →
+craft → Cave Warden → open world → save) plus:
+
+1. Save / quit / reload — the run quits right after a mid-slice checkpoint; a *new* process resumes
+   from the save; the loaded state equals the saved one and the resumed run's final state is
+   byte-identical (canonical JSON) to the uninterrupted run.
+2. Selection matrix — every leader × starter pet (4 × 3 = 12) clears the slice (``FORGE_ACCEPT_FAST=1``:
+   2 representative selections, used by pytest/CI).
+3. Parity — Python twins replay the Godot quest trace (forge.world.QuestLog) and loot probe rolls
+   (forge.world.roll_loot) exactly; save v1–v3 fixtures migrate to v4 identically.
+4. Static — Codegen-World gates (schema, cross-refs, quest-chart soft-lock analysis, economy
+   solvability, loot tables, music rules) recorded in the registry; every locale key the slice uses exists.
+
+Slice length is reported against the GAME_SPEC §6.1 15–20 min target as a *soft* metric: the bot plays
+at maximum efficiency, so human length needs a GUI playtest (see docs/acceptance-tests/F6.md).
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import Any
+
+from forge.accept_f4 import _godot_argv
+
+LEADERS = ["kael", "nyra", "bram", "sola"]
+PETS = ["ember_fox", "stone_tortle", "lumen_wisp"]
+FAST_SELECTIONS = [("sola", "lumen_wisp"), ("bram", "stone_tortle")]
+QUIT_AT = 4            # checkpoint 4 = back in the tunnels after clearing the deep cave (mid-slice)
+PROBE = [("cave_mite", 1), ("emberling", 1), ("rock_brute", 2), ("cave_warden", 3), ("cave_mite", 1)]
+TARGET_MIN = (15.0, 20.0)
+
+
+def fast_mode() -> bool:
+    return os.environ.get("FORGE_ACCEPT_FAST", "") not in ("", "0")
+
+
+def _slice(root: Path, save_dir: Path, *extra: str, timeout: int = 300) -> tuple[int, dict[str, Any]]:
+    from forge.milestones import parse_output
+
+    args = ("--scene=slice", "--autoplay", "--no-live", f"--watchdog={timeout - 20}", f"--save-dir={save_dir}", *extra)
+    proc = subprocess.run(_godot_argv(root, *args), capture_output=True, text=True, timeout=timeout)
+    out = parse_output(proc.stdout + proc.stderr)
+    out["_script_errors"] = len(re.findall(r"SCRIPT ERROR", proc.stdout + proc.stderr))
+    return proc.returncode, out
+
+
+def _summary(s: dict[str, Any]) -> dict[str, Any]:
+    return {"completed": s.get("completed"), "ticks": s.get("ticks"), "game_minutes": s.get("game_minutes"),
+            "wipes": s.get("wipes"), "softlocks": len(s.get("softlocks", [])), "boss_attempt": (s.get("boss") or {}).get("attempt"),
+            "boss_ticks": (s.get("boss") or {}).get("ticks"), "wall_ms": s.get("wall_ms")}
+
+
+def locale_report(root: Path) -> dict[str, Any]:
+    """Every literal ``tr("key")`` in the slice scripts + every dynamic id key exists in locale/en.json."""
+    from forge.world import load_world
+
+    game = root / "games" / "game-zero"
+    loc = json.loads((game / "locale" / "en.json").read_text(encoding="utf-8"))
+    used: set[str] = set()
+    for f in ["scenes/slice.gd", "scenes/encounter.gd", "audio/music_director.gd", "world/world_state.gd"]:
+        p = game / f
+        if p.exists():
+            used |= {k for k in re.findall(r'tr\("([a-z0-9_.]+)"\)', p.read_text(encoding="utf-8"))}
+    w = load_world(root)
+    used |= {f"item.{i}" for i in w["items"]} | {f"area.{a}" for a in w["areas"]}
+    for q in w["quests"]:
+        used |= {f"quest.{q['id']}.title", f"quest.{q['id']}.done"} | {f"quest.{q['id']}.{s['id']}" for s in q["stages"]}
+    gd = json.loads((game / "data" / "generated" / "game_data.json").read_text(encoding="utf-8"))
+    fs, ps = gd.get("fighters", {}), gd.get("pets", {})
+    used |= {f"roster.{k}" for k in fs} | {f"role.{f['role']}" for f in fs.values()}
+    used |= {f"pet.{k}" for k in ps} | {f"pet.style.{p['style']}" for p in ps.values()}
+    missing = sorted(k for k in used if k not in loc)
+    return {"ok": not missing, "keys_checked": len(used), "missing": missing}
+
+
+def f6_run(root: Path) -> tuple[int, dict[str, Any]]:
+    from forge.save import FIXTURES, canonical_json, migrate, validate
+    from forge.world import Lcg, QuestLog, load_world, roll_loot
+
+    tmp = Path(tempfile.mkdtemp(prefix="fabric-f6-"))
+    try:
+        code, res = _slice(root, tmp / "a")
+        s = res.get("slice", {})
+        result: dict[str, Any] = {"slice": {k: v for k, v in s.items() if k not in ("final_state", "quest_trace")},
+                                  "script_errors": res["_script_errors"]}
+        # 1. save / quit / reload in a new process
+        cq, rq = _slice(root, tmp / "b", f"--quit-after-checkpoint={QUIT_AT}")
+        cr, rr = _slice(root, tmp / "b", "--resume")
+        q, r = rq.get("slice_quit", {}), rr.get("slice", {})
+        saved = q.get("state", {})
+        result["save_quit_reload"] = {
+            "quit_checkpoint": q.get("checkpoint"), "quit_tick": q.get("tick"), "quit_area": q.get("area"),
+            "loaded_equal_saved": canonical_json(r.get("resumed_from", {}).get("state", {})) == canonical_json(saved),
+            "python_validates_save": validate(saved) == [] if saved else False,
+            "resumed_completed": r.get("completed"), "resumed_ticks": r.get("ticks"),
+            "final_equal_uninterrupted": bool(s.get("final_state")) and canonical_json(r.get("final_state", {})) == canonical_json(s.get("final_state", {})),
+            "final_checksum": (s.get("final_state") or {}).get("checksum"),
+            "exit_codes": [cq, cr], "script_errors": rq["_script_errors"] + rr["_script_errors"],
+        }
+        fx = tmp / "fixtures.json"
+        fx.write_text(json.dumps(FIXTURES), encoding="utf-8")
+        _, chk = _slice_check(root, tmp / "a", fx)
+        parity = {}
+        for name, f in FIXTURES.items():
+            py, steps = migrate(f)
+            g = chk.get("migrated", {}).get(name, {})
+            parity[name] = {"steps_py": steps, "steps_gd": g.get("steps"), "gd_errors": g.get("errors"),
+                            "checksum_equal": py["checksum"] == (g.get("save") or {}).get("checksum")}
+        result["save_quit_reload"]["migration_parity"] = parity
+        # 2. selection matrix
+        sels = FAST_SELECTIONS if fast_mode() else [(l, p) for l in LEADERS for p in PETS]
+        def one(sel: tuple[str, str]) -> dict[str, Any]:
+            c, o = _slice(root, tmp / f"m_{sel[0]}_{sel[1]}", f"--leader={sel[0]}", f"--pet={sel[1]}")
+            return {"leader": sel[0], "pet": sel[1], "exit": c, "script_errors": o["_script_errors"]} | _summary(o.get("slice", {}))
+        with ThreadPoolExecutor(max_workers=max(1, min(4, (os.cpu_count() or 2)))) as ex:
+            result["matrix"] = {"mode": "fast" if fast_mode() else "full", "runs": list(ex.map(one, sels))}
+        # 3. parity with the Python twins
+        w = load_world(root)
+        ql, mism = QuestLog(w), []
+        for e in s.get("quest_trace", []):
+            py = [[t["region"], t["from"], t["to"]] for t in ql.send(e["event"], e["counters"])]
+            if py != e["taken"]:
+                mism.append({"tick": e["tick"], "event": e["event"], "gd": e["taken"], "py": py})
+        rng = Lcg(int(s.get("loot", {}).get("probe_seed", 12345)))
+        py_rolls = [roll_loot(w, tier, ref, rng) for ref, tier in PROBE]
+        result["parity"] = {"quest_events": len(s.get("quest_trace", [])), "quest_mismatches": mism[:5],
+                            "loot_probe_equal": py_rolls == s.get("loot", {}).get("probe_rolls")}
+        # 4. static gates + locale
+        from forge.pipeline import build_all
+
+        rep = build_all(root, pattern="f6/*.yaml", export=False)     # re-gate the slice briefs (no export)
+        reg = json.loads((root / "games" / "game-zero" / "assets" / "generated" / "fabric_assets.json").read_text(encoding="utf-8"))
+        result["world_gates"] = (rep["assets"].get("world") or {}).get("gates", {})
+        result["world_meta"] = {k: v for k, v in (reg["assets"].get("world") or {}).get("meta", {}).items()
+                                if k in ("node_counts", "supply", "loot_ev", "quests")}
+        result["tilemaps"] = {a: (rep["assets"].get(a) or {}).get("gates", {}) for a in ("field_01", "tunnels_01", "cave_deep")}
+        result["locale"] = locale_report(root)
+        return (code or cq or cr), result
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _slice_check(root: Path, save_dir: Path, fixtures: Path) -> tuple[int, dict[str, Any]]:
+    from forge.milestones import parse_output
+
+    proc = subprocess.run(_godot_argv(root, "--scene=savecheck", f"--save-dir={save_dir}", f"--fixtures={fixtures}"),
+                          capture_output=True, text=True, timeout=120)
+    return proc.returncode, parse_output(proc.stdout + proc.stderr).get("savecheck", {})
+
+
+def f6_check(r: dict[str, Any]) -> list[str]:
+    from forge.milestones import _need
+
+    errs: list[str] = []
+    s = r.get("slice", {})
+    _need(r.get("script_errors") == 0, f"script errors: {r.get('script_errors')}", errs)
+    _need(s.get("completed") is True and s.get("quests", {}).get("q_warden") == "done", f"slice not completed: {s.get('quests')}", errs)
+    _need(not s.get("softlocks"), f"runtime soft-locks: {s.get('softlocks')}", errs)
+    # §6.1 (1) character select among 4 + starter pet
+    _need(bool(s.get("selection", {}).get("leader")) and bool(s.get("selection", {}).get("pet")), "no selection", errs)
+    m = r.get("matrix", {})
+    runs = m.get("runs", [])
+    _need(len(runs) == (2 if m.get("mode") == "fast" else 12), f"matrix size {len(runs)}", errs)
+    for x in runs:
+        _need(x.get("completed") is True and x.get("exit") == 0 and x.get("script_errors") == 0 and x.get("softlocks") == 0,
+              f"selection {x.get('leader')}+{x.get('pet')} failed: {x}", errs)
+    # (2) farming beat yields usable resources
+    fm = s.get("farming", {})
+    _need(len(fm.get("harvested", [])) >= 2 and "moss_salve" in fm.get("crafted", []) and "ember_tonic" in fm.get("crafted", []),
+          f"farming beat: {fm.get('harvested')} {fm.get('crafted')}", errs)
+    _need(bool((s.get("buff_at_boss") or {}).get("buffs")), "crafted tonic not used in the boss fight", errs)
+    # (3) solvable cave  (4) open-world transition
+    areas = [a["area"] for a in s.get("areas", [])]
+    _need("cave_deep" in areas and s.get("stage_ticks", {}).get("q_warden.clear_cave") is not None, "cave not cleared", errs)
+    _need(areas[-1:] == ["field"] and "warden_lair" in areas, f"open-world transition: {areas}", errs)
+    _need(all(g is True for t in r.get("tilemaps", {}).values() for g in t.values()) and len(r.get("tilemaps", {})) == 3,
+          f"tilemap gates: {r.get('tilemaps')}", errs)
+    # (5) party combat with followers + pet
+    ps = s.get("party_stats", {})
+    _need(sum(1 for k, v in ps.items() if not v.get("pet") and v.get("damage", 0) + v.get("healing", 0) > 0) >= 4
+          and any(v.get("pet") for v in ps.values()), f"party combat: {ps}", errs)
+    # (6) time-freeze swap with overlay
+    _need(len(s.get("swaps", [])) >= 1 and all(s.get("swap_parity", [False])) and len(s.get("overlay", [])) >= 5,
+          f"freeze swap: {s.get('swaps')} parity={s.get('swap_parity')}", errs)
+    # (7) Cave Warden boss clear
+    b = s.get("boss", {})
+    _need(b.get("defeated") is True and b.get("tier") == 3 and b.get("phases_reached", 0) >= 3, f"boss: {b}", errs)
+    _need("vex" in s.get("unlocked", []), "boss reward unlock missing", errs)
+    # (8) save / quit / reload
+    sq = r.get("save_quit_reload", {})
+    for k in ("loaded_equal_saved", "python_validates_save", "resumed_completed", "final_equal_uninterrupted"):
+        _need(sq.get(k) is True, f"save/quit/reload {k}: {sq}", errs)
+    for name, p in sq.get("migration_parity", {}).items():
+        _need(p["steps_py"] == p["steps_gd"] and p["checksum_equal"] and not p["gd_errors"], f"migration parity {name}: {p}", errs)
+    # loop wiring
+    mu = s.get("music", {})
+    _need({t["state"] for t in mu.get("trace", [])} >= {"explore", "tension", "combat", "boss"}
+          and {t["biome"] for t in mu.get("trace", [])} >= {"field", "cave"}, "adaptive music did not cover biomes × states", errs)
+    _need(any(t == 3 for _, t, _ in s.get("loot", {}).get("drops", [])), "no tier-3 loot drop", errs)
+    p = r.get("parity", {})
+    _need(not p.get("quest_mismatches") and p.get("quest_events", 0) > 0, f"quest parity: {p.get('quest_mismatches')}", errs)
+    _need(p.get("loot_probe_equal") is True, "loot probe rolls differ between GDScript and Python", errs)
+    _need(bool(r.get("world_gates")) and all(v is True for v in r.get("world_gates", {}).values()), f"world gates: {r.get('world_gates')}", errs)
+    _need(r.get("locale", {}).get("ok") is True, f"missing locale keys: {r.get('locale', {}).get('missing')}", errs)
+    return errs
+
+
+def f6_perf(r: dict[str, Any]) -> dict[str, Any]:
+    s = r.get("slice", {})
+    gm = s.get("game_minutes") or 0
+    runs = r.get("matrix", {}).get("runs", [])
+    return {"slice_ticks": s.get("ticks"), "slice_game_minutes": gm, "slice_wall_ms": s.get("wall_ms"),
+            "target_minutes": list(TARGET_MIN), "length_within_target": TARGET_MIN[0] <= gm <= TARGET_MIN[1],
+            "length_note": "QA autopilot plays at max efficiency (no exploration, reading, or menu time); human length needs a GUI playtest",
+            "matrix_game_minutes": [x.get("game_minutes") for x in runs],
+            "matrix_wipes": sum(x.get("wipes") or 0 for x in runs),
+            "swap_wall_ms": [x.get("wall_ms") for x in s.get("swaps", [])]}

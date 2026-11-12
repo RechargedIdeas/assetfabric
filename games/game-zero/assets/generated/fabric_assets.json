@@ -977,11 +977,41 @@
         "roster:vex"
       ]
     },
+    "tunnels_01": {
+      "files": {
+        "tunnels_01.json": {
+          "res": "res://assets/generated/tilemap/tunnels_01.json",
+          "sha256": "482c8f3c412bdb2d3ba2e091eda9ceed0f2c1765fd2ac916f8614fed09f01384"
+        },
+        "tunnels_01_tiles.png": {
+          "res": "res://assets/generated/tilemap/tunnels_01_tiles.png",
+          "sha256": "f27b35051b1e58d53023371036754d834c0c57af60e34f12d636cd391b41fefb"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 59,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:tunnels",
+        "slice"
+      ]
+    },
     "world": {
       "files": {
         "world.json": {
           "res": "res://data/generated/world.json",
-          "sha256": "ca073e0ed04454e1d514d2b6ca518657bcd5e86fb9d9de3fcd83a122447fb5f3"
+          "sha256": "91e14d6efc512845362b27b5870b1158916059c991e0be5b0e59dfccde23afe2"
         }
       },
       "kind": "world",
@@ -1011,7 +1041,7 @@
         "model_version": "1",
         "node_counts": {
           "cave_moss": 4,
-          "flint": 4
+          "flint": 7
         },
         "quests": [
           "q_warden",
@@ -1021,7 +1051,7 @@
           "cave_moss": 4,
           "coin": 38.0,
           "ember_tonic": 3.0,
-          "flint": 4,
+          "flint": 7,
           "flint_edge": 0,
           "glowcap": 6.0,
           "glowcap_spore": 3.0,

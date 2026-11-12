@@ -11,7 +11,7 @@
     },
     "S": {
      "arrive": "E",
-     "to": "field"
+     "to": "tunnels"
     }
    },
    "nodes": {
@@ -62,7 +62,7 @@
    "links": {
     "E": {
      "arrive": "S",
-     "to": "cave_deep"
+     "to": "tunnels"
     }
    },
    "nodes": {
@@ -80,6 +80,52 @@
     }
    ],
    "tilemap": "field_01"
+  },
+  "tunnels": {
+   "biome": "cave",
+   "id": "tunnels",
+   "links": {
+    "E": {
+     "arrive": "S",
+     "to": "cave_deep"
+    },
+    "S": {
+     "arrive": "E",
+     "to": "field"
+    }
+   },
+   "nodes": {
+    "G": "flint"
+   },
+   "packs": [
+    {
+     "spawn": 0,
+     "units": [
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      },
+      {
+       "count": 1,
+       "ref": "emberling"
+      }
+     ]
+    },
+    {
+     "spawn": 1,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 1,
+       "ref": "emberling"
+      }
+     ]
+    }
+   ],
+   "tilemap": "tunnels_01"
   },
   "warden_lair": {
    "biome": "cave",

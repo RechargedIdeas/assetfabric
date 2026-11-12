@@ -94,6 +94,12 @@ static func decide(s) -> Dictionary:
 		if ws.quests.stage("q_warden") == "rest" and not bench.is_empty():
 			return _go(here, bench[0], "save", null)
 		return _link(s, here, "E")
+	if area == "tunnels":
+		if not nodes.is_empty() and not ws.stage_at_least("q_warden", "return_farm"):
+			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])
+		if s.hostiles_left() > 0:
+			return {"kind": "fight"}
+		return _link(s, here, "S" if ws.quests.stage("q_warden") == "return_farm" else "E")
 	if area == "cave_deep":
 		if not nodes.is_empty() and not ws.stage_at_least("q_warden", "return_farm"):
 			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])

@@ -108,8 +108,13 @@ func outcome() -> String:
 # ---------------------------------------------------------------- movement
 
 func move(e, dir: Vector2) -> void:
-	# separation from same-team neighbours (deterministic order)
+	# separation from same-team neighbours (deterministic order). F6: a player-driven leader
+	# exploring the world is not shoved by followers (they part around it instead) — otherwise a
+	# follower parked on the leader's next waypoint can pin it in place [INFERENCE F6-7].
+	var shove: bool = not (explore and leader_manual and e.is_leader)
 	for o in entities:
+		if not shove:
+			break
 		if o == e or not o.alive() or o.team != e.team:
 			continue
 		var d: Vector2 = e.pos - o.pos
