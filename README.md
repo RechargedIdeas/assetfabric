@@ -6,6 +6,8 @@
 
 **Game Zero** — an offline-first 8-bit fighter/farming hybrid on Godot 4 — is its **first product and MVP test**. Every Fabric milestone is proven by a playable Game Zero increment.
 
+**Not this product:** [Future Beasts](https://github.com/RechargedIdeas/future-beasts) is a separate browser game with its own HMAP engine. It does not import this studio. Game Zero is not Future Beasts.
+
 **Architecture in one line:** Python/PySide6 **Studio** → **Content Forge** (generators · validators · orchestrator · BudgetGate) → **Substrate** (sandbox · hot reload · snapshots) → **Godot 4 Compatibility runtime** (GIRT · CascadeHub) — spread over equal **LoomCluster** nodes with **GroundWeave** CPU fallbacks, and a standalone Android companion, **PocketLoom**.
 
 ## Status
