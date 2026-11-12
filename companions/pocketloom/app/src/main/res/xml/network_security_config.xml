@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LoomLink speaks HTTP to a LAN or Tailscale address the user paired with; requests are
+     HMAC-signed (integrity), not encrypted — Tailscale provides encryption. See docs/INFERENCES.md C-7. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

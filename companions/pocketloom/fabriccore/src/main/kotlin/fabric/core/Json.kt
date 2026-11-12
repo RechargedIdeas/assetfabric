@@ -28,7 +28,9 @@ object Json {
             is Double, is Float -> {
                 val d = (v as Number).toDouble()
                 require(d.isFinite()) { "non-finite number" }
-                if (d == Math.rint(d) && Math.abs(d) < 1e15) sb.append(d.toLong()) else sb.append(d.toString())
+                // Python json.dumps renders 1.0 as "1.0" and 0.25 as "0.25" — same as Kotlin for the
+                // magnitudes we use; exponent forms (1e+20 vs 1.0E20) are not produced by FabricCore.
+                sb.append(d.toString())
             }
             is Map<*, *> -> {
                 sb.append('{')

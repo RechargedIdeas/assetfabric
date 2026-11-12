@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PocketLoom UI strings. Every user-visible string lives here (locale keys; no hard-coded UI text). -->
+<resources>
+    <string name="app_name">PocketLoom</string>
+    <string name="header_status">%1$s · %2$d assets · %3$d queued · %4$s</string>
+    <string name="mode_standalone">standalone (offline)</string>
+    <string name="mode_paired">paired with %1$s</string>
+
+    <string name="tab_generate">Generate</string>
+    <string name="tab_library">Library</string>
+    <string name="tab_capture">Capture</string>
+    <string name="tab_link">Link</string>
+    <string name="tab_telemetry">Telemetry</string>
+
+    <string name="gen_kind">Kind</string>
+    <string name="gen_palette">Palette</string>
+    <string name="gen_seed_hint">Seed (number)</string>
+    <string name="gen_button">Generate on this device</string>
+    <string name="gen_random">Random seed</string>
+    <string name="gen_running">Generating…</string>
+    <string name="gen_result">%1$s · seed %2$d · %3$s · %4$.1f ms\nGates: %5$s\nsha256 %6$s</string>
+    <string name="gen_backend_note">Backend ladder: %1$s</string>
+    <string name="gen_failed">Generation failed: %1$s</string>
+    <string name="gen_gates_failed">rejected by gates — not saved</string>
+    <string name="gate_pass">pass</string>
+    <string name="gate_fail">FAIL</string>
+    <string-array name="gen_kinds">
+        <item>Cave tilemap</item>
+        <item>Creature sprite</item>
+    </string-array>
+
+    <string name="lib_empty">Nothing here yet — generate or capture something.</string>
+    <string name="lib_item">%1$s · %2$s · %3$d bytes</string>
+    <string name="lib_conflict">%1$s (sync conflict copy)</string>
+    <string name="lib_delete">Delete selected</string>
+    <string name="lib_selected">Selected: %1$s</string>
+
+    <string name="cap_intro">Stills are stored on this phone and queued for reconstruction on a paired desktop. Reconstruction itself (LensForge / SplatForge, C10–C12) is not built yet.</string>
+    <string name="cap_take">Take photo</string>
+    <string name="cap_import">Import image</string>
+    <string name="cap_no_camera">No camera app is available on this device.</string>
+    <string name="cap_saved">Saved %1$s (%2$d bytes) — reconstruction job queued.</string>
+    <string name="cap_failed">Capture failed: %1$s</string>
+    <string name="cap_count">%1$d captures on this phone</string>
+
+    <string name="link_intro">Optional: pair with a desktop running `forge link serve` (same Wi-Fi or Tailscale). PocketLoom works fully without it.</string>
+    <string name="link_url_hint">Desktop address, e.g. http://100.64.0.2:8765</string>
+    <string name="link_code_hint">Pairing code (8 characters)</string>
+    <string name="link_pair">Pair</string>
+    <string name="link_unpair">Forget desktop</string>
+    <string name="link_drain">Send queued jobs</string>
+    <string name="link_sync">Sync library</string>
+    <string name="link_not_paired">Not paired — standalone mode.</string>
+    <string name="link_paired">Paired with %1$s at %2$s\nGranted: %3$s</string>
+    <string name="link_pair_ok">Paired. Granted: %1$s</string>
+    <string name="link_pair_failed">Pairing failed: %1$s</string>
+    <string name="link_from_qr">Pairing link received — check the address and tap Pair to confirm.</string>
+    <string name="link_bad_code">The pairing code must be 8 characters.</string>
+    <string name="link_drain_ok">Sent %1$d jobs; %2$d still queued.</string>
+    <string name="link_sync_ok">Sync: pushed %1$d, pulled %2$d, conflicts %3$d.</string>
+    <string name="link_failed">Link error: %1$s</string>
+    <string name="link_queue">%1$d jobs waiting for a desktop</string>
+
+    <string name="tel_store">Store: %1$d assets, %2$d bytes</string>
+    <string name="tel_models">Model cache: %1$d models, %2$d / %3$d bytes</string>
+    <string name="tel_queue">Offload queue: %1$d pending, %2$d completed</string>
+    <string name="tel_events">Events: %1$d (errors %2$d)</string>
+    <string name="tel_job">%1$s: %2$d runs, mean %3$.1f ms, max %4$.1f ms</string>
+    <string name="tel_backend">%1$s → %2$s</string>
+    <string name="tel_backend_skip">%1$s skipped: %2$s</string>
+    <string name="tel_device">Device: %1$s, Android %2$d, %3$d cores</string>
+    <string name="tel_node">Node %1$s · FabricCore %2$s</string>
+    <string name="tel_refresh">Refresh</string>
+</resources>

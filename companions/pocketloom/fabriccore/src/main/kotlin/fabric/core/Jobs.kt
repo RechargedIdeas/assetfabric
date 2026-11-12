@@ -59,6 +59,29 @@ class LocalExecutor(private val store: AssetStore?, private val palettes: (Strin
     }
 }
 
+/** Routes a job: runs it here when the local CPU executor can (offline-first), otherwise — or when
+ *  the user asks to offload — parks it in the [OffloadQueue] until a paired desktop drains it. */
+class Dispatcher(private val local: JobExecutor, private val queue: OffloadQueue, private val telemetry: Telemetry?) {
+    fun submit(job: JobSpec, preferOffload: Boolean = false): Map<String, Any?> {
+        if (preferOffload || !local.canRun(job)) {
+            queue.enqueue(job)
+            telemetry?.record("job.queued", mapOf("op" to job.op, "id" to job.id))
+            return mapOf("status" to "queued", "id" to job.id, "op" to job.op)
+        }
+        val t0 = System.nanoTime()
+        return try {
+            val r = local.execute(job)
+            val ms = (System.nanoTime() - t0) / 1e6
+            telemetry?.record("job.local", mapOf("op" to job.op, "id" to job.id, "ms" to ms,
+                "ok" to (r["ok"] ?: true), "backend" to ((r["meta"] as? Map<*, *>)?.get("backend") ?: "cpu")))
+            mapOf("status" to "done", "id" to job.id, "op" to job.op, "ms" to ms, "result" to r)
+        } catch (e: Exception) {
+            telemetry?.record("job.error", mapOf("op" to job.op, "id" to job.id, "error" to e.toString()))
+            mapOf("status" to "error", "id" to job.id, "op" to job.op, "error" to e.toString())
+        }
+    }
+}
+
 /** OffloadQueue (C6): durable FIFO of jobs waiting for a paired desktop/cluster
  *  (jobs whose op/device this phone cannot run, or that the user chose to offload).
  *  Journal = JSON lines; a torn last line is ignored on load. */

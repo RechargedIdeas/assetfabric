@@ -14,13 +14,15 @@ android {
         versionName = "0.1.0-c6"
     }
     buildTypes {
-        release { isMinifyEnabled = false }   // signing: TODO (unsigned/debug only, see TODO.md)
+        // Debug builds only for now (auto debug keystore). Release signing is a TODO — docs/packaging.md.
+        release { isMinifyEnabled = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    lint { abortOnError = true; checkReleaseBuilds = false }
 }
 
 dependencies {
