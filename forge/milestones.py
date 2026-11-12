@@ -26,6 +26,7 @@ class Increment:
     check: Callable[[dict[str, Any]], list[str]] = field(compare=False)
     description: str = ""
     perf: Callable[[dict[str, Any]], dict[str, Any]] | None = field(default=None, compare=False)
+    runner: Callable[[Path], tuple[int, dict[str, Any]]] | None = field(default=None, compare=False)
 
 
 def _need(cond: bool, msg: str, errs: list[str]) -> None:
@@ -131,6 +132,12 @@ INCREMENTS: dict[str, Increment] = {
     "F3": Increment("F3", "party-ai", ("--scene=party", "--autoplay"), _f3,
                     "Party AI: BT + GIRT policy, callouts, intents, dialogue, time-freeze swap advisor", _f3_perf),
 }
+from forge.accept_f4 import f4_check, f4_perf, f4_run  # noqa: E402  (needs Increment/_need above)
+
+INCREMENTS["F4"] = Increment("F4", "live-tune", ("--scene=live", "--autoplay"), f4_check,
+                             "Live tune without a full rebuild: sandboxed regen, atomic hot reload "
+                             "(2PC + probe + rollback), snapshots + WAL replay, parallel statecharts, guardian restart",
+                             f4_perf, f4_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
 
@@ -174,8 +181,11 @@ def run_godot(root: Path, args: tuple[str, ...], timeout: int = 180) -> tuple[in
 def accept(milestone: str, root: Path | None = None, write: bool = True) -> dict[str, Any]:
     root = root or find_repo_root()
     inc = INCREMENTS[milestone]
-    code, out = run_godot(root, inc.godot_args)
-    result = parse_output(out)
+    if inc.runner:
+        code, result = inc.runner(root)
+    else:
+        code, out = run_godot(root, inc.godot_args)
+        result = parse_output(out)
     errs = inc.check(result)
     if code != 0:
         errs.append(f"godot exit code {code}")

@@ -30,3 +30,4 @@ godot-bin/
 *.keystore
 *.jks
 *.pem
+/.fabric/live/

@@ -203,6 +203,25 @@ func json_asset(id: String, file_name: String = "") -> Variant:
 	return read_json(file_path(id, file_name))
 
 
+## F4 hot reload: point one registry file at a staged path (absolute or res://).
+## In-memory only; `forge build` remains the source of truth for committed content.
+func override_file(id: String, file_name: String, path: String) -> void:
+	var a: Dictionary = registry.get("assets", {}).get(id, {})
+	if a.is_empty():
+		return
+	if not a.has("files"):
+		a["files"] = {}
+	if not a["files"].has(file_name):
+		a["files"][file_name] = {}
+	a["files"][file_name]["res"] = path
+	clear_caches()
+
+
+func clear_caches() -> void:
+	_tex_cache.clear()
+	_audio_cache.clear()
+
+
 func _exit_tree() -> void:
 	_tex_cache.clear()
 	_audio_cache.clear()

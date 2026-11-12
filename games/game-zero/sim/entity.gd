@@ -74,10 +74,76 @@ func copy():
 	c.stats_dealt = stats_dealt.duplicate()
 	c.low_hp_called = low_hp_called
 	c.last_dir = last_dir
-	for m in ["bt_target", "bt_target_tick"]:   # brain memory (ids/ints only, never object refs)
+	for m in ["bt_target", "bt_target_tick", "ref"]:   # brain memory + roster ref (ids/ints only)
 		if has_meta(m):
 			c.set_meta(m, get_meta(m))
 	return c
+
+
+const _SCALARS := ["id", "team", "kind", "sprite_id", "radius", "max_hp", "hp", "atk", "def", "speed", "aggro_range",
+	"owner_id", "is_leader", "tier", "taunt_left", "facing", "anim", "moving", "hit_flash", "last_ability", "low_hp_called"]
+const _INTS := ["team", "max_hp", "hp", "tier", "taunt_left", "facing", "hit_flash"]
+
+
+## Full JSON-safe state (F4 snapshots). Abilities are stored inline so a snapshot
+## taken before a live tune restores the *pre-tune* numbers exactly.
+func to_dict() -> Dictionary:
+	var d := {}
+	for p in _SCALARS:
+		d[p] = get(p)
+	d["ref"] = get_meta("ref", "")
+	d["pos"] = [pos.x, pos.y]
+	d["last_dir"] = [last_dir.x, last_dir.y]
+	d["abilities"] = abilities.duplicate(true)
+	d["cooldowns"] = cooldowns.duplicate()
+	var cast := casting.duplicate(true)
+	d["casting"] = cast
+	d["stats_dealt"] = stats_dealt.duplicate()
+	var mem := {}
+	for m in ["bt_target", "bt_target_tick"]:
+		if has_meta(m):
+			mem[m] = get_meta(m)
+	d["memory"] = mem
+	return d
+
+
+static func from_dict(d: Dictionary):
+	var e = new()
+	for p in _SCALARS:
+		e.set(p, int(d[p]) if p in _INTS else d[p])
+	if str(d.get("ref", "")) != "":
+		e.set_meta("ref", d["ref"])
+	e.pos = Vector2(float(d["pos"][0]), float(d["pos"][1]))
+	e.last_dir = Vector2(float(d["last_dir"][0]), float(d["last_dir"][1]))
+	e.abilities = []
+	for ab in d["abilities"]:
+		e.abilities.append(_norm_ability(ab))
+	e.cooldowns = {}
+	for k in d["cooldowns"]:
+		e.cooldowns[k] = int(d["cooldowns"][k])
+	e.casting = {}
+	if not d["casting"].is_empty():
+		e.casting = {"ability": _norm_ability(d["casting"]["ability"]), "target": str(d["casting"]["target"]),
+			"left": int(d["casting"]["left"])}
+	e.stats_dealt = {}
+	for k in d["stats_dealt"]:
+		e.stats_dealt[k] = int(d["stats_dealt"][k])
+	var mem: Dictionary = d.get("memory", {})
+	if mem.has("bt_target"):
+		e.set_meta("bt_target", str(mem["bt_target"]))
+	if mem.has("bt_target_tick"):
+		e.set_meta("bt_target_tick", int(mem["bt_target_tick"]))
+	return e
+
+
+## JSON numbers come back as floats; integer-valued ability fields must stay ints so
+## cooldown/windup arithmetic and hashes match the live object.
+static func _norm_ability(ab: Dictionary) -> Dictionary:
+	var out := ab.duplicate(true)
+	for k in out:
+		if typeof(out[k]) == TYPE_FLOAT and k in ["cooldown", "windup", "duration"]:
+			out[k] = int(out[k])
+	return out
 
 
 func snapshot() -> Dictionary:

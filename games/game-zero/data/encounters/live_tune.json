@@ -1,0 +1,27 @@
+{
+  "id": "live_tune",
+  "increment": "live-tune",
+  "tilemap": "cave_02",
+  "ai": "bt",
+  "party": [
+    {"ref": "kael", "leader": true, "pets": ["ember_fox"]},
+    {"ref": "nyra", "pets": ["lumen_wisp"]},
+    {"ref": "bram", "pets": ["stone_tortle"]},
+    {"ref": "sola"}
+  ],
+  "hostiles": [
+    {"ref": "emberling", "count": 3},
+    {"ref": "cave_mite", "count": 3},
+    {"ref": "rock_brute", "count": 2}
+  ],
+  "script": [
+    {"tick": 120, "snapshot": "pre_tune"},
+    {"tick": 200, "command": "everyone focus the brute"},
+    {"tick": 240, "live_poll": true},
+    {"tick": 300, "freeze_swap": true, "force_change": true},
+    {"tick": 420, "command": "charge"}
+  ],
+  "replay_check": "pre_tune",
+  "music": {"id": "music_cave", "stem": "combat"},
+  "tick_limit": 14400
+}

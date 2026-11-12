@@ -17,9 +17,9 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 |---|---|---|---|---|
 | **F0** | 1–4 | Manifest, `forge` CLI, asset store, orchestrator, telemetry schema | Empty Godot boots; `forge status` healthy | ✅ |
 | **F1** | 5–10 | Sprite/tile/DyeWorks procedural, gates, Godot presets, PatternVault, SwatchStudio | Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack | ✅ |
-| **F2** | 11–14 | Codegen (chars/abilities/stats), G1-Audio | First combat: party of 4 + pets + enemies | |
-| **F3** | 15–20 | GIRT, CascadeHub, micro LM, callouts | Party AI, swap, dialogue, callouts | |
-| **F4** | 21–25 | Sandbox/micro-VM, hot reload, snapshots, statecharts | Live tune without full rebuild | |
+| **F2** | 11–14 | Codegen (chars/abilities/stats), G1-Audio | First combat: party of 4 + pets + enemies | ✅ |
+| **F3** | 15–20 | GIRT, CascadeHub, micro LM, callouts | Party AI, swap, dialogue, callouts | ✅ |
+| **F4** | 21–25 | Sandbox/micro-VM, hot reload, snapshots, statecharts | Live tune without full rebuild | ✅ |
 | **F5** | 26–29 | Monte Carlo balance, soft-lock, save migration | First boss | |
 | **F6** | 30–33 | Quest SM, farming, loot, adaptive music | **Vertical slice 15–20 min** | |
 | **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | |
@@ -33,7 +33,8 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 - **F0** ✅ accepted 2026-11-05.
 - **F1** ✅ accepted 2026-11-05 — procedural G1-Sprite / G1-Tile / DyeWorks, gates, Godot binding, PatternVault, SwatchStudio CLI; sandbox encounter playable and headless-proven.
 - **F2** ✅ accepted 2026-11-05 — codegen (roster → game data + ability `.tres`), derived sprites, G1-Audio stems; first combat with party of 4 + pets.
-- **F3** ✅ accepted 2026-11-05 — GIRT (CPU/GDScript backends), CascadeHub, policy + callout cache + persona LM stand-in; party AI (BT + policy), time-freeze swap with forward-sim ranking, intents, dialogue. Swap < 50 ms target tracked as soft (measured ≈ 50–80 ms).
+- **F3** ✅ accepted 2026-11-05 — GIRT (CPU/GDScript backends), CascadeHub, policy + callout cache + persona LM stand-in; party AI (BT + policy), time-freeze swap with forward-sim ranking, intents, dialogue. Swap < 50 ms target tracked as soft (measured ≈ 50–100 ms).
+- **F4** ✅ accepted 2026-11-12 — Substrate sandbox (bwrap / process tiers; Firecracker + gVisor detected, no launcher — no usable KVM), live channel with atomic hot reload (ticket → stage/validate → 2PC → probe → rollback), Tier-2 snapshots + WAL replay, parallel statecharts with soft-lock analysis, Guardian (crash/hang → backoff restart → resume + poison-ticket quarantine). Game: `live-tune`. See [docs/SUBSTRATE.md](docs/SUBSTRATE.md).
 
 ### Entry criteria for any F(n+1)
 

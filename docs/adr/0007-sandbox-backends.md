@@ -19,6 +19,10 @@ Sandbox Orchestrator selects **gVisor** for short trusted jobs, **Firecracker** 
 - Requires KVM for Firecracker; hosts without it must fall back to a documented, weaker **process sandbox** and label it as such `[INFERENCE]`.
 - F4 deliverable.
 
+## Implementation note (F4, 2026-11-12)
+
+The reference box has `/dev/kvm` without access and no `runsc`. F4 ships the ladder firecracker → gvisor → **bwrap** (namespaces) → **process** (rlimits + audit hook); the first two are detected and report why they are unavailable. See `docs/SUBSTRATE.md`.
+
 ## Alternatives considered
 
 - **Containers only:** rejected for untrusted code.

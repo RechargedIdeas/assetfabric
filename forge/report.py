@@ -12,7 +12,7 @@ PLAN = {
     "F1": "Sprite/tile/DyeWorks procedural, gates, Godot binding, PatternVault, SwatchStudio",
     "F2": "Codegen (chars/abilities/stats), G1-Audio",
     "F3": "GIRT, CascadeHub, micro LM path, callouts",
-    "F4": "Sandbox (process tier), hot reload, snapshots, statecharts",
+    "F4": "Sandbox (bwrap/process tiers), atomic hot reload, snapshots + WAL, statecharts, guardian",
     "F5": "Monte Carlo balance, soft-lock detection, save migration",
     "F6": "Quest SM, farming, loot, adaptive music",
     "F7": "Desktop/Android/Web packaging, ShuttleLine multi, BoltPack",

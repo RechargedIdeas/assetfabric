@@ -26,6 +26,10 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | deferred |
 | **GIRT** | — | Inference runtime | F3 | **real (CPU/GDScript)** — `autoload/girt.gd`: registry, latency budgets, telemetry, LM refusal inside tick; backends `mlp-gdscript`, `persona-bigram`. ONNX Runtime GDExtension deferred |
 | **CascadeHub** | — | Multi-agent bus | F3 | **real** — `autoload/cascade_hub.gd`: typed topics, drained after each tick |
+| **Substrate sandbox** | — | Isolated generator/authoring execution | F4 | **real** bwrap + process tiers (`forge sandbox`); Firecracker/gVisor detected only (no KVM launcher) |
+| **Live channel** | — | Atomic hot reload + live tune | F4 | **real** (`forge live set/sprite/push/watch/serve/status`) |
+| **Guardian** | — | Crash/hang self-healing | F4 | **real** (backoff restart, resume, quarantine); Crash Predictor deferred |
+| **Statecharts** | — | Parallel SCXML-subset + soft-lock analysis | F4 | **real** (GDScript runtime + Python twin) |
 | **GodotIPC / PWAPipeline / …** | — | Platform toolkit layers | staged | deferred |
 
 ### CLI acceptance
@@ -40,3 +44,7 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge palette [name] [--variant]` | Lists/echoes PatternVault swatches |
 | `forge accept <F>` | Headless Godot increment passes; result recorded |
 | `forge report` | Regenerates STATUS.md |
+| `forge sandbox doctor` / `run <brief>` | Lists real tiers; runs one brief sandboxed |
+| `forge build --sandbox auto` | Every generator job sandboxed; output identical |
+| `forge live set k=v …` / `sprite <id>` / `push` / `watch` | Ticket acked `committed` by a running game |
+| `forge live serve` | Game under guardian; crash/hang → restart + resume |

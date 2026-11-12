@@ -1,0 +1,822 @@
+{
+  "description": "Live tune without a full rebuild: sandboxed regen, atomic hot reload (2PC + probe + rollback), snapshots + WAL replay, parallel statecharts, guardian restart",
+  "errors": [],
+  "increment": "live-tune",
+  "milestone": "F4",
+  "passed": true,
+  "perf": {
+    "ack_ms": [
+      170.3,
+      161.9
+    ],
+    "ack_target_met": true,
+    "ack_target_ms": 500.0,
+    "backoffs_s": [
+      0.25,
+      0.5
+    ],
+    "commit_apply_us": [
+      52179,
+      50670
+    ],
+    "recover_s": [
+      0.86,
+      3.96
+    ],
+    "recover_target_met": true,
+    "recover_target_s": 10.0,
+    "snapshot_bytes": 36274
+  },
+  "result": {
+    "abilities_loaded": 14,
+    "abilities_used": [
+      "arrow",
+      "bite",
+      "claw",
+      "mend",
+      "shield_bash",
+      "slam",
+      "slash",
+      "smash",
+      "spark",
+      "spit",
+      "taunt",
+      "volley"
+    ],
+    "ai": {
+      "brain": "bt+policy",
+      "callouts": [
+        {
+          "event": "battle_start",
+          "line": "Shields up, friend.",
+          "tick": 256,
+          "who": "kael"
+        },
+        {
+          "event": "swap_in",
+          "line": "My turn to aim.",
+          "tick": 300,
+          "who": "nyra"
+        },
+        {
+          "event": "heal",
+          "line": "Hold still, friend.",
+          "tick": 355,
+          "who": "sola"
+        },
+        {
+          "event": "taunt",
+          "line": "Face me!",
+          "tick": 390,
+          "who": "bram"
+        },
+        {
+          "event": "kill",
+          "line": "One less thing.",
+          "tick": 399,
+          "who": "kael"
+        },
+        {
+          "event": "heal",
+          "line": "Patched you up, friend.",
+          "tick": 465,
+          "who": "sola"
+        },
+        {
+          "event": "kill",
+          "line": "Target down.",
+          "tick": 481,
+          "who": "nyra"
+        },
+        {
+          "event": "kill",
+          "line": "One less thing.",
+          "tick": 519,
+          "who": "kael"
+        },
+        {
+          "event": "kill",
+          "line": "Gone.",
+          "tick": 533,
+          "who": "bram"
+        },
+        {
+          "event": "kill",
+          "line": "Got it!",
+          "tick": 557,
+          "who": "sola"
+        },
+        {
+          "event": "victory",
+          "line": "Not a single wasted arrow.",
+          "tick": 557,
+          "who": "nyra"
+        }
+      ],
+      "callouts_total": 11,
+      "cascade": {
+        "callout": 11,
+        "callout_request": 14,
+        "intent": 4
+      },
+      "decisions": {
+        "bt_ticks": 13730,
+        "policy": 658,
+        "rule": 3988
+      },
+      "dialogue": [],
+      "field_warm_ms": 94.44,
+      "girt": {
+        "callouts_served": 11,
+        "lm_calls": 0,
+        "lm_p95_us": 0,
+        "lm_refused_in_tick": 0,
+        "policy_calls": 658,
+        "policy_fallbacks": 1,
+        "policy_p95_us": 30,
+        "registry": [
+          {
+            "arch": "mlp-7-12-1-tanh",
+            "backend": "mlp-gdscript",
+            "kind": "policy",
+            "model_id": "P-TargetSelect"
+          },
+          {
+            "backend": "persona-bigram",
+            "kind": "lm",
+            "model_id": "M-PersonaLM"
+          },
+          {
+            "backend": "callout-cache",
+            "kind": "cache",
+            "model_id": "CalloutCache"
+          }
+        ]
+      },
+      "intents": [
+        {
+          "intent": "focus",
+          "target_kind": "rock_brute",
+          "text": "everyone focus the brute",
+          "tick": 201
+        },
+        {
+          "intent": "aggressive",
+          "target_kind": "",
+          "text": "charge",
+          "tick": 421
+        }
+      ],
+      "lm_selftest": {
+        "bram": [
+          "i will carry what you cannot",
+          "slow steps still reach the stone is over",
+          "slow steps still reach the tunnel",
+          "the stone is over",
+          "the seeds and wait for rain"
+        ],
+        "kael": [
+          "a steady blade beats a",
+          "i trust the open fields",
+          "the old tunnels lead to the cave remembers every step we take",
+          "we move",
+          "stay close and then we take"
+        ],
+        "nyra": [
+          "every arrow counts in a quicker eye",
+          "keep them falling",
+          "keep them busy and a quicker eye",
+          "the open fields",
+          "the exit from here if you look up"
+        ],
+        "sola": [
+          "a long way down here",
+          "i keep the moss glows brighter near the water",
+          "i keep the farm in my pack",
+          "we are stronger when we",
+          "we stay together"
+        ]
+      },
+      "selftest": [
+        21.1046,
+        -28.5776,
+        22.5013
+      ],
+      "swap_parity": true,
+      "swap_recs": [
+        [
+          "kael",
+          12.5
+        ],
+        [
+          "nyra",
+          8.5
+        ],
+        [
+          "sola",
+          6.5
+        ],
+        [
+          "bram",
+          -19.99
+        ]
+      ],
+      "swap_threaded": true,
+      "swap_wall_ms": 84,
+      "swaps": [
+        {
+          "tick": 300,
+          "to": "nyra",
+          "wall_ms": 84
+        }
+      ]
+    },
+    "assets": [
+      "cave_02",
+      "spr_kael",
+      "spr_nyra",
+      "spr_bram",
+      "spr_sola",
+      "spr_ember_fox",
+      "spr_lumen_wisp",
+      "spr_stone_tortle",
+      "spr_emberling",
+      "spr_cave_mite",
+      "spr_rock_brute"
+    ],
+    "encounter": "live_tune",
+    "entities": {
+      "bram": {
+        "alive": true,
+        "casts": 8,
+        "damage": 56,
+        "healing": 0,
+        "hits": 11,
+        "hp": 58,
+        "kills": 2,
+        "kind": "fighter",
+        "max_hp": 81,
+        "team": 0
+      },
+      "bram_stone_tortle": {
+        "alive": true,
+        "casts": 2,
+        "damage": 3,
+        "healing": 0,
+        "hits": 1,
+        "hp": 40,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 40,
+        "team": 0
+      },
+      "cave_mite_4": {
+        "alive": false,
+        "casts": 5,
+        "damage": 5,
+        "healing": 0,
+        "hits": 4,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_mite_5": {
+        "alive": false,
+        "casts": 8,
+        "damage": 10,
+        "healing": 0,
+        "hits": 8,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_mite_6": {
+        "alive": false,
+        "casts": 4,
+        "damage": 4,
+        "healing": 0,
+        "hits": 4,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "emberling_1": {
+        "alive": false,
+        "casts": 4,
+        "damage": 7,
+        "healing": 0,
+        "hits": 4,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_2": {
+        "alive": false,
+        "casts": 5,
+        "damage": 8,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_3": {
+        "alive": false,
+        "casts": 5,
+        "damage": 5,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "kael": {
+        "alive": true,
+        "casts": 10,
+        "damage": 60,
+        "healing": 0,
+        "hits": 9,
+        "hp": 42,
+        "kills": 2,
+        "kind": "fighter",
+        "max_hp": 62,
+        "team": 0
+      },
+      "kael_ember_fox": {
+        "alive": false,
+        "casts": 1,
+        "damage": 1,
+        "healing": 0,
+        "hits": 1,
+        "hp": 0,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 22,
+        "team": 0
+      },
+      "nyra": {
+        "alive": true,
+        "casts": 10,
+        "damage": 50,
+        "healing": 0,
+        "hits": 15,
+        "hp": 46,
+        "kills": 2,
+        "kind": "fighter",
+        "max_hp": 46,
+        "team": 0
+      },
+      "nyra_lumen_wisp": {
+        "alive": true,
+        "casts": 7,
+        "damage": 5,
+        "healing": 0,
+        "hits": 5,
+        "hp": 7,
+        "kills": 1,
+        "kind": "pet",
+        "max_hp": 18,
+        "team": 0
+      },
+      "rock_brute_7": {
+        "alive": false,
+        "casts": 2,
+        "damage": 27,
+        "healing": 0,
+        "hits": 3,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 30,
+        "team": 1
+      },
+      "rock_brute_8": {
+        "alive": false,
+        "casts": 4,
+        "damage": 52,
+        "healing": 0,
+        "hits": 7,
+        "hp": 0,
+        "kills": 1,
+        "kind": "enemy",
+        "max_hp": 30,
+        "team": 1
+      },
+      "sola": {
+        "alive": true,
+        "casts": 9,
+        "damage": 16,
+        "healing": 22,
+        "hits": 7,
+        "hp": 29,
+        "kills": 1,
+        "kind": "fighter",
+        "max_hp": 39,
+        "team": 0
+      }
+    },
+    "hits": 89,
+    "increment": "live-tune",
+    "live": {
+      "acks": [
+        {
+          "apply_us": 52179,
+          "assets": [],
+          "hash_after": "63e1fe7a2420ef01",
+          "hash_before": "d6a7a918b2299c11",
+          "restatted": 2,
+          "source": "accept F4: tune",
+          "status": "committed",
+          "tick": 240,
+          "ticket": 1
+        },
+        {
+          "apply_us": 50670,
+          "assets": [
+            "spr_rock_brute"
+          ],
+          "hash_after": "63e1fe7a2420ef01",
+          "hash_before": "63e1fe7a2420ef01",
+          "restatted": 0,
+          "source": "forge live sprite spr_rock_brute seed=4242 sandbox=bwrap",
+          "status": "committed",
+          "tick": 240,
+          "ticket": 2
+        },
+        {
+          "hash_after": "63e1fe7a2420ef01",
+          "hash_before": "63e1fe7a2420ef01",
+          "reason": "fault injected (acceptance test of the rollback path)",
+          "restored_equal": true,
+          "source": "accept F4: probe fault",
+          "status": "rolled_back",
+          "tick": 240,
+          "ticket": 3
+        },
+        {
+          "reason": "enemies.rock_brute.stats.hp: 99999 outside [1, 9999]",
+          "source": "accept F4: bypass",
+          "status": "rejected",
+          "tick": 240,
+          "ticket": 4
+        }
+      ],
+      "chart_active": {
+        "ai": "done",
+        "combat": "victory",
+        "dialogue": "quiet",
+        "movement": "settled",
+        "reload": "idle"
+      },
+      "chart_active_after_replay": {
+        "ai": "done",
+        "combat": "victory",
+        "dialogue": "quiet",
+        "movement": "settled",
+        "reload": "idle"
+      },
+      "chart_main": {
+        "active": {
+          "ai": "done",
+          "combat": "victory",
+          "dialogue": "quiet",
+          "movement": "settled",
+          "reload": "idle"
+        },
+        "events": [
+          "move",
+          "intent",
+          "ticket",
+          "valid",
+          "applied",
+          "probe_ok",
+          "ticket",
+          "valid",
+          "applied",
+          "probe_ok",
+          "ticket",
+          "valid",
+          "applied",
+          "probe_fail",
+          "restored",
+          "ticket",
+          "invalid",
+          "battle_start",
+          "freeze",
+          "swap",
+          "resume",
+          "stop",
+          "move",
+          "stop",
+          "move",
+          "stop",
+          "move",
+          "stop",
+          "intent",
+          "victory"
+        ],
+        "transitions": 33
+      },
+      "chart_replay_equal": true,
+      "chart_trace": [
+        "idle>preparing",
+        "preparing>committing",
+        "committing>probing",
+        "probing>idle",
+        "idle>preparing",
+        "preparing>committing",
+        "committing>probing",
+        "probing>idle",
+        "idle>preparing",
+        "preparing>committing",
+        "committing>probing",
+        "probing>rolling_back",
+        "rolling_back>idle",
+        "idle>preparing",
+        "preparing>idle",
+        "idle>preparing",
+        "preparing>committing",
+        "committing>probing",
+        "probing>idle",
+        "idle>preparing",
+        "preparing>committing",
+        "committing>probing",
+        "probing>idle"
+      ],
+      "final_hash": "06e0e45f9c8a4c37",
+      "live_dir": "/tmp/fabric-f4-o41hh2sf/backlog",
+      "replay": {
+        "final_hash": "06e0e45f9c8a4c37",
+        "outcome": "victory",
+        "replayed": 5,
+        "restored_hash_equal": true,
+        "tick": 557
+      },
+      "replay_equal": true,
+      "restarts": 0,
+      "snapshot_bytes": 36274,
+      "snapshots": [
+        "pre_tune"
+      ],
+      "summary_hash": "924275576a626619",
+      "tuned": {
+        "leash": 72,
+        "rock_brute_max_hp": 30,
+        "separation": 9,
+        "sprite_override": "/tmp/fabric-f4-o41hh2sf/backlog/stage/2/spr_rock_brute.png"
+      },
+      "wal": [
+        {
+          "kind": "command",
+          "tick": 200
+        },
+        {
+          "kind": "ticket",
+          "tick": 240
+        },
+        {
+          "kind": "ticket",
+          "tick": 240
+        },
+        {
+          "kind": "swap",
+          "tick": 300
+        },
+        {
+          "kind": "command",
+          "tick": 420
+        }
+      ]
+    },
+    "music_loaded": true,
+    "outcome": "victory",
+    "sandbox": {
+      "profiles": {
+        "gen": {
+          "cpu_s": 60,
+          "fsize_mb": 64,
+          "mem_mb": 2048,
+          "network": false,
+          "nofile": 256,
+          "wall_s": 120.0
+        },
+        "short": {
+          "cpu_s": 10,
+          "fsize_mb": 64,
+          "mem_mb": 1024,
+          "network": false,
+          "nofile": 256,
+          "wall_s": 20.0
+        },
+        "train": {
+          "cpu_s": 900,
+          "fsize_mb": 64,
+          "mem_mb": 8192,
+          "network": false,
+          "nofile": 256,
+          "wall_s": 1800.0
+        }
+      },
+      "selected": "bwrap",
+      "tiers": {
+        "bwrap": {
+          "available": true,
+          "launcher": true,
+          "reason": "ok"
+        },
+        "firecracker": {
+          "available": false,
+          "launcher": false,
+          "reason": "/dev/kvm present but not accessible to this user"
+        },
+        "gvisor": {
+          "available": false,
+          "launcher": false,
+          "reason": "runsc missing"
+        },
+        "process": {
+          "available": true,
+          "launcher": true,
+          "reason": "ok"
+        }
+      }
+    },
+    "serve": {
+      "guardian": {
+        "backoffs": [
+          0.25,
+          0.5
+        ],
+        "failures": [
+          {
+            "event": "failure",
+            "kind": "crash",
+            "rc": -6,
+            "signal": 6,
+            "t": 1794492185.307
+          },
+          {
+            "event": "failure",
+            "heartbeat_age_s": 3.03,
+            "kind": "hang",
+            "t": 1794492189.429
+          }
+        ],
+        "policy": {
+          "backoff": {
+            "base_s": 0.25,
+            "factor": 2.0,
+            "max_s": 4.0
+          },
+          "grace_s": 60.0,
+          "hang_s": 3.0,
+          "max_restarts": 4,
+          "window_s": 120.0
+        },
+        "restarts": 2,
+        "status": "exited"
+      },
+      "steps": [
+        {
+          "ack_ms": 170.3,
+          "status": "committed",
+          "step": "tune",
+          "ticket": 1,
+          "tuned": {
+            "leash": 80,
+            "rock_brute_max_hp": 40,
+            "separation": 9,
+            "sprite_override": "res://assets/generated/sprite/spr_rock_brute.png"
+          }
+        },
+        {
+          "recover_s": 0.86,
+          "resume": {
+            "from_snapshot": true,
+            "full_hash": "5a4096705e3e6b38",
+            "quarantined": 2,
+            "reapplied": [],
+            "tick": 18
+          },
+          "status": "quarantined",
+          "step": "crash",
+          "ticket": 2,
+          "tuned": {
+            "leash": 80,
+            "rock_brute_max_hp": 40,
+            "separation": 9,
+            "sprite_override": "res://assets/generated/sprite/spr_rock_brute.png"
+          }
+        },
+        {
+          "ack_ms": 161.9,
+          "status": "committed",
+          "step": "tune_after_restart",
+          "ticket": 3,
+          "tuned": {
+            "leash": 80,
+            "rock_brute_max_hp": 45,
+            "separation": 9,
+            "sprite_override": "res://assets/generated/sprite/spr_rock_brute.png"
+          }
+        },
+        {
+          "recover_s": 3.96,
+          "resume": {
+            "from_snapshot": true,
+            "full_hash": "ca30ea54216efab4",
+            "quarantined": 4,
+            "reapplied": [],
+            "tick": 36
+          },
+          "status": "quarantined",
+          "step": "hang",
+          "ticket": 4,
+          "tuned": {
+            "leash": 80,
+            "rock_brute_max_hp": 45,
+            "separation": 9,
+            "sprite_override": "res://assets/generated/sprite/spr_rock_brute.png"
+          }
+        },
+        {
+          "status": "committed",
+          "step": "quit",
+          "ticket": 5
+        }
+      ]
+    },
+    "sim_ms": 736.49,
+    "state_hash": "924275576a626619",
+    "statechart_analysis": {
+      "id": "live_session",
+      "ok": true,
+      "regions": {
+        "ai": {
+          "dangling": [],
+          "dead_ends": [],
+          "has_final": true,
+          "initial_ok": true,
+          "ok": true,
+          "traps": [],
+          "unreachable": []
+        },
+        "combat": {
+          "dangling": [],
+          "dead_ends": [],
+          "has_final": true,
+          "initial_ok": true,
+          "ok": true,
+          "traps": [],
+          "unreachable": []
+        },
+        "dialogue": {
+          "dangling": [],
+          "dead_ends": [],
+          "has_final": true,
+          "initial_ok": true,
+          "ok": true,
+          "traps": [],
+          "unreachable": []
+        },
+        "movement": {
+          "dangling": [],
+          "dead_ends": [],
+          "has_final": true,
+          "initial_ok": true,
+          "ok": true,
+          "traps": [],
+          "unreachable": []
+        },
+        "reload": {
+          "dangling": [],
+          "dead_ends": [],
+          "has_final": true,
+          "initial_ok": true,
+          "ok": true,
+          "traps": [],
+          "unreachable": []
+        }
+      }
+    },
+    "statechart_parity": {
+      "active_equal": true,
+      "events": 30,
+      "transitions_equal": true
+    },
+    "ticks": 557,
+    "tres_loaded": 14
+  }
+}

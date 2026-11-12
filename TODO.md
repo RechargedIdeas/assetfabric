@@ -1,29 +1,32 @@
 # TODO.md — Actionable Tasks
 
-Last updated: 2026-11-05 ~21:40 America/New_York
+Last updated: 2026-11-12 America/New_York
 
-## Current sprint — F4 sandbox + hot reload + snapshots + live tune
+## Current sprint — F5 balance + boss
 
-- [ ] Process-tier sandbox runner for generator jobs (subprocess, rlimits, no network, scratch dir); KVM tier documented as unavailable on the box
-- [ ] Hot reload: Forge watches content → rebuilds → game reloads `fabric_assets.json` / game data without restart
-- [ ] Sim snapshots: serialize/restore CombatSim; restored state hash must match
-- [ ] Live tune: typed tune messages (CascadeHub topic) applied between ticks; recorded for replay
-- [ ] Game F4 increment + docs
+- [ ] Monte Carlo balance runner (headless batch, G-BAL-01: 1k encounters, win-rate deviation < 5 % across matchups)
+- [ ] Bayesian / Optuna tuning on CPU against the balance objective
+- [ ] Soft-lock detection (statechart static analysis + runtime stall detector)
+- [ ] Save system + versioned migration (Player State Profile / Roster / World)
+- [ ] Game F5 increment: first tier-3 boss cleared, proven by the balance runner
 
 ## Perf debt
 
-- [ ] Swap advisor < 50 ms (now ≈ 50–80 ms): native step function (GDExtension) or reduced candidate set; keep serial/threaded parity test
+- [ ] Swap advisor < 50 ms (now ≈ 50–100 ms; F4 re-measured 66–104 ms): native step function (GDExtension) or reduced candidate set; keep serial/threaded parity test
 ## Done
 
 - [x] F0 Foundation (accepted 2026-11-05)
 - [x] F1 Content Pipeline (accepted 2026-11-05): G1-Sprite, G1-Tile, DyeWorks procedural; gates; PatternVault; SwatchStudio CLI; Godot binding; sandbox encounter
 - [x] F2 Codegen + G1-Audio (accepted 2026-11-05): roster → game data + .tres; derived sprites; chiptune stems; first combat party of 4 + pets
 - [x] F3 GIRT + CascadeHub + callouts (accepted 2026-11-05): policy BC, callout cache, persona LM stand-in, BT party AI, time-freeze swap, intents, dialogue
+- [x] F4 Substrate (accepted 2026-11-12): bwrap/process sandbox, live channel (2PC + probe + rollback), snapshots + WAL, parallel statecharts, guardian
 - [x] Private repo + proprietary license (D-003, D-004)
 
 ## Backlog (later milestones)
 
-- F5 Monte Carlo balance, soft-lock, save migration, first boss
+- Firecracker / gVisor launchers (need usable KVM + guest image)
+- Hot reload of GDScript code, tilemaps, audio; remote (WS/gRPC) live transport for Studio
+- Session host migration (failover tier 3); Crash Predictor model
 - F6 quest SM, farming, loot, adaptive music, vertical slice
 - F7 packaging (desktop/Android/Web), ShuttleLine multi, BoltPack
 - Studio PySide6 shell; SwatchStudio GUI

@@ -86,13 +86,20 @@ def _write_registry(ctx: Context, reg: dict[str, Any]) -> None:
     (ctx.export_root / REGISTRY_NAME).write_text(json.dumps(reg, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True) -> GeneratorOutput:
+def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True, sandbox: str | None = None) -> GeneratorOutput:
+    """`sandbox`: None → in-process (trusted first-party generators); "auto"/"bwrap"/"process"
+    → run the generator inside a forge.sandbox tier (F4). Output is byte-identical either way."""
     gens = load_all()
     kind = brief["kind"]
     if kind not in gens:
         raise KeyError(f"no generator registered for kind {kind!r} (have {sorted(gens)})")
     t0 = time.perf_counter()
-    out = gens[kind](brief, ctx)
+    if sandbox:
+        from forge import sandbox as sbx
+
+        out = sbx.generate(brief, ctx.root, tier=sandbox)
+    else:
+        out = gens[kind](brief, ctx)
     elapsed = (time.perf_counter() - t0) * 1000
     files: dict[str, dict[str, str]] = {}
     if out.ok:
@@ -123,6 +130,7 @@ def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True) -> Gener
         "forge.generate", agent_id=f"gen:{kind}", agent_type="generator",
         action_taken={"brief": brief["id"], "ok": out.ok, "gates": {g.gate: g.ok for g in out.gates}},
         action_source="system", inference_latency_ms=round(elapsed, 2),
+        sandbox_id=out.meta.get("sandbox", {}).get("id"),
         model_id=out.meta.get("model_id"), model_version=out.meta.get("model_version"),
     ))
     out.meta["files"] = files
@@ -130,17 +138,18 @@ def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True) -> Gener
     return out
 
 
-def build_all(root: Path | None = None, pattern: str = "**/*.yaml", export: bool = True) -> dict[str, Any]:
+def build_all(root: Path | None = None, pattern: str = "**/*.yaml", export: bool = True,
+              sandbox: str | None = None) -> dict[str, Any]:
     """Queue every brief on the orchestrator and run them (deterministic order)."""
     ctx = Context.create(root)
     orch = JobOrchestrator(ctx.root)
     briefs = {b["id"]: b for b in load_briefs(ctx.root, pattern)}
     for b in briefs.values():
         orch.enqueue(f"gen.{b['kind']}", {"brief_id": b["id"]})
-    report: dict[str, Any] = {"ok": True, "assets": {}}
+    report: dict[str, Any] = {"ok": True, "assets": {}, "sandbox": sandbox}
 
     def handler(job: Any) -> GeneratorOutput:
-        return run_brief(briefs[job.payload["brief_id"]], ctx, export=export)
+        return run_brief(briefs[job.payload["brief_id"]], ctx, export=export, sandbox=sandbox)
 
     for job, res in run_pending(orch, handler, kinds={f"gen.{b['kind']}" for b in briefs.values()}):
         bid = job.payload.get("brief_id")

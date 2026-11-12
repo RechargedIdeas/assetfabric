@@ -166,12 +166,14 @@ def store_cmd(action: str, file_path: Path | None, root: Path | None) -> None:
 @main.command("build")
 @click.option("--brief", "pattern", default="**/*.yaml", help="Glob under content/briefs/.")
 @click.option("--no-export", is_flag=True, help="Generate + gate + store only; do not write into the game.")
+@click.option("--sandbox", "sandbox_tier", default=None, type=click.Choice(["auto", "bwrap", "process"]),
+              help="Run every generator job inside a Substrate sandbox tier (F4).")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
-def build_cmd(pattern: str, no_export: bool, root: Path | None) -> None:
+def build_cmd(pattern: str, no_export: bool, sandbox_tier: str | None, root: Path | None) -> None:
     """Run content briefs through generators → gates → store → Godot export."""
     from forge.pipeline import build_all
 
-    report = build_all(root or find_repo_root(), pattern, export=not no_export)
+    report = build_all(root or find_repo_root(), pattern, export=not no_export, sandbox=sandbox_tier)
     click.echo(json.dumps(report, indent=2))
     sys.exit(0 if report["ok"] else 1)
 
@@ -233,6 +235,203 @@ def accept_cmd(milestone: str, no_write: bool, root: Path | None) -> None:
     report = accept(milestone, root or find_repo_root(), write=not no_write)
     click.echo(json.dumps(report, indent=2))
     sys.exit(0 if report["passed"] else 1)
+
+
+@main.group("sandbox")
+def sandbox_grp() -> None:
+    """Substrate sandbox tiers (F4): firecracker / gvisor / bwrap / process."""
+
+
+@sandbox_grp.command("doctor")
+def sandbox_doctor() -> None:
+    """Probe which isolation tiers this host can actually provide."""
+    from forge.sandbox import describe
+
+    click.echo(json.dumps(describe(), indent=2))
+
+
+@sandbox_grp.command("run")
+@click.argument("brief_id")
+@click.option("--tier", default="auto", type=click.Choice(["auto", "bwrap", "process"]))
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def sandbox_run(brief_id: str, tier: str, root: Path | None) -> None:
+    """Generate one brief inside a sandbox (no export) and report gates + sandbox stats."""
+    from forge import sandbox
+    from forge.pipeline import load_briefs
+
+    root = root or find_repo_root()
+    briefs = {b["id"]: b for b in load_briefs(root)}
+    if brief_id not in briefs:
+        console.print(f"[red]unknown brief {brief_id!r}[/red]")
+        sys.exit(2)
+    out = sandbox.generate(briefs[brief_id], root, tier=tier)
+    click.echo(json.dumps({"ok": out.ok, "sandbox": out.meta["sandbox"], "gates": {g.gate: g.ok for g in out.gates},
+                           "artifacts": [a.name for a in out.artifacts]}, indent=2))
+    sys.exit(0 if out.ok else 1)
+
+
+@main.group("live")
+def live_grp() -> None:
+    """Live channel to a running game (F4): hot reload + live tune, no rebuild."""
+
+
+def _channel(live_dir: Path | None, root: Path | None):
+    from forge.live import LiveChannel
+
+    return LiveChannel(live_dir, root or find_repo_root())
+
+
+_live_dir_opt = click.option("--live-dir", type=click.Path(path_type=Path), default=None,
+                             help="Default: .fabric/live/game-zero (the game's default too).")
+
+
+def _finish(ch, n: int | None, wait: float) -> None:
+    out: dict = {"ticket": n}
+    if n and wait > 0:
+        out["ack"] = ch.wait_ack(n, wait)
+    click.echo(json.dumps(out, indent=2))
+    sys.exit(0 if not out.get("ack") or out["ack"]["status"] == "committed" else 1)
+
+
+@live_grp.command("set")
+@click.argument("assignments", nargs=-1, required=True)
+@_live_dir_opt
+@click.option("--wait", default=5.0, help="Seconds to wait for the game's ack (0 = fire and forget).")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_set(assignments: tuple[str, ...], live_dir: Path | None, wait: float, root: Path | None) -> None:
+    """Tune values: forge live set enemies.rock_brute.stats.hp=30 sim.leash=64"""
+    from forge.live import LiveError
+
+    patches = []
+    for a in assignments:
+        if "=" not in a:
+            console.print(f"[red]expected path=value, got {a!r}[/red]")
+            sys.exit(2)
+        k, v = a.split("=", 1)
+        patches.append({"path": k, "value": float(v) if "." in v or "e" in v.lower() else int(v)})
+    ch = _channel(live_dir, root)
+    try:
+        n = ch.push(patches, source="forge live set")
+    except LiveError as exc:
+        console.print(f"[red]rejected:[/red] {exc}")
+        sys.exit(1)
+    _finish(ch, n, wait)
+
+
+@live_grp.command("sprite")
+@click.argument("brief_id")
+@click.option("--seed", type=int, default=None)
+@click.option("--tier", default="auto", type=click.Choice(["auto", "bwrap", "process"]))
+@_live_dir_opt
+@click.option("--wait", default=5.0)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_sprite(brief_id: str, seed: int | None, tier: str, live_dir: Path | None, wait: float, root: Path | None) -> None:
+    """Regenerate a sprite brief in the sandbox and hot-swap it into the running game."""
+    ch = _channel(live_dir, root)
+    _finish(ch, ch.push_sprite(brief_id, seed, tier), wait)
+
+
+@live_grp.command("push")
+@click.option("--tier", default="auto", type=click.Choice(["auto", "bwrap", "process"]))
+@_live_dir_opt
+@click.option("--wait", default=5.0)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_push(tier: str, live_dir: Path | None, wait: float, root: Path | None) -> None:
+    """Re-run codegen on content/roster (sandboxed) and push numeric changes live."""
+    from forge.live import LiveError
+
+    ch = _channel(live_dir, root)
+    try:
+        n, patches = ch.push_roster(tier)
+    except LiveError as exc:
+        console.print(f"[red]rejected:[/red] {exc}")
+        sys.exit(1)
+    console.print(f"{len(patches)} patch(es)")
+    _finish(ch, n, wait)
+
+
+@live_grp.command("watch")
+@click.option("--interval", default=0.5)
+@click.option("--tier", default="auto", type=click.Choice(["auto", "bwrap", "process"]))
+@_live_dir_opt
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_watch(interval: float, tier: str, live_dir: Path | None, root: Path | None) -> None:
+    """Watch content/roster/*.yaml; on save, push numeric changes to the running game."""
+    import time as _t
+
+    from forge.live import LiveError
+
+    ch = _channel(live_dir, root)
+    src = ch.root / "content" / "roster"
+
+    def sig() -> tuple:
+        return tuple(sorted((p.name, p.stat().st_mtime_ns) for p in src.glob("*.yaml")))
+
+    last = sig()
+    console.print(f"watching {src} → {ch.dir} (Ctrl-C to stop)")
+    while True:
+        _t.sleep(interval)
+        cur = sig()
+        if cur == last:
+            continue
+        last = cur
+        try:
+            n, patches = ch.push_roster(tier)
+            console.print(f"ticket {n}: {len(patches)} patch(es)" if n else "no numeric change")
+        except LiveError as exc:
+            console.print(f"[yellow]{exc}[/yellow]")
+
+
+@live_grp.command("serve")
+@click.option("--scene", default="live", help="Game Zero scene to serve (default: live).")
+@click.option("--encounter", default=None)
+@click.option("--headless/--windowed", default=False)
+@click.option("--hang-s", default=5.0, help="Heartbeat staleness that counts as a hang.")
+@click.option("--allow-fault-injection", is_flag=True, help="Honour fault=probe|crash|hang tickets (testing only).")
+@_live_dir_opt
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_serve(scene: str, encounter: str | None, headless: bool, hang_s: float, allow_fault_injection: bool,
+               live_dir: Path | None, root: Path | None) -> None:
+    """Run Game Zero under the Guardian (crash/hang → restart with backoff + --live-resume)."""
+    from forge.guardian import Guardian, GuardianPolicy
+    from forge.manifest import load_manifest
+    from forge.milestones import godot_binary
+
+    root = root or find_repo_root()
+    ch = _channel(live_dir, root)
+    gb = godot_binary(root)
+    if not gb:
+        console.print("[red]Godot binary not found[/red]")
+        sys.exit(2)
+    project = root / load_manifest(None, root).game.project_path
+    argv = [gb, *(["--headless"] if headless else []), "--path", str(project), "--", f"--scene={scene}",
+            "--serve", f"--live-dir={ch.dir}"] + (["--autoplay"] if headless else [])
+    if encounter:
+        argv.append(f"--encounter={encounter}")
+    if allow_fault_injection:
+        argv.append("--allow-fault-injection")
+    g = Guardian(argv, ch.dir, heartbeat=ch.dir / "status.json", restart_args=["--live-resume"],
+                 policy=GuardianPolicy(hang_s=hang_s), log_child=ch.dir / "godot.log", root=root)
+    console.print(f"guardian: serving {scene} on {ch.dir} (Ctrl-C to stop)")
+    try:
+        status = g.run()
+    except KeyboardInterrupt:
+        g._stop.set()
+        g._kill()
+        status = "stopped"
+    click.echo(json.dumps(g.summary(), indent=2))
+    sys.exit(0 if status in ("exited", "stopped") else 1)
+
+
+@live_grp.command("status")
+@_live_dir_opt
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def live_status(live_dir: Path | None, root: Path | None) -> None:
+    """Show HEAD ticket, the game's last status and recent acks."""
+    ch = _channel(live_dir, root)
+    acks = sorted((ch.dir / "acks").glob("*.json"), key=lambda p: int(p.stem))[-5:]
+    click.echo(json.dumps({"dir": str(ch.dir), "head": ch.head(), "game": ch.status(),
+                           "acks": [json.loads(p.read_text()) for p in acks]}, indent=2))
 
 
 @main.command("report")

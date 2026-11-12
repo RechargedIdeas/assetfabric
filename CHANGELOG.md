@@ -4,6 +4,24 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.4.0+f4] — 2026-11-12 — F4 Substrate: sandbox, hot reload, snapshots, statecharts, guardian
+
+### Added
+- `forge/sandbox.py` + `sandbox_worker.py`: tier ladder firecracker/gvisor (detected, no launcher) → bwrap (namespaces, no network, ro root) → process (rlimits, scrubbed env, audit hook); lifecycle telemetry; scratch snapshots; `forge sandbox doctor|run`; `forge build --sandbox`.
+- `forge/live.py` + `autoload/live.gd`: live channel — monotonic tickets, sandboxed staging, `tune_limits` validation on both sides, two-phase commit at a tick boundary, 90-tick health probe, rollback, acks; `forge live set|sprite|push|watch|serve|status`; `content/tune/limits.yaml` exported into `game_data.json`.
+- Tier-2 snapshots: `CombatSim.to_snapshot/restore/full_hash`, `Entity.to_dict/from_dict`; session WAL; on-disk restore + replay.
+- Parallel statecharts: `sim/statechart.gd`, `forge/statechart.py` (soft-lock analysis), `data/statecharts/live_session.json` (combat / movement / ai / dialogue / reload).
+- `forge/guardian.py`: crash/hang detection, exponential backoff, restart with `--live-resume` (session snapshot, poison-ticket quarantine, re-apply committed tickets), crash-loop give-up.
+- F4 increment `live-tune` (`scenes/live.tscn`, `encounters/live_tune.json`) + two-phase acceptance (`forge/accept_f4.py`); `tests/test_f4_substrate.py` (28 tests); `docs/SUBSTRATE.md`, `docs/acceptance-tests/F4.md`.
+
+### Changed
+- `sim.leash` / `sim.separation` are per-sim (live-tunable); `EncounterBuilder.restat` re-derives stats in place; roster `ref` meta on entities.
+- Replay no longer duplicates intents/swaps/callouts in reports.
+
+### Known
+- No micro-VM/gVisor launcher (no usable KVM); `process` tier is best-effort against native code.
+- Swap advisor still ≈ 50–100 ms (target < 50 ms; ceiling 150 ms) — native step function not built.
+
 ## [0.3.0+f3] — 2026-11-05 — F3 GIRT + CascadeHub + callouts
 
 ### Added

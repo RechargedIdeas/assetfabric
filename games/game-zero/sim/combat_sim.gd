@@ -7,8 +7,9 @@ const SimGrid = preload("res://sim/grid.gd")
 const SimEntity = preload("res://sim/entity.gd")
 
 const TICK_HZ := 60
-const LEASH := 56.0          # followers stay near the leader when idle
-const SEPARATION := 9.0
+const LEASH := 56.0          # default; live-tunable as `sim.leash` (F4)
+const SEPARATION := 9.0      # default; live-tunable as `sim.separation`
+const SNAPSHOT_VERSION := 1
 
 var grid
 var entities: Array = []
@@ -23,6 +24,8 @@ var engaged := false
 var brain_ref: RefCounted = null   # strong ref for a brain_override target owned by this sim
 var forward := false           # true for swap-advisor clones: no global (GIRT) writes, thread-safe
 var think_interval := 1        # forward-sim LOD: brains think every N ticks (swap advisor uses 3)
+var leash := LEASH             # followers stay near the leader when idle
+var separation := SEPARATION
 
 
 func _init(grid_) -> void:
@@ -51,6 +54,8 @@ func clone():
 	c.focus_kind = focus_kind
 	c.engaged = engaged
 	c.think_interval = think_interval
+	c.leash = leash
+	c.separation = separation
 	return c
 
 
@@ -93,8 +98,8 @@ func move(e, dir: Vector2) -> void:
 			continue
 		var d: Vector2 = e.pos - o.pos
 		var l := d.length()
-		if l > 0.001 and l < SEPARATION:
-			dir += d / l * (SEPARATION - l) / SEPARATION * 0.8
+		if l > 0.001 and l < separation:
+			dir += d / l * (separation - l) / separation * 0.8
 	e.moving = dir.length_squared() > 0.0001
 	if not e.moving:
 		return
@@ -276,7 +281,7 @@ func rule_brain(e) -> void:
 		anchor = by_id.get(e.owner_id)
 	elif e.team == 0 and not e.is_leader:
 		anchor = leader()
-	if anchor and anchor.alive() and e.pos.distance_to(anchor.pos) > LEASH * (0.5 if e.kind == "pet" else 1.0):
+	if anchor and anchor.alive() and e.pos.distance_to(anchor.pos) > leash * (0.5 if e.kind == "pet" else 1.0):
 		move_toward_entity(e, anchor)
 	else:
 		e.moving = false
@@ -367,6 +372,54 @@ func _cd_of(e, ab_id: String) -> int:
 		if a["id"] == ab_id:
 			return int(a["cooldown"])
 	return 0
+
+
+# ---------------------------------------------------------------- F4 snapshots (Tier 2: application state)
+
+## Complete, JSON-safe sim state. Restoring it and stepping is bit-identical to stepping
+## the original (proved by `full_hash` + the F4 acceptance replay).
+func to_snapshot() -> Dictionary:
+	var ents := []
+	for e in entities:
+		ents.append(e.to_dict())
+	return {"v": SNAPSHOT_VERSION, "tick": tick, "tactic": tactic, "focus_kind": focus_kind, "engaged": engaged,
+		"leader_manual": leader_manual, "think_interval": think_interval, "leash": leash, "separation": separation,
+		"entities": ents, "events": events.duplicate(true)}
+
+
+## Restore in place (keeps grid, brain hook and forward flag).
+func restore(snap: Dictionary) -> void:
+	assert(int(snap.get("v", 0)) == SNAPSHOT_VERSION, "snapshot version mismatch")
+	entities.clear()
+	by_id.clear()
+	for d in snap["entities"]:
+		add(SimEntity.from_dict(d))
+	tick = int(snap["tick"])
+	tactic = str(snap["tactic"])
+	focus_kind = str(snap["focus_kind"])
+	engaged = bool(snap["engaged"])
+	leader_manual = bool(snap["leader_manual"])
+	think_interval = int(snap["think_interval"])
+	leash = float(snap["leash"])
+	separation = float(snap["separation"])
+	events = []
+	for ev in snap["events"]:
+		events.append(_int_fields(ev))
+
+
+static func _int_fields(ev: Dictionary) -> Dictionary:
+	var out := ev.duplicate()
+	for k in ["tick", "dmg", "hp", "amount", "target_team"]:
+		if out.has(k):
+			out[k] = int(out[k])
+	return out
+
+
+## Strict hash over the whole snapshot (full float precision), vs. the display-level state_hash.
+func full_hash() -> String:
+	var s := to_snapshot()
+	s.erase("events")
+	return JSON.stringify(s, "", true, true).sha256_text().substr(0, 16)
 
 
 func state_hash() -> String:

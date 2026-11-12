@@ -65,3 +65,14 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 45. **Intent grammar** verbs (focus/target/attack/hit, regroup/fall back/retreat, defend/hold, charge/push/go, swap/switch) — closed vocabulary shared with the future Vosk path (ADR-0006).
 46. **CascadeHub** topics (`intent`, `callout_request`, `callout`, `dialogue_request`) drained once after each fixed tick, never inside it.
 47. **Demo/attract mode**: windowed `--autoplay` plays the encounter script and holds the freeze overlay 90 frames so it can be captured.
+
+## F4 — Substrate: sandbox, hot reload, snapshots, statecharts, guardian
+
+48. **Sandbox ladder** firecracker → gvisor → **bwrap** → **process**: the chat names Firecracker/gVisor/Microsandbox only; `bwrap` (namespaces) and the rlimit `process` tier are our KVM-less fallbacks (ADR-0007 consequence). Firecracker/gVisor are detected but have no launcher.
+49. **Live channel transport = files** (tickets / HEAD / acks under `.fabric/live/`), not sockets/gRPC — simplest atomic medium that works headless and in CI; a Studio WS/gRPC transport can sit on the same ticket protocol later.
+50. **Live-tunable surface** = numeric leaves of `game_data.json` matched by `content/tune/limits.yaml` + `sim.leash` / `sim.separation`; ranges are ours. Structural edits require `forge build`.
+51. **Health probe** = 90-tick forward clone + invariants (finite positions, 0 ≤ HP ≤ max, max > 0, casts resolve). Spec says only "health probe".
+52. **ACK target ≤ 500 ms and recovery ≤ 10 s** are our soft targets (spec gives none); tracked in `results/F4.json` `perf`.
+53. **Guardian policy**: heartbeat = `status.json` mtime (~2 Hz), hang 5 s default (3 s in acceptance), backoff 0.5 s × 2ⁿ capped 8 s, give up after 5 restarts in 120 s. **Poison-ticket quarantine** (in-flight ticket with no ack is never re-applied) is our addition.
+54. **Statechart regions** combat / movement / ai / dialogue / reload and their events (`move/stop`, `freeze/resume/swap`, `intent`, `dialogue_request/reply`, reload 2PC events) are ours; SCXML subset without hierarchy/history.
+55. **Session snapshot cadence** 300 ticks + after each commit; snapshots are JSON (not binary) for diffability.

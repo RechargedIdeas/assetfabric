@@ -49,6 +49,7 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 		var e = SimEntity.create(m["ref"], 0, "fighter", m.get("sprite", f["sprite_id"]), stats, abs_, grid.center(party_cells[pi]))
 		pi += 1
 		e.is_leader = bool(m.get("leader", false))
+		e.set_meta("ref", m["ref"])
 		sim.add(e)
 		fighters.append([e, m])
 	# pets: bonuses to owner with diminishing returns; a share to the whole party
@@ -65,6 +66,7 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 			pi += 1
 			pe.owner_id = owner.id
 			pe.radius = 4.0
+			pe.set_meta("ref", pid)
 			sim.add(pe)
 			for k in p["bonus"]:
 				own[k] += float(p["bonus"][k])
@@ -94,5 +96,35 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 			var e = SimEntity.create("%s_%d" % [h["ref"], n], 1, "enemy", h.get("sprite", en["sprite_id"]), en["stats"],
 				en["abilities"].map(func(a): return abilities[a]), grid.center(cell))
 			e.tier = int(en["tier"])
+			e.set_meta("ref", h["ref"])
 			sim.add(e)
 	return sim
+
+
+## F4 live tune: re-derive stats/abilities for every live entity from (patched) game data,
+## through exactly the same path as build() (pet bonuses, diminishing returns, tiers).
+## Positions, cooldowns, casts and brain memory are untouched; HP keeps its ratio.
+static func restat(sim, encounter: Dictionary, layout: Dictionary, data: Dictionary, abilities: Dictionary) -> int:
+	var fresh = build(encounter, layout, data, abilities)
+	var n := 0
+	for e in sim.entities:
+		var f = fresh.by_id.get(e.id)
+		if f == null:
+			continue
+		var old_max: int = e.max_hp
+		var ratio: float = float(e.hp) / maxf(1.0, float(e.max_hp))
+		var changed: bool = e.max_hp != f.max_hp or e.atk != f.atk or e.def != f.def or e.speed != f.speed or e.aggro_range != f.aggro_range
+		e.max_hp = f.max_hp
+		e.atk = f.atk
+		e.def = f.def
+		e.speed = f.speed
+		e.aggro_range = f.aggro_range
+		if e.hp > 0 and e.max_hp != old_max:
+			e.hp = clampi(int(round(ratio * e.max_hp)), 1, e.max_hp)
+		e.abilities = f.abilities          # re-link to the shared (patched) ability dicts
+		for ab in e.abilities:
+			if not e.cooldowns.has(ab["id"]):
+				e.cooldowns[ab["id"]] = 0
+		if changed:
+			n += 1
+	return n

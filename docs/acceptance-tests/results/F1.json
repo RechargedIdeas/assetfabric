@@ -47,7 +47,7 @@
     "increment": "sandbox-encounter",
     "music_loaded": false,
     "outcome": "victory",
-    "sim_ms": 7.34,
+    "sim_ms": 10.04,
     "state_hash": "3b2bd97029c2a7fb",
     "ticks": 400,
     "tres_loaded": 14

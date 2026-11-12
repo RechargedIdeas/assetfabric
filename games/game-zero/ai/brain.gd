@@ -146,7 +146,7 @@ func _act(leaf: int, sim, e) -> bool:
 			return true
 		Leaf.REGROUP:
 			var anchor = sim.by_id.get(e.owner_id) if e.kind == "pet" else (null if e.is_leader else sim.leader())
-			if anchor and anchor.alive() and e.pos.distance_to(anchor.pos) > sim.LEASH * (0.5 if e.kind == "pet" else 1.0):
+			if anchor and anchor.alive() and e.pos.distance_to(anchor.pos) > sim.leash * (0.5 if e.kind == "pet" else 1.0):
 				sim.move_toward_entity(e, anchor)
 			else:
 				e.moving = false

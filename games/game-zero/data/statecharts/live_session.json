@@ -1,0 +1,52 @@
+{
+  "id": "live_session",
+  "doc": "F4 parallel statechart (SPEC §6.3): combat / movement / ai / dialogue / reload run concurrently. Mirrored by forge/statechart.py, which also gates soft-locks statically.",
+  "regions": {
+    "combat": {
+      "initial": "explore",
+      "states": {
+        "explore": {"on": {"battle_start": "engaged", "victory": "victory", "defeat": "defeat"}},
+        "engaged": {"on": {"victory": "victory", "defeat": "defeat"}},
+        "victory": {"final": true},
+        "defeat": {"final": true}
+      }
+    },
+    "movement": {
+      "initial": "idle",
+      "states": {
+        "idle": {"on": {"move": "moving", "freeze": "held", "victory": "settled", "defeat": "settled"}},
+        "moving": {"on": {"stop": "idle", "freeze": "held", "victory": "settled", "defeat": "settled"}},
+        "held": {"on": {"resume": "idle"}},
+        "settled": {"final": true}
+      }
+    },
+    "ai": {
+      "initial": "autonomous",
+      "states": {
+        "autonomous": {"on": {"intent": "directed", "freeze": "frozen", "victory": "done", "defeat": "done"}},
+        "directed": {"on": {"intent": "directed", "freeze": "frozen", "victory": "done", "defeat": "done"}},
+        "frozen": {"on": {"swap": "frozen", "resume": "autonomous"}},
+        "done": {"final": true}
+      }
+    },
+    "dialogue": {
+      "initial": "quiet",
+      "states": {
+        "quiet": {"on": {"dialogue_request": "speaking", "end": "closed"}},
+        "speaking": {"on": {"dialogue_reply": "quiet"}},
+        "closed": {"final": true}
+      }
+    },
+    "reload": {
+      "initial": "idle",
+      "states": {
+        "idle": {"on": {"ticket": "preparing", "end": "closed"}},
+        "preparing": {"on": {"valid": "committing", "invalid": "idle"}},
+        "committing": {"on": {"applied": "probing"}},
+        "probing": {"on": {"probe_ok": "idle", "probe_fail": "rolling_back"}},
+        "rolling_back": {"on": {"restored": "idle"}},
+        "closed": {"final": true}
+      }
+    }
+  }
+}

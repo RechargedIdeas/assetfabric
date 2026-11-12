@@ -11,7 +11,7 @@ godot --headless --path games/game-zero -- --scene=sandbox --autoplay   # headle
 forge accept F1                                   # same, parsed + recorded
 ```
 
-User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`.
+User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`.
 
 Controls: WASD/arrows move · J/Space basic attack · K signature skill · R restart (abstract input schema in `autoload/fabric.gd`).
 
@@ -24,6 +24,8 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | `data/` | `ability.gd` Resource, `encounters/*.json`, `generated/` (**codegen output** — do not hand-edit) |
 | `sim/` | Deterministic fixed-step simulation (no rendering, no LLM) |
 | `scenes/` | Rendering + input scenes driving the sim |
+| `autoload/live.gd` | F4 live channel (tickets, validation, acks, WAL, quarantine) |
+| `data/statecharts/` | Parallel statecharts (combat / movement / ai / dialogue / reload) |
 | `locale/` | Locale tables (`tr()` keys only in code) |
 
 ## Increments
@@ -34,5 +36,6 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | F1 | sandbox-encounter (1 char, 1 tilemap, 1 enemy, 1 attack) | ✅ |
 | F2 | first-combat (party of 4 + pets vs. 7 enemies) — `--scene=combat` | ✅ |
 | F3 | party-ai (BT + policy, time-freeze swap, intents, callouts, dialogue) — `--scene=party` | ✅ |
+| F4 | live-tune (hot reload + live tune from `forge live`, snapshots + WAL replay, parallel statecharts, guardian restart) — `--scene=live` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).

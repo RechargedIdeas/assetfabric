@@ -8,6 +8,8 @@ const SwapAdvisor = preload("res://ai/swap_advisor.gd")
 var field_warm_ms := 0.0
 var swap_parity := false
 const IntentGrammar = preload("res://ai/intent_grammar.gd")
+const StateChart = preload("res://sim/statechart.gd")
+const PROBE_TICKS := 90       # F4 health probe: forward-simulate a clone 1.5 s after a live commit
 const CALLOUT_GAP := 90   # ticks between callouts per speaker
 const FRAME_NAMES := ["idle0", "idle1", "walk0", "walk1", "attack0", "attack1"]
 
@@ -33,13 +35,28 @@ var swaps: Array = []
 var bubble: Label
 var overlay: Label
 var command_box: LineEdit
+var chart                      # F4 parallel statechart: combat / reload / dialogue regions
+var layout: Dictionary
+var snapshots := {}            # name -> {"sim": Dictionary, "wal_len": int, "path": String}
+var live_report := {}
+var _replaying := false
+var _serve := false
+var _status_frames := 0
+var _leader_moving := false
+var resume_info := {}
+var _last_autosnap := -1
+const AUTOSNAP_TICKS := 300      # serve mode: on-disk session snapshot cadence (5 s of sim)
 
 
 func _ready() -> void:
 	autoplay = Fabric.flag("autoplay")
+	_serve = Fabric.flag("serve")
 	encounter = Fabric.read_json("res://data/encounters/%s.json" % Fabric.arg("encounter", default_encounter))
 	_build()
-	if autoplay and DisplayServer.get_name() == "headless":
+	if Fabric.flag("live-resume") and Live.enabled:
+		resume_info = _resume()
+	_publish_status(true)
+	if autoplay and DisplayServer.get_name() == "headless" and not _serve:
 		_run_headless()
 
 
@@ -47,8 +64,9 @@ func _build() -> void:
 	for c in get_children():
 		c.queue_free()
 	sprites.clear()
-	var layout = Fabric.json_asset(encounter["tilemap"])
+	layout = Fabric.json_asset(encounter["tilemap"])
 	sim = EncounterBuilder.build(encounter, layout, Fabric.game_data, Fabric.abilities)
+	chart = StateChart.new(Fabric.read_json("res://data/statecharts/live_session.json"))
 	var warm_t0 := Time.get_ticks_usec()
 	sim.grid.warm_fields()
 	field_warm_ms = snappedf((Time.get_ticks_usec() - warm_t0) / 1000.0, 0.01)
@@ -130,8 +148,18 @@ func _player_input() -> Dictionary:
 
 
 func _physics_process(delta: float) -> void:
-	if sim == null or (autoplay and DisplayServer.get_name() == "headless"):
+	if sim == null or (autoplay and DisplayServer.get_name() == "headless" and not _serve):
 		return
+	for t in Live.pending():
+		apply_ticket(t)
+		if t.get("control") == "quit":
+			_quit_serve()
+			return
+	_status_frames += 1
+	if _status_frames % 30 == 0:
+		_publish_status(true)
+	if _serve and Live.enabled and sim.tick > 0 and sim.tick % AUTOSNAP_TICKS == 0 and sim.tick != _last_autosnap:
+		_autosnap()
 	if command_box.visible:
 		return
 	if Input.is_action_just_pressed("restart"):
@@ -168,24 +196,220 @@ func _physics_process(delta: float) -> void:
 
 func _step(input: Dictionary) -> void:
 	sim.step(input)
+	chart.tick = sim.tick
+	var l = sim.leader()
+	var mv: bool = l != null and l.moving
+	if mv != _leader_moving:
+		_leader_moving = mv
+		chart.send("move" if mv else "stop")
 	_emit_events()
 	CascadeHub.drain(sim.tick)
+
+
+# ---------------------------------------------------------------- F4: live tune / hot reload / snapshots
+
+## Two-phase commit of one live ticket at a tick boundary (SPEC §6.3 atomic reload).
+func apply_ticket(t: Dictionary, replay: bool = false) -> Dictionary:
+	chart.send("ticket")
+	if t.get("control") == "quit" and t.get("patches", []).is_empty() and t.get("assets", []).is_empty():
+		chart.send("invalid")
+		return Live.ack(t, "committed", {"tick": sim.tick, "control": "quit"}) if not replay else {}
+	var reason: String = "" if replay else Live.validate(t, Fabric.game_data)
+	if reason != "":
+		chart.send("invalid")
+		return Live.ack(t, "rejected", {"tick": sim.tick, "reason": reason})
+	chart.send("valid")
+	if not replay:
+		Live.begin(int(t.get("ticket", 0)))
+		if Live.allow_fault and t.get("fault", "") == "crash":
+			OS.crash("fault injected: crash during commit of ticket %d (guardian acceptance)" % int(t["ticket"]))
+		if Live.allow_fault and t.get("fault", "") == "hang":
+			while true:
+				OS.delay_msec(1000)
+	var t0 := Time.get_ticks_usec()
+	var snap: Dictionary = sim.to_snapshot()
+	var bak: Dictionary = Live.backup()
+	var h0: String = sim.full_hash()
+	var applied: Dictionary = Live.apply_data(t)
+	for k in applied["sim"]:
+		sim.set(k, applied["sim"][k])
+	var restatted: int = EncounterBuilder.restat(sim, encounter, layout, Fabric.game_data, Fabric.abilities)
+	_refresh_textures()
+	chart.send("applied")
+	if replay:
+		chart.send("probe_ok")
+		return {}
+	var probe := _probe()
+	if t.get("fault", "") == "probe" and Live.allow_fault:
+		probe = "fault injected (acceptance test of the rollback path)"
+	if probe != "":
+		chart.send("probe_fail")
+		sim.restore(snap)
+		Live.restore_backup(bak)
+		_refresh_textures()
+		chart.send("restored")
+		return Live.ack(t, "rolled_back", {"tick": sim.tick, "reason": probe, "hash_before": h0, "hash_after": sim.full_hash(),
+			"restored_equal": sim.full_hash() == h0})
+	chart.send("probe_ok")
+	Live.log_input(sim.tick, "ticket", t)
+	if _serve:
+		_autosnap.call_deferred()
+	return Live.ack(t, "committed", {"tick": sim.tick, "hash_before": h0, "hash_after": sim.full_hash(), "restatted": restatted,
+		"assets": t.get("assets", []).map(func(a): return a["id"]), "apply_us": Time.get_ticks_usec() - t0})
+
+
+## Health probe: a forward clone must survive PROBE_TICKS with sane invariants.
+func _probe() -> String:
+	var c = sim.clone()
+	c.forward = true
+	for _i in PROBE_TICKS:
+		c.step({})
+		if c.outcome() != "running":
+			break
+	for e in c.entities:
+		if is_nan(e.pos.x) or is_nan(e.pos.y) or e.hp < 0 or e.hp > e.max_hp or e.max_hp <= 0:
+			return "invariant violated by %s" % e.id
+		if not e.casting.is_empty() and int(e.casting["left"]) > 3600:
+			return "cast never resolves for %s" % e.id
+	return ""
+
+
+func _refresh_textures() -> void:
+	for e in sim.entities:
+		if sprites.has(e.id):
+			sprites[e.id].texture = Fabric.texture(e.sprite_id)
+
+
+func _snapshot_dict(name: String) -> Dictionary:
+	return {"name": name, "sim": sim.to_snapshot(), "wal_len": Live.wal.size(), "full_hash": sim.full_hash(),
+		"chart": chart.to_dict(), "data": {"game_data": Fabric.game_data, "abilities": Fabric.abilities, "registry": Fabric.registry},
+		"live_applied": Live.applied, "script_i": _script_i, "event_cursor": _event_cursor}
+
+
+func take_snapshot(name: String) -> Dictionary:
+	var snap := _snapshot_dict(name)
+	DirAccess.make_dir_recursive_absolute("user://snapshots")
+	var path := "user://snapshots/%s.json" % name
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(snap, "", true, true))
+	f.close()
+	snap["path"] = ProjectSettings.globalize_path(path)
+	snapshots[name] = snap
+	return snap
+
+
+## Serve mode: atomic on-disk session snapshot in the live dir (restart point for the guardian).
+func _autosnap() -> void:
+	_last_autosnap = sim.tick
+	Live.write_file("snapshots/auto.json", _snapshot_dict("auto"))
+
+
+## Restore sim + chart + data overlay from a snapshot dictionary (shared by replay and resume).
+func _load_snapshot_state(snap: Dictionary) -> void:
+	sim.restore(snap["sim"])
+	chart.restore(snap["chart"])
+	_event_cursor = sim.events.size()
+	Fabric.game_data = snap["data"]["game_data"]
+	for id in snap["data"]["abilities"]:
+		if Fabric.abilities.has(id):
+			for k in snap["data"]["abilities"][id]:
+				var v = snap["data"]["abilities"][id][k]
+				Fabric.abilities[id][k] = int(v) if typeof(Fabric.abilities[id][k]) == TYPE_INT else v
+	if snap["data"].has("registry"):
+		Fabric.registry = snap["data"]["registry"]
+		Fabric.clear_caches()
+	_refresh_textures()
+
+
+## Guardian restart (`--live-resume`): restore the last session snapshot, quarantine the ticket
+## that was in flight when the previous process died, re-apply committed tickets after the snapshot.
+func _resume() -> Dictionary:
+	var info := {"from_snapshot": false, "reapplied": [], "quarantined": 0, "tick": 0}
+	var snap := Live.read_json_file("snapshots/auto.json")
+	var after := 0
+	if not snap.is_empty():
+		_load_snapshot_state(snap)
+		after = int(snap.get("live_applied", 0))
+		_script_i = int(snap.get("script_i", 0))
+		info["from_snapshot"] = true
+	info["quarantined"] = Live.quarantine_inflight()
+	Live.applied = after
+	for n in range(after + 1, Live.head() + 1):
+		var a := Live.read_ack(n)
+		if a.is_empty():
+			break                       # never handled: leave it pending for the normal poll
+		Live.applied = n
+		if str(a.get("status", "")) == "committed":
+			var t := Live.read_ticket(n)
+			if not t.is_empty() and (t.get("patches", []).size() > 0 or t.get("assets", []).size() > 0):
+				apply_ticket(t, true)
+				Live.log_input(sim.tick, "ticket", t)
+				info["reapplied"].append(n)
+	info["tick"] = sim.tick
+	info["full_hash"] = sim.full_hash()
+	return info
+
+
+func _tuned() -> Dictionary:
+	return {"rock_brute_max_hp": _max_hp_of("rock_brute"), "leash": sim.leash, "separation": sim.separation,
+		"sprite_override": Fabric.file_path("spr_rock_brute", "spr_rock_brute.png")}
+
+
+func _publish_status(ready: bool) -> void:
+	Live.status({"ready": ready, "scene": encounter["id"], "tick": sim.tick, "pid": OS.get_process_id(), "applied": Live.applied,
+		"outcome": sim.outcome(), "tuned": _tuned(), "resume": resume_info, "full_hash": sim.full_hash(),
+		"hb_unix": Time.get_unix_time_from_system()})
+
+
+## Restore a snapshot from disk and replay the session WAL (inputs + live tickets) to `until_tick`.
+func replay_from_disk(name: String, until_tick: int) -> Dictionary:
+	var snap = JSON.parse_string(FileAccess.get_file_as_string("user://snapshots/%s.json" % name))
+	var wal: Array = Live.wal.duplicate()
+	_load_snapshot_state(snap)
+	var restored_hash: String = sim.full_hash()
+	_replaying = true
+	var i := int(snap["wal_len"])
+	while sim.outcome() == "running" and sim.tick < until_tick:
+		while i < wal.size() and int(wal[i]["tick"]) <= sim.tick:
+			var w: Dictionary = wal[i]
+			i += 1
+			match w["kind"]:
+				"command": submit_command(w["payload"])
+				"swap": do_swap(w["payload"])
+				"ticket": apply_ticket(w["payload"], true)
+		_step({})
+	_replaying = false
+	return {"restored_hash_equal": restored_hash == snap["full_hash"], "replayed": wal.size() - int(snap["wal_len"]),
+		"final_hash": sim.full_hash(), "tick": sim.tick, "outcome": sim.outcome()}
+
+
+func _quit_serve() -> void:
+	_publish_status(false)
+	print("FABRIC_RESULT " + JSON.stringify({"serve": {"acks": Live.acks, "ticks": sim.tick, "wal": Live.wal.size()}}))
+	get_tree().quit(0)
 
 
 # ---------------------------------------------------------------- F3: swap / intents / callouts / dialogue
 
 func toggle_freeze() -> void:
 	frozen = not frozen
+	chart.send("freeze" if frozen else "resume")
 	if frozen:
 		swap_recs = SwapAdvisor.rank(sim)
 
 
-func do_swap(id_: String) -> void:
+func do_swap(id_: String, log_it: bool = true) -> void:
+	if log_it and not _replaying:
+		Live.log_input(sim.tick, "swap", id_)
 	sim.set_leader(id_)
-	swaps.append({"tick": sim.tick, "to": id_, "wall_ms": swap_recs.get("wall_ms", 0.0)})
+	chart.send("swap")
+	if not _replaying:
+		swaps.append({"tick": sim.tick, "to": id_, "wall_ms": swap_recs.get("wall_ms", 0.0)})
 
 
 func submit_command(text: String) -> void:
+	if not _replaying:
+		Live.log_input(sim.tick, "command", text)
 	var kinds := []
 	for e in sim.entities:
 		if e.team == 1:
@@ -208,10 +432,12 @@ func _on_intent(m: Dictionary) -> void:
 			sim.tactic = "aggressive"
 		"swap":
 			if p.has("to"):
-				do_swap(p["to"])
+				do_swap(p["to"], false)
 		_:
 			return
-	intents_handled.append({"tick": sim.tick, "intent": p.get("intent"), "text": p.get("text"), "target_kind": p.get("target_kind", "")})
+	chart.send("intent")
+	if not _replaying:
+		intents_handled.append({"tick": sim.tick, "intent": p.get("intent"), "text": p.get("text"), "target_kind": p.get("target_kind", "")})
 
 
 func _speaker_for(ev: Dictionary) -> Array:
@@ -242,8 +468,10 @@ func _emit_events() -> void:
 	while _event_cursor < sim.events.size():
 		var ev: Dictionary = sim.events[_event_cursor]
 		_event_cursor += 1
+		if ev["type"] in ["battle_start", "victory", "defeat"]:
+			chart.send(ev["type"])
 		var sp := _speaker_for(ev)
-		if sp[0] != "":
+		if sp[0] != "" and not _replaying:
 			CascadeHub.publish("callout_request", sp[0], {"event": sp[1], "tick": ev["tick"], "subject": ev.get("target", "")})
 
 
@@ -274,9 +502,11 @@ func talk(persona: String, seed: int, topic: String = "<s>") -> void:
 
 func _on_dialogue_request(m: Dictionary) -> void:
 	var p: Dictionary = m["payload"]
+	chart.send("dialogue_request")
 	var reply: String = GIRT.lm_generate(p["persona"], int(p["seed"]), p["topic"])
 	var e2e_ms := (Time.get_ticks_usec() - int(p["t_us"])) / 1000.0
 	dialogue_log.append({"persona": p["persona"], "reply": reply, "e2e_ms": snappedf(e2e_ms, 0.01)})
+	chart.send("dialogue_reply")
 	if bubble and reply != "":
 		bubble.text = "%s: %s" % [tr("roster." + p["persona"]), reply.capitalize()]
 
@@ -360,6 +590,11 @@ func _run_headless() -> void:
 		while si < script_.size() and int(script_[si]["tick"]) <= sim.tick:
 			var s: Dictionary = script_[si]
 			si += 1
+			if s.has("snapshot"):
+				take_snapshot(s["snapshot"])
+			if s.get("live_poll", false):
+				for t in Live.pending(true):
+					apply_ticket(t)
 			if s.has("command"):
 				submit_command(s["command"])
 			if s.get("freeze_swap", false):
@@ -369,6 +604,21 @@ func _run_headless() -> void:
 				swap_parity = serial == swap_recs.get("recommendations", []).map(func(r): return [r["id"], r["score"]])
 				_scripted_swap(s)
 		_step({})
+	if encounter.has("replay_check") and sim.outcome() != "running":
+		var final_hash: String = sim.full_hash()
+		var final_tick: int = sim.tick
+		var final_summary_hash: String = sim.state_hash()
+		var outcome0: String = sim.outcome()
+		var chart_main := {"events": chart.events.duplicate(), "active": chart.active.duplicate(),
+			"transitions": chart.trace.size()}
+		var rp := replay_from_disk(str(encounter["replay_check"]), final_tick)
+		live_report = {"acks": Live.acks, "wal": Live.wal.map(func(w): return {"tick": w["tick"], "kind": w["kind"]}),
+			"snapshots": snapshots.keys(), "snapshot_bytes": FileAccess.get_file_as_bytes("user://snapshots/%s.json" % encounter["replay_check"]).size(),
+			"final_hash": final_hash, "replay": rp, "replay_equal": rp["final_hash"] == final_hash and rp["outcome"] == outcome0,
+			"chart_trace": chart.trace.filter(func(r): return r["region"] == "reload").map(func(r): return "%s>%s" % [r["from"], r["to"]]),
+			"chart_active": chart.active, "chart_main": chart_main, "chart_active_after_replay": chart.active.duplicate(), "summary_hash": final_summary_hash,
+			"tuned": _tuned(), "chart_replay_equal": chart.active == chart_main["active"],
+			"restarts": 0, "live_dir": Live.dir}
 	var t_lm := Time.get_ticks_usec()
 	if sim.outcome() == "victory" and encounter.has("dialogue"):
 		for d in encounter["dialogue"]:
@@ -380,6 +630,8 @@ func _run_headless() -> void:
 			"cascade": CascadeHub.counts, "callouts": callout_log.slice(0, 40), "callouts_total": callout_log.size(),
 			"intents": intents_handled, "swaps": swaps, "swap_recs": swap_recs.get("recommendations", []).map(func(r): return [r["id"], r["score"]]),
 			"swap_wall_ms": swap_recs.get("wall_ms", 0.0), "swap_threaded": swap_recs.get("threaded", false), "field_warm_ms": field_warm_ms, "swap_parity": swap_parity, "dialogue": dialogue_log}
+	if not live_report.is_empty():
+		result["live"] = live_report
 	result["increment"] = encounter.get("increment", encounter["id"])
 	result["encounter"] = encounter["id"]
 	result["sim_ms"] = snappedf((Time.get_ticks_usec() - t0) / 1000.0, 0.01)
@@ -395,3 +647,10 @@ func _run_headless() -> void:
 	var ok: bool = sim.outcome() == "victory"
 	print("ENCOUNTER %s %s" % [encounter["id"], "OK" if ok else "FAIL"])
 	get_tree().quit(0 if ok else 1)
+
+
+func _max_hp_of(ref: String) -> int:
+	for e in sim.entities:
+		if str(e.get_meta("ref", "")) == ref:
+			return e.max_hp
+	return -1

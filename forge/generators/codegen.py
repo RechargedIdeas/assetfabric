@@ -120,6 +120,14 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
                     for e in flat["enemies"]},
         "pet_rules": pet_rules,
     }
+    limits_path = ctx.root / "content" / "tune" / "limits.yaml"
+    if limits_path.exists():   # F4 live-tune limits travel with the data they bound
+        rules = yaml.safe_load(limits_path.read_text(encoding="utf-8"))["rules"]
+        data["tune_limits"] = {k: [float(v[0]), float(v[1])] for k, v in sorted(rules.items())}
+        from forge.live import match_paths
+
+        dead = [k for k in rules if not k.startswith("sim.") and not match_paths(data, k)]
+        gates.append(GateResult("tune_limits", not dead, {"rules_matching_nothing": dead}))
     sanity = [f"{gid}:{uid}" for gid in ("fighters",) for uid, u in data[gid].items() if u["levels"][0]["hp"] <= 0]
     gates.append(GateResult("stat_sanity", not sanity, {"bad": sanity}))
     arts = [Artifact("game_data.json", (json.dumps(data, indent=1, sort_keys=True) + "\n").encode(), "application/json")]

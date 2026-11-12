@@ -325,7 +325,7 @@
         },
         "game_data.json": {
           "res": "res://data/generated/game_data.json",
-          "sha256": "832cae72f4f382b044c8675b5abaddb5d46d019855f879120b6ea2c9ed0a32eb"
+          "sha256": "95bb1e292ed861f2907f771f9fbab8d014fce87c06927f27bf0e07c742fcf2d8"
         }
       },
       "kind": "codegen",

@@ -17,7 +17,7 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 └───────────────┬──────────────┘   └────────┬─────────────────────┘
                 │                           │
 ┌───────────────▼───────────────────────────▼─────────────────────┐
-│ Substrate (UEF): sandbox · micro-VMs · hot reload · snapshots   │
+│ Substrate (UEF): sandbox · hot reload · snapshots · guardian    │
 └───────────────┬─────────────────────────────────────────────────┘
                 │
 ┌───────────────▼─────────────────────────────────────────────────┐
@@ -57,6 +57,13 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `games/game-zero/autoload/girt.gd` | GIRT: model registry, budgets, telemetry, policy + LM backends; refuses LM inside tick | F3 |
 | `games/game-zero/autoload/cascade_hub.gd` | CascadeHub typed bus, drained after each tick | F3 |
 | `games/game-zero/ai/` | `brain.gd` (compiled BTs + policy targeting), `swap_advisor.gd` (threaded forward sim), `intent_grammar.gd` | F3 |
+| `forge/sandbox.py`, `forge/sandbox_worker.py` | Substrate sandbox tiers (firecracker/gvisor detected; bwrap + process real), lifecycle, scratch snapshots, worker protocol | F4 |
+| `forge/live.py`, `content/tune/limits.yaml` | Live channel (Forge side): tickets, staging, validation, `forge live` | F4 |
+| `forge/statechart.py` | Statechart runtime twin + static soft-lock analysis | F4 |
+| `forge/guardian.py` | Crash/hang supervisor, backoff, restart with `--live-resume` | F4 |
+| `forge/accept_f4.py` | F4 two-phase acceptance (backlog run + live process under guardian) | F4 |
+| `games/game-zero/autoload/live.gd` | Live channel (game side): poll, validate, overlay, acks, in-flight marker, quarantine, WAL | F4 |
+| `games/game-zero/sim/statechart.gd`, `data/statecharts/` | Parallel statechart runtime (combat / movement / ai / dialogue / reload) | F4 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)
@@ -66,6 +73,15 @@ content/briefs/*.yaml ─► forge build ─► JobOrchestrator ─► generator
         ─► gates (palette, seamless, solvability, budget) ─► AssetStore (sha256 + provenance)
         ─► games/game-zero/assets/generated/<kind>/ + fabric_assets.json
         ─► Fabric autoload (runtime load) ─► sim + scenes
+```
+
+### Live flow (F4)
+
+```
+forge live set/sprite/push ─► stage (sandbox regen) + validate (tune_limits) ─► ticket n + HEAD (atomic)
+   ─► game polls HEAD at a tick boundary ─► re-validate (limits + sha256) ─► inflight marker ─► snapshot
+   ─► apply + restat ─► health probe (90-tick clone) ─► commit | rollback ─► ack n ─► session snapshot + WAL
+guardian: crash/hang ─► kill ─► backoff ─► restart --live-resume (snapshot + quarantine + re-apply)
 ```
 
 The sim is separated from rendering so it can run headless (acceptance, balance, RL) at thousands of ticks per second and stay deterministic (state hash).

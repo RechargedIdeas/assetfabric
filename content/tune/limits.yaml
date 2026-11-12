@@ -1,0 +1,32 @@
+# Live-tune limits (F4). Designers may change these numeric leaves of the generated
+# game data — or the listed sim parameters — in a running game without a rebuild.
+# Anything not matched here (new units, ability lists, sprites ids, …) is structural
+# and needs `forge build`. `*` matches exactly one path segment.
+# Both `forge live` and the game's LiveChannel enforce these ranges (defense in depth).
+schema_version: "1.0"
+rules:
+  "fighters.*.levels.*.hp": [1, 999]
+  "fighters.*.levels.*.atk": [0, 99]
+  "fighters.*.levels.*.def": [0, 50]
+  "fighters.*.levels.*.speed": [0.2, 3.0]
+  "pets.*.stats.hp": [1, 500]
+  "pets.*.stats.atk": [0, 60]
+  "pets.*.stats.def": [0, 30]
+  "pets.*.stats.speed": [0.2, 3.0]
+  "pets.*.bonus.*": [0, 1.0]
+  "enemies.*.stats.hp": [1, 9999]
+  "enemies.*.stats.atk": [0, 200]
+  "enemies.*.stats.def": [0, 100]
+  "enemies.*.stats.speed": [0.1, 3.0]
+  "enemies.*.stats.aggro": [16, 400]
+  "abilities.*.power": [0, 20]
+  "abilities.*.cooldown": [1, 3600]
+  "abilities.*.windup": [0, 600]
+  "abilities.*.range": [4, 400]
+  "abilities.*.radius": [4, 160]
+  "abilities.*.threshold": [0.05, 1.0]
+  "abilities.*.duration": [1, 3600]
+  "pet_rules.ally_share": [0, 1.0]
+  "pet_rules.bonus_caps.*": [0, 2.0]
+  "sim.leash": [16, 256]
+  "sim.separation": [0, 32]
