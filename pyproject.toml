@@ -24,6 +24,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 studio = ["PySide6>=6.6"]
+tune = ["optuna>=3.6"]
 
 [project.scripts]
 forge = "forge.cli:main"

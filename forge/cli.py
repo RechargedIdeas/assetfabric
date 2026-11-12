@@ -434,6 +434,99 @@ def live_status(live_dir: Path | None, root: Path | None) -> None:
                            "acks": [json.loads(p.read_text()) for p in acks]}, indent=2))
 
 
+@main.group("balance")
+def balance_grp() -> None:
+    """Monte Carlo balance runner + Bayesian tuning (F5, G-BAL-01)."""
+
+
+def _parse_sets(assignments: tuple[str, ...]) -> list[dict]:
+    out = []
+    for a in assignments:
+        k, v = a.split("=", 1)
+        out.append({"path": k, "value": float(v) if "." in v or "e" in v.lower() else int(v)})
+    return out
+
+
+@balance_grp.command("run")
+@click.option("--encounter", default="boss_warden")
+@click.option("--seeds", default=200, help="Seeds per matchup (12 matchups; 200 → 2400 encounters).")
+@click.option("--seed-base", default=1000)
+@click.option("--variance", default=0.20, help="± damage roll (BalanceConfig default).")
+@click.option("--workers", default=0, help="Godot worker processes (0 = CPU count).")
+@click.option("--set", "sets", multiple=True, help="Override path=value (live-tune limits apply).")
+@click.option("--out", type=click.Path(path_type=Path), default=None)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def balance_run(encounter: str, seeds: int, seed_base: int, variance: float, workers: int, sets: tuple[str, ...],
+                out: Path | None, root: Path | None) -> None:
+    """Run the matchup matrix and report win rates, CIs, deviation and the G-BAL-01 verdict."""
+    from forge.balance import BalanceConfig, run
+
+    agg = run(BalanceConfig(encounter=encounter, seeds=seeds, seed_base=seed_base, variance=variance, workers=workers,
+                            overrides=_parse_sets(sets)), root or find_repo_root())
+    text = json.dumps(agg, indent=2)
+    if out:
+        out.write_text(text + "\n", encoding="utf-8")
+    click.echo(text)
+    sys.exit(0 if agg["verdict"]["G-BAL-01"] else 1)
+
+
+@balance_grp.command("tune")
+@click.option("--trials", default=30)
+@click.option("--seeds", default=60)
+@click.option("--out", type=click.Path(path_type=Path), default=None)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def balance_tune(trials: int, seeds: int, out: Path | None, root: Path | None) -> None:
+    """Optuna TPE search over forge.balance.TUNE_SPACE; prints the best overrides (apply them to content/roster)."""
+    from forge.balance import tune
+
+    res = tune(trials=trials, seeds=seeds, root=root or find_repo_root())
+    text = json.dumps(res, indent=2)
+    if out:
+        out.write_text(text + "\n", encoding="utf-8")
+    click.echo(text)
+
+
+@main.command("softlock")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def softlock_cmd(root: Path | None) -> None:
+    """Static soft-lock report: statecharts + encounter reachability (runtime layer: forge balance)."""
+    from forge.softlock import static_report
+
+    rep = static_report(root or find_repo_root())
+    rep.pop("chart_details", None)
+    click.echo(json.dumps(rep, indent=2))
+    sys.exit(0 if rep["ok"] else 1)
+
+
+@main.group("save")
+def save_grp() -> None:
+    """Game Zero saves: inspect, validate, migrate (F5)."""
+
+
+@save_grp.command("inspect")
+@click.argument("path", type=click.Path(exists=True, path_type=Path))
+def save_inspect(path: Path) -> None:
+    """Validate a save (format, version, checksum) and print its layers."""
+    from forge.save import validate
+
+    s = json.loads(path.read_text(encoding="utf-8"))
+    errs = validate(s)
+    click.echo(json.dumps({"errors": errs, "version": s.get("version"), "save": s}, indent=2))
+    sys.exit(0 if not errs else 1)
+
+
+@save_grp.command("migrate")
+@click.argument("src", type=click.Path(exists=True, path_type=Path))
+@click.argument("dst", type=click.Path(path_type=Path))
+def save_migrate(src: Path, dst: Path) -> None:
+    """Migrate an older save to the current version (same code path as the game)."""
+    from forge.save import migrate
+
+    s, steps = migrate(json.loads(src.read_text(encoding="utf-8")))
+    dst.write_text(json.dumps(s, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    click.echo(json.dumps({"migrated_from": steps, "version": s["version"], "checksum": s["checksum"]}))
+
+
 @main.command("report")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
 def report_cmd(root: Path | None) -> None:

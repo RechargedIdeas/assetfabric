@@ -1,0 +1,22 @@
+{
+  "id": "boss_warden",
+  "increment": "first-boss",
+  "tilemap": "cave_boss",
+  "ai": "bt",
+  "party": [
+    {"ref": "kael", "leader": true, "level": 3, "pets": ["ember_fox"]},
+    {"ref": "nyra", "level": 3, "pets": ["lumen_wisp"]},
+    {"ref": "bram", "level": 3, "pets": ["stone_tortle"]},
+    {"ref": "sola", "level": 3}
+  ],
+  "hostiles": [
+    {"ref": "cave_warden", "count": 1, "at": "boss_room"},
+    {"ref": "cave_mite", "count": 2}
+  ],
+  "script": [
+    {"tick": 240, "command": "everyone focus the warden"}
+  ],
+  "music": {"id": "music_cave", "stem": "boss"},
+  "save_on_victory": true,
+  "tick_limit": 18000
+}

@@ -78,6 +78,36 @@
         "encounter:first_combat"
       ]
     },
+    "cave_boss": {
+      "files": {
+        "cave_boss.json": {
+          "res": "res://assets/generated/tilemap/cave_boss.json",
+          "sha256": "a49c810b0de89c96f219cfcba59158e56d866ac77d234a3320ea3cdd719e725d"
+        },
+        "cave_boss_tiles.png": {
+          "res": "res://assets/generated/tilemap/cave_boss_tiles.png",
+          "sha256": "cdb9bc9ed54a9c5a0c15bad010223289571e1621187ca78a9c38534beabd6b3e"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 47,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:cave",
+        "encounter:boss"
+      ]
+    },
     "enemy_emberling": {
       "files": {
         "enemy_emberling.png": {
@@ -279,6 +309,14 @@
           "res": "res://data/generated/abilities/claw.tres",
           "sha256": "106a430bde408641ee7df1fdf8f9e123b2f38d2c6320dc92e8c2ba29c6b382ff"
         },
+        "abilities/cleave.tres": {
+          "res": "res://data/generated/abilities/cleave.tres",
+          "sha256": "b1708541bdb3f6e6cf94436ef2605741db361b554efa664c783a98440c4b5477"
+        },
+        "abilities/ember_bolt.tres": {
+          "res": "res://data/generated/abilities/ember_bolt.tres",
+          "sha256": "cb086b9b0e2cea20dda44d0d0d1f92ffb4fe3d9d351ec0ead1f418825d5be5cc"
+        },
         "abilities/hex_bolt.tres": {
           "res": "res://data/generated/abilities/hex_bolt.tres",
           "sha256": "e0d194afd54c7968b61f1de09d42904e97fb1d50a33caa7b13d6c5fb1fb98a3a"
@@ -290,6 +328,10 @@
         "abilities/mend.tres": {
           "res": "res://data/generated/abilities/mend.tres",
           "sha256": "97d04915dfb18a53a36ebe5439dc092e81d701110cc1ee51be2495faddad6644"
+        },
+        "abilities/quake.tres": {
+          "res": "res://data/generated/abilities/quake.tres",
+          "sha256": "5cb5a4f1408318af3b0f6ddc6a03c5fb1bfede861c1239f69e6be5b6f9198f1b"
         },
         "abilities/shield_bash.tres": {
           "res": "res://data/generated/abilities/shield_bash.tres",
@@ -325,14 +367,14 @@
         },
         "game_data.json": {
           "res": "res://data/generated/game_data.json",
-          "sha256": "95bb1e292ed861f2907f771f9fbab8d014fce87c06927f27bf0e07c742fcf2d8"
+          "sha256": "7ae7d75d6c471b5d42aaa591626e0fb4fb141e3eb91aa11118fa08a50a5cd063"
         }
       },
       "kind": "codegen",
       "meta": {
         "counts": {
-          "abilities": 14,
-          "enemies": 3,
+          "abilities": 17,
+          "enemies": 4,
           "fighters": 6,
           "pets": 4
         },
@@ -413,6 +455,42 @@
       "tags": [
         "enemy",
         "roster:cave_mite"
+      ]
+    },
+    "spr_cave_warden": {
+      "files": {
+        "spr_cave_warden.png": {
+          "res": "res://assets/generated/sprite/spr_cave_warden.png",
+          "sha256": "ac103d2c1795de10bdd0e5b48d7a0f2c0fbcd9616d4e0b94352df12811dd6ac3"
+        }
+      },
+      "kind": "sprite",
+      "meta": {
+        "frame_size": 16,
+        "frames": [
+          "idle0",
+          "idle1",
+          "walk0",
+          "walk1",
+          "attack0",
+          "attack1"
+        ],
+        "kind": "sprite",
+        "model_id": "G1-Sprite",
+        "model_version": "procedural-1",
+        "palette": "enemy_ember@1",
+        "params": {
+          "belt": false,
+          "body_w": 4,
+          "hair": true,
+          "head_w": 3,
+          "leg_gap": 0,
+          "weapon_len": 3
+        }
+      },
+      "tags": [
+        "enemy",
+        "roster:cave_warden"
       ]
     },
     "spr_dusk_owl": {

@@ -97,6 +97,15 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
             missing += [f"{u['id']}→{a}" for a in u["abilities"] if a not in ab_ids]
             if u["sprite"]["palette"] not in palettes:
                 missing.append(f"{u['id']}→palette:{u['sprite']['palette']}")
+    enemy_ids = {e["id"] for e in flat["enemies"]}
+    for e in flat["enemies"]:   # F5 boss phases: ability + summon refs, descending thresholds
+        ats = [float(ph["at"]) for ph in e.get("phases", [])]
+        if ats and (ats != sorted(ats, reverse=True) or ats[0] != 1.0):
+            missing.append(f"{e['id']}→phases must start at 1.0 and descend")
+        for ph in e.get("phases", []):
+            missing += [f"{e['id']}→phase→{a}" for a in ph.get("abilities", []) if a not in ab_ids]
+            if "summon" in ph and ph["summon"]["ref"] not in enemy_ids:
+                missing.append(f"{e['id']}→summon:{ph['summon']['ref']}")
     gates.append(GateResult("cross_refs", not missing, {"missing": missing}))
     base = [f for f in flat["fighters"] if f.get("base")]
     starters = [p for p in flat["pets"] if p.get("starter")]
@@ -116,7 +125,8 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
         "pets": {p["id"]: {"style": p["style"], "starter": bool(p.get("starter")), "abilities": p["abilities"],
                            "bonus": p["bonus"], "sprite_id": f"spr_{p['id']}", "stats": p["stats"]} for p in flat["pets"]},
         "enemies": {e["id"]: {"tier": e["tier"], "weakness": e.get("weakness"), "abilities": e["abilities"], "sprite_id": f"spr_{e['id']}",
-                              "stats": {k: (round(v * tier_scale[e["tier"]], 2) if k in ("hp", "atk", "def") else v) for k, v in e["stats"].items()}}
+                              "stats": {k: (round(v * tier_scale[e["tier"]], 2) if k in ("hp", "atk", "def") else v) for k, v in e["stats"].items()},
+                              **({"boss": True, "phases": e["phases"]} if e.get("phases") else {})}
                     for e in flat["enemies"]},
         "pet_rules": pet_rules,
     }

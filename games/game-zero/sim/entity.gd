@@ -28,6 +28,10 @@ var stats_dealt := {"damage": 0, "healing": 0, "hits": 0, "kills": 0, "casts": 0
 var last_ability: String = ""
 var low_hp_called := false
 var last_dir := Vector2.ZERO
+# F5 boss: hierarchical manager state (phase thresholds → worker kit). Empty for non-bosses.
+var phases: Array = []     # [{at, abilities: [Dictionary], speed, atk_mult, summon: {template}}]
+var phase: int = 0
+var base_atk: float = 1.0
 
 
 static func create(id_: String, team_: int, kind_: String, sprite: String, stats: Dictionary, abilities_: Array, at: Vector2):
@@ -44,6 +48,7 @@ static func create(id_: String, team_: int, kind_: String, sprite: String, stats
 	e.speed = float(stats.get("speed", 1.0))
 	e.aggro_range = float(stats.get("aggro", 112.0))
 	e.abilities = abilities_
+	e.base_atk = e.atk
 	for a in abilities_:
 		e.cooldowns[a["id"]] = 0
 	return e
@@ -73,6 +78,9 @@ func copy():
 	c.casting = casting.duplicate()
 	c.stats_dealt = stats_dealt.duplicate()
 	c.low_hp_called = low_hp_called
+	c.phases = phases          # read-only templates, shared
+	c.phase = phase
+	c.base_atk = base_atk
 	c.last_dir = last_dir
 	for m in ["bt_target", "bt_target_tick", "ref"]:   # brain memory + roster ref (ids/ints only)
 		if has_meta(m):
@@ -104,6 +112,9 @@ func to_dict() -> Dictionary:
 		if has_meta(m):
 			mem[m] = get_meta(m)
 	d["memory"] = mem
+	d["phases"] = phases.duplicate(true)
+	d["phase"] = phase
+	d["base_atk"] = base_atk
 	return d
 
 
@@ -128,6 +139,17 @@ static func from_dict(d: Dictionary):
 	e.stats_dealt = {}
 	for k in d["stats_dealt"]:
 		e.stats_dealt[k] = int(d["stats_dealt"][k])
+	e.phase = int(d.get("phase", 0))
+	e.base_atk = float(d.get("base_atk", e.atk))
+	e.phases = []
+	for ph in d.get("phases", []):
+		var q: Dictionary = ph.duplicate(true)
+		q["abilities"] = q.get("abilities", []).map(func(a): return _norm_ability(a))
+		if q.has("summon"):
+			q["summon"]["count"] = int(q["summon"]["count"])
+			q["summon"]["tier"] = int(q["summon"].get("tier", 1))
+			q["summon"]["abilities"] = q["summon"]["abilities"].map(func(a): return _norm_ability(a))
+		e.phases.append(q)
 	var mem: Dictionary = d.get("memory", {})
 	if mem.has("bt_target"):
 		e.set_meta("bt_target", str(mem["bt_target"]))

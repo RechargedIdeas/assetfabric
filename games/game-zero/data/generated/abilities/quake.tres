@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FabricAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://data/ability.gd" id="1_ab"]
+
+[resource]
+script = ExtResource("1_ab")
+id = "quake"
+kind = "aoe"
+target = "enemy"
+power = 1.2
+range = 30.0
+radius = 40.0
+cooldown = 150
+windup = 30
+duration = 0
+threshold = 0.0
+name_key = "ability.quake"
