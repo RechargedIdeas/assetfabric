@@ -36,3 +36,27 @@ jobs:
         run: source .venv/bin/activate && pytest -q
       - name: Godot smoke
         run: source .venv/bin/activate && REQUIRE_GODOT=1 ./scripts/smoke_godot.sh
+
+  pocketloom:
+    # Companion track C1–C6: FabricCore JVM tests, debug APK (aapt/apksigner), lint, Kotlin↔Python LoomLink interop.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - uses: astral-sh/setup-uv@v3
+      - name: Install forge
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -e ".[dev]"
+      - name: Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0" > /dev/null
+      - name: forge accept C1-C6 (full mode)
+        run: source .venv/bin/activate && forge accept C1-C6 --no-write
