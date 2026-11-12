@@ -15,7 +15,7 @@ forge templates status                     # Godot / templates / JDK / Android S
 forge templates fetch                      # once: Godot 4.3-stable templates (≈1 GB, sha256-pinned) → .fabric/godot-home
 forge build --target all                   # every target → dist/<target>/ + dist/bolt/*.fabricbolt
 forge build --target web --skip-smoke      # one target, no smoke runs
-forge accept F7                            # full acceptance (≈ 2.5 min on 8 vCPU) → docs/acceptance-tests/results/F7.json
+forge accept F7                            # full acceptance (≈ 1.7–2.5 min on 8 vCPU) → docs/acceptance-tests/results/F7.json
 FORGE_ACCEPT_FAST=1 forge accept F7 --no-write   # static subset (CI / no templates)
 ```
 
