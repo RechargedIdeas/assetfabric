@@ -5,13 +5,13 @@
   "milestone": "F3",
   "passed": true,
   "perf": {
-    "field_warm_ms": 87.94,
+    "field_warm_ms": 81.65,
     "lm_p95_us": 43,
-    "policy_p95_us": 21,
+    "policy_p95_us": 26,
     "swap_target_met": false,
     "swap_target_ms": 50.0,
     "swap_threaded": true,
-    "swap_wall_ms": 68.45
+    "swap_wall_ms": 67.07
   },
   "result": {
     "abilities_loaded": 17,
@@ -117,7 +117,7 @@
           "reply": "the water"
         }
       ],
-      "field_warm_ms": 87.94,
+      "field_warm_ms": 81.65,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 2,
@@ -125,7 +125,7 @@
         "lm_refused_in_tick": 0,
         "policy_calls": 121,
         "policy_fallbacks": 0,
-        "policy_p95_us": 21,
+        "policy_p95_us": 26,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -214,12 +214,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 68.45,
+      "swap_wall_ms": 67.07,
       "swaps": [
         {
           "tick": 260,
           "to": "nyra",
-          "wall_ms": 68.45
+          "wall_ms": 67.07
         }
       ]
     },
@@ -424,7 +424,7 @@
     "music_loaded": true,
     "music_stem": "combat",
     "outcome": "victory",
-    "sim_ms": 340.29,
+    "sim_ms": 345.06,
     "state_hash": "372a2a8c69155f02",
     "ticks": 613,
     "tres_loaded": 17

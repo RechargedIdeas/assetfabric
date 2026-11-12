@@ -5,11 +5,11 @@
   "milestone": "F5",
   "passed": true,
   "perf": {
-    "balance_wall_s": 125.28,
+    "balance_wall_s": 107.12,
     "balance_workers": 8,
-    "boss_sim_ms": 171.96,
+    "boss_sim_ms": 167.63,
     "boss_ticks": 880,
-    "ms_per_encounter_per_worker": 417.6
+    "ms_per_encounter_per_worker": 357.1
   },
   "result": {
     "abilities_loaded": 17,
@@ -111,7 +111,7 @@
         "rule": 1052
       },
       "dialogue": [],
-      "field_warm_ms": 108.35,
+      "field_warm_ms": 122.96,
       "girt": {
         "callouts_served": 11,
         "lm_calls": 0,
@@ -119,7 +119,7 @@
         "lm_refused_in_tick": 0,
         "policy_calls": 200,
         "policy_fallbacks": 0,
-        "policy_p95_us": 14,
+        "policy_p95_us": 18,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -385,7 +385,7 @@
           0.9
         ]
       },
-      "wall_s": 125.28,
+      "wall_s": 107.12,
       "workers": 8
     },
     "boss": {
@@ -556,7 +556,7 @@
     "outcome": "victory",
     "save": {
       "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
-      "path": "/tmp/fabric-f5-i_7oll3q/saves/slot0.json",
+      "path": "/tmp/fabric-f5-r10a8l44/saves/slot0.json",
       "state": {
         "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
         "format": "gamezero-save",
@@ -710,7 +710,7 @@
         "loaded_equal_first": true
       }
     },
-    "sim_ms": 171.96,
+    "sim_ms": 167.63,
     "softlock_probe": {
       "encounters": 24,
       "outcomes": {

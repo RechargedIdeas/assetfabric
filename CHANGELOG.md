@@ -4,6 +4,33 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.6.0+f6] — 2026-11-12 — F6 Vertical slice: quests, farming/craft economy, tiered loot, adaptive music, cave ↔ open world
+
+### Added
+- **Codegen-World** (`forge/generators/world.py`, `forge/world.py`): `content/world/{economy,loot,quests,music,areas}.yaml` → `games/game-zero/data/generated/world.json` — items, crops, recipes, shop, XP curve, tiered loot tables, quests compiled to one parallel statechart, adaptive-music rules, area graph. Gates: schema, cross-refs, quest-chart soft-lock (F4 analyzer), economy solvability, loot tables, music rules. Python twins (`Lcg`, `roll_loot`, `QuestLog`, guards) for GDScript parity.
+- G1-Tile open-world features: farm plots, workbench, gather nodes, pinned hostile spawns; new maps `field_01`, `tunnels_01`, `cave_deep` (caves without features stay byte-identical). `music_field` stems (ambient/tension/combat).
+- Game Zero world layer `games/game-zero/world/` (`world_state.gd`, `quest_log.gd`, `loot.gd`, `autopilot.gd` scripted QA agent) and `audio/music_director.gd` (biome × explore/tension/combat/boss layers with fades).
+- `--scene=slice` (`scenes/slice.gd/.tscn`): character + pet select, plant/grow/harvest, gather, craft salve/tonic/gear at the bench, field ⇄ tunnels ⇄ deep cave → Warden's lair → open-world exit, quest log (main + side quest), XP/levels, checkpoints, save/quit/resume, boss-reward unlock (`vex`), freeze-swap overlay; `--autoplay`, `--leader/--pet/--seed/--resume/--quit-after-checkpoint`.
+- Player State **save v4** (farm, checkpoint, quest counters, rng, world tick, depleted nodes, cleared packs, buffs, gear, unlocks, party HP); v3→v4 migration with GDScript ↔ Python parity.
+- Pet↔character **affinity** (GAME_SPEC §4.2) in `content/roster/pets.yaml` (live-tune bounds 0.25–3.0) and `AFFINITY_SPACE` tuning knobs.
+- F6 increment `vertical-slice` + acceptance (`forge/accept_f6.py`: slice + quit/resume in a new process + 12-selection matrix + quest/loot/migration parity + world gates + locale coverage; `FORGE_ACCEPT_FAST=1` 2-selection subset for pytest/CI); `tests/test_f6_world.py`; `docs/acceptance-tests/F6.md`; `results/F6.json`; inferences F6-1…F6-12.
+
+### Changed
+- **G-BAL-01 gates the per-pair (leader × pet) spread** (`max_combo_deviation_lt_5pp`) in addition to choice marginals; balance death-order diagnostics.
+- A player-driven exploring leader is no longer shoved by follower separation; area transitions end the tick (resume parity).
+- Slice salve key (H) is edge-triggered (one salve per press).
+- `forge report` plan text for F6; version `0.6.0+f6` in `forge/__init__.py`, `pyproject.toml`, `forge.yaml` (`milestone: F6`, `increment: vertical-slice`), `project.godot`.
+
+### Measured
+- Vertical slice: all 8 GAME_SPEC §6.1 items met headless; 12/12 selections complete, 0 wipes / soft-locks / script errors; quit→resume final state byte-identical to an uninterrupted run.
+- Slice length (bot): 2.92 game-min (matrix 2.75–3.37) vs 15–20 min human target — soft, not met by the bot.
+- G-BAL-01 (seed_base 1000, 2400 fights): mean 0.718, choice 1.04 pp, **per-pair 3.21 pp** — pass. Unseen seed_base 9000: per-pair 5.25 pp (≈ 200-seed noise floor).
+
+### Known
+- Human GUI playtest pending (length, readability, controls, music mix).
+- Economy / loot / quest / music content is placeholder (D-005, INFERENCE F6-3).
+- Companion drafts remain on `wip/f5-companions`, unverified.
+
 ## [0.5.0+f5] — 2026-11-12 — F5 Balance: Monte Carlo, Optuna, soft-lock detection, save migration, first boss
 
 ### Added

@@ -5,7 +5,7 @@
 **License:** proprietary, All Rights Reserved (ADR-0001)
 **Current Fabric milestone:** **F6 — Quest statechart, farming/craft economy, tiered loot, adaptive music, cave ↔ open world** (accepted, `0.6.0+f6`)
 **Current game increment:** `vertical-slice`
-**Next:** F7 — Desktop / Android / Web PWA packaging, ShuttleLine multi, BoltPack
+**Next:** F7 — Desktop / Android / Web PWA packaging, ShuttleLine multi, BoltPack — plus the companion track (verify + land `wip/f5-companions`: PocketLoom FabricCore, LoomCluster, GroundWeave)
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
 Milestone dashboard: [STATUS.md](STATUS.md).
@@ -52,7 +52,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 - `godot-bin/` (Godot 4.3 Linux) is gitignored; CI downloads it. See `docs/setup/README.md`.
 - Godot editor import is bypassed (`.gdignore` on `assets/generated/`); export packaging must include those files as non-resources (F7 task).
 - **Sandbox**: no micro-VM/gVisor launcher (no usable KVM); `process` tier is best-effort (audit hook does not stop native code). Hot reload covers numeric data, `sim.*` params and sprites — not code, tilemaps or audio.
-- **Swap advisor misses the < 50 ms target**: ≈ 50–100 ms on the 8-vCPU reference box (threaded); serial ≈ 80 ms. GDScript worker threads scale poorly (shared-Variant refcount contention). Hard ceiling 150 ms is gated; `results/F3.json` → `perf.swap_target_met`. Fix path: native sim core (GDExtension) or a C#/Rust step function — see TODO.
+- **Swap advisor misses the < 50 ms target**: ≈ 50–100 ms on the 8-vCPU reference box (threaded); serial ≈ 80 ms. GDScript worker threads scale poorly (shared-Variant refcount contention). Hard ceiling 150 ms is gated; `results/F3.json` → `perf.swap_target_met`. (The F6 slice measured 24–46 ms for its two freezes; not re-measured in the party scene, so the target stays open.) Fix path: native sim core (GDExtension) or a C#/Rust step function — see TODO.
 - "Micro-LM" is a bigram stand-in (deterministic, safety-gated), not a neural LM; GIRT has no ONNX backend yet.
 - Voice (Vosk) intents not wired; typed commands use the same closed grammar.
 - Roster names/numbers are placeholders (D-005).

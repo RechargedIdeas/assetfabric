@@ -10,7 +10,7 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 | Component | store, orchestrator, CLI | `tests/` | F0 ✅ |
 | Integration | generators → gates → store → registry; determinism; codegen; audio; AI models; sandbox tiers, live channel, statecharts, guardian | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py`, `tests/test_f3_ai.py`, `tests/test_f4_substrate.py`, `tests/test_f5_balance_save.py`, `tests/test_f6_world.py` | F1–F6 ✅ |
 | Headless game | Godot `--headless` autoplay per increment (incl. GDScript↔Python model parity); F4 also drives a live process under the guardian; F5 runs the 2400-fight Monte Carlo matrix + save round-trip; F6 plays the whole vertical slice with the QA autopilot, quits + resumes in a new process, and runs the selection matrix (2 in pytest/CI via `FORGE_ACCEPT_FAST=1`, 12 in `forge accept F6`) | `tests/test_game_increments.py`, `forge accept` | F0–F6 ✅ |
-| Acceptance | milestone gates | `docs/acceptance-tests/F*.md` | F0 ✅ |
+| Acceptance | milestone gates | `docs/acceptance-tests/F*.md`, `forge accept F0..F6` | F0–F6 ✅ |
 | Perf / fidelity | GroundWeave 2-core budgets, retro authenticity (V1) | later | F1+ |
 | Balance / soft-lock | Monte Carlo G-BAL-01 (sharded headless workers), soft-lock static + runtime detector | `forge balance run`, `forge softlock`, `forge accept F5` | F5 ✅ |
 | Hybrid QA | Scripted QA autopilot plays the slice headless (F6 ✅); human GUI playtest checklist in F6.md (pending) | `world/autopilot.gd`, `docs/acceptance-tests/F6.md` | F6 ◐ |
