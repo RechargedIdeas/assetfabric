@@ -1,0 +1,111 @@
+{
+  "description": "PocketLoom / FabricCore: Kotlin core (JobExecutor, store, queue, telemetry) + debug APK (aapt/apksigner verified)",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C1",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c1": {
+      "apk": {
+        "apksigner_verified": true,
+        "bytes": 972815,
+        "debuggable": true,
+        "dex_has_app": true,
+        "dex_has_fabriccore": true,
+        "launchable": "fabric.pocketloom.MainActivity",
+        "min_sdk": 26,
+        "native_libs": [],
+        "package": "com.rechargedideas.pocketloom",
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "permissions": [
+          "android.permission.INTERNET"
+        ],
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+        "signature_schemes": [
+          "v2"
+        ],
+        "target_sdk": 35,
+        "version_name": "0.1.0-c6"
+      },
+      "core_suites": {
+        "ok": true,
+        "suites": {
+          "JobsTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 3
+          },
+          "JsonTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 3
+          },
+          "StoreTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 3
+          },
+          "TelemetryTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 1
+          }
+        }
+      },
+      "jar_info": {
+        "onnx_runtime_bundled": false,
+        "ops": [
+          "hashchain",
+          "local.cave",
+          "local.sprite"
+        ],
+        "palettes": [
+          "cave_moss",
+          "cave_stone",
+          "enemy_ember",
+          "hero_amber",
+          "hero_rose",
+          "hero_teal",
+          "hero_violet",
+          "ui_retro"
+        ],
+        "version": "0.1.0-c6"
+      },
+      "jar_top_level": [
+        "META-INF",
+        "fabric",
+        "kotlin",
+        "org"
+      ],
+      "ok": true,
+      "third_party_runtime": []
+    },
+    "mode": "full",
+    "sources": {
+      "missing": [],
+      "ok": true
+    },
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}

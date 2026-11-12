@@ -118,11 +118,13 @@ class MainActivity : Activity() {
         val seed = EditText(this).apply { setHint(R.string.gen_seed_hint); inputType = InputType.TYPE_CLASS_NUMBER; setText("1") }
         val img = ImageView(this).apply { adjustViewBounds = true }
         val out = text("")
+        val note = text("")
+        val rejected = text("")
         statusLine = out
         content.addView(text(getString(R.string.gen_kind))); content.addView(kind)
         content.addView(text(getString(R.string.gen_palette))); content.addView(pal)
         content.addView(seed)
-        content.addView(button(R.string.gen_random) { seed.setText(Random.nextInt(1, 1_000_000).toString()) })
+        content.addView(button(R.string.gen_random) { seed.setText(String.format(java.util.Locale.ROOT, "%d", Random.nextInt(1, 1_000_000))) })
         content.addView(button(R.string.gen_button) {
             val k = kinds[kind.selectedItemPosition]; val s = seed.text.toString().toLongOrNull() ?: 1L
             val p = palettes.getOrNull(pal.selectedItemPosition)
@@ -136,15 +138,15 @@ class MainActivity : Activity() {
                 val ladder = (sel["skipped"].asList().map { it.asMap()["rung"] } + sel["backend"]).joinToString(" → ")
                 val png = core.store.get("${k}_$s")?.let { core.store.read(it["sha256"] as String) }
                 ui {
-                    out.text = getString(R.string.gen_result, k, s, sel["backend"], (r["ms"] as Number).toDouble(), gates, res["sha256"]) +
-                        "\n" + getString(R.string.gen_backend_note, ladder) +
-                        (if (res["ok"] != true) "\n" + getString(R.string.gen_gates_failed) else "")
+                    out.text = getString(R.string.gen_result, k, s, sel["backend"], (r["ms"] as Number).toDouble(), gates, res["sha256"])
+                    note.text = getString(R.string.gen_backend_note, ladder)
+                    rejected.text = if (res["ok"] != true) getString(R.string.gen_gates_failed) else null
                     if (png != null && res["ok"] == true) preview(png, img)
                     refreshHeader()
                 }
             }
         })
-        content.addView(out); content.addView(img)
+        content.addView(out); content.addView(note); content.addView(rejected); content.addView(img)
     }
 
     // ------------------------------------------------------------------ C3 library
@@ -188,7 +190,7 @@ class MainActivity : Activity() {
         content.addView(out)
         bg {
             val n = core.store.list().count { it["kind"] == "capture" }
-            ui { content.addView(text(getString(R.string.cap_count, n))) }
+            ui { content.addView(text(resources.getQuantityString(R.plurals.cap_count, n, n))) }
         }
     }
 
@@ -220,10 +222,11 @@ class MainActivity : Activity() {
     private fun linkTab() {
         val out = text(""); statusLine = out
         val state = text("")
+        val queued = text("")
         val url = EditText(this).apply { setHint(R.string.link_url_hint); inputType = InputType.TYPE_TEXT_VARIATION_URI }
         val code = EditText(this).apply { setHint(R.string.link_code_hint); inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS }
         pendingUri?.let { url.setText(it.url); code.setText(it.code); out.setText(R.string.link_from_qr); pendingUri = null }
-        content.addView(text(getString(R.string.link_intro))); content.addView(state)
+        content.addView(text(getString(R.string.link_intro))); content.addView(state); content.addView(queued)
         content.addView(url); content.addView(code)
         content.addView(button(R.string.link_pair) {
             val c = code.text.toString()
@@ -244,8 +247,8 @@ class MainActivity : Activity() {
             val s = core.link.session
             val q = core.queue.pending().size
             ui {
-                state.text = (if (s == null) getString(R.string.link_not_paired) else getString(R.string.link_paired, s.serverId, s.url, s.caps.joinToString(", "))) +
-                    "\n" + getString(R.string.link_queue, q)
+                state.text = if (s == null) getString(R.string.link_not_paired) else getString(R.string.link_paired, s.serverId, s.url, s.caps.joinToString(", "))
+                queued.text = resources.getQuantityString(R.plurals.link_queue, q, q)
             }
         }
     }

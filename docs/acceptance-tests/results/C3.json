@@ -1,0 +1,106 @@
+{
+  "description": "Standalone UI: Generate / Library / Capture / Link / Telemetry, string resources only, offline by construction",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C3",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c3": {
+      "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
+      "lint": {
+        "errors": 0,
+        "i18n_issues": 0,
+        "issues": {
+          "Warning:DataExtractionRules": 1
+        },
+        "ok": true
+      },
+      "manifest": {
+        "allow_backup_off": true,
+        "launcher": true,
+        "loomlink_intent": true,
+        "provider_not_exported": true
+      },
+      "offline": {
+        "app_network_code": [],
+        "fabriccore_network_files": [
+          "companions/pocketloom/fabriccore/src/main/kotlin/fabric/core/LoomLink.kt"
+        ],
+        "ok": true
+      },
+      "ok": true,
+      "strings": {
+        "defined": 61,
+        "hardcoded_ui_literals": [],
+        "missing": [],
+        "ok": true,
+        "unused": [],
+        "used": 61
+      },
+      "telemetry_status": {
+        "models": {
+          "budget": 67108864,
+          "bytes": 0,
+          "models": 0
+        },
+        "offload_pending": 0,
+        "store": {
+          "assets": 2,
+          "bytes": 612
+        },
+        "telemetry": {
+          "counts": {
+            "job.local": 2
+          },
+          "errors": 0,
+          "events": 2,
+          "local_jobs": {
+            "local.cave": {
+              "max_ms": 62.7,
+              "mean_ms": 39.1,
+              "n": 2
+            }
+          }
+        }
+      }
+    },
+    "mode": "full",
+    "offline": {
+      "app_network_code": [],
+      "fabriccore_network_files": [
+        "companions/pocketloom/fabriccore/src/main/kotlin/fabric/core/LoomLink.kt"
+      ],
+      "ok": true
+    },
+    "strings": {
+      "defined": 61,
+      "hardcoded_ui_literals": [],
+      "missing": [],
+      "ok": true,
+      "unused": [],
+      "used": 61
+    },
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}

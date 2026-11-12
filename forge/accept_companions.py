@@ -89,12 +89,14 @@ def gradle_build(root: Path) -> dict[str, Any]:
         return _BUILD
     pl = root / PL
     t0 = time.time()
-    proc = subprocess.run(["./gradlew", "--no-daemon", "-q", ":fabriccore:test", ":fabriccore:fatJar", ":app:assembleDebug"],
+    proc = subprocess.run(["./gradlew", "--no-daemon", "-q", ":fabriccore:test", ":fabriccore:fatJar", ":app:assembleDebug",
+                           ":app:lintDebug"],
                           cwd=pl, env=_env(root), capture_output=True, text=True, timeout=1800)
     out: dict[str, Any] = {"ok": proc.returncode == 0, "seconds": round(time.time() - t0, 1)}
     if proc.returncode != 0:
         out["log_tail"] = (proc.stdout + proc.stderr)[-3000:]
     out["junit"] = junit(pl / "fabriccore" / "build" / "test-results" / "test")
+    out["lint"] = lint(pl / "app" / "build" / "reports" / "lint-results-debug.xml")
     apk = root / APK_REL
     if apk.exists():
         dist = root / "dist" / "pocketloom"
@@ -118,6 +120,19 @@ def junit(d: Path) -> dict[str, Any]:
     total = sum(c["tests"] for c in classes.values())
     failed = sum(c["failures"] for c in classes.values())
     return {"classes": classes, "tests": total, "failures": failed, "ok": total > 0 and failed == 0}
+
+
+def lint(p: Path) -> dict[str, Any]:
+    if not p.exists():
+        return {"ok": False, "error": "no lint report"}
+    xml = p.read_text(encoding="utf-8")
+    issues = re.findall(r'<issue\s+id="([^"]+)"\s+severity="([^"]+)"', xml)
+    by: dict[str, int] = {}
+    for i, sev in issues:
+        by[f"{sev}:{i}"] = by.get(f"{sev}:{i}", 0) + 1
+    errors = sum(v for k, v in by.items() if k.startswith(("Error", "Fatal")))
+    i18n = sum(v for k, v in by.items() if k.split(":")[1] in ("HardcodedText", "SetTextI18n"))
+    return {"ok": errors == 0 and i18n == 0, "errors": errors, "i18n_issues": i18n, "issues": by}
 
 
 def _suites_ok(b: dict[str, Any], *names: str) -> dict[str, Any]:
@@ -186,12 +201,12 @@ UI_LITERAL = re.compile(r'(setText|setHint|makeText|setTitle|setMessage)\(\s*"[^
 def strings_report(root: Path) -> dict[str, Any]:
     app = root / PL / "app" / "src" / "main"
     xml = (app / "res" / "values" / "strings.xml").read_text(encoding="utf-8")
-    defined = set(re.findall(r'<string name="([a-z0-9_]+)"', xml)) | set(re.findall(r'<string-array name="([a-z0-9_]+)"', xml))
+    defined = set(re.findall(r'<(?:string|string-array|plurals) name="([a-z0-9_]+)"', xml))
     used: set[str] = set()
     literals: list[str] = []
     for f in sorted(app.rglob("*.kt")):
         src = f.read_text(encoding="utf-8")
-        used |= set(re.findall(r"R\.(?:string|array)\.([a-z0-9_]+)", src))
+        used |= set(re.findall(r"R\.(?:string|array|plurals)\.([a-z0-9_]+)", src))
         for i, line in enumerate(src.splitlines(), 1):
             if UI_LITERAL.search(line):
                 literals.append(f"{f.relative_to(root)}:{i}: {line.strip()[:100]}")
@@ -430,10 +445,11 @@ def c3_full(root: Path, b: dict[str, Any], tmp: Path) -> dict[str, Any]:
         "allow_backup_off": re.search(r"android:allowBackup\(0x[0-9a-f]+\)=\(type 0x12\)0x0\b", tree) is not None,
     }
     status_ok = code == 0 and {"store", "models", "offload_pending", "telemetry", "backends"} <= set(st)
-    return {"manifest": manifest, "strings": strings_report(root), "offline": offline_scan(root),
+    return {"manifest": manifest, "strings": strings_report(root), "offline": offline_scan(root), "lint": b.get("lint"),
             "telemetry_status": {k: st.get(k) for k in ("store", "models", "offload_pending", "telemetry")} if status_ok else st,
             "device_run": "not exercised — no Android device or KVM emulator on this box",
-            "ok": all(manifest.values()) and strings_report(root)["ok"] and offline_scan(root)["ok"] and status_ok}
+            "ok": all(manifest.values()) and strings_report(root)["ok"] and offline_scan(root)["ok"] and status_ok
+                  and (b.get("lint") or {}).get("ok") is True}
 
 
 def c4_full(root: Path, b: dict[str, Any], tmp: Path) -> dict[str, Any]:
@@ -581,7 +597,7 @@ def runner(ms: str):  # noqa: ANN201
             result: dict[str, Any] = {"mode": "full" if full else "fast"} | fast_part(root, ms, tmp)
             if full:
                 b = gradle_build(root)
-                result["build"] = {k: v for k, v in b.items() if k != "junit"} | {"junit_tests": b["junit"]["tests"],
+                result["build"] = {k: v for k, v in b.items() if k not in ("junit", "lint")} | {"junit_tests": b["junit"]["tests"],
                                                                                   "junit_failures": b["junit"]["failures"]}
                 if b["ok"] and "apk" in b:
                     if ms == "C3":   # C3 reads telemetry from a home C2 populated; make it self-contained

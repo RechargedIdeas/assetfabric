@@ -1,0 +1,64 @@
+{
+  "description": "Local capture: camera intent / import \u2192 content-addressed store + capture telemetry + queued recon offload",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C4",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c4": {
+      "blob_identical": true,
+      "camera_permission": false,
+      "entry": {
+        "id": "cap_c9733dc805b3",
+        "kind": "capture",
+        "media": "image/jpeg",
+        "provenance": {
+          "bytes": 15406,
+          "captured_at": 1794510021313,
+          "device": "jvm-cli",
+          "height": 480,
+          "media": "image/jpeg",
+          "reconstruction": "pending-offload (C10\u2013C12 not implemented)",
+          "source": "camera",
+          "width": 640
+        },
+        "sha256": "c9733dc805b374c44e91ced4652ceae8578cb2b8a3fd1cbdd51eb55ea75e746e",
+        "size": 15406,
+        "updated_by": "pl-eaae6076",
+        "vv": {
+          "pl-eaae6076": 1
+        }
+      },
+      "image_capture_query": true,
+      "non_image_rejected": true,
+      "ok": true,
+      "queued": [
+        "recon.capture"
+      ],
+      "reconstruction": "queued for desktop; RealityLoom/SplatForge reconstruction is C10\u2013C12 (not built)"
+    },
+    "mode": "full",
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}

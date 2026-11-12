@@ -1,0 +1,96 @@
+{
+  "description": "Offload + sync: durable OffloadQueue drains to desktop; version-vector sync, conflicts keep both",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C6",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c6": {
+      "capture_arrived_identical": true,
+      "drain_online": {
+        "paired": true,
+        "pending": 0,
+        "sent": 4
+      },
+      "indexes_identical": true,
+      "keep_both": true,
+      "offload_digests_match_desktop": true,
+      "ok": true,
+      "phone_assets": 6,
+      "queued_while_offline": {
+        "paired": true,
+        "pending": 4,
+        "results": {},
+        "sent": 0
+      },
+      "suites": {
+        "ok": true,
+        "suites": {
+          "JobsTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 3
+          },
+          "SyncPlanTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 2
+          }
+        }
+      },
+      "sync1": {
+        "conflicts": [
+          {
+            "id": "cap_c9733dc805b3",
+            "resolution": "merged_identical"
+          },
+          {
+            "id": "shared",
+            "phone_copy": "shared~pl-52ed2b6e",
+            "resolution": "keep_both"
+          }
+        ],
+        "pulled": 3,
+        "pushed": 3
+      },
+      "sync2": {
+        "conflicts": [],
+        "pulled": 0,
+        "pushed": 0
+      },
+      "sync_fixture": {
+        "cases": 5,
+        "mismatched": [],
+        "ok": true
+      }
+    },
+    "mode": "full",
+    "sync_fixture": {
+      "cases": 5,
+      "mismatched": [],
+      "ok": true
+    },
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}

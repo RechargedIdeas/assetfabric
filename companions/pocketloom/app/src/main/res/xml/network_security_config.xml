@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- LoomLink speaks HTTP to a LAN or Tailscale address the user paired with; requests are
-     HMAC-signed (integrity), not encrypted — Tailscale provides encryption. See docs/INFERENCES.md C-7. -->
-<network-security-config>
-    <base-config cleartextTrafficPermitted="true" />
+<!-- LoomLink speaks HTTP to the LAN or Tailscale address the user paired with. Those addresses are
+     user-chosen IPs, which domain-config cannot enumerate, so cleartext is allowed app-wide.
+     Requests are HMAC-signed (integrity + replay protection), not encrypted — Tailscale provides
+     encryption; TLS with a pinned desktop fingerprint is a TODO. See docs/INFERENCES.md C-7. -->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration" />
 </network-security-config>

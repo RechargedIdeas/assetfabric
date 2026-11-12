@@ -1,0 +1,109 @@
+{
+  "description": "On-device generation: LocalForge CPU caves/sprites via backend ladder (ONNX rung = labelled stub), 2-core budget",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C2",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "gen_ms": {
+      "cave": {
+        "max": 47.54,
+        "mean": 11.95
+      },
+      "sprite": {
+        "max": 48.04,
+        "mean": 6.54
+      }
+    },
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c2": {
+      "budget_ms": 250.0,
+      "cores": "0,1 (taskset)",
+      "kinds": {
+        "cave": {
+          "all_done": true,
+          "backend": [
+            "localforge-ca-cpu"
+          ],
+          "deterministic": true,
+          "dims": [
+            [
+              48,
+              32
+            ]
+          ],
+          "gates_pass": 16,
+          "ms_max": 47.54,
+          "ms_mean": 11.95,
+          "n": 16,
+          "palette_locked_independent": true,
+          "retried": 0,
+          "skipped_rungs": [
+            "onnx-small: stub: onnxruntime not bundled in this build"
+          ]
+        },
+        "sprite": {
+          "all_done": true,
+          "backend": [
+            "localforge-sprite-cpu"
+          ],
+          "deterministic": true,
+          "dims": [
+            [
+              16,
+              16
+            ]
+          ],
+          "gates_pass": 16,
+          "ms_max": 48.04,
+          "ms_mean": 6.54,
+          "n": 16,
+          "palette_locked_independent": true,
+          "retried": 0,
+          "skipped_rungs": [
+            "onnx-small: stub: onnxruntime not bundled in this build"
+          ]
+        }
+      },
+      "ok": true,
+      "onnx": "stub \u2014 onnxruntime not bundled; CPU procedural rung always available",
+      "suites": {
+        "ok": true,
+        "suites": {
+          "LocalForgeTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 5
+          },
+          "ModelsTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 2
+          }
+        }
+      }
+    },
+    "mode": "full",
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}

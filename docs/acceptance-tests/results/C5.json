@@ -1,0 +1,99 @@
+{
+  "description": "Pairing: LoomLink code / loomlink:// QR URI / Tailscale address; HMAC proofs, caps intersection, signed requests",
+  "errors": [],
+  "increment": "pocketloom",
+  "milestone": "C5",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 972815,
+    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "mode": "full"
+  },
+  "result": {
+    "build": {
+      "apk": {
+        "bytes": 972815,
+        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+      },
+      "junit_failures": 0,
+      "junit_tests": 26,
+      "ok": true,
+      "seconds": 50.9
+    },
+    "c5": {
+      "code_rotated": true,
+      "ok": true,
+      "pair": {
+        "caps": [
+          "offload",
+          "sync"
+        ],
+        "client_id": "pl-1434bf66",
+        "paired_at": 1794510023206,
+        "server_id": "desktop",
+        "url": "http://127.0.0.1:44227"
+      },
+      "python_side": {
+        "bad_proofs_refused": 5,
+        "code_rotated_after_use": true,
+        "first_signed": 200,
+        "granted": [
+          "offload",
+          "sync"
+        ],
+        "offload_ok": true,
+        "ok": true,
+        "replay_status": 403,
+        "reused_code_rejected": true,
+        "rotated_after_5_fails": true,
+        "sessions_file_mode": "0o600",
+        "stale_hello_rejected": true,
+        "unknown_device_status": 403,
+        "unsigned_status": 403
+      },
+      "reused_uri_exit": 3,
+      "session_key_matches_desktop": true,
+      "suites": {
+        "ok": true,
+        "suites": {
+          "LoomLinkTest": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 5
+          }
+        }
+      },
+      "transport": "HTTP to LAN/Tailscale address; HMAC-signed requests (integrity), no TLS yet (INFERENCES C-7)",
+      "wrong_code": {
+        "error": "desktop failed to prove the pairing code",
+        "exit": 3
+      }
+    },
+    "mode": "full",
+    "python_side": {
+      "bad_proofs_refused": 5,
+      "code_rotated_after_use": true,
+      "first_signed": 200,
+      "granted": [
+        "offload",
+        "sync"
+      ],
+      "offload_ok": true,
+      "ok": true,
+      "replay_status": 403,
+      "reused_code_rejected": true,
+      "rotated_after_5_fails": true,
+      "sessions_file_mode": "0o600",
+      "stale_hello_rejected": true,
+      "unknown_device_status": 403,
+      "unsigned_status": 403
+    },
+    "toolchain": {
+      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "jdk": "/workspace/jdk/jdk-17.0.21+9",
+      "sdk": "/workspace/android-sdk"
+    }
+  }
+}
