@@ -148,6 +148,12 @@ from forge.accept_f6 import f6_check, f6_perf, f6_run  # noqa: E402
 INCREMENTS["F6"] = Increment("F6", "vertical-slice", ("--scene=slice", "--autoplay"), f6_check,
                              "Vertical slice (GAME_SPEC §6.1): select → farm → tunnels → cave → craft → Cave Warden → "
                              "open world → save; quit/reload parity, 12-selection matrix, quest/loot/save parity", f6_perf, f6_run)
+from forge.accept_f7 import f7_check, f7_perf, f7_run  # noqa: E402
+
+INCREMENTS["F7"] = Increment("F7", "launch-candidates", ("--net-report",), f7_check,
+                             "Desktop + Android + Web launch candidates: Godot 4.3 exports (Linux, Windows, debug APK, Web PWA), "
+                             "G-WEB-01, G-SAVE-01 desktop→Android→Web→desktop, G-NET-01, ShuttleLine contract, BoltPack SBOM",
+                             f7_perf, f7_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
 

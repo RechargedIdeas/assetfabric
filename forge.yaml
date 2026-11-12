@@ -4,17 +4,34 @@ name: assetfabric
 description: Universal content fabric + execution substrate; Game Zero is the first MVP product.
 
 fabric:
-  milestone: F6
-  version: "0.6.0+f6"
+  milestone: F7
+  version: "0.7.0+f7"
 
 game:
   id: game-zero
-  increment: vertical-slice
+  increment: launch-candidates
   project_path: games/game-zero
 
 targets:
   - id: godot-desktop
     kind: godot-desktop
+    renderer: compatibility
+    enabled: true
+  # F7 packaging targets — `forge build --target <id>` (presets: games/game-zero/export_presets.cfg)
+  - id: desktop-linux
+    kind: godot-desktop
+    renderer: compatibility
+    enabled: true
+  - id: desktop-windows
+    kind: godot-desktop
+    renderer: compatibility
+    enabled: true
+  - id: android
+    kind: godot-android
+    renderer: compatibility
+    enabled: true
+  - id: web
+    kind: godot-web
     renderer: compatibility
     enabled: true
   - id: studio-desktop

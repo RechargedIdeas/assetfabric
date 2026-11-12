@@ -15,7 +15,7 @@ PLAN = {
     "F4": "Sandbox (bwrap/process tiers), atomic hot reload, snapshots + WAL, statecharts, guardian",
     "F5": "Monte Carlo balance (G-BAL-01) + Optuna tuning, soft-lock detection, versioned save migration, tier-3 boss",
     "F6": "Quest statechart, farming/gather/craft economy, tiered loot, adaptive music, cave ↔ open world; 15–20 min vertical slice",
-    "F7": "Desktop/Android/Web packaging, ShuttleLine multi, BoltPack",
+    "F7": "Godot 4.3 exports (Linux, Windows, debug APK, Web PWA) via forge build --target, PWAPipeline (G-WEB-01), ShuttleLine multi-target contract, BoltPack SBOM + license audit",
 }
 
 
