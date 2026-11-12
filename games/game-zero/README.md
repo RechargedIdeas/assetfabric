@@ -11,7 +11,7 @@ godot --headless --path games/game-zero -- --scene=sandbox --autoplay   # headle
 forge accept F1                                   # same, parsed + recorded
 ```
 
-User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`.
+User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`; F5: `--save-dir=<abs path>` (default `user://saves`), `--scene=balance --jobs=<file>` (balance worker), `--scene=savecheck [--fixtures=<file>]`.
 
 Controls: WASD/arrows move · J/Space basic attack · K signature skill · R restart (abstract input schema in `autoload/fabric.gd`).
 
@@ -26,6 +26,8 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | `scenes/` | Rendering + input scenes driving the sim |
 | `autoload/live.gd` | F4 live channel (tickets, validation, acks, WAL, quarantine) |
 | `data/statecharts/` | Parallel statecharts (combat / movement / ai / dialogue / reload) |
+| `autoload/save.gd` | F5 Player State save: v3 layers, migrations from v1/v2, checksum, atomic write + `.bak` |
+| `tools/balance.gd`, `tools/savecheck.gd` | F5 headless balance worker (`BALANCE_RESULT` lines) and save loader/migration checker |
 | `locale/` | Locale tables (`tr()` keys only in code) |
 
 ## Increments
@@ -37,5 +39,6 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | F2 | first-combat (party of 4 + pets vs. 7 enemies) — `--scene=combat` | ✅ |
 | F3 | party-ai (BT + policy, time-freeze swap, intents, callouts, dialogue) — `--scene=party` | ✅ |
 | F4 | live-tune (hot reload + live tune from `forge live`, snapshots + WAL replay, parallel statecharts, guardian restart) — `--scene=live` | ✅ |
+| F5 | first-boss (tier-3 Cave Warden: 3 phases, summons, enrage, boss arena; save on victory; proven by the balance runner) — `--scene=boss` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).

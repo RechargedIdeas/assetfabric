@@ -4,6 +4,28 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.5.0+f5] — 2026-11-12 — F5 Balance: Monte Carlo, Optuna, soft-lock detection, save migration, first boss
+
+### Added
+- `forge/balance.py` + `tools/balance.gd` (`--scene=balance`): Monte Carlo runner — 12 character-select matchups (leader × starter pet) × N seeds, common random numbers, ±20 % damage rolls + crits + spawn jitter, sharded over headless Godot workers (CPU only), Wilson 95 % CIs, marginals, G-BAL-01 verdict; `forge balance run|tune` (Optuna TPE, optional extra `tune`; knobs validated against live-tune limits).
+- `forge/softlock.py` + `forge softlock`: static statechart + encounter reachability report; runtime `softlock` (no damage/heal for 1200 ticks) and `timeout` outcomes in the sim; stall probe.
+- `forge/save.py` + `autoload/save.gd` (`Save` autoload): Player State v3 (profile / roster / world), migrations v1→v2→v3, canonical JSON + sha256 checksum, atomic tmp→rename + `.bak` fallback, newer-version refusal; `forge save inspect|migrate`; `tools/savecheck.gd`.
+- Tier-3 boss **Cave Warden** (HP-threshold phase manager: summons 2 emberlings at 66 %, enrage at 33 %), boss kit cleave / ember_bolt / quake, derived sprite, G1-Tile boss arena (`boss_room` carve, brief `content/briefs/f5/boss.yaml`), `boss_warden` encounter + `scenes/boss.tscn`, save on victory, boss music stem.
+- F5 increment `first-boss` + acceptance (`forge/accept_f5.py`); `tests/test_f5_balance_save.py` (15 tests); `docs/acceptance-tests/F5.md`; `results/F5.json`, `results/F5-tune.json`.
+
+### Changed
+- Codegen validates boss phases (descending from 1.0, ability + summon refs) and exports them; roster schema adds `boss` / `phases`.
+- BT: a tier-3 boss counts double for `should_taunt`; autoplay leader rallies outside an un-pulled boss's aggro ring until followers are in leash [INFERENCE F5-6].
+- Starter-pet bonuses tuned (ember_fox atk 0.15→0.25, stone_tortle def 2→2.7, lumen_wisp hp 0.15→0.30); limits for `def_flat`.
+
+### Measured
+- G-BAL-01: 2400 fights, mean 0.732, max choice deviation 3.04 pp, 0 soft-locks — pass. Wall ≈ 109–135 s on 8 workers.
+- Boss clear: victory in 880 ticks, all 3 phases, 2 summons.
+
+### Known
+- Per-combination spread 12.7 pp (soft metric, not met) — balance debt.
+- Companion drafts (PocketLoom FabricCore, LoomCluster, GroundWeave) remain on `wip/f5-companions`, unverified.
+
 ## [0.4.0+f4] — 2026-11-12 — F4 Substrate: sandbox, hot reload, snapshots, statecharts, guardian
 
 ### Added

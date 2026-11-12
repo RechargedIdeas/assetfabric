@@ -8,11 +8,12 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 |---|---|---|---|
 | Unit | schemas, pure functions | `tests/` | F0 ✅ |
 | Component | store, orchestrator, CLI | `tests/` | F0 ✅ |
-| Integration | generators → gates → store → registry; determinism; codegen; audio; AI models; sandbox tiers, live channel, statecharts, guardian | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py`, `tests/test_f3_ai.py`, `tests/test_f4_substrate.py` | F1–F4 ✅ |
-| Headless game | Godot `--headless` autoplay per increment (incl. GDScript↔Python model parity); F4 also drives a live process under the guardian | `tests/test_game_increments.py`, `forge accept` | F0–F4 ✅ |
+| Integration | generators → gates → store → registry; determinism; codegen; audio; AI models; sandbox tiers, live channel, statecharts, guardian | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py`, `tests/test_f3_ai.py`, `tests/test_f4_substrate.py`, `tests/test_f5_balance_save.py` | F1–F5 ✅ |
+| Headless game | Godot `--headless` autoplay per increment (incl. GDScript↔Python model parity); F4 also drives a live process under the guardian; F5 runs the 2400-fight Monte Carlo matrix + save round-trip | `tests/test_game_increments.py`, `forge accept` | F0–F5 ✅ |
 | Acceptance | milestone gates | `docs/acceptance-tests/F*.md` | F0 ✅ |
 | Perf / fidelity | GroundWeave 2-core budgets, retro authenticity (V1) | later | F1+ |
-| Hybrid QA | AI agent playtests + human playtesters | later | F5+ |
+| Balance / soft-lock | Monte Carlo G-BAL-01 (sharded headless workers), soft-lock static + runtime detector | `forge balance run`, `forge softlock`, `forge accept F5` | F5 ✅ |
+| Hybrid QA | AI agent playtests + human playtesters | later | F6+ |
 
 ## 2. Running tests
 
@@ -52,6 +53,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F2 | [F2.md](docs/acceptance-tests/F2.md) | first-combat |
 | F3 | [F3.md](docs/acceptance-tests/F3.md) | party-ai |
 | F4 | [F4.md](docs/acceptance-tests/F4.md) | live-tune (custom runner: backlog run + guardian-supervised serve run) |
+| F5 | [F5.md](docs/acceptance-tests/F5.md) | first-boss (custom runner: boss clear ×2 + save round-trip + 2400-fight balance matrix + soft-lock probe; ≈ 2 min on 8 vCPU, ≈ 7–9 min on 2 cores) |
 
 ## 4. CI gates
 

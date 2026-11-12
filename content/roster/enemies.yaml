@@ -25,7 +25,8 @@ enemies:
   - id: cave_warden
     tier: 3
     boss: true
-    # hp/atk tuned by `forge balance tune` (Optuna TPE, 30 trials × 720 fights, seed_base 50000)
+    # hp/atk picked with `forge balance tune` (Optuna TPE, CPU, seed_base 50000) during F5 development and
+    # verified by G-BAL-01 on seed_base 1000; reproducible log: docs/acceptance-tests/results/F5-tune.json
     stats: {hp: 89.6, atk: 4.3, def: 1, speed: 0.6, aggro: 160}
     abilities: [cleave, ember_bolt]
     weakness: water

@@ -30,6 +30,10 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **Live channel** | — | Atomic hot reload + live tune | F4 | **real** (`forge live set/sprite/push/watch/serve/status`) |
 | **Guardian** | — | Crash/hang self-healing | F4 | **real** (backoff restart, resume, quarantine); Crash Predictor deferred |
 | **Statecharts** | — | Parallel SCXML-subset + soft-lock analysis | F4 | **real** (GDScript runtime + Python twin) |
+| **BalanceSchema / Monte Carlo runner** | — | Parameterized rule space + Monte Carlo runner | F5 | **real** (`forge balance run`; headless Godot workers, CPU only) |
+| **Bayesian optimizer** | — | Balance tuning (Optuna/Ax) | F5 | **real, Optuna TPE on CPU** (`forge balance tune`, optional extra `tune`); surrogate model / Ax not used |
+| **Soft-lock detector** | — | Static + runtime soft-lock detection | F5 | **real** (`forge softlock`; runtime stall/timeout flags in the sim) |
+| **Player State save** | — | Versioned save + migration (Profile/Roster/World) | F5 | **real** (`forge save inspect/migrate`; `autoload/save.gd`); cross-device round-trip (G-SAVE-01) is F7 |
 | **GodotIPC / PWAPipeline / …** | — | Platform toolkit layers | staged | deferred |
 
 ### CLI acceptance

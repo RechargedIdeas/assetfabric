@@ -20,7 +20,7 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 | **F2** | 11–14 | Codegen (chars/abilities/stats), G1-Audio | First combat: party of 4 + pets + enemies | ✅ |
 | **F3** | 15–20 | GIRT, CascadeHub, micro LM, callouts | Party AI, swap, dialogue, callouts | ✅ |
 | **F4** | 21–25 | Sandbox/micro-VM, hot reload, snapshots, statecharts | Live tune without full rebuild | ✅ |
-| **F5** | 26–29 | Monte Carlo balance, soft-lock, save migration | First boss | |
+| **F5** | 26–29 | Monte Carlo balance, soft-lock, save migration | First boss | ✅ |
 | **F6** | 30–33 | Quest SM, farming, loot, adaptive music | **Vertical slice 15–20 min** | |
 | **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | |
 | **F8** | optional | Retro/console-style | Confirm scope first | |
@@ -35,6 +35,7 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 - **F2** ✅ accepted 2026-11-05 — codegen (roster → game data + ability `.tres`), derived sprites, G1-Audio stems; first combat with party of 4 + pets.
 - **F3** ✅ accepted 2026-11-05 — GIRT (CPU/GDScript backends), CascadeHub, policy + callout cache + persona LM stand-in; party AI (BT + policy), time-freeze swap with forward-sim ranking, intents, dialogue. Swap < 50 ms target tracked as soft (measured ≈ 50–100 ms).
 - **F4** ✅ accepted 2026-11-12 — Substrate sandbox (bwrap / process tiers; Firecracker + gVisor detected, no launcher — no usable KVM), live channel with atomic hot reload (ticket → stage/validate → 2PC → probe → rollback), Tier-2 snapshots + WAL replay, parallel statecharts with soft-lock analysis, Guardian (crash/hang → backoff restart → resume + poison-ticket quarantine). Game: `live-tune`. See [docs/SUBSTRATE.md](docs/SUBSTRATE.md).
+- **F5** ✅ accepted 2026-11-12 — Monte Carlo balance runner (headless Godot workers, CRN seeds, Wilson CIs; G-BAL-01 2400 fights, choice deviation 3.0 pp, mean 0.73), Optuna TPE tuning on CPU, soft-lock detection (static statecharts + encounter reachability + runtime stall detector with probe), versioned Player State save v1→v2→v3 with GDScript↔Python parity and `.bak` recovery. Game: `first-boss` (tier-3 Cave Warden). Per-combination spread 12.7 pp is open balance debt. See [docs/acceptance-tests/F5.md](docs/acceptance-tests/F5.md).
 
 ### Entry criteria for any F(n+1)
 

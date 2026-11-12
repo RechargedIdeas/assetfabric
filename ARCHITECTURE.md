@@ -64,6 +64,10 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/accept_f4.py` | F4 two-phase acceptance (backlog run + live process under guardian) | F4 |
 | `games/game-zero/autoload/live.gd` | Live channel (game side): poll, validate, overlay, acks, in-flight marker, quarantine, WAL | F4 |
 | `games/game-zero/sim/statechart.gd`, `data/statecharts/` | Parallel statechart runtime (combat / movement / ai / dialogue / reload) | F4 |
+| `forge/balance.py`, `games/game-zero/tools/balance.gd` | Monte Carlo balance runner (sharded headless Godot workers, CRN seeds, Wilson CIs, G-BAL-01 verdict) + Optuna TPE tuner | F5 |
+| `forge/softlock.py` | Static soft-lock report (statecharts + encounter reachability) + stall-probe overrides; runtime detector lives in `sim/combat_sim.gd` | F5 |
+| `forge/save.py`, `games/game-zero/autoload/save.gd` | Player State save (Profile / Roster / World), v1→v2→v3 migrations, canonical JSON + sha256, atomic write + `.bak` fallback (Python twin ↔ GDScript) | F5 |
+| `forge/accept_f5.py`, `scenes/boss.tscn`, `data/encounters/boss_warden.json` | F5 acceptance (boss clear ×2, save round-trip, G-BAL-01, soft-lock probe); tier-3 boss with HP-phase manager | F5 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)

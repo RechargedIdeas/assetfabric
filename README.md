@@ -12,10 +12,10 @@
 
 | | |
 |---|---|
-| Fabric milestone | **F4 — Substrate: sandbox, hot reload, snapshots, statecharts, guardian** ✅ accepted (`forge accept F4`) |
-| Game increment | `live-tune` — enemy stats, sim params and a sandbox-regenerated sprite change inside a running Game Zero, no rebuild |
-| Version | `0.4.0+f4` |
-| Next | F5 Monte Carlo balance, soft-lock detection, save migration, first boss |
+| Fabric milestone | **F5 — Balance: Monte Carlo + Optuna, soft-lock detection, save migration** ✅ accepted (`forge accept F5`) |
+| Game increment | `first-boss` — tier-3 Cave Warden (3 phases, summons, enrage) cleared headless and proven by the balance runner (G-BAL-01, 2400 fights) |
+| Version | `0.5.0+f5` |
+| Next | F6 quest state machine, farming, loot, adaptive music, vertical slice |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -35,7 +35,8 @@ forge status          # exit 0 == healthy
 pytest -q
 ./scripts/smoke_godot.sh
 forge build           # regenerate content from content/briefs/ (deterministic)
-forge accept F4       # headless Godot acceptance (needs Godot 4.3)
+forge accept F5       # headless Godot acceptance (needs Godot 4.3)
+forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
 forge live serve --headless &   # Game Zero under the guardian; then: forge live set sim.leash=72
 ```
 
@@ -58,7 +59,7 @@ Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in th
 | `cluster/loomcluster/` | Compute clustering — placeholder |
 | `store/` | Content-addressed asset store (blobs gitignored) |
 | `locales/` | Locale string tables (no hard-coded strings) |
-| `content/tune/` | Live-tune limits (F4) |
+| `content/tune/` | Live-tune limits (F4); also bound balance/tuning knobs (F5) |
 | `scripts/` | bootstrap and smoke scripts |
 | `tests/` | pytest suite |
 
@@ -82,6 +83,7 @@ Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in th
 | [docs/design/](docs/design/README.md) | ASSETFABRIC_SPEC, GAME_SPEC, ML/AI features, chat summary |
 | [docs/tool-catalog.md](docs/tool-catalog.md) | Fabric tools and their milestones |
 | [docs/SUBSTRATE.md](docs/SUBSTRATE.md) | Sandbox tiers, live channel, snapshots, statecharts, guardian (F4) |
+| [docs/acceptance-tests/F5.md](docs/acceptance-tests/F5.md) | Balance runner, Optuna tuning, soft-lock detection, save migration, first boss (F5) |
 | [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first node inventory |
 | [docs/INFERENCES.md](docs/INFERENCES.md) | Register of `[INFERENCE]` decisions |
 
