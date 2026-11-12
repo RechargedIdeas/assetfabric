@@ -162,10 +162,10 @@
         "damage": 54,
         "healing": 0,
         "hits": 13,
-        "hp": 49,
+        "hp": 48,
         "kills": 2,
         "kind": "fighter",
-        "max_hp": 49,
+        "max_hp": 48,
         "team": 0
       },
       "nyra_lumen_wisp": {
@@ -210,8 +210,8 @@
     "music_loaded": true,
     "music_stem": "combat",
     "outcome": "victory",
-    "sim_ms": 133.98,
-    "state_hash": "14f3200e98d869e2",
+    "sim_ms": 96.25,
+    "state_hash": "642df8161c490e15",
     "ticks": 547,
     "tres_loaded": 17
   }

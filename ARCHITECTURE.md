@@ -66,8 +66,13 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `games/game-zero/sim/statechart.gd`, `data/statecharts/` | Parallel statechart runtime (combat / movement / ai / dialogue / reload) | F4 |
 | `forge/balance.py`, `games/game-zero/tools/balance.gd` | Monte Carlo balance runner (sharded headless Godot workers, CRN seeds, Wilson CIs, G-BAL-01 verdict) + Optuna TPE tuner | F5 |
 | `forge/softlock.py` | Static soft-lock report (statecharts + encounter reachability) + stall-probe overrides; runtime detector lives in `sim/combat_sim.gd` | F5 |
-| `forge/save.py`, `games/game-zero/autoload/save.gd` | Player State save (Profile / Roster / World), v1→v2→v3 migrations, canonical JSON + sha256, atomic write + `.bak` fallback (Python twin ↔ GDScript) | F5 |
+| `forge/save.py`, `games/game-zero/autoload/save.gd` | Player State save (Profile / Roster / World), v1→v2→v3→v4 migrations (v4: farm, checkpoint, quest counters, buffs, gear — F6), canonical JSON + sha256, atomic write + `.bak` fallback (Python twin ↔ GDScript) | F5 |
 | `forge/accept_f5.py`, `scenes/boss.tscn`, `data/encounters/boss_warden.json` | F5 acceptance (boss clear ×2, save round-trip, G-BAL-01, soft-lock probe); tier-3 boss with HP-phase manager | F5 |
+| `content/world/*.yaml`, `forge/generators/world.py`, `forge/world.py` | **Codegen-World**: economy (items, crops, recipes, shop, XP), tiered loot tables, quests (compiled to one parallel statechart), adaptive-music rules, area graph → `data/generated/world.json`; gates schema / cross-refs / quest-chart soft-lock / economy solvability / loot / music; Python twins (Lcg, roll_loot, QuestLog, guards) for parity | F6 |
+| `forge/generators/tile.py` (features) | G1-Tile open-world features: farm plots `P`, workbench `W`, gather nodes `G`, pinned hostile spawns (`spawn_at`); caves without features stay byte-identical | F6 |
+| `games/game-zero/world/` | `world_state.gd` (inventory, farm, nodes, packs, buffs, gear, XP, quest counters, save ↔ state), `quest_log.gd` (statechart + guards), `loot.gd`, `autopilot.gd` (scripted QA agent) | F6 |
+| `games/game-zero/audio/music_director.gd` | Adaptive music: per-biome stem sets, explore / tension / combat / boss layer maps with fades | F6 |
+| `forge/accept_f6.py`, `scenes/slice.tscn` | F6 vertical slice (select → farm → tunnels → cave → craft → boss → open world → save) + quit/reload parity, 12-selection matrix, quest/loot/save parity, locale coverage | F6 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)

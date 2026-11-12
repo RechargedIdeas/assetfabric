@@ -11,9 +11,10 @@ godot --headless --path games/game-zero -- --scene=sandbox --autoplay   # headle
 forge accept F1                                   # same, parsed + recorded
 ```
 
-User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`; F5: `--save-dir=<abs path>` (default `user://saves`), `--scene=balance --jobs=<file>` (balance worker), `--scene=savecheck [--fixtures=<file>]`.
+User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`; F5: `--save-dir=<abs path>` (default `user://saves`), `--scene=balance --jobs=<file>` (balance worker), `--scene=savecheck [--fixtures=<file>]`; F6 slice: `--scene=slice [--autoplay] [--leader=<id> --pet=<id>] [--seed=<n>] [--resume] [--quit-after-checkpoint=<n>]`.
 
 Controls: WASD/arrows move · J/Space basic attack · K signature skill · R restart (abstract input schema in `autoload/fabric.gd`).
+Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interact (plant / harvest / gather / craft at the bench / travel through an exit) · H use a Moss Salve · Tab freeze time + 1–4 swap · Q toggle tactic · `/` typed command.
 
 ## Layout
 
@@ -28,6 +29,9 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | `data/statecharts/` | Parallel statecharts (combat / movement / ai / dialogue / reload) |
 | `autoload/save.gd` | F5 Player State save: v3 layers, migrations from v1/v2, checksum, atomic write + `.bak` |
 | `tools/balance.gd`, `tools/savecheck.gd` | F5 headless balance worker (`BALANCE_RESULT` lines) and save loader/migration checker |
+| `world/` | F6 world layer: `world_state.gd` (inventory, farm, nodes, packs, buffs, gear, XP, save ↔ state), `quest_log.gd`, `loot.gd`, `autopilot.gd` (scripted QA agent) |
+| `audio/music_director.gd` | F6 adaptive music (biome stem sets × explore/tension/combat/boss layers) |
+| `data/generated/world.json` | **Codegen-World output** (economy, loot, quests + quest chart, music rules, areas) — do not hand-edit |
 | `locale/` | Locale tables (`tr()` keys only in code) |
 
 ## Increments
@@ -40,5 +44,6 @@ Controls: WASD/arrows move · J/Space basic attack · K signature skill · R res
 | F3 | party-ai (BT + policy, time-freeze swap, intents, callouts, dialogue) — `--scene=party` | ✅ |
 | F4 | live-tune (hot reload + live tune from `forge live`, snapshots + WAL replay, parallel statecharts, guardian restart) — `--scene=live` | ✅ |
 | F5 | first-boss (tier-3 Cave Warden: 3 phases, summons, enrage, boss arena; save on victory; proven by the balance runner) — `--scene=boss` | ✅ |
+| F6 | vertical-slice (GAME_SPEC §6.1: select → farm → tunnels → cave → craft → Cave Warden → open world → save/quit/reload) — `--scene=slice` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).

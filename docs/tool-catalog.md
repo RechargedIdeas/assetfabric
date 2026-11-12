@@ -33,7 +33,12 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **BalanceSchema / Monte Carlo runner** | — | Parameterized rule space + Monte Carlo runner | F5 | **real** (`forge balance run`; headless Godot workers, CPU only) |
 | **Bayesian optimizer** | — | Balance tuning (Optuna/Ax) | F5 | **real, Optuna TPE on CPU** (`forge balance tune`, optional extra `tune`); surrogate model / Ax not used |
 | **Soft-lock detector** | — | Static + runtime soft-lock detection | F5 | **real** (`forge softlock`; runtime stall/timeout flags in the sim) |
-| **Player State save** | — | Versioned save + migration (Profile/Roster/World) | F5 | **real** (`forge save inspect/migrate`; `autoload/save.gd`); cross-device round-trip (G-SAVE-01) is F7 |
+| **Player State save** | — | Versioned save + migration (Profile/Roster/World) | F5 | **real** (`forge save inspect/migrate`; `autoload/save.gd`; v4 world layer at F6); cross-device round-trip (G-SAVE-01) is F7 |
+| **Quest state machine** | — | Quest SM | F6 | **real** (quests compiled to a parallel statechart by Codegen-World; `world/quest_log.gd` + Python twin; static soft-lock analysis) |
+| **Farming / economy** | — | Farm, gather, grow, craft feeding economy + combat | F6 | **real** (`content/world/economy.yaml`; plots, crops, gather nodes, recipes, buffs, gear; economy-solvability gate) — content placeholders (D-005) |
+| **Loot tables** | — | Loot tied to tiers | F6 | **real** (`content/world/loot.yaml`; deterministic LCG rolls, GDScript ↔ Python parity, EV in registry) |
+| **Adaptive music** | — | Stems layered by biome/state | F6 | **real** (`audio/music_director.gd` + `content/world/music.yaml`; G1-Audio stems `music_field`, `music_cave`) |
+| **QA autopilot** | — | AI agent playtests (hybrid QA) | F6 | **scripted** deterministic agent (`world/autopilot.gd`), not learned; humans still needed for length/feel |
 | **GodotIPC / PWAPipeline / …** | — | Platform toolkit layers | staged | deferred |
 
 ### CLI acceptance

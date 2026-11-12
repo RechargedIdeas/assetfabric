@@ -40,6 +40,7 @@ var _swapped_here := false
 var _boss_engaged := false
 var _msg := ""
 var _boss_built := false
+var _h_was_down := false
 var _transitions := 0             # bumped on every area change: a transition ends the tick (resume parity)
 var rep := {"areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
 	"party_stats": {}, "boss": {}, "buff_at_boss": {}, "music_stems_loaded": {}, "checkpoints": []}
@@ -623,8 +624,10 @@ func _physics_process(delta: float) -> void:
 	if not autoplay:
 		if Input.is_action_just_pressed("interact"):
 			_interact()
-		if Input.is_key_pressed(KEY_H) and not in_combat:
+		var h_down := Input.is_key_pressed(KEY_H)      # edge-triggered: one salve per key press
+		if h_down and not _h_was_down and not in_combat:
 			_use("moss_salve")
+		_h_was_down = h_down
 	_accum += delta
 	while _accum >= 1.0 / 60.0 and phase == "play":
 		_accum -= 1.0 / 60.0

@@ -6,8 +6,8 @@
   "passed": true,
   "perf": {
     "ack_ms": [
-      82.7,
-      107.4
+      81.9,
+      142.0
     ],
     "ack_target_met": true,
     "ack_target_ms": 500.0,
@@ -16,16 +16,16 @@
       0.5
     ],
     "commit_apply_us": [
-      69324,
-      63131
+      48027,
+      50130
     ],
     "recover_s": [
-      0.91,
-      4.06
+      0.76,
+      3.95
     ],
     "recover_target_met": true,
     "recover_target_s": 10.0,
-    "snapshot_bytes": 39902
+    "snapshot_bytes": 43156
   },
   "result": {
     "abilities_loaded": 17,
@@ -119,7 +119,7 @@
         "rule": 3960
       },
       "dialogue": [],
-      "field_warm_ms": 139.06,
+      "field_warm_ms": 122.5,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 0,
@@ -127,7 +127,7 @@
         "lm_refused_in_tick": 0,
         "policy_calls": 664,
         "policy_fallbacks": 0,
-        "policy_p95_us": 49,
+        "policy_p95_us": 24,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -216,12 +216,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 92.2,
+      "swap_wall_ms": 79.28,
       "swaps": [
         {
           "tick": 300,
           "to": "nyra",
-          "wall_ms": 92.2
+          "wall_ms": 79.28
         }
       ]
     },
@@ -366,10 +366,10 @@
         "damage": 38,
         "healing": 0,
         "hits": 11,
-        "hp": 49,
+        "hp": 48,
         "kills": 3,
         "kind": "fighter",
-        "max_hp": 49,
+        "max_hp": 48,
         "team": 0
       },
       "nyra_lumen_wisp": {
@@ -426,10 +426,10 @@
     "live": {
       "acks": [
         {
-          "apply_us": 69324,
+          "apply_us": 48027,
           "assets": [],
-          "hash_after": "e62070de00a1b863",
-          "hash_before": "ee9be104e09cc564",
+          "hash_after": "cb4c3575d67ed0ce",
+          "hash_before": "35896434e6ecbb0e",
           "restatted": 2,
           "source": "accept F4: tune",
           "status": "committed",
@@ -437,12 +437,12 @@
           "ticket": 1
         },
         {
-          "apply_us": 63131,
+          "apply_us": 50130,
           "assets": [
             "spr_rock_brute"
           ],
-          "hash_after": "e62070de00a1b863",
-          "hash_before": "e62070de00a1b863",
+          "hash_after": "cb4c3575d67ed0ce",
+          "hash_before": "cb4c3575d67ed0ce",
           "restatted": 0,
           "source": "forge live sprite spr_rock_brute seed=4242 sandbox=bwrap",
           "status": "committed",
@@ -450,8 +450,8 @@
           "ticket": 2
         },
         {
-          "hash_after": "e62070de00a1b863",
-          "hash_before": "e62070de00a1b863",
+          "hash_after": "cb4c3575d67ed0ce",
+          "hash_before": "cb4c3575d67ed0ce",
           "reason": "fault injected (acceptance test of the rollback path)",
           "restored_equal": true,
           "source": "accept F4: probe fault",
@@ -549,10 +549,10 @@
         "committing>probing",
         "probing>idle"
       ],
-      "final_hash": "272ccc28f928a284",
-      "live_dir": "/tmp/fabric-f4-addywonc/backlog",
+      "final_hash": "85ceb9560ba64d81",
+      "live_dir": "/tmp/fabric-f4-x5etivpg/backlog",
       "replay": {
-        "final_hash": "272ccc28f928a284",
+        "final_hash": "85ceb9560ba64d81",
         "outcome": "victory",
         "replayed": 5,
         "restored_hash_equal": true,
@@ -560,16 +560,16 @@
       },
       "replay_equal": true,
       "restarts": 0,
-      "snapshot_bytes": 39902,
+      "snapshot_bytes": 43156,
       "snapshots": [
         "pre_tune"
       ],
-      "summary_hash": "ff74dd5392e4079d",
+      "summary_hash": "5c7396f38c8c6327",
       "tuned": {
         "leash": 72,
         "rock_brute_max_hp": 30,
         "separation": 9,
-        "sprite_override": "/tmp/fabric-f4-addywonc/backlog/stage/2/spr_rock_brute.png"
+        "sprite_override": "/tmp/fabric-f4-x5etivpg/backlog/stage/2/spr_rock_brute.png"
       },
       "wal": [
         {
@@ -660,13 +660,13 @@
             "kind": "crash",
             "rc": -6,
             "signal": 6,
-            "t": 1794498314.748
+            "t": 1794502074.8
           },
           {
             "event": "failure",
-            "heartbeat_age_s": 3.06,
+            "heartbeat_age_s": 3.05,
             "kind": "hang",
-            "t": 1794498318.871
+            "t": 1794502078.802
           }
         ],
         "policy": {
@@ -685,7 +685,7 @@
       },
       "steps": [
         {
-          "ack_ms": 82.7,
+          "ack_ms": 81.9,
           "status": "committed",
           "step": "tune",
           "ticket": 1,
@@ -697,10 +697,10 @@
           }
         },
         {
-          "recover_s": 0.91,
+          "recover_s": 0.76,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "4a262935b150bc42",
+            "full_hash": "ffe1b0812845be24",
             "quarantined": 2,
             "reapplied": [],
             "tick": 12
@@ -716,7 +716,7 @@
           }
         },
         {
-          "ack_ms": 107.4,
+          "ack_ms": 142.0,
           "status": "committed",
           "step": "tune_after_restart",
           "ticket": 3,
@@ -728,13 +728,13 @@
           }
         },
         {
-          "recover_s": 4.06,
+          "recover_s": 3.95,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "54955b2c4c4122ec",
+            "full_hash": "5d3ae9c28e88e3e9",
             "quarantined": 4,
             "reapplied": [],
-            "tick": 24
+            "tick": 30
           },
           "status": "quarantined",
           "step": "hang",
@@ -753,8 +753,8 @@
         }
       ]
     },
-    "sim_ms": 1038.02,
-    "state_hash": "ff74dd5392e4079d",
+    "sim_ms": 648.65,
+    "state_hash": "5c7396f38c8c6327",
     "statechart_analysis": {
       "id": "live_session",
       "ok": true,

@@ -12,10 +12,10 @@
 
 | | |
 |---|---|
-| Fabric milestone | **F5 — Balance: Monte Carlo + Optuna, soft-lock detection, save migration** ✅ accepted (`forge accept F5`) |
-| Game increment | `first-boss` — tier-3 Cave Warden (3 phases, summons, enrage) cleared headless and proven by the balance runner (G-BAL-01, 2400 fights) |
-| Version | `0.5.0+f5` |
-| Next | F6 quest state machine, farming, loot, adaptive music, vertical slice |
+| Fabric milestone | **F6 — Quest statechart, farming/craft economy, tiered loot, adaptive music, cave ↔ open world** ✅ accepted (`forge accept F6`) |
+| Game increment | `vertical-slice` — GAME_SPEC §6.1: character + pet select → farm → tunnels → cave → craft → Cave Warden → open world → save/reload; played end-to-end headless for all 12 selections |
+| Version | `0.6.0+f6` |
+| Next | F7 — Desktop / Android / Web PWA packaging, ShuttleLine multi, BoltPack (Tier 1 + Tier 2 launch candidates) |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -35,12 +35,12 @@ forge status          # exit 0 == healthy
 pytest -q
 ./scripts/smoke_godot.sh
 forge build           # regenerate content from content/briefs/ (deterministic)
-forge accept F5       # headless Godot acceptance (needs Godot 4.3)
+forge accept F6       # headless Godot acceptance (needs Godot 4.3); FORGE_ACCEPT_FAST=1 for the CI subset
 forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
 forge live serve --headless &   # Game Zero under the guardian; then: forge live set sim.leash=72
 ```
 
-Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in the Godot editor. More: [docs/setup/README.md](docs/setup/README.md).
+Play Game Zero: `godot --path games/game-zero -- --scene=slice` (the vertical slice), or open `games/game-zero/` in the Godot editor. More: [docs/setup/README.md](docs/setup/README.md).
 
 ## Repository layout
 
@@ -48,7 +48,7 @@ Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in th
 |---|---|
 | `forge/` | Content Forge Python package and `forge` CLI |
 | `forge.yaml` | Project manifest (milestone, targets, profiles, fleet) |
-| `content/` | Content briefs + PatternVault palettes (inputs to `forge build`) |
+| `content/` | Content briefs, roster, world (economy/loot/quests/music/areas) + PatternVault palettes (inputs to `forge build`) |
 | `docs/design/` | **Authoritative design specs** imported from the design chat |
 | `docs/adr/` | Architecture Decision Records |
 | `docs/schemas/` | JSON Schemas (manifest, telemetry) |
@@ -84,6 +84,7 @@ Play Game Zero: `godot --path games/game-zero`, or open `games/game-zero/` in th
 | [docs/tool-catalog.md](docs/tool-catalog.md) | Fabric tools and their milestones |
 | [docs/SUBSTRATE.md](docs/SUBSTRATE.md) | Sandbox tiers, live channel, snapshots, statecharts, guardian (F4) |
 | [docs/acceptance-tests/F5.md](docs/acceptance-tests/F5.md) | Balance runner, Optuna tuning, soft-lock detection, save migration, first boss (F5) |
+| [docs/acceptance-tests/F6.md](docs/acceptance-tests/F6.md) | Vertical slice: quests, farming/craft, loot, adaptive music, cave ↔ open world, save/quit/reload (F6) |
 | [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first node inventory |
 | [docs/INFERENCES.md](docs/INFERENCES.md) | Register of `[INFERENCE]` decisions |
 
