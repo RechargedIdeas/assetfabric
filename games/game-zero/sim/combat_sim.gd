@@ -9,7 +9,8 @@ const SimEntity = preload("res://sim/entity.gd")
 const TICK_HZ := 60
 const LEASH := 56.0          # default; live-tunable as `sim.leash` (F4)
 const SEPARATION := 9.0      # default; live-tunable as `sim.separation`
-const SNAPSHOT_VERSION := 1
+const SNAPSHOT_VERSION := 2      # v2 (F5): rng_state, variance, progress tick, boss phases
+const STALL_TICKS := 1200        # F5 soft-lock: 20 s with no damage/heal while both sides live
 
 var grid
 var entities: Array = []
@@ -26,6 +27,12 @@ var forward := false           # true for swap-advisor clones: no global (GIRT) 
 var think_interval := 1        # forward-sim LOD: brains think every N ticks (swap advisor uses 3)
 var leash := LEASH             # followers stay near the leader when idle
 var separation := SEPARATION
+# F5 Monte Carlo: seeded variance (0 = fully deterministic legacy behaviour, as in F1–F4)
+var variance := 0.0            # ± fraction applied to every damage roll
+var crit_chance := 0.0         # seeded encounters: chance of a ×1.5 hit
+var rng_state := 0             # 31-bit LCG state; part of the snapshot
+var last_progress_tick := 0    # last tick with damage or healing (soft-lock detector)
+var summons := 0
 
 
 func _init(grid_) -> void:
@@ -56,6 +63,11 @@ func clone():
 	c.think_interval = think_interval
 	c.leash = leash
 	c.separation = separation
+	c.variance = variance
+	c.crit_chance = crit_chance
+	c.rng_state = rng_state
+	c.last_progress_tick = last_progress_tick
+	c.summons = summons
 	return c
 
 
@@ -113,6 +125,23 @@ func move(e, dir: Vector2) -> void:
 	var ny: Vector2 = e.pos + Vector2(0, v.y)
 	if not grid.blocked_at(ny, e.radius):
 		e.pos = ny
+
+
+## F5 rally: the autoplay leader stops just outside an un-pulled boss's aggro ring until every
+## living follower is within the leash, so the whole party engages together. Without it the
+## leader (whoever was picked at character select) tanked the opening alone and G-BAL-01
+## measured the *pathing order*, not the matchup ([INFERENCE] F5-6).
+const RALLY_TIER := 3
+func rally_hold(e, target) -> bool:
+	if not e.is_leader or leader_manual or target == null or target.tier < RALLY_TIER or target.hp < target.max_hp:
+		return false
+	var d: float = e.pos.distance_to(target.pos)
+	if d < target.aggro_range * 0.9 or d > target.aggro_range + 32.0:
+		return false
+	for o in entities:
+		if o.team == e.team and o.kind == "fighter" and o != e and o.alive() and o.pos.distance_to(e.pos) > leash:
+			return true
+	return false
 
 
 func move_toward_entity(e, target) -> void:
@@ -177,8 +206,20 @@ func begin_cast(e, ab: Dictionary, target) -> void:
 	events.append({"tick": tick, "type": "cast", "by": e.id, "ability": ab["id"], "target": e.casting["target"]})
 
 
+## Deterministic LCG (Numerical Recipes constants, 31-bit) — same seed, same fight.
+func rand01() -> float:
+	rng_state = (rng_state * 1103515245 + 12345) & 0x7fffffff
+	return float(rng_state) / 2147483648.0
+
+
 func _damage(src, dst, power: float) -> void:
-	var dmg := maxi(1, int(round(src.atk * power - dst.def)))
+	var raw: float = src.atk * power - dst.def
+	if variance > 0.0:
+		raw *= 1.0 + variance * (rand01() * 2.0 - 1.0)
+	if crit_chance > 0.0 and rand01() < crit_chance:
+		raw *= 1.5
+	var dmg := maxi(1, int(round(raw)))
+	last_progress_tick = tick
 	dst.hp = maxi(0, dst.hp - dmg)
 	dst.hit_flash = 8
 	src.stats_dealt["damage"] += dmg
@@ -214,6 +255,8 @@ func resolve_cast(e) -> void:
 				var amt := int(round(e.atk * float(ab["power"])))
 				var before: int = target.hp
 				target.hp = mini(target.max_hp, target.hp + amt)
+				if target.hp != before:
+					last_progress_tick = tick
 				e.stats_dealt["healing"] += target.hp - before
 				events.append({"tick": tick, "type": "heal", "by": e.id, "target": target.id, "amount": target.hp - before})
 		"taunt":
@@ -270,7 +313,9 @@ func rule_brain(e) -> void:
 		for ab in e.abilities:
 			if ab["target"] == "enemy":
 				best_range = maxf(best_range, float(ab["range"]))
-		if e.pos.distance_to(target.pos) > best_range * 0.8:
+		if rally_hold(e, target):
+			e.moving = false
+		elif e.pos.distance_to(target.pos) > best_range * 0.8:
 			move_toward_entity(e, target)
 		else:
 			e.moving = false
@@ -303,6 +348,7 @@ func step(input: Dictionary = {}) -> void:
 		if foe:
 			engaged = true
 			events.append({"tick": tick, "type": "battle_start", "by": l.id})
+	_boss_managers()
 	var idx := 0
 	for e in entities:
 		idx += 1
@@ -374,6 +420,59 @@ func _cd_of(e, ab_id: String) -> int:
 	return 0
 
 
+# ---------------------------------------------------------------- F5 boss manager / soft-lock
+
+## Hierarchical boss: the manager picks the phase from HP thresholds; the worker (BT / rule
+## brain) then plays that phase's kit. Phase entry may summon adds and enrage.
+func _boss_managers() -> void:
+	var n := entities.size()
+	for i in n:
+		var e = entities[i]
+		if e.phases.is_empty() or not e.alive():
+			continue
+		var ratio := float(e.hp) / float(e.max_hp)
+		var want: int = e.phase
+		for pi in range(e.phase + 1, e.phases.size()):
+			if ratio <= float(e.phases[pi]["at"]):
+				want = pi
+		if want == e.phase:
+			continue
+		for pi in range(e.phase + 1, want + 1):
+			_enter_phase(e, pi)
+
+
+func _enter_phase(e, pi: int) -> void:
+	var ph: Dictionary = e.phases[pi]
+	e.phase = pi
+	e.abilities = ph["abilities"]
+	for ab in e.abilities:
+		if not e.cooldowns.has(ab["id"]):
+			e.cooldowns[ab["id"]] = 0
+	if ph.has("speed"):
+		e.speed = float(ph["speed"])
+	e.atk = snappedf(e.base_atk * float(ph.get("atk_mult", 1.0)), 0.01)
+	events.append({"tick": tick, "type": "boss_phase", "by": e.id, "phase": pi + 1})
+	if ph.has("summon"):
+		var t: Dictionary = ph["summon"]
+		var cnt := int(t["count"])
+		for k in cnt:
+			var ang := TAU * float(k) / float(cnt)
+			var at: Vector2 = e.pos + Vector2(cos(ang), sin(ang)) * 18.0
+			if grid.blocked_at(at, 4.0):
+				at = e.pos
+			summons += 1
+			var minion = SimEntity.create("%s_add%d" % [t["ref"], summons], 1, "enemy", t["sprite_id"], t["stats"], t["abilities"], at)
+			minion.tier = int(t.get("tier", 1))
+			minion.set_meta("ref", t["ref"])
+			add(minion)
+			events.append({"tick": tick, "type": "summon", "by": e.id, "target": minion.id})
+
+
+## Soft-lock (runtime): both sides alive but nothing has been hit or healed for STALL_TICKS.
+func stalled(limit: int = STALL_TICKS) -> bool:
+	return outcome() == "running" and engaged and tick - last_progress_tick > limit
+
+
 # ---------------------------------------------------------------- F4 snapshots (Tier 2: application state)
 
 ## Complete, JSON-safe sim state. Restoring it and stepping is bit-identical to stepping
@@ -384,12 +483,14 @@ func to_snapshot() -> Dictionary:
 		ents.append(e.to_dict())
 	return {"v": SNAPSHOT_VERSION, "tick": tick, "tactic": tactic, "focus_kind": focus_kind, "engaged": engaged,
 		"leader_manual": leader_manual, "think_interval": think_interval, "leash": leash, "separation": separation,
+		"variance": variance, "crit_chance": crit_chance, "rng_state": rng_state, "last_progress_tick": last_progress_tick, "summons": summons,
 		"entities": ents, "events": events.duplicate(true)}
 
 
 ## Restore in place (keeps grid, brain hook and forward flag).
 func restore(snap: Dictionary) -> void:
-	assert(int(snap.get("v", 0)) == SNAPSHOT_VERSION, "snapshot version mismatch")
+	var v := int(snap.get("v", 0))
+	assert(v >= 1 and v <= SNAPSHOT_VERSION, "unsupported snapshot version %d" % v)   # v1 → defaults below
 	entities.clear()
 	by_id.clear()
 	for d in snap["entities"]:
@@ -402,6 +503,11 @@ func restore(snap: Dictionary) -> void:
 	think_interval = int(snap["think_interval"])
 	leash = float(snap["leash"])
 	separation = float(snap["separation"])
+	variance = float(snap.get("variance", 0.0))
+	crit_chance = float(snap.get("crit_chance", 0.0))
+	rng_state = int(snap.get("rng_state", 0))
+	last_progress_tick = int(snap.get("last_progress_tick", tick))
+	summons = int(snap.get("summons", 0))
 	events = []
 	for ev in snap["events"]:
 		events.append(_int_fields(ev))
@@ -409,7 +515,7 @@ func restore(snap: Dictionary) -> void:
 
 static func _int_fields(ev: Dictionary) -> Dictionary:
 	var out := ev.duplicate()
-	for k in ["tick", "dmg", "hp", "amount", "target_team"]:
+	for k in ["tick", "dmg", "hp", "amount", "target_team", "phase"]:
 		if out.has(k):
 			out[k] = int(out[k])
 	return out

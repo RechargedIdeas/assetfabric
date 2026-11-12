@@ -31,3 +31,4 @@ godot-bin/
 *.jks
 *.pem
 /.fabric/live/
+companions/pocketloom/local.properties

@@ -20,6 +20,7 @@ Fabric="*res://autoload/fabric.gd"
 GIRT="*res://autoload/girt.gd"
 CascadeHub="*res://autoload/cascade_hub.gd"
 Live="*res://autoload/live.gd"
+Save="*res://autoload/save.gd"
 
 [display]
 

@@ -47,6 +47,12 @@ briefs: []
 models: {}
 
 cluster:
+  protocol:            # LoomCluster (C7) wire settings; loopback unless LoomLink exposes it
+    bind: 127.0.0.1
+    heartbeat_s: 0.5
+    lease_s: 6.0
+    steal_batch: 2
+    http_timeout_s: 2.0
   nodes:
     - id: main
       tier: T1

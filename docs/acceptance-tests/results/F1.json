@@ -1,55 +1,14 @@
 {
   "description": "Playable sandbox: 1 char, 1 tilemap, 1 enemy, 1 attack",
-  "errors": [],
+  "errors": [
+    "outcome=None",
+    "needs 1 tilemap + 1 character + 1 enemy from Fabric",
+    "at least one attack must land",
+    "godot exit code 3"
+  ],
   "increment": "sandbox-encounter",
   "milestone": "F1",
-  "passed": true,
+  "passed": false,
   "perf": {},
-  "result": {
-    "abilities_loaded": 14,
-    "abilities_used": [
-      "claw",
-      "slash"
-    ],
-    "assets": [
-      "cave_01",
-      "hero_kael",
-      "enemy_emberling"
-    ],
-    "encounter": "sandbox",
-    "entities": {
-      "emberling_1": {
-        "alive": false,
-        "casts": 2,
-        "damage": 2,
-        "healing": 0,
-        "hits": 2,
-        "hp": 0,
-        "kills": 0,
-        "kind": "enemy",
-        "max_hp": 24,
-        "team": 1
-      },
-      "kael": {
-        "alive": true,
-        "casts": 4,
-        "damage": 28,
-        "healing": 0,
-        "hits": 4,
-        "hp": 58,
-        "kills": 1,
-        "kind": "fighter",
-        "max_hp": 60,
-        "team": 0
-      }
-    },
-    "hits": 6,
-    "increment": "sandbox-encounter",
-    "music_loaded": false,
-    "outcome": "victory",
-    "sim_ms": 10.04,
-    "state_hash": "3b2bd97029c2a7fb",
-    "ticks": 400,
-    "tres_loaded": 14
-  }
+  "result": {}
 }

@@ -138,6 +138,11 @@ INCREMENTS["F4"] = Increment("F4", "live-tune", ("--scene=live", "--autoplay"), 
                              "Live tune without a full rebuild: sandboxed regen, atomic hot reload "
                              "(2PC + probe + rollback), snapshots + WAL replay, parallel statecharts, guardian restart",
                              f4_perf, f4_run)
+from forge.accept_f5 import f5_check, f5_perf, f5_run  # noqa: E402
+
+INCREMENTS["F5"] = Increment("F5", "first-boss", ("--scene=boss", "--autoplay"), f5_check,
+                             "First boss + balance: tier-3 Cave Warden cleared, save/migrate round-trip, "
+                             "G-BAL-01 Monte Carlo (2400 fights), soft-lock detection", f5_perf, f5_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
 

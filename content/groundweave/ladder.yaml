@@ -1,0 +1,84 @@
+# GroundWeave (C8) — GPU→CPU fallback ladder for every forge op.
+# Each op lists backends best-first. Selection walks the ladder and takes the first
+# backend whose device is present AND whose implementation exists on this checkout
+# (`impl: real`). A `cpu` backend with `impl: real` is mandatory unless the op declares
+# `gpu_required: true` with `route: loomcluster` (then the job must be sent to a node
+# that advertises a matching device).
+# `budget_s_2core` is the wall-clock budget for the CPU backend on the weakest
+# acceptance node (2 cores, no GPU); `forge groundweave verify` enforces it.
+schema_version: "1.0"
+acceptance_node: {cores: 2, gpu: false}
+devices: [rocm, directml, vulkan, cpu]
+ops:
+  gen.sprite:
+    kind: sprite
+    budget_s_2core: 20
+    probe_brief: hero_kael
+    ladder:
+      - {id: g1-sprite-onnx-tiny, device: rocm, impl: planned}
+      - {id: g1-sprite-onnx-tiny, device: vulkan, impl: planned}
+      - {id: g1-sprite-procedural, device: cpu, impl: real}
+  gen.tilemap:
+    kind: tilemap
+    budget_s_2core: 30
+    probe_brief: cave_01
+    ladder:
+      - {id: g1-tile-nca, device: rocm, impl: planned}
+      - {id: g1-tile-ca, device: cpu, impl: real}
+  gen.material:
+    kind: material
+    budget_s_2core: 30
+    probe_brief: mat_cave_stone
+    ladder:
+      - {id: dyeworks-sdxl, device: rocm, impl: planned}
+      - {id: dyeworks-sd15, device: directml, impl: planned}
+      - {id: dyeworks-procedural, device: cpu, impl: real}
+  gen.audio:
+    kind: audio
+    budget_s_2core: 60
+    probe_brief: music_cave
+    ladder:
+      - {id: g1-audio-procedural, device: cpu, impl: real}
+  gen.codegen:
+    kind: codegen
+    budget_s_2core: 20
+    probe_brief: roster
+    ladder:
+      - {id: codegen, device: cpu, impl: real}
+  gen.callouts:
+    kind: callouts
+    budget_s_2core: 30
+    probe_brief: callouts
+    ladder:
+      - {id: persona-bigram, device: cpu, impl: real}
+  gen.persona_lm:
+    kind: persona_lm
+    budget_s_2core: 30
+    probe_brief: persona_lm
+    ladder:
+      - {id: persona-bigram-train, device: cpu, impl: real}
+  gen.policy:
+    kind: policy
+    budget_s_2core: 120
+    probe_brief: policy_target
+    ladder:
+      - {id: mlp-train-rocm, device: rocm, impl: planned}
+      - {id: mlp-train-cpu, device: cpu, impl: real}
+  runtime.girt:
+    budget_s_2core: 0.002
+    note: per-tick inference budget is enforced in-engine by GIRT latency budgets (F3)
+    ladder:
+      - {id: onnxruntime-gdextension, device: vulkan, impl: planned}
+      - {id: mlp-gdscript, device: cpu, impl: real}
+  qa.balance:
+    budget_s_2core: 900
+    note: 1008-encounter G-BAL-01 run sharded over available cores
+    ladder:
+      - {id: godot-headless-shards, device: cpu, impl: real}
+  recon.splat:
+    gpu_required: true
+    route: loomcluster
+    note: 3DGS training (SplatForge, C12) has no practical CPU path; COLMAP-CPU + photogrammetry is the honest degraded route (C10–C12 stub)
+    ladder:
+      - {id: opensplat-rocm, device: rocm, impl: planned}
+      - {id: colmap-cpu-photogrammetry, device: cpu, impl: planned}

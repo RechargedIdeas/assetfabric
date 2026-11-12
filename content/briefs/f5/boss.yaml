@@ -1,0 +1,16 @@
+# F5 briefs — boss arena (G1-Tile with a carved boss room). The boss itself comes from
+# content/roster/enemies.yaml (codegen + derived sprite).
+briefs:
+  - id: cave_boss
+    kind: tilemap
+    seed: 51
+    tile_size: 16
+    constraints:
+      width: 40
+      height: 22
+      density: 0.40
+      smoothing: 5
+      min_path: 30
+      enemies: 2
+      boss_room: {radius: 5, at: 0.85}
+    tags: [biome:cave, encounter:boss]

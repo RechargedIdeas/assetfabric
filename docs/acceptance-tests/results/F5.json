@@ -1,0 +1,711 @@
+{
+  "description": "First boss + balance: tier-3 Cave Warden cleared, save/migrate round-trip, G-BAL-01 Monte Carlo (1008 fights), soft-lock detection",
+  "errors": [
+    "new process did not load the exact saved state",
+    "torn save not recovered: {'last_load': {'errors': ['slot0.json: unreadable'], 'migrated_from': [], 'ok': True, 'recovered_from_backup': True}, 'loaded_equal_first': False}",
+    "G-BAL-01 failed: {'encounters_ge_1000': True, 'max_deviation_lt_5pp': True, 'mean_in_target_band': False, 'no_softlocks': True} mean=0.9921 max_dev=0.0159 n=1008"
+  ],
+  "increment": "first-boss",
+  "milestone": "F5",
+  "passed": false,
+  "perf": {
+    "balance_wall_s": 35.3,
+    "balance_workers": 8,
+    "boss_sim_ms": 168.17,
+    "boss_ticks": 771,
+    "ms_per_encounter_per_worker": 280.2
+  },
+  "result": {
+    "abilities_loaded": 17,
+    "abilities_used": [
+      "arrow",
+      "bite",
+      "claw",
+      "cleave",
+      "ember_bolt",
+      "mend",
+      "quake",
+      "shield_bash",
+      "slam",
+      "slash",
+      "spark",
+      "spit",
+      "taunt",
+      "volley"
+    ],
+    "ai": {
+      "brain": "bt+policy",
+      "callouts": [
+        {
+          "event": "battle_start",
+          "line": "Here they come.",
+          "tick": 223,
+          "who": "kael"
+        },
+        {
+          "event": "taunt",
+          "line": "Look here!",
+          "tick": 341,
+          "who": "bram"
+        },
+        {
+          "event": "heal",
+          "line": "Patched you up, friend.",
+          "tick": 561,
+          "who": "sola"
+        },
+        {
+          "event": "low_hp",
+          "line": "I'm cracked, not broken.",
+          "tick": 638,
+          "who": "kael"
+        },
+        {
+          "event": "taunt",
+          "line": "Look here!",
+          "tick": 641,
+          "who": "bram"
+        },
+        {
+          "event": "heal",
+          "line": "Hold still, friend.",
+          "tick": 671,
+          "who": "sola"
+        },
+        {
+          "event": "low_hp",
+          "line": "Still standing.",
+          "tick": 718,
+          "who": "bram"
+        },
+        {
+          "event": "kill",
+          "line": "Target down.",
+          "tick": 727,
+          "who": "nyra"
+        },
+        {
+          "event": "kill",
+          "line": "That's done.",
+          "tick": 754,
+          "who": "kael"
+        },
+        {
+          "event": "victory",
+          "line": "Good work, friend.",
+          "tick": 771,
+          "who": "kael"
+        }
+      ],
+      "callouts_total": 10,
+      "cascade": {
+        "callout": 10,
+        "callout_request": 13,
+        "intent": 1
+      },
+      "decisions": {
+        "bt_ticks": 7838,
+        "policy": 224,
+        "rule": 1027
+      },
+      "dialogue": [],
+      "field_warm_ms": 134.93,
+      "girt": {
+        "callouts_served": 10,
+        "lm_calls": 0,
+        "lm_p95_us": 0,
+        "lm_refused_in_tick": 0,
+        "policy_calls": 224,
+        "policy_fallbacks": 0,
+        "policy_p95_us": 15,
+        "registry": [
+          {
+            "arch": "mlp-7-12-1-tanh",
+            "backend": "mlp-gdscript",
+            "kind": "policy",
+            "model_id": "P-TargetSelect"
+          },
+          {
+            "backend": "persona-bigram",
+            "kind": "lm",
+            "model_id": "M-PersonaLM"
+          },
+          {
+            "backend": "callout-cache",
+            "kind": "cache",
+            "model_id": "CalloutCache"
+          }
+        ]
+      },
+      "intents": [
+        {
+          "intent": "focus",
+          "target_kind": "cave_warden",
+          "text": "everyone focus the warden",
+          "tick": 241
+        }
+      ],
+      "lm_selftest": {
+        "bram": [
+          "i will carry what you cannot",
+          "slow steps still reach the stone is over",
+          "slow steps still reach the tunnel",
+          "the stone is over",
+          "the seeds and wait for rain"
+        ],
+        "kael": [
+          "a steady blade beats a",
+          "i trust the open fields",
+          "the old tunnels lead to the cave remembers every step we take",
+          "we move",
+          "stay close and then we take"
+        ],
+        "nyra": [
+          "every arrow counts in a quicker eye",
+          "keep them falling",
+          "keep them busy and a quicker eye",
+          "the open fields",
+          "the exit from here if you look up"
+        ],
+        "sola": [
+          "a long way down here",
+          "i keep the moss glows brighter near the water",
+          "i keep the farm in my pack",
+          "we are stronger when we",
+          "we stay together"
+        ]
+      },
+      "selftest": [
+        21.1046,
+        -28.5776,
+        22.5013
+      ],
+      "swap_parity": false,
+      "swap_recs": [],
+      "swap_threaded": false,
+      "swap_wall_ms": 0,
+      "swaps": []
+    },
+    "assets": [
+      "cave_boss",
+      "spr_kael",
+      "spr_nyra",
+      "spr_bram",
+      "spr_sola",
+      "spr_ember_fox",
+      "spr_lumen_wisp",
+      "spr_stone_tortle",
+      "spr_cave_warden",
+      "spr_cave_mite",
+      "spr_emberling"
+    ],
+    "balance": {
+      "config": {
+        "crit": 0.1,
+        "encounter": "boss_warden",
+        "level": 3,
+        "overrides": [],
+        "seed_base": 1000,
+        "seeds": 84,
+        "variance": 0.2
+      },
+      "encounters": 1008,
+      "errors": [],
+      "marginals": {
+        "leader": {
+          "bram": 0.9881,
+          "kael": 0.9841,
+          "nyra": 1.0,
+          "sola": 0.996
+        },
+        "pet": {
+          "ember_fox": 0.9881,
+          "lumen_wisp": 0.9881,
+          "stone_tortle": 1.0
+        }
+      },
+      "matchups": {
+        "bram+ember_fox": {
+          "avg_ticks": 987.8,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9173,
+            0.9934
+          ],
+          "n": 84,
+          "win_rate": 0.9762,
+          "wins": 82
+        },
+        "bram+lumen_wisp": {
+          "avg_ticks": 1029.3,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9356,
+            0.9979
+          ],
+          "n": 84,
+          "win_rate": 0.9881,
+          "wins": 83
+        },
+        "bram+stone_tortle": {
+          "avg_ticks": 962.0,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "kael+ember_fox": {
+          "avg_ticks": 909.3,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9173,
+            0.9934
+          ],
+          "n": 84,
+          "win_rate": 0.9762,
+          "wins": 82
+        },
+        "kael+lumen_wisp": {
+          "avg_ticks": 1025.8,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9173,
+            0.9934
+          ],
+          "n": 84,
+          "win_rate": 0.9762,
+          "wins": 82
+        },
+        "kael+stone_tortle": {
+          "avg_ticks": 981.3,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "nyra+ember_fox": {
+          "avg_ticks": 900.1,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "nyra+lumen_wisp": {
+          "avg_ticks": 973.2,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "nyra+stone_tortle": {
+          "avg_ticks": 939.9,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "sola+ember_fox": {
+          "avg_ticks": 956.4,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        },
+        "sola+lumen_wisp": {
+          "avg_ticks": 1006.3,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9356,
+            0.9979
+          ],
+          "n": 84,
+          "win_rate": 0.9881,
+          "wins": 83
+        },
+        "sola+stone_tortle": {
+          "avg_ticks": 958.3,
+          "boss_phase3_rate": 1.0,
+          "ci95": [
+            0.9563,
+            1.0
+          ],
+          "n": 84,
+          "win_rate": 1.0,
+          "wins": 84
+        }
+      },
+      "max_deviation": 0.0159,
+      "mean_win_rate": 0.9921,
+      "outcomes": {
+        "defeat": 8,
+        "victory": 1000
+      },
+      "softlocks": 0,
+      "verdict": {
+        "G-BAL-01": false,
+        "checks": {
+          "encounters_ge_1000": true,
+          "max_deviation_lt_5pp": true,
+          "mean_in_target_band": false,
+          "no_softlocks": true
+        },
+        "dev_limit": 0.05,
+        "target_band": [
+          0.55,
+          0.9
+        ]
+      },
+      "wall_s": 35.3,
+      "workers": 8
+    },
+    "boss": {
+      "defeated": true,
+      "id": "cave_warden_1",
+      "max_hp": 256,
+      "phase_events": 2,
+      "phases_reached": 3,
+      "ref": "cave_warden",
+      "summons": 2,
+      "tier": 3
+    },
+    "boss_clear_2": {
+      "outcome": "victory",
+      "ticks": 771
+    },
+    "encounter": "boss_warden",
+    "entities": {
+      "bram": {
+        "alive": true,
+        "casts": 16,
+        "damage": 67,
+        "healing": 0,
+        "hits": 16,
+        "hp": 20,
+        "kills": 0,
+        "kind": "fighter",
+        "max_hp": 100,
+        "team": 0
+      },
+      "bram_stone_tortle": {
+        "alive": true,
+        "casts": 5,
+        "damage": 7,
+        "healing": 0,
+        "hits": 5,
+        "hp": 21,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 40,
+        "team": 0
+      },
+      "cave_mite_2": {
+        "alive": false,
+        "casts": 15,
+        "damage": 15,
+        "healing": 0,
+        "hits": 15,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_mite_3": {
+        "alive": false,
+        "casts": 10,
+        "damage": 8,
+        "healing": 0,
+        "hits": 7,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 16,
+        "team": 1
+      },
+      "cave_warden_1": {
+        "alive": false,
+        "casts": 12,
+        "damage": 195,
+        "healing": 0,
+        "hits": 16,
+        "hp": 0,
+        "kills": 1,
+        "kind": "enemy",
+        "max_hp": 256,
+        "team": 1
+      },
+      "emberling_add1": {
+        "alive": false,
+        "casts": 5,
+        "damage": 8,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_add2": {
+        "alive": false,
+        "casts": 5,
+        "damage": 8,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "kael": {
+        "alive": true,
+        "casts": 17,
+        "damage": 146,
+        "healing": 0,
+        "hits": 17,
+        "hp": 22,
+        "kills": 1,
+        "kind": "fighter",
+        "max_hp": 77,
+        "team": 0
+      },
+      "kael_ember_fox": {
+        "alive": false,
+        "casts": 5,
+        "damage": 5,
+        "healing": 0,
+        "hits": 5,
+        "hp": 0,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 22,
+        "team": 0
+      },
+      "nyra": {
+        "alive": true,
+        "casts": 16,
+        "damage": 84,
+        "healing": 0,
+        "hits": 20,
+        "hp": 51,
+        "kills": 4,
+        "kind": "fighter",
+        "max_hp": 57,
+        "team": 0
+      },
+      "nyra_lumen_wisp": {
+        "alive": true,
+        "casts": 13,
+        "damage": 14,
+        "healing": 0,
+        "hits": 12,
+        "hp": 18,
+        "kills": 0,
+        "kind": "pet",
+        "max_hp": 18,
+        "team": 0
+      },
+      "sola": {
+        "alive": true,
+        "casts": 16,
+        "damage": 19,
+        "healing": 24,
+        "hits": 13,
+        "hp": 31,
+        "kills": 0,
+        "kind": "fighter",
+        "max_hp": 49,
+        "team": 0
+      }
+    },
+    "hits": 136,
+    "increment": "first-boss",
+    "music_loaded": true,
+    "music_stem": "boss",
+    "outcome": "victory",
+    "save": {
+      "checksum": "a8b6622e95781d2e394dc61b7a2963e8da54698f9d66bcce5edf3fe0bdd68acc",
+      "path": "/tmp/fabric-f5-qmqytkrj/saves/slot0.json",
+      "state": {
+        "checksum": "744cbb66c6952d8c0e52027ed6d34dba66715d8e45665a847582a8e82b016120",
+        "format": "gamezero-save",
+        "profile": {
+          "playtime_ticks": 771,
+          "settings": {
+            "input_remap": {},
+            "palette_variant": "default"
+          },
+          "stats": {
+            "bosses_defeated": 1,
+            "encounters_won": 1
+          }
+        },
+        "roster": {
+          "fighters": {
+            "bram": {
+              "level": 3,
+              "xp": 70
+            },
+            "kael": {
+              "level": 3,
+              "xp": 70
+            },
+            "nyra": {
+              "level": 3,
+              "xp": 70
+            },
+            "sola": {
+              "level": 3,
+              "xp": 70
+            }
+          },
+          "leader": "kael",
+          "pets": {
+            "assigned": {
+              "bram": [
+                "stone_tortle"
+              ],
+              "kael": [
+                "ember_fox"
+              ],
+              "nyra": [
+                "lumen_wisp"
+              ]
+            },
+            "owned": [
+              "ember_fox",
+              "lumen_wisp",
+              "stone_tortle"
+            ]
+          }
+        },
+        "version": 3,
+        "world": {
+          "area": "cave_boss",
+          "bosses_defeated": [
+            "cave_warden"
+          ],
+          "cleared": [
+            "boss_warden"
+          ],
+          "flags": {},
+          "inventory": {},
+          "quests": {}
+        }
+      }
+    },
+    "save_roundtrip": {
+      "first_checksum": "a8b6622e95781d2e394dc61b7a2963e8da54698f9d66bcce5edf3fe0bdd68acc",
+      "last_load": {
+        "errors": [],
+        "migrated_from": [],
+        "ok": true,
+        "recovered_from_backup": false
+      },
+      "loaded_equal_second": false,
+      "migration_parity": {
+        "v1": {
+          "canonical_equal": true,
+          "checksum_equal": true,
+          "gd_errors": [],
+          "steps_gd": [
+            1,
+            2
+          ],
+          "steps_py": [
+            1,
+            2
+          ]
+        },
+        "v2": {
+          "canonical_equal": true,
+          "checksum_equal": true,
+          "gd_errors": [],
+          "steps_gd": [
+            2
+          ],
+          "steps_py": [
+            2
+          ]
+        }
+      },
+      "python_validates_godot_save": true,
+      "second_checksum": "fb5d94a961d9a69806f0937e629ea558e26a3ff002279d349b21443c5216a91e",
+      "torn_primary": {
+        "last_load": {
+          "errors": [
+            "slot0.json: unreadable"
+          ],
+          "migrated_from": [],
+          "ok": true,
+          "recovered_from_backup": true
+        },
+        "loaded_equal_first": false
+      }
+    },
+    "sim_ms": 168.17,
+    "softlock_probe": {
+      "encounters": 24,
+      "outcomes": {
+        "softlock": 24
+      },
+      "softlocks": 24
+    },
+    "softlock_static": {
+      "encounters": {
+        "boss_warden": {
+          "issues": [],
+          "ok": true
+        },
+        "first_combat": {
+          "issues": [],
+          "ok": true
+        },
+        "live_tune": {
+          "issues": [],
+          "ok": true
+        },
+        "party_ai": {
+          "issues": [],
+          "ok": true
+        },
+        "sandbox": {
+          "issues": [],
+          "ok": true
+        }
+      },
+      "ok": true,
+      "statecharts": {
+        "live_session": true
+      }
+    },
+    "state_hash": "f16fb018540fd31d",
+    "ticks": 771,
+    "tres_loaded": 17
+  }
+}

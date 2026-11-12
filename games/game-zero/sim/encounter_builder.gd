@@ -29,9 +29,32 @@ static func _free_cells_near(grid, origin: Vector2i, count: int, taken: Dictiona
 	return out
 
 
+## F5: resolve a boss's phase list into self-contained templates (ability dicts, summon stats).
+static func boss_phases(en: Dictionary, data: Dictionary, abilities: Dictionary) -> Array:
+	var out := []
+	for ph in en.get("phases", []):
+		var q := {"at": float(ph["at"]), "abilities": ph["abilities"].map(func(a): return abilities[a])}
+		if ph.has("speed"):
+			q["speed"] = float(ph["speed"])
+		if ph.has("atk_mult"):
+			q["atk_mult"] = float(ph["atk_mult"])
+		if ph.has("summon"):
+			var se: Dictionary = data["enemies"][ph["summon"]["ref"]]
+			q["summon"] = {"ref": ph["summon"]["ref"], "count": int(ph["summon"]["count"]), "stats": se["stats"],
+				"abilities": se["abilities"].map(func(a): return abilities[a]), "sprite_id": se["sprite_id"], "tier": int(se["tier"])}
+		out.append(q)
+	return out
+
+
 static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, abilities: Dictionary):
 	var grid = SimGrid.from_layout(layout)
 	var sim = CombatSim.new(grid)
+	# F5 Monte Carlo: a seeded encounter gets damage variance + spawn jitter; unseeded stays bit-identical to F1–F4
+	var seeded := encounter.has("seed")
+	if seeded:
+		sim.rng_state = (int(encounter["seed"]) * 2654435761 + 97) & 0x7fffffff
+		sim.variance = float(encounter.get("variance", 0.1))
+		sim.crit_chance = float(encounter.get("crit", 0.1))
 	var taken := {}
 	var party_cells := _free_cells_near(grid, grid.start, 16, taken)
 	var pi := 0
@@ -90,13 +113,28 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 	for h in encounter.get("hostiles", []):
 		var en: Dictionary = data["enemies"][h["ref"]]
 		for i in int(h.get("count", 1)):
-			var cell: Vector2i = _free_cells_near(grid, spawns[si % spawns.size()], 1, taken)[0]
+			var origin: Vector2i = spawns[si % spawns.size()]
+			if str(h.get("at", "")) == "boss_room" and layout.has("boss_room"):
+				origin = Vector2i(int(layout["boss_room"]["center"][0]), int(layout["boss_room"]["center"][1]))
+			var cell: Vector2i
+			if seeded:
+				var cands := _free_cells_near(grid, origin, 6, taken.duplicate())
+				cell = cands[int(sim.rand01() * cands.size()) % cands.size()]
+				taken[cell] = true
+			else:
+				cell = _free_cells_near(grid, origin, 1, taken)[0]
 			si += 1
 			n += 1
 			var e = SimEntity.create("%s_%d" % [h["ref"], n], 1, "enemy", h.get("sprite", en["sprite_id"]), en["stats"],
 				en["abilities"].map(func(a): return abilities[a]), grid.center(cell))
 			e.tier = int(en["tier"])
 			e.set_meta("ref", h["ref"])
+			if en.has("phases"):
+				e.phases = boss_phases(en, data, abilities)
+				e.abilities = e.phases[0]["abilities"]
+				if e.phases[0].has("speed"):
+					e.speed = float(e.phases[0]["speed"])
+				e.radius = 7.0
 			sim.add(e)
 	return sim
 
@@ -122,6 +160,13 @@ static func restat(sim, encounter: Dictionary, layout: Dictionary, data: Diction
 		if e.hp > 0 and e.max_hp != old_max:
 			e.hp = clampi(int(round(ratio * e.max_hp)), 1, e.max_hp)
 		e.abilities = f.abilities          # re-link to the shared (patched) ability dicts
+		e.base_atk = f.base_atk
+		if not f.phases.is_empty():        # boss: keep the current phase, re-derive its kit
+			e.phases = f.phases
+			var ph: Dictionary = e.phases[e.phase]
+			e.abilities = ph["abilities"]
+			e.speed = float(ph.get("speed", f.speed))
+			e.atk = snappedf(e.base_atk * float(ph.get("atk_mult", 1.0)), 0.01)
 		for ab in e.abilities:
 			if not e.cooldowns.has(ab["id"]):
 				e.cooldowns[ab["id"]] = 0

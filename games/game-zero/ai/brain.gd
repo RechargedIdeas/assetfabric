@@ -13,6 +13,11 @@ const RETARGET := 6   # ticks between target re-evaluations (10 Hz decision rate
 enum Op { SELECTOR, SEQUENCE, CONDITION, ACTION }
 const LEAVES := ["is_casting", "ally_needs_heal", "should_taunt", "tactic_defensive", "not_threatened",
 	"cast_heal", "cast_taunt", "select_target", "engage", "regroup", "idle"]
+## A tier-3 boss counts as a whole pack for should_taunt: the warden pulls it off whoever
+## leads (F5 balance finding: without this, non-tank leaders tanked the boss alone).
+const BOSS_TIER := 3
+const BOSS_TAUNT_WEIGHT := 2
+
 enum Leaf { IS_CASTING, ALLY_NEEDS_HEAL, SHOULD_TAUNT, TACTIC_DEFENSIVE, NOT_THREATENED,
 	CAST_HEAL, CAST_TAUNT, SELECT_TARGET, ENGAGE, REGROUP, IDLE }
 
@@ -97,7 +102,7 @@ func _cond(leaf: int, sim, e) -> bool:
 					var n := 0
 					for o in sim.entities:
 						if o.team != e.team and o.hp > 0 and e.pos.distance_to(o.pos) <= r:
-							n += 1
+							n += BOSS_TAUNT_WEIGHT if o.tier >= BOSS_TIER else 1
 					if n >= 2:
 						e.set_meta("bt_ability", ab)
 						return true
@@ -139,7 +144,9 @@ func _act(leaf: int, sim, e) -> bool:
 			for ab in e.abilities:
 				if ab["target"] == "enemy":
 					best = maxf(best, float(ab["range"]))
-			if e.pos.distance_to(t.pos) > best * 0.8:
+			if sim.rally_hold(e, t):
+				e.moving = false
+			elif e.pos.distance_to(t.pos) > best * 0.8:
 				sim.move_toward_entity(e, t)
 			else:
 				e.moving = false

@@ -20,3 +20,17 @@ enemies:
     abilities: [smash, claw]
     weakness: arcane
     sprite: {archetype: humanoid, palette: enemy_ember, seed: 40}
+  # F5 first boss. Hierarchical: a phase manager (HP thresholds) swaps the worker's
+  # ability set / speed, summons adds and enrages; the worker is the normal enemy BT.
+  - id: cave_warden
+    tier: 3
+    boss: true
+    # hp/atk tuned by `forge balance tune` (Optuna TPE, 30 trials × 720 fights, seed_base 50000)
+    stats: {hp: 89.6, atk: 4.3, def: 1, speed: 0.6, aggro: 160}
+    abilities: [cleave, ember_bolt]
+    weakness: water
+    phases:
+      - {at: 1.0, abilities: [cleave, ember_bolt], speed: 0.6}
+      - {at: 0.66, abilities: [quake, cleave, ember_bolt], speed: 0.7, summon: {ref: emberling, count: 2}}
+      - {at: 0.33, abilities: [quake, cleave, ember_bolt], speed: 0.85, atk_mult: 1.25}
+    sprite: {archetype: humanoid, palette: enemy_ember, seed: 61}

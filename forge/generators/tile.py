@@ -95,6 +95,19 @@ def make_cave(constraints: dict[str, Any], seed: int, attempts: int = 20) -> tup
             continue
         sx, sy = start
         ex, ey = end
+        boss_info: dict[str, Any] = {}
+        room = constraints.get("boss_room")
+        if room:   # F5: carve a round arena around the cell ~85% of the way to the exit
+            r = int(room.get("radius", 4))
+            at = float(room.get("at", 0.85))
+            cx, cy = min(dist, key=lambda p: (abs(dist[p] - dist[end] * at), p[1], p[0]))
+            for yy in range(max(1, cy - r), min(h - 1, cy + r + 1)):
+                for xx in range(max(1, cx - r), min(w - 1, cx + r + 1)):
+                    if (xx - cx) ** 2 + (yy - cy) ** 2 <= r * r + 1 and grid[yy][xx] == "#":
+                        grid[yy][xx] = "."
+            end, dist = _farthest(grid, start)   # carving can only shorten/extend reach; recompute
+            ex, ey = end
+            boss_info = {"boss_room": {"center": [cx, cy], "radius": r}}
         grid[sy][sx] = "S"
         grid[ey][ex] = "E"
         # enemy spawns: floor cells ~60% of the way along entry->exit distance
@@ -102,7 +115,7 @@ def make_cave(constraints: dict[str, Any], seed: int, attempts: int = 20) -> tup
         cands = sorted((abs(d - target), p) for p, d in dist.items() if grid[p[1]][p[0]] == ".")
         spawns = [p for _, p in cands[:enemies]]
         rows = ["".join(r) for r in grid]
-        return rows, {"start": list(start), "exit": list(end), "spawns": [list(p) for p in spawns], "attempt": attempt, "path_len": dist[end]}
+        return rows, {"start": list(start), "exit": list(end), "spawns": [list(p) for p in spawns], "attempt": attempt, "path_len": dist[end], **boss_info}
     raise RuntimeError("G1-Tile: no layout satisfied constraints")
 
 

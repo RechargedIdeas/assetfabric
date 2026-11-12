@@ -6,51 +6,243 @@
   "$defs": {
     "stats": {
       "type": "object",
-      "required": ["hp", "atk", "def", "speed"],
+      "required": [
+        "hp",
+        "atk",
+        "def",
+        "speed"
+      ],
       "properties": {
-        "hp": {"type": "number", "minimum": 1},
-        "atk": {"type": "number", "minimum": 0},
-        "def": {"type": "number", "minimum": 0},
-        "speed": {"type": "number", "exclusiveMinimum": 0},
-        "aggro": {"type": "number", "minimum": 0}
+        "hp": {
+          "type": "number",
+          "minimum": 1
+        },
+        "atk": {
+          "type": "number",
+          "minimum": 0
+        },
+        "def": {
+          "type": "number",
+          "minimum": 0
+        },
+        "speed": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "aggro": {
+          "type": "number",
+          "minimum": 0
+        }
       }
     },
     "sprite": {
       "type": "object",
-      "required": ["archetype", "palette", "seed"],
-      "properties": {"archetype": {"enum": ["humanoid", "beast", "pet"]}, "palette": {"type": "string"}, "seed": {"type": "integer"}}
+      "required": [
+        "archetype",
+        "palette",
+        "seed"
+      ],
+      "properties": {
+        "archetype": {
+          "enum": [
+            "humanoid",
+            "beast",
+            "pet"
+          ]
+        },
+        "palette": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        }
+      }
     },
     "ability": {
       "type": "object",
-      "required": ["id", "type", "target", "power", "range", "cooldown", "windup"],
+      "required": [
+        "id",
+        "type",
+        "target",
+        "power",
+        "range",
+        "cooldown",
+        "windup"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
-        "type": {"enum": ["melee", "ranged", "aoe", "heal", "taunt"]},
-        "target": {"enum": ["enemy", "ally", "self"]},
-        "power": {"type": "number", "minimum": 0},
-        "range": {"type": "number", "minimum": 0},
-        "radius": {"type": "number", "minimum": 0},
-        "cooldown": {"type": "integer", "minimum": 1},
-        "windup": {"type": "integer", "minimum": 1},
-        "duration": {"type": "integer", "minimum": 1},
-        "threshold": {"type": "number", "minimum": 0, "maximum": 1}
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "type": {
+          "enum": [
+            "melee",
+            "ranged",
+            "aoe",
+            "heal",
+            "taunt"
+          ]
+        },
+        "target": {
+          "enum": [
+            "enemy",
+            "ally",
+            "self"
+          ]
+        },
+        "power": {
+          "type": "number",
+          "minimum": 0
+        },
+        "range": {
+          "type": "number",
+          "minimum": 0
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cooldown": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "windup": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       }
     },
     "unit": {
       "type": "object",
-      "required": ["id", "stats", "abilities", "sprite"],
+      "required": [
+        "id",
+        "stats",
+        "abilities",
+        "sprite"
+      ],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
-        "stats": {"$ref": "#/$defs/stats"},
-        "abilities": {"type": "array", "items": {"type": "string"}, "minItems": 1},
-        "sprite": {"$ref": "#/$defs/sprite"}
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "stats": {
+          "$ref": "#/$defs/stats"
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "sprite": {
+          "$ref": "#/$defs/sprite"
+        }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "required": [
+        "at",
+        "abilities"
+      ],
+      "properties": {
+        "at": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "speed": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "atk_mult": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "summon": {
+          "type": "object",
+          "required": [
+            "ref",
+            "count"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            }
+          }
+        }
       }
     }
   },
   "properties": {
-    "abilities": {"type": "array", "items": {"$ref": "#/$defs/ability"}},
-    "fighters": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
-    "pets": {"type": "array", "items": {"$ref": "#/$defs/unit"}},
-    "enemies": {"type": "array", "items": {"allOf": [{"$ref": "#/$defs/unit"}, {"required": ["tier"]}]}}
+    "abilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ability"
+      }
+    },
+    "fighters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unit"
+      }
+    },
+    "pets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unit"
+      }
+    },
+    "enemies": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/unit"
+          },
+          {
+            "required": [
+              "tier"
+            ]
+          },
+          {
+            "properties": {
+              "boss": {
+                "type": "boolean"
+              },
+              "phases": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/phase"
+                },
+                "minItems": 1
+              }
+            }
+          }
+        ]
+      }
+    }
   }
 }

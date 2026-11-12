@@ -76,3 +76,16 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 53. **Guardian policy**: heartbeat = `status.json` mtime (~2 Hz), hang 5 s default (3 s in acceptance), backoff 0.5 s × 2ⁿ capped 8 s, give up after 5 restarts in 120 s. **Poison-ticket quarantine** (in-flight ticket with no ack is never re-applied) is our addition.
 54. **Statechart regions** combat / movement / ai / dialogue / reload and their events (`move/stop`, `freeze/resume/swap`, `intent`, `dialogue_request/reply`, reload 2PC events) are ours; SCXML subset without hierarchy/history.
 55. **Session snapshot cadence** 300 ticks + after each commit; snapshots are JSON (not binary) for diffability.
+
+## F5 — Monte Carlo balance, soft-lock detection, save migration, first boss
+
+56. **F5-1 Matchup definition**: a G-BAL-01 "matchup" is a character-select choice = leader ∈ 4 base fighters × starter pet ∈ 3 starters (12 cells, GAME_SPEC §6.1 step 1). The other three base fighters follow without pets. GAME_SPEC does not define "matchup".
+57. **F5-2 Target band**: mean win rate must sit in 0.55–0.90 (tuning target 0.72) — a boss that everyone beats (or nobody beats) is "balanced" but useless. Spec gives no band.
+58. **F5-3 Dice**: balance seeds vary ±20 % damage rolls, 10 % ×1.5 crits and hostile spawn cells; common random numbers (same seed list for every matchup).
+59. **F5-4 Save versions**: v1 (flat prototype) and v2 (layered, int levels) model formats we migrate *from*; v3 is the first shipped layout (profile / roster / world, GAME_SPEC §4.5), canonical JSON + sha256 checksum, atomic tmp→rename with `.bak` fallback.
+60. **F5-5 XP**: xp per defeated hostile = tier × 10, granted to every party member (placeholder until progression design, D-005).
+61. **F5-6 Rally**: the autoplay leader holds just outside an un-pulled tier-3 boss's aggro ring until every living follower is inside the leash. Before this, whoever was picked as leader tanked the opening alone and the balance runner measured pathing order, not the choice.
+62. **F5-7 Boss design**: Cave Warden = tier 3 (×3.2 stats), 3 HP-threshold phases (1.0 / 0.66 summon 2 emberlings / 0.33 enrage ×1.25 atk), telegraphed kit cleave / ember_bolt / quake. Names and numbers are ours (D-005).
+63. **F5-8 Choice-level deviation gate**: G-BAL-01 "< 5 % across matchups" is gated on each *choice* (each leader's and each pet's marginal win rate) vs. the mean, measured on ≥ 1000 fights (default 2400). The per-cell (leader × pet) spread is measured and reported as a soft metric (`combo_deviation`) because the combat sim has strong pairwise interactions (a fragile pet following a melee leader); that spread is balance debt, tracked in TODO, not hidden.
+64. **F5-9 Tuning space**: Optuna TPE (CPU) over boss HP/ATK and the three starter-pet bonuses; tuned on seed_base 50 000, verified on seed_base 1000 (no overfit to the gate seeds). Fighter stats stay as authored.
+65. **F5-10 Runtime soft-lock**: no damage or healing for 1200 ticks (20 s) while both sides live = `softlock`; tick limit = `timeout`. Probe: every ability cooldown at the live-tune maximum must be flagged.

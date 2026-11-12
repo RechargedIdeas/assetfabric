@@ -10,21 +10,21 @@ pets:
     style: skirmisher
     stats: {hp: 22, atk: 4, def: 0, speed: 1.6}
     abilities: [bite]
-    bonus: {atk_pct: 0.15}
+    bonus: {atk_pct: 0.25}   # F5 tuned (was 0.15)
     sprite: {archetype: pet, palette: enemy_ember, seed: 5}
   - id: stone_tortle
     starter: true
     style: guardian
     stats: {hp: 40, atk: 3, def: 3, speed: 0.9}
     abilities: [bite]
-    bonus: {def_flat: 2}
+    bonus: {def_flat: 2.7}   # F5 tuned (was 2)
     sprite: {archetype: pet, palette: cave_moss, seed: 9}
   - id: lumen_wisp
     starter: true
     style: caster
     stats: {hp: 18, atk: 4, def: 0, speed: 1.4}
     abilities: [spark]
-    bonus: {hp_pct: 0.15}
+    bonus: {hp_pct: 0.30}   # F5 tuned (was 0.15)
     sprite: {archetype: pet, palette: hero_teal, seed: 13}
   - id: dusk_owl
     starter: false

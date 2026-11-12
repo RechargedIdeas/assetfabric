@@ -84,13 +84,7 @@ func _build() -> void:
 	CascadeHub.subscribe("dialogue_request", _on_dialogue_request)
 	tileset = Fabric.texture(encounter["tilemap"], encounter["tilemap"] + "_tiles.png")
 	for e in sim.entities:
-		var s := Sprite2D.new()
-		s.texture = Fabric.texture(e.sprite_id)
-		s.hframes = FRAME_NAMES.size()
-		if e.kind == "pet":
-			s.scale = Vector2(0.75, 0.75)
-		add_child(s)
-		sprites[e.id] = s
+		_sprite_for(e)
 	var cam := Camera2D.new()
 	cam.zoom = Vector2(2, 2)
 	cam.position = Vector2(sim.grid.width * sim.grid.tile_size, sim.grid.height * sim.grid.tile_size) / 2.0
@@ -511,9 +505,22 @@ func _on_dialogue_request(m: Dictionary) -> void:
 		bubble.text = "%s: %s" % [tr("roster." + p["persona"]), reply.capitalize()]
 
 
+func _sprite_for(e) -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = Fabric.texture(e.sprite_id)
+	s.hframes = FRAME_NAMES.size()
+	if e.kind == "pet":
+		s.scale = Vector2(0.75, 0.75)
+	elif e.tier >= 3:
+		s.scale = Vector2(1.5, 1.5)        # bosses read bigger at a glance
+	add_child(s)
+	sprites[e.id] = s
+	return s
+
+
 func _sync_view() -> void:
 	for e in sim.entities:
-		var s: Sprite2D = sprites[e.id]
+		var s: Sprite2D = sprites[e.id] if sprites.has(e.id) else _sprite_for(e)   # F5: summoned adds
 		s.position = e.pos.round()
 		s.visible = e.alive()
 		s.flip_h = e.facing < 0
@@ -625,6 +632,8 @@ func _run_headless() -> void:
 			talk(d["persona"], int(d.get("seed", 1)), d.get("topic", "<s>"))
 		CascadeHub.drain(sim.tick)
 	var result: Dictionary = sim.summary()
+	if sim.outcome() == "victory" and encounter.get("save_on_victory", false):
+		result["save"] = save_progress()
 	if brain:
 		result["ai"] = {"brain": "bt+policy", "decisions": brain.decisions, "girt": GIRT.report(), "selftest": GIRT.selftest(), "lm_selftest": GIRT.lm_selftest(),
 			"cascade": CascadeHub.counts, "callouts": callout_log.slice(0, 40), "callouts_total": callout_log.size(),
@@ -643,10 +652,65 @@ func _run_headless() -> void:
 	result["abilities_loaded"] = Fabric.abilities.size()
 	result["tres_loaded"] = Fabric.game_data.get("abilities", {}).keys().filter(func(k): return ResourceLoader.exists(Fabric.game_data["abilities"][k]["tres"])).size()
 	result["music_loaded"] = music != null and music.stream != null
+	var mus = encounter.get("music", {})
+	result["music_stem"] = str(mus.get("stem", "")) if typeof(mus) == TYPE_DICTIONARY else ""
+	for e in sim.entities:
+		if not e.phases.is_empty():
+			result["boss"] = {"id": e.id, "ref": e.get_meta("ref", ""), "tier": e.tier, "defeated": not e.alive(),
+				"phases_reached": e.phase + 1, "phase_events": sim.events.filter(func(ev): return ev["type"] == "boss_phase").size(),
+				"summons": sim.summons, "max_hp": e.max_hp}
 	print("FABRIC_RESULT " + JSON.stringify(result))
 	var ok: bool = sim.outcome() == "victory"
 	print("ENCOUNTER %s %s" % [encounter["id"], "OK" if ok else "FAIL"])
 	get_tree().quit(0 if ok else 1)
+
+
+## F5: fold the encounter outcome into the Player State save (profile / roster / world).
+const XP_PER_TIER := 10        # [INFERENCE] F5-5: xp per defeated hostile = tier × 10
+func save_progress() -> Dictionary:
+	var s: Dictionary = Save.load_slot()
+	var leader = sim.leader()
+	if s.is_empty():
+		var lv := {}
+		for m in encounter["party"]:
+			lv[m["ref"]] = int(m.get("level", 1))
+		s = Save.new_save(str(leader.get_meta("ref", leader.id)) if leader else "", lv, [])
+	var xp := 0
+	var bosses := []
+	for e in sim.entities:
+		if e.team == 1 and not e.alive():
+			xp += XP_PER_TIER * maxi(1, e.tier)
+			if not e.phases.is_empty():
+				bosses.append(str(e.get_meta("ref", e.id)))
+	var r: Dictionary = s["roster"]
+	for m in encounter["party"]:
+		var f: Dictionary = r["fighters"].get(m["ref"], {"level": int(m.get("level", 1)), "xp": 0})
+		f["level"] = maxi(int(f["level"]), int(m.get("level", 1)))
+		f["xp"] = int(f["xp"]) + xp
+		r["fighters"][m["ref"]] = f
+		for p in m.get("pets", []):
+			if not r["pets"]["owned"].has(p):
+				r["pets"]["owned"].append(p)
+		if not m.get("pets", []).is_empty():
+			r["pets"]["assigned"][m["ref"]] = m["pets"].duplicate()
+	if leader:
+		r["leader"] = str(leader.get_meta("ref", leader.id))
+	var w: Dictionary = s["world"]
+	w["area"] = encounter["tilemap"]
+	if not w["cleared"].has(encounter["id"]):
+		w["cleared"].append(encounter["id"])
+	for b in bosses:
+		if not w["bosses_defeated"].has(b):
+			w["bosses_defeated"].append(b)
+	s["profile"]["playtime_ticks"] = int(s["profile"]["playtime_ticks"]) + sim.tick
+	s["profile"]["stats"]["encounters_won"] = int(s["profile"]["stats"]["encounters_won"]) + 1
+	s["profile"]["stats"]["bosses_defeated"] = w["bosses_defeated"].size()
+	var sum := Save.write(s)
+	var state: Dictionary = Save.canon(s)
+	state["format"] = Save.FORMAT
+	state["version"] = Save.CURRENT
+	state["checksum"] = sum      # exactly what is on disk
+	return {"path": Save.path(), "checksum": sum, "state": state}
 
 
 func _max_hp_of(ref: String) -> int:
