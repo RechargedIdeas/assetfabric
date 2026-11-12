@@ -61,6 +61,10 @@ func _ready() -> void:
 				outcome = "timeout"
 				break
 		var boss_phase := 0
+		var deaths := []     # F6 diagnostics: party death order [id, tick]
+		for ev in sim.events:
+			if ev["type"] == "defeated" and int(ev.get("target_team", 1)) == 0:
+				deaths.append([ev["target"], int(ev["tick"])])
 		var party_hp := 0
 		var party_max := 0
 		for e in sim.entities:
@@ -70,7 +74,7 @@ func _ready() -> void:
 				party_hp += e.hp
 				party_max += e.max_hp
 		print("BALANCE_RESULT " + JSON.stringify({"id": job["id"], "seed": job["seed"], "outcome": outcome, "ticks": sim.tick,
-			"boss_phase": boss_phase, "leader_alive": sim.leader() != null and sim.leader().is_leader, "summons": sim.summons, "party_hp_ratio": snappedf(float(party_hp) / maxf(1.0, party_max), 0.001)}))
+			"boss_phase": boss_phase, "leader_alive": sim.leader() != null and sim.leader().is_leader, "summons": sim.summons, "party_hp_ratio": snappedf(float(party_hp) / maxf(1.0, party_max), 0.001), "deaths": deaths}))
 		n += 1
 	print("BALANCE_DONE %d %.1f" % [n, (Time.get_ticks_usec() - t0) / 1000.0])
 	get_tree().quit(0)

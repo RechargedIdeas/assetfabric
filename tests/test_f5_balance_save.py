@@ -72,7 +72,7 @@ def test_aggregate_and_verdict() -> None:
     assert agg["matchups"]["a+x"]["ci95"][0] < 0.7 < agg["matchups"]["a+x"]["ci95"][1]
     v = verdict(agg)
     assert not v["G-BAL-01"] and not v["checks"]["encounters_ge_1000"] and not v["checks"]["max_choice_deviation_lt_5pp"]
-    assert v["soft"]["combo_deviation_lt_5pp"] is False
+    assert v["checks"]["max_combo_deviation_lt_5pp"] is False     # F6: per-pair spread is gated
 
 
 def test_wilson_interval() -> None:

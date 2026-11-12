@@ -91,8 +91,9 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 			pe.radius = 4.0
 			pe.set_meta("ref", pid)
 			sim.add(pe)
+			var aff := float(p.get("affinity", {}).get(str(m["ref"]), 1.0))   # F6 pet↔character affinity
 			for k in p["bonus"]:
-				own[k] += float(p["bonus"][k])
+				own[k] += float(p["bonus"][k]) * aff
 				party_bonus[k] += float(p["bonus"][k]) * share
 		owner.set_meta("own_bonus", own)
 	for pair in fighters:

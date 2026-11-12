@@ -6,12 +6,15 @@ pets [INFERENCE F5-1]. Every matchup fights the same encounter (default: the F5 
 **same seed list** (common random numbers), so differences between matchups come from the
 choice, not the dice. Each seed varies damage rolls (±variance) and hostile spawn cells.
 
-G-BAL-01: ≥ 1000 encounters, every character-select **choice** (each leader, each starter pet;
-marginal win rate over the other choice) within 5 pp of the mean, mean win-rate inside the target
-band, zero soft-locks/timeouts [INFERENCE F5-2 band, F5-8 choice-level deviation]. The stricter
-per-combination spread (leader × pet, 12 cells) is measured and reported as a *soft* metric
-(`combo_deviation`): the combat sim is chaotic enough that some combinations interact strongly
-(e.g. a fragile pet following a melee leader), and those are tracked as balance debt, not hidden.
+G-BAL-01 (F6+): ≥ 1000 encounters, every character-select **combination** (leader × starter pet,
+12 cells) within 5 pp of the mean, every **choice** marginal within 5 pp too, mean win-rate inside
+the target band, zero soft-locks/timeouts [INFERENCE F5-2 band, F5-8 deviation level, updated in
+F6]. F5 gated only the choice marginals (per-combination spread was 12.7 pp); F6 added
+pet↔character affinity (GAME_SPEC §4.2) fitted on separate seeds, bringing the per-combination
+spread under 5 pp on the gate seeds. Note the statistical floor: at 200 seeds/cell the per-cell
+standard error is ≈ 3.2 pp, so the expected max |deviation| of 12 perfectly balanced cells is
+≈ 5–6 pp on *fresh* seeds; the gate runs on a fixed seed list (CRN, deterministic) and the
+fresh-seed hold-out is reported in docs/acceptance-tests/F6.md [INFERENCE F6-2].
 
 Work is sharded over N headless Godot processes (`--scene=balance`), CPU only.
 """
@@ -136,10 +139,11 @@ def verdict(agg: dict[str, Any]) -> dict[str, Any]:
     checks = {
         "encounters_ge_1000": agg["encounters"] >= 1000,
         "max_choice_deviation_lt_5pp": agg["choice_deviation"] < DEV_LIMIT,
+        "max_combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT,     # F6: per-pair is gated
         "mean_in_target_band": TARGET_BAND[0] <= agg["mean_win_rate"] <= TARGET_BAND[1],
         "no_softlocks": agg["softlocks"] == 0,
     }
-    soft = {"combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT}
+    soft: dict[str, bool] = {}     # F5 reported combo spread here; gated since F6
     return {"G-BAL-01": all(checks.values()), "checks": checks, "soft": soft, "dev_limit": DEV_LIMIT,
             "target_band": list(TARGET_BAND)}
 
@@ -187,6 +191,10 @@ TUNE_SPACE = {   # knob path → (low, high); every path must be live-tunable (c
     "pets.stone_tortle.bonus.def_flat": (1.0, 3.0),
     "pets.lumen_wisp.bonus.hp_pct": (0.10, 0.30),
 }
+# F6: per-pair knobs (pet↔character affinity, 12 cells). Each cell only depends on its own knob in
+# the balance matrix (only the leader carries the starter pet), so `forge balance` fits are decoupled.
+AFFINITY_SPACE = {f"pets.{p}.affinity.{f}": (0.25, 3.0) for p in ("ember_fox", "lumen_wisp", "stone_tortle")
+                  for f in ("bram", "kael", "nyra", "sola")}
 
 
 def objective(agg: dict[str, Any]) -> float:

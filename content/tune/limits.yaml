@@ -15,6 +15,7 @@ rules:
   "pets.*.stats.speed": [0.2, 3.0]
   "pets.*.bonus.*": [0, 1.0]
   "pets.*.bonus.def_flat": [0, 4.0]
+  "pets.*.affinity.*": [0.25, 3.0]
   "enemies.*.stats.hp": [1, 9999]
   "enemies.*.stats.atk": [0, 200]
   "enemies.*.stats.def": [0, 100]

@@ -123,7 +123,11 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
                                "abilities": f["abilities"], "sprite_id": f"spr_{f['id']}", "levels": _level_table(f["stats"], growth)}
                      for f in flat["fighters"]},
         "pets": {p["id"]: {"style": p["style"], "starter": bool(p.get("starter")), "abilities": p["abilities"],
-                           "bonus": p["bonus"], "sprite_id": f"spr_{p['id']}", "stats": p["stats"]} for p in flat["pets"]},
+                           "bonus": p["bonus"], "sprite_id": f"spr_{p['id']}", "stats": p["stats"],
+                           # F6: pet↔character affinity (GAME_SPEC §4.2) — multiplier on the owner's own bonus,
+                           # one leaf per base fighter so it is live-tunable [INFERENCE F6-1]
+                           "affinity": {f["id"]: float(p.get("affinity", {}).get(f["id"], 1.0)) for f in base}}
+                 for p in flat["pets"]},
         "enemies": {e["id"]: {"tier": e["tier"], "weakness": e.get("weakness"), "abilities": e["abilities"], "sprite_id": f"spr_{e['id']}",
                               "stats": {k: (round(v * tier_scale[e["tier"]], 2) if k in ("hp", "atk", "def") else v) for k, v in e["stats"].items()},
                               **({"boss": True, "phases": e["phases"]} if e.get("phases") else {})}
