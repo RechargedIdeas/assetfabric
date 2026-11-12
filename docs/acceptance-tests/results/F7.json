@@ -1,0 +1,910 @@
+{
+  "description": "Desktop + Android + Web launch candidates: Godot 4.3 exports (Linux, Windows, debug APK, Web PWA), G-WEB-01, G-SAVE-01 desktop\u2192Android\u2192Web\u2192desktop, G-NET-01, ShuttleLine contract, BoltPack SBOM",
+  "errors": [],
+  "increment": "launch-candidates",
+  "milestone": "F7",
+  "passed": true,
+  "perf": {
+    "apk_bytes": 25593334,
+    "artifacts": {
+      "android": {
+        "artifact": {
+          "path": "dist/android/GameZero-debug.apk",
+          "sha256": "cc250ea4ef61113a991288082268ff8b22fbc68a2c6205c1ea5809aa40b7c8dd",
+          "size": 25593334
+        },
+        "export_wall_s": 15.7,
+        "total_size": 25822111
+      },
+      "desktop-linux": {
+        "artifact": {
+          "path": "dist/desktop-linux/GameZero.x86_64",
+          "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
+          "size": 66074584
+        },
+        "export_wall_s": 8.0,
+        "total_size": 67665780
+      },
+      "desktop-windows": {
+        "artifact": {
+          "path": "dist/desktop-windows/GameZero.exe",
+          "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
+          "size": 84214784
+        },
+        "export_wall_s": 6.8,
+        "total_size": 85991918
+      },
+      "web": {
+        "artifact": {
+          "path": "dist/web/index.html",
+          "sha256": "9fc2ab590624bfc3476611795eb5450aa148133aa491d038d72dff5d3d10f8b4",
+          "size": 4934
+        },
+        "export_wall_s": 7.4,
+        "total_size": 35853351
+      }
+    },
+    "desktop_slice_game_minutes": 2.92,
+    "mode": "full",
+    "web_budget_headroom_bytes": 35709771,
+    "web_gzip9_bytes": 9290229
+  },
+  "result": {
+    "a11y": {
+      "input_remap_roundtrip": {
+        "android_content": true,
+        "desktop": true,
+        "remap": {
+          "attack": [
+            "F"
+          ],
+          "interact": [
+            "G"
+          ]
+        },
+        "web": true
+      },
+      "palette_variants_in_patternvault": [
+        "deuteranopia",
+        "protanopia"
+      ],
+      "rebinding_ui": false,
+      "runtime_palette_toggle": false,
+      "status": "partial \u2014 data-level remap travels with the save on every target; no in-game palette toggle / rebinding UI yet"
+    },
+    "android_content": {
+      "completed": true,
+      "exit": 0,
+      "final_equal_desktop": true,
+      "runtime": "exported desktop runtime over the APK's assets/ (no device/emulator: no KVM)",
+      "script_errors": 0
+    },
+    "bolt_static": {
+      "ok": true,
+      "targets": {
+        "android": {
+          "copyleft": {},
+          "licenses": 21,
+          "ok": true,
+          "unknown": {}
+        },
+        "desktop-linux": {
+          "copyleft": {},
+          "licenses": 20,
+          "ok": true,
+          "unknown": {}
+        },
+        "desktop-windows": {
+          "copyleft": {},
+          "licenses": 20,
+          "ok": true,
+          "unknown": {}
+        },
+        "web": {
+          "copyleft": {},
+          "licenses": 21,
+          "ok": true,
+          "unknown": {}
+        }
+      }
+    },
+    "build": {
+      "error": null,
+      "ok": true,
+      "targets": {
+        "android": {
+          "artifact": {
+            "path": "dist/android/GameZero-debug.apk",
+            "sha256": "cc250ea4ef61113a991288082268ff8b22fbc68a2c6205c1ea5809aa40b7c8dd",
+            "size": 25593334
+          },
+          "bolt": {
+            "bolt": "dist/bolt/GameZero-0.7.0+f7-android.fabricbolt",
+            "bolt_sha256": "d5c50fc7bdc3483e9e879f9272ef56c202db440c12ea2aa787bb2b6a95753fbe",
+            "bolt_size": 25299518,
+            "components": 85,
+            "copyleft": {},
+            "licenses": {
+              "Apache-2.0": 13,
+              "Apache-2.0 WITH LLVM-exception": 1,
+              "BSD-2-clause": 2,
+              "BSD-3-clause": 14,
+              "BSL-1.0": 1,
+              "CC0-1.0": 1,
+              "CC0-1.0 and Apache-2.0": 1,
+              "Expat": 32,
+              "Expat and Zlib": 1,
+              "FTL": 1,
+              "HarfBuzz": 1,
+              "LicenseRef-Proprietary": 1,
+              "MIT": 2,
+              "MPL-2.0": 1,
+              "OFL-1.1": 2,
+              "Unicode": 1,
+              "Zlib": 5,
+              "glslang": 1,
+              "public-domain or Apache-2.0": 1,
+              "public-domain or Unlicense": 1,
+              "public-domain or Unlicense or Expat": 2
+            },
+            "ok": true,
+            "signed": false,
+            "unknown": {}
+          },
+          "built_at": "2026-11-12T12:45:45-0500",
+          "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
+          "errors": [],
+          "exit_code": 0,
+          "export_wall_s": 15.7,
+          "godot": "4.3.stable.official.77dcf97d8",
+          "kind": "godot-android",
+          "mode": "debug",
+          "notes": "debug keystore, arm64-v8a, Compatibility renderer, no INTERNET permission",
+          "ok": true,
+          "preset": "android",
+          "shuttle": {
+            "adapter": "godot",
+            "contract_files": 63,
+            "converted_resources": 17,
+            "identical": 46,
+            "missing": [],
+            "missing_runtime": [],
+            "ok": true,
+            "schema": "shuttleline.contract/1",
+            "shipped_files": 166,
+            "target": "android"
+          },
+          "source_digest": "8e984ae11180d70fb3b9612bb432c612ae5d5ed212f538ef3a2331ba9c148b12",
+          "target": "android",
+          "templates": "4.3.stable",
+          "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
+          "total_size": 25822111,
+          "verify": {
+            "apk_size": 25593334,
+            "apkanalyzer_download_size": 25059231,
+            "internet_permission": false,
+            "launchable": true,
+            "min_sdk": 21,
+            "native_code": [
+              "arm64-v8a"
+            ],
+            "ok": true,
+            "package": {
+              "name": "com.rechargedideas.gamezero",
+              "version_code": 7,
+              "version_name": "0.7.0"
+            },
+            "permissions": [],
+            "signature": {
+              "key": "debug keystore",
+              "schemes": [
+                "v1",
+                "v2",
+                "v3"
+              ],
+              "verifies": true
+            },
+            "target_sdk": 34
+          },
+          "version": "0.7.0+f7"
+        },
+        "desktop-linux": {
+          "artifact": {
+            "path": "dist/desktop-linux/GameZero.x86_64",
+            "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
+            "size": 66074584
+          },
+          "bolt": {
+            "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-linux.fabricbolt",
+            "bolt_sha256": "b89ea4a270436363fdc48e4226aacad8657c13f4a4b15a212fa875dff90459b6",
+            "bolt_size": 25456213,
+            "components": 83,
+            "copyleft": {},
+            "licenses": {
+              "Apache-2.0": 13,
+              "BSD-2-clause": 2,
+              "BSD-3-clause": 14,
+              "BSL-1.0": 1,
+              "CC0-1.0": 1,
+              "CC0-1.0 and Apache-2.0": 1,
+              "Expat": 32,
+              "Expat and Zlib": 1,
+              "FTL": 1,
+              "HarfBuzz": 1,
+              "LicenseRef-Proprietary": 1,
+              "MIT": 1,
+              "MPL-2.0": 1,
+              "OFL-1.1": 2,
+              "Unicode": 1,
+              "Zlib": 5,
+              "glslang": 1,
+              "public-domain or Apache-2.0": 1,
+              "public-domain or Unlicense": 1,
+              "public-domain or Unlicense or Expat": 2
+            },
+            "ok": true,
+            "signed": false,
+            "unknown": {}
+          },
+          "built_at": "2026-11-12T12:45:13-0500",
+          "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
+          "errors": [],
+          "exit_code": 0,
+          "export_wall_s": 8.0,
+          "godot": "4.3.stable.official.77dcf97d8",
+          "kind": "godot-desktop",
+          "mode": "release",
+          "notes": "",
+          "ok": true,
+          "preset": "desktop-linux",
+          "shuttle": {
+            "adapter": "godot",
+            "contract_files": 63,
+            "converted_resources": 17,
+            "identical": 46,
+            "missing": [],
+            "missing_runtime": [],
+            "ok": true,
+            "schema": "shuttleline.contract/1",
+            "shipped_files": 165,
+            "target": "desktop-linux"
+          },
+          "source_digest": "8e984ae11180d70fb3b9612bb432c612ae5d5ed212f538ef3a2331ba9c148b12",
+          "target": "desktop-linux",
+          "templates": "4.3.stable",
+          "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
+          "total_size": 67665780,
+          "verify": {
+            "boots": true,
+            "how": "exported binary run headless (--net-report)",
+            "net": {
+              "has_multiplayer_peer": true,
+              "offline_peer": true,
+              "peer": "OfflineMultiplayerPeer",
+              "platform": "desktop"
+            },
+            "ok": true,
+            "version": "0.7.0+f7"
+          },
+          "version": "0.7.0+f7"
+        },
+        "desktop-windows": {
+          "artifact": {
+            "path": "dist/desktop-windows/GameZero.exe",
+            "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
+            "size": 84214784
+          },
+          "bolt": {
+            "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-windows.fabricbolt",
+            "bolt_sha256": "14a8237c19059811b4d7442b3da4926c4a63b8d0468250b707ca27678547aff5",
+            "bolt_size": 31583362,
+            "components": 83,
+            "copyleft": {},
+            "licenses": {
+              "Apache-2.0": 13,
+              "BSD-2-clause": 2,
+              "BSD-3-clause": 14,
+              "BSL-1.0": 1,
+              "CC0-1.0": 1,
+              "CC0-1.0 and Apache-2.0": 1,
+              "Expat": 32,
+              "Expat and Zlib": 1,
+              "FTL": 1,
+              "HarfBuzz": 1,
+              "LicenseRef-Proprietary": 1,
+              "MIT": 1,
+              "MPL-2.0": 1,
+              "OFL-1.1": 2,
+              "Unicode": 1,
+              "Zlib": 5,
+              "glslang": 1,
+              "public-domain or Apache-2.0": 1,
+              "public-domain or Unlicense": 1,
+              "public-domain or Unlicense or Expat": 2
+            },
+            "ok": true,
+            "signed": false,
+            "unknown": {}
+          },
+          "built_at": "2026-11-12T12:45:25-0500",
+          "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
+          "errors": [],
+          "exit_code": 0,
+          "export_wall_s": 6.8,
+          "godot": "4.3.stable.official.77dcf97d8",
+          "kind": "godot-desktop",
+          "mode": "release",
+          "notes": "cross-exported from Linux; unsigned (rcedit/codesign off)",
+          "ok": true,
+          "preset": "desktop-windows",
+          "shuttle": {
+            "adapter": "godot",
+            "contract_files": 63,
+            "converted_resources": 17,
+            "identical": 46,
+            "missing": [],
+            "missing_runtime": [],
+            "ok": true,
+            "schema": "shuttleline.contract/1",
+            "shipped_files": 165,
+            "target": "desktop-windows"
+          },
+          "source_digest": "8e984ae11180d70fb3b9612bb432c612ae5d5ed212f538ef3a2331ba9c148b12",
+          "target": "desktop-windows",
+          "templates": "4.3.stable",
+          "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
+          "total_size": 85991918,
+          "verify": {
+            "console_wrapper": {
+              "machine": "0x8664",
+              "pe": true,
+              "pe32_plus": true,
+              "sections": 11,
+              "subsystem": "windows_cui",
+              "x86_64": true
+            },
+            "exe": {
+              "machine": "0x8664",
+              "pe": true,
+              "pe32_plus": true,
+              "sections": 13,
+              "subsystem": "windows_gui",
+              "x86_64": true
+            },
+            "ok": true,
+            "pck_content_equal_linux": true,
+            "pck_data_equal_linux": true,
+            "pck_fileset_equal_linux": true,
+            "pck_present": true,
+            "wine_smoke": {
+              "ran": false,
+              "reason": "wine not installed on the build host (documented; run on Windows)"
+            }
+          },
+          "version": "0.7.0+f7"
+        },
+        "web": {
+          "artifact": {
+            "path": "dist/web/index.html",
+            "sha256": "9fc2ab590624bfc3476611795eb5450aa148133aa491d038d72dff5d3d10f8b4",
+            "size": 4934
+          },
+          "bolt": {
+            "bolt": "dist/bolt/GameZero-0.7.0+f7-web.fabricbolt",
+            "bolt_sha256": "50720fc71224bbada089dabb8cc420c8f566ac9384460fd9d2cd14bd2b0d8c59",
+            "bolt_size": 9373855,
+            "components": 84,
+            "copyleft": {},
+            "licenses": {
+              "Apache-2.0": 13,
+              "BSD-2-clause": 2,
+              "BSD-3-clause": 14,
+              "BSL-1.0": 1,
+              "CC0-1.0": 1,
+              "CC0-1.0 and Apache-2.0": 1,
+              "Expat": 32,
+              "Expat and Zlib": 1,
+              "FTL": 1,
+              "HarfBuzz": 1,
+              "LicenseRef-Proprietary": 1,
+              "MIT": 1,
+              "MIT OR NCSA": 1,
+              "MPL-2.0": 1,
+              "OFL-1.1": 2,
+              "Unicode": 1,
+              "Zlib": 5,
+              "glslang": 1,
+              "public-domain or Apache-2.0": 1,
+              "public-domain or Unlicense": 1,
+              "public-domain or Unlicense or Expat": 2
+            },
+            "ok": true,
+            "signed": false,
+            "unknown": {}
+          },
+          "built_at": "2026-11-12T12:46:22-0500",
+          "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
+          "errors": [],
+          "exit_code": 0,
+          "export_wall_s": 7.4,
+          "godot": "4.3.stable.official.77dcf97d8",
+          "kind": "godot-web",
+          "mode": "release",
+          "notes": "threads build + PWA (offline SW, COOP/COEP)",
+          "ok": true,
+          "preset": "web",
+          "pwa": {
+            "budget": {
+              "budget_bytes": 45000000,
+              "files": {
+                "_headers": {
+                  "bytes": 286,
+                  "gzip9": 207
+                },
+                "index.144x144.png": {
+                  "bytes": 562,
+                  "gzip9": 291
+                },
+                "index.180x180.png": {
+                  "bytes": 650,
+                  "gzip9": 250
+                },
+                "index.512x512.png": {
+                  "bytes": 2557,
+                  "gzip9": 578
+                },
+                "index.apple-touch-icon.png": {
+                  "bytes": 650,
+                  "gzip9": 250
+                },
+                "index.audio.worklet.js": {
+                  "bytes": 7298,
+                  "gzip9": 2194
+                },
+                "index.html": {
+                  "bytes": 5158,
+                  "gzip9": 2173
+                },
+                "index.icon.png": {
+                  "bytes": 437,
+                  "gzip9": 190
+                },
+                "index.js": {
+                  "bytes": 386102,
+                  "gzip9": 93296
+                },
+                "index.manifest.json": {
+                  "bytes": 330,
+                  "gzip9": 196
+                },
+                "index.offline.html": {
+                  "bytes": 971,
+                  "gzip9": 581
+                },
+                "index.pck": {
+                  "bytes": 1568704,
+                  "gzip9": 1246718
+                },
+                "index.png": {
+                  "bytes": 21443,
+                  "gzip9": 19328
+                },
+                "index.service.worker.js": {
+                  "bytes": 5799,
+                  "gzip9": 2103
+                },
+                "index.wasm": {
+                  "bytes": 33829596,
+                  "gzip9": 7921657
+                },
+                "index.worker.js": {
+                  "bytes": 294,
+                  "gzip9": 217
+                }
+              },
+              "headroom_bytes": 35709771,
+              "ok": true,
+              "total_bytes": 35830837,
+              "total_gzip9": 9290229
+            },
+            "hook": true,
+            "ok": true,
+            "service_worker": {
+              "cached_on_first_use": [
+                "index.wasm",
+                "index.pck"
+              ],
+              "cached_on_install": [
+                "index.html",
+                "index.js",
+                "index.offline.html",
+                "index.icon.png",
+                "index.apple-touch-icon.png",
+                "index.worker.js",
+                "index.audio.worklet.js"
+              ],
+              "ensure_isolation_shim": true,
+              "manifest": {
+                "display": "standalone",
+                "icons": 3,
+                "name": "Game Zero",
+                "orientation": "landscape",
+                "start_url": "./index.html"
+              },
+              "ok": true,
+              "runtime_missing_from_cache": []
+            },
+            "smoke": {
+              "checks": {
+                "boots": true,
+                "coop_coep_headers": true,
+                "cross_origin_isolated": true,
+                "headerless_host_isolated_via_sw": true,
+                "net_dormant": true,
+                "offline_boot": true,
+                "sw_cached_runtime": true,
+                "sw_registered": true
+              },
+              "first_visit": {
+                "boot_ok": true,
+                "error": null,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.worker.js",
+                    "index.audio.worklet.js"
+                  ],
+                  "isolated": true,
+                  "sab": true,
+                  "sw_controller": false,
+                  "sw_registered": true
+                },
+                "wall_s": 4.9
+              },
+              "headerless_host": {
+                "first": {
+                  "boot_ok": true,
+                  "error": null,
+                  "page": {
+                    "cached": [
+                      "index.html",
+                      "index.js",
+                      "index.offline.html",
+                      "index.icon.png",
+                      "index.apple-touch-icon.png",
+                      "index.worker.js",
+                      "index.audio.worklet.js",
+                      "index.pck",
+                      "index.wasm"
+                    ],
+                    "isolated": true,
+                    "sab": true,
+                    "sw_controller": true,
+                    "sw_registered": true
+                  }
+                },
+                "second": {
+                  "boot_ok": true,
+                  "error": null,
+                  "page": {
+                    "cached": [
+                      "index.html",
+                      "index.js",
+                      "index.offline.html",
+                      "index.icon.png",
+                      "index.apple-touch-icon.png",
+                      "index.worker.js",
+                      "index.audio.worklet.js",
+                      "index.pck",
+                      "index.wasm"
+                    ],
+                    "isolated": true,
+                    "sab": true,
+                    "sw_controller": true,
+                    "sw_registered": true
+                  }
+                }
+              },
+              "headers_ok": true,
+              "offline_reload": {
+                "boot_ok": true,
+                "error": null,
+                "log_tail": [
+                  "Failed to load resource: net::ERR_FAILED",
+                  "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
+                  "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+                  "Game Zero F0 boot OK \u2014 AssetFabric env gate",
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44111/index.js:9:234048"
+                ],
+                "offline": true,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.worker.js",
+                    "index.audio.worklet.js",
+                    "index.pck",
+                    "index.wasm"
+                  ],
+                  "isolated": true,
+                  "sab": true,
+                  "sw_controller": true,
+                  "sw_registered": true
+                },
+                "result": {
+                  "net": {
+                    "has_multiplayer_peer": true,
+                    "offline_peer": true,
+                    "peer": "OfflineMultiplayerPeer",
+                    "platform": "web"
+                  },
+                  "version": "0.7.0+f7"
+                },
+                "script_errors": 0,
+                "wall_s": 2.4
+              },
+              "ok": true,
+              "online": {
+                "boot_ok": true,
+                "error": null,
+                "log_tail": [
+                  "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
+                  "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+                  "Game Zero F0 boot OK \u2014 AssetFabric env gate",
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44111/index.js:9:234048"
+                ],
+                "offline": false,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.worker.js",
+                    "index.audio.worklet.js",
+                    "index.pck",
+                    "index.wasm"
+                  ],
+                  "isolated": true,
+                  "sab": true,
+                  "sw_controller": true,
+                  "sw_registered": true
+                },
+                "result": {
+                  "net": {
+                    "has_multiplayer_peer": true,
+                    "offline_peer": true,
+                    "peer": "OfflineMultiplayerPeer",
+                    "platform": "web"
+                  },
+                  "version": "0.7.0+f7"
+                },
+                "script_errors": 0,
+                "wall_s": 3.5
+              },
+              "response_headers": {
+                "index.html": {
+                  "Cross-Origin-Embedder-Policy": "require-corp",
+                  "Cross-Origin-Opener-Policy": "same-origin"
+                },
+                "index.pck": {
+                  "Cross-Origin-Embedder-Policy": "require-corp",
+                  "Cross-Origin-Opener-Policy": "same-origin"
+                },
+                "index.wasm": {
+                  "Cross-Origin-Embedder-Policy": "require-corp",
+                  "Cross-Origin-Opener-Policy": "same-origin"
+                }
+              }
+            }
+          },
+          "shuttle": {
+            "adapter": "godot",
+            "contract_files": 63,
+            "converted_resources": 17,
+            "identical": 46,
+            "missing": [],
+            "missing_runtime": [],
+            "ok": true,
+            "schema": "shuttleline.contract/1",
+            "shipped_files": 165,
+            "target": "web"
+          },
+          "source_digest": "8e984ae11180d70fb3b9612bb432c612ae5d5ed212f538ef3a2331ba9c148b12",
+          "target": "web",
+          "templates": "4.3.stable",
+          "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
+          "total_size": 35853351,
+          "version": "0.7.0+f7"
+        }
+      },
+      "toolchain": {
+        "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+        "android_sdk": "/workspace/android-sdk",
+        "bwrap": "/usr/bin/bwrap",
+        "chrome": "/usr/bin/google-chrome",
+        "godot": "/workspace/assetfabric/godot-bin/godot",
+        "godot_version": "4.3.stable.official.77dcf97d8",
+        "jdk": "/workspace/jdk/jdk-17.0.21+9",
+        "templates": {
+          "dir": "/workspace/assetfabric/.fabric/godot-home/data/godot/export_templates/4.3.stable",
+          "missing": [],
+          "ok": true,
+          "version": "4.3.stable"
+        },
+        "wine": null
+      }
+    },
+    "desktop_launch": {
+      "completed": true,
+      "default_scene_is_slice": true,
+      "exit": 0,
+      "final_checksum": "cfef517f0cf2f740bb49c3431c95035ab1ef53fd1c6a94c32a0e6b3bf38dd327",
+      "final_equal_editor": true,
+      "game_minutes": 2.92,
+      "net": {
+        "has_multiplayer_peer": true,
+        "offline_peer": true,
+        "peer": "OfflineMultiplayerPeer",
+        "platform": "desktop"
+      },
+      "network_namespace": "bwrap --unshare-net",
+      "script_errors": 0,
+      "wall_ms": 5362.5
+    },
+    "editor_roundtrip": {
+      "checksum_equal": true,
+      "loaded_equal": true,
+      "net": {
+        "has_multiplayer_peer": true,
+        "offline_peer": true,
+        "peer": "OfflineMultiplayerPeer",
+        "platform": "desktop"
+      },
+      "reloaded_equal": true,
+      "remap_applied": true,
+      "rewritten_validates": true
+    },
+    "input_remap": {
+      "android_content": true,
+      "desktop": true,
+      "remap": {
+        "attack": [
+          "F"
+        ],
+        "interact": [
+          "G"
+        ]
+      },
+      "web": true
+    },
+    "mode": "full",
+    "net_runtime": {
+      "android_content": {
+        "has_multiplayer_peer": true,
+        "offline_peer": true,
+        "peer": "OfflineMultiplayerPeer",
+        "platform": "desktop"
+      },
+      "desktop": {
+        "has_multiplayer_peer": true,
+        "offline_peer": true,
+        "peer": "OfflineMultiplayerPeer",
+        "platform": "desktop"
+      },
+      "web": {
+        "has_multiplayer_peer": true,
+        "offline_peer": true,
+        "peer": "OfflineMultiplayerPeer",
+        "platform": "web"
+      }
+    },
+    "net_scan": {
+      "network_api_uses": [],
+      "ok": true
+    },
+    "presets": {
+      "checks": {
+        "all_targets": true,
+        "android_arm64": true,
+        "android_no_internet": true,
+        "compatibility_renderer": true,
+        "etc2_astc_import": true,
+        "no_secrets_in_presets": true,
+        "ships_fabric_output": true,
+        "web_pwa_isolation": true
+      },
+      "ok": true,
+      "presets": [
+        "android",
+        "desktop-linux",
+        "desktop-windows",
+        "web"
+      ]
+    },
+    "save_roundtrip": {
+      "android_import_rewrite": {
+        "bytes_equal_previous_hop": true,
+        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "exit": 0,
+        "loaded_equal": true,
+        "loaded_ok": true,
+        "net": {
+          "has_multiplayer_peer": true,
+          "offline_peer": true,
+          "peer": "OfflineMultiplayerPeer",
+          "platform": "desktop"
+        },
+        "validates": true
+      },
+      "desktop_resume": {
+        "completed": true,
+        "exit": 0,
+        "final_equal_uninterrupted": true,
+        "resumed_checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373"
+      },
+      "desktop_write": {
+        "bytes": 2809,
+        "checkpoint": 4,
+        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "exit": 0,
+        "validates": true
+      },
+      "hops": [
+        "desktop-linux (export)",
+        "android (APK content)",
+        "web (Chrome, IndexedDB, offline reload)",
+        "desktop-linux (export)"
+      ],
+      "same_checksum_all_hops": true,
+      "web_import_rewrite": {
+        "boot_ok": true,
+        "bytes_equal_previous_hop": true,
+        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "error": null,
+        "loaded_equal": true,
+        "loaded_ok": true,
+        "platform": "web",
+        "script_errors": 0,
+        "validates": true
+      },
+      "web_offline_reload": {
+        "boot_ok": true,
+        "error": null,
+        "imported": false,
+        "loaded_from_indexeddb_equal": true,
+        "offline": true,
+        "sw_controller": true
+      }
+    },
+    "shuttle_sources": {
+      "counts": {
+        "assets": 30,
+        "files": 63
+      },
+      "mismatched": [],
+      "missing_runtime": [],
+      "ok": true
+    },
+    "targets": {
+      "manifest_targets": {
+        "android": "godot-android",
+        "desktop-linux": "godot-desktop",
+        "desktop-windows": "godot-desktop",
+        "godot-desktop": "godot-desktop",
+        "studio-desktop": "studio",
+        "web": "godot-web"
+      },
+      "missing": [],
+      "ok": true
+    }
+  }
+}

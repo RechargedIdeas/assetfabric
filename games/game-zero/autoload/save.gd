@@ -161,6 +161,21 @@ static func new_save(leader: String, fighters: Dictionary, pets: Array) -> Dicti
 
 # --------------------------------------------------------------------------- disk
 
+## Quit without losing the last write. On Web, user:// is IndexedDB-backed and Godot syncs it from the
+## main loop after a written file is closed, so quitting in the same frame can drop the save (F7, G-SAVE-01);
+## wait a few frames + 0.5 s there. Elsewhere this is a plain quit.
+func quit_after_persist(code: int = 0) -> void:
+	await persist_wait()
+	get_tree().quit(code)
+
+
+func persist_wait() -> void:
+	if OS.has_feature("web"):
+		for i in 10:
+			await get_tree().process_frame
+		await get_tree().create_timer(0.5).timeout
+
+
 func path(slot: String = "slot0") -> String:
 	return dir.path_join(slot + ".json")
 

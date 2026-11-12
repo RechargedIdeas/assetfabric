@@ -172,7 +172,9 @@ def full_part(root: Path, tmp: Path) -> dict[str, Any]:
     from forge.save import canonical_json, validate
 
     r: dict[str, Any] = {}
-    build = build_targets(root, ["desktop-linux", "desktop-windows", "android", "web"])
+    import sys
+
+    build = build_targets(root, ["desktop-linux", "desktop-windows", "android", "web"], log=lambda m: print(m, file=sys.stderr))
     r["build"] = {"ok": build["ok"], "error": build.get("error"), "toolchain": build.get("toolchain"),
                   "targets": {t: {k: v for k, v in rep.items() if k not in ("files",)} for t, rep in build.get("targets", {}).items()}}
     if not all(t.get("ok") for t in build.get("targets", {}).values()) or not build.get("targets"):

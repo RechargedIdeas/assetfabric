@@ -32,5 +32,6 @@ func _ready() -> void:
 			var m := Save.migrate(d[name])
 			out["migrated"][name] = {"save": m[0], "steps": m[1], "errors": Save.validate(m[0]),
 				"canonical_sha": Save.canonical_json(m[0]).sha256_text()}
+	await Save.persist_wait()      # Web: let the IndexedDB sync finish before reporting / quitting
 	print("FABRIC_RESULT " + JSON.stringify({"savecheck": out}))
 	get_tree().quit(0)

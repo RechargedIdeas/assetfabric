@@ -510,6 +510,8 @@ def build_targets(root: Path, targets: list[str], *, skip_smoke: bool = False, l
             rep["shuttle"] = verify_target(root, t)
             rep["files"] = file_table(dist_dir(root) / t)
             rep["total_size"] = sum(f["size"] for f in rep["files"])
+            art = dist_dir(root) / t / TARGETS[t].artifact      # post-steps may patch it (PWAPipeline hook)
+            rep["artifact"] = {"path": f"dist/{t}/{TARGETS[t].artifact}", "size": art.stat().st_size, "sha256": sha256_file(art)}
             rep["bolt"] = bolt_target(root, t, version)
         rep.update({"version": version, "source_digest": sdig, "godot": tc["godot_version"],
                     "templates": TEMPLATE_VERSION, "templates_tpz_sha256": TPZ_SHA256,

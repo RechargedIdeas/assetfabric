@@ -175,7 +175,7 @@ func checkpoint_save() -> void:
 		var loaded: Dictionary = Save.load_slot()
 		print("FABRIC_RESULT " + JSON.stringify({"slice_quit": {"checkpoint": _checkpoints, "tick": ws.tick, "area": ws.area,
 			"checksum": sum, "state": _canon_state(s), "reloaded_same_process": loaded.get("checksum", "") == sum}}))
-		get_tree().quit(0)
+		Save.quit_after_persist(0)
 		phase = "quit"
 
 

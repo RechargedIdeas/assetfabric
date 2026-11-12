@@ -163,7 +163,7 @@ class WebHarness:
             self._pw.stop()
 
     def run(self, base_url: str, args: list[str] | None = None, *, wait_for: str = "FABRIC_RESULT", timeout_s: float = 90,
-            offline: bool = False, settle_sw: bool = False) -> dict[str, Any]:
+            offline: bool = False, settle_sw: bool = False, linger_ms: int = 1500) -> dict[str, Any]:
         from forge.milestones import parse_output
 
         if args and args[0] != "--":
@@ -179,6 +179,7 @@ class WebHarness:
             page.goto(url, wait_until="load", timeout=int(timeout_s * 1000))
             while time.time() - t0 < timeout_s and not any(wait_for in ln for ln in logs):
                 page.wait_for_timeout(250)
+            page.wait_for_timeout(linger_ms)     # let Godot's IDBFS sync (user://) finish before the page closes
             info = page.evaluate("""async () => {
                 const reg = await navigator.serviceWorker.getRegistration();
                 const keys = await caches.keys();
