@@ -1,0 +1,390 @@
+{
+  "best_overrides": [
+    {
+      "path": "enemies.cave_warden.stats.hp",
+      "value": 283.773
+    },
+    {
+      "path": "enemies.cave_warden.stats.atk",
+      "value": 13.826
+    },
+    {
+      "path": "pets.ember_fox.bonus.atk_pct",
+      "value": 0.281
+    },
+    {
+      "path": "pets.stone_tortle.bonus.def_flat",
+      "value": 1.361
+    },
+    {
+      "path": "pets.lumen_wisp.bonus.hp_pct",
+      "value": 0.248
+    }
+  ],
+  "best_score": 0.1971,
+  "trials": [
+    {
+      "trial": 0,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 258.052
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.56
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.188
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.447
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.296
+        }
+      ],
+      "mean": 0.8021,
+      "choice_dev": 0.0799,
+      "combo_dev": 0.1771,
+      "softlocks": 0,
+      "score": 0.2473
+    },
+    {
+      "trial": 1,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 276.54
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.002
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.114
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.537
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.2
+        }
+      ],
+      "mean": 0.5417,
+      "choice_dev": 0.1979,
+      "combo_dev": 0.375,
+      "softlocks": 0,
+      "score": 0.5591
+    },
+    {
+      "trial": 2,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 282.169
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.607
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.176
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.132
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.158
+        }
+      ],
+      "mean": 0.2222,
+      "choice_dev": 0.0487,
+      "combo_dev": 0.1945,
+      "softlocks": 0,
+      "score": 0.844
+    },
+    {
+      "trial": 3,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 291.384
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.427
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.19
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.862
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.105
+        }
+      ],
+      "mean": 0.7014,
+      "choice_dev": 0.1528,
+      "combo_dev": 0.2431,
+      "softlocks": 0,
+      "score": 0.2415
+    },
+    {
+      "trial": 4,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 279.022
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.9
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.146
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.097
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.282
+        }
+      ],
+      "mean": 0.2465,
+      "choice_dev": 0.1215,
+      "combo_dev": 0.2952,
+      "softlocks": 0,
+      "score": 0.9055
+    },
+    {
+      "trial": 5,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 260.327
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.047
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.25
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.338
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.194
+        }
+      ],
+      "mean": 0.9201,
+      "choice_dev": 0.0659,
+      "combo_dev": 0.3368,
+      "softlocks": 0,
+      "score": 0.4503
+    },
+    {
+      "trial": 6,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 263.194
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.982
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.174
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.955
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.173
+        }
+      ],
+      "mean": 0.8542,
+      "choice_dev": 0.0764,
+      "combo_dev": 0.2292,
+      "softlocks": 0,
+      "score": 0.335
+    },
+    {
+      "trial": 7,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 288.517
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 14.537
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.163
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.145
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.155
+        }
+      ],
+      "mean": 0.1771,
+      "choice_dev": 0.0729,
+      "combo_dev": 0.1562,
+      "softlocks": 0,
+      "score": 0.9263
+    },
+    {
+      "trial": 8,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 273.114
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.706
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.231
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.741
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.192
+        }
+      ],
+      "mean": 0.8611,
+      "choice_dev": 0.0799,
+      "combo_dev": 0.1528,
+      "softlocks": 0,
+      "score": 0.3297
+    },
+    {
+      "trial": 9,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 283.773
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.826
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.281
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.361
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.248
+        }
+      ],
+      "mean": 0.7188,
+      "choice_dev": 0.1354,
+      "combo_dev": 0.2395,
+      "softlocks": 0,
+      "score": 0.1971
+    },
+    {
+      "trial": 10,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 292.919
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.718
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.289
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 2.513
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.289
+        }
+      ],
+      "mean": 0.6667,
+      "choice_dev": 0.0833,
+      "combo_dev": 0.25,
+      "softlocks": 0,
+      "score": 0.2258
+    },
+    {
+      "trial": 11,
+      "overrides": [
+        {
+          "path": "enemies.cave_warden.stats.hp",
+          "value": 289.108
+        },
+        {
+          "path": "enemies.cave_warden.stats.atk",
+          "value": 13.803
+        },
+        {
+          "path": "pets.ember_fox.bonus.atk_pct",
+          "value": 0.277
+        },
+        {
+          "path": "pets.stone_tortle.bonus.def_flat",
+          "value": 1.787
+        },
+        {
+          "path": "pets.lumen_wisp.bonus.hp_pct",
+          "value": 0.267
+        }
+      ],
+      "mean": 0.6285,
+      "choice_dev": 0.1006,
+      "combo_dev": 0.2535,
+      "softlocks": 0,
+      "score": 0.3012
+    }
+  ],
+  "seeds_per_matchup": 24,
+  "sampler": "TPE(seed=7)",
+  "optuna": "5.0.0"
+}
