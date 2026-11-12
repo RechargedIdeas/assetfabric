@@ -4,6 +4,32 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.0+f7] — 2026-11-12 — F7 Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack
+
+### Added
+- `forge build --target {desktop-linux,desktop-windows,android,web,all}` (`forge/packaging.py`): toolchain discovery (Godot 4.3, templates, JDK 17, Android SDK, Chrome, bwrap, wine), hermetic Godot home (`.fabric/godot-home`, generated debug keystore), staged keep-import so runtime-loaded Fabric output ships byte-for-byte, exports, per-target verify (exported-binary boot, PE32+ headers, aapt/apksigner/apkanalyzer, PCK/APK readers), `BUILD.json` with SHA-256 of every file. `forge templates status|fetch` (sha256-pinned 4.3-stable templates).
+- `games/game-zero/export_presets.cfg`: desktop-linux, desktop-windows (release), android (debug, arm64-v8a, no INTERNET), web (threads + PWA).
+- **PWAPipeline** (`forge/pwa.py`): G-WEB-01 gzip-9 budget, SW cache-list check, `_headers` (COOP/COEP), URL-fragment QA hook, local server + headless-Chrome smoke (headers, isolation, SW, offline reload, header-less host).
+- **ShuttleLine** `shuttleline.contract/1` (`forge shuttle contract [--check]`), verified against every shipped PCK/APK; `generic-folder` adapter (`forge shuttle export`).
+- **BoltPack** (`forge/boltpack.py`): CycloneDX 1.5 SBOM from the engine's own copyright info + platform extras + game content, license allow-list audit (copyleft fails), `LICENSES/`, `dist/bolt/*.fabricbolt` (unsigned).
+- Game: `--net-report` (multiplayer peer report), input remap (`profile.settings.input_remap`) applied at boot/load, `savecheck --import-b64 [--rewrite]` for cross-device saves, `Save.quit_after_persist()` (Web IndexedDB flush before quit).
+- F7 increment `launch-candidates` + acceptance (`forge/accept_f7.py`, fast + full); `tests/test_f7_packaging.py`; `docs/packaging.md`; `docs/acceptance-tests/F7.md`; `results/F7.json`; inferences F7-1…F7-18.
+
+### Changed
+- Boot router default scene is `slice` (shipped builds open the game); exported builds never open the F4 live channel implicitly.
+- GIRT counts over-budget policy calls as `policy_over_budget`, not fallbacks; F3 gates policy **p95 ≤ budget** (fixes a ≈ 1-in-4 F3 flake, also seen on `main`).
+- `project.godot`: ETC2/ASTC import enabled (Android export requirement). `forge.yaml` declares the four platform targets. Version `0.7.0+f7`; optional extra `package` (Playwright).
+- `.gitignore`: `.fabric/godot-home/`, `.fabric/cache/`, `.fabric/jdk/`, `games/game-zero/*.import` (plus existing `dist/`, `godot-bin/`, `*.keystore`).
+
+### Measured
+- `forge accept F7` full: passed, 1 min 44 s on 8 vCPU. Linux 66.1 MB binary + 1.57 MB PCK; Windows 84.2 MB exe; debug APK 25.6 MB; Web 35.9 MB raw / **9.29 MB gzip** (G-WEB-01 budget 45 MB). SHA-256 per artifact in docs/acceptance-tests/F7.md.
+- G-SAVE-01: desktop → Android content → Web (IndexedDB, offline reload) → desktop, checksum identical every hop, final state == uninterrupted run. G-NET-01: slice completes in `bwrap --unshare-net`; no INTERNET permission; Web boots offline.
+
+### Known
+- Unsigned/debug only; no store listings. Windows build not executed (no Windows host/wine); Android not run on a device (no KVM); Web tested on localhost headless Chrome only.
+- G-A11Y-01 partial (no rebinding UI / runtime palette toggle). Web ships threads only (D-001). Exports not byte-reproducible.
+- Platform exports + full F7 acceptance are local-only; CI runs the F7 fast subset.
+
 ## [0.6.0+f6] — 2026-11-12 — F6 Vertical slice: quests, farming/craft economy, tiered loot, adaptive music, cave ↔ open world
 
 ### Added

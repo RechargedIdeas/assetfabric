@@ -2,11 +2,25 @@
 
 Last updated: 2026-11-12 America/New_York
 
-## Current sprint — F7 packaging (next)
+## Current sprint — companion track (next)
 
+- [ ] Branch from `main`; review + verify `wip/f5-companions` (do not merge blind): PocketLoom FabricCore (Kotlin), `forge/loomcluster.py`, `forge/loomlink.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, cluster settings in `forge.yaml`
+- [ ] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync)
+- [ ] LoomCluster C7 (node registry + scheduler) and GroundWeave C8 (CPU fallback ladder) with acceptance on a 2-core / no-GPU node
+- [ ] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs
 - [ ] **Human GUI playtest of the vertical slice** (F6 carry-over): measure real length vs 15–20 min; HUD/quest/overlay readability; controls (E interact, H salve, Tab freeze, `/` command); music mix and fades; art legibility of plots/bench/nodes. Checklist: docs/acceptance-tests/F6.md §Human playtest
 - [ ] Slice length: if humans also finish well under 15 min, add content (more field/tunnel areas, a second crop cycle, side quests) rather than slowing the bot
-- [ ] F7: Desktop / Android / Web PWA packaging (export must ship `assets/generated/` + `data/generated/` as non-resources), ShuttleLine multi, BoltPack
+
+## Packaging follow-ups (F7)
+
+- [ ] Run `GameZero.console.exe --headless -- --net-report` + the slice on a real Windows host (or add wine to the build box) — Windows is statically verified only (INFERENCE F7-18)
+- [ ] On-device Android run on the Redmi Note 12 Pro 5G (D-002): install the debug APK, play the slice, G-SAVE-01 hop on hardware
+- [ ] Real-browser Web test on a public HTTPS host (Chrome, Firefox, Safari) with COOP/COEP; decide `nothreads` fallback (D-001)
+- [ ] **Signing**: Windows Authenticode (+ rcedit icon/version), Linux AppImage/Flatpak signature, Android release keystore (env only, never committed) + AAB, BoltPack detached signature over `bolt.json`
+- [ ] **Store listings** (Producer): itch.io / own web host, Google Play (copy, screenshots, content rating, privacy), Steam later
+- [ ] G-A11Y-01 full: in-game input rebinding UI + runtime colour-blind palette toggle
+- [ ] Cached CI `package` job (templates + SDK cache) running `forge accept F7` full on `main` (INFERENCE F7-16)
+- [ ] Reproducible exports (pin GDScript tokenisation / compare by content) if byte-identical rebuilds are required
 
 ## Balance (F6)
 
@@ -27,6 +41,7 @@ Last updated: 2026-11-12 America/New_York
 - [x] F3 GIRT + CascadeHub + callouts (accepted 2026-11-05): policy BC, callout cache, persona LM stand-in, BT party AI, time-freeze swap, intents, dialogue
 - [x] F4 Substrate (accepted 2026-11-12): bwrap/process sandbox, live channel (2PC + probe + rollback), snapshots + WAL, parallel statecharts, guardian
 - [x] F5 Balance (accepted 2026-11-12): Monte Carlo runner (G-BAL-01 pass), Optuna TPE tuning, soft-lock detection, save v3 + migrations; first tier-3 boss
+- [x] F7 Packaging (accepted 2026-11-12): `forge build --target` Linux / Windows / debug APK / Web PWA, PWAPipeline (G-WEB-01), ShuttleLine contract + generic-folder adapter, BoltPack SBOM + license audit; G-SAVE-01 ring, G-NET-01 offline; G-A11Y-01 partial; unsigned
 - [x] F6 Vertical slice (accepted 2026-11-12): quest statechart, farming/gather/craft economy, tiered loot, adaptive music, field ⇄ tunnels ⇄ cave ⇄ lair, save v4 + quit/reload parity, QA autopilot, 12-selection matrix; per-pair balance gate
 - [x] Private repo + proprietary license (D-003, D-004)
 
@@ -59,8 +74,8 @@ Last updated: 2026-11-12 America/New_York
 
 | ID | Question | Owner | By |
 |---|---|---|---|
-| D-001 | Web export single-threaded fallback strategy? | Factory Lead | before F7 |
-| D-002 | Confirm Android reference = Redmi Note 12 Pro 5G | Producer | F7 |
+| D-001 | Web export single-threaded fallback strategy? (F7 ships threads + COOP/COEP + SW shim; `nothreads` templates fetched, not built — INFERENCE F7-3) | Factory Lead | before public Web hosting |
+| D-002 | Confirm Android reference = Redmi Note 12 Pro 5G (F7 APK is arm64-v8a only, untested on hardware) | Producer | before on-device test |
 | D-005 | Final names/stats of 4 fighters + 3 starter pets (GAME_SPEC §10); F6 economy/loot/quest content | Game Design | before content lock |
 
 ## Infrastructure

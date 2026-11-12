@@ -12,10 +12,10 @@
 
 | | |
 |---|---|
-| Fabric milestone | **F6 — Quest statechart, farming/craft economy, tiered loot, adaptive music, cave ↔ open world** ✅ accepted (`forge accept F6`) |
-| Game increment | `vertical-slice` — GAME_SPEC §6.1: character + pet select → farm → tunnels → cave → craft → Cave Warden → open world → save/reload; played end-to-end headless for all 12 selections |
-| Version | `0.6.0+f6` |
-| Next | F7 — Desktop / Android / Web PWA packaging, ShuttleLine multi, BoltPack (Tier 1 + Tier 2 launch candidates) |
+| Fabric milestone | **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** ✅ accepted (`forge accept F7`) |
+| Game increment | `launch-candidates` — unsigned Linux + Windows builds, debug Android APK, Web PWA (9.3 MB gzip, offline) of the vertical slice; saves round-trip desktop → Android → Web → desktop |
+| Version | `0.7.0+f7` |
+| Next | Companion track (verify + land `wip/f5-companions`: PocketLoom C1–C6, LoomCluster C7, GroundWeave C8; C9–C12 interfaces); F8 retro is optional — confirm scope first |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -36,6 +36,7 @@ pytest -q
 ./scripts/smoke_godot.sh
 forge build           # regenerate content from content/briefs/ (deterministic)
 forge accept F6       # headless Godot acceptance (needs Godot 4.3); FORGE_ACCEPT_FAST=1 for the CI subset
+forge build --target all   # F7 platform builds → dist/ (needs `forge templates fetch`, JDK 17, Android SDK; see docs/packaging.md)
 forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
 forge live serve --headless &   # Game Zero under the guardian; then: forge live set sim.leash=72
 ```
@@ -85,6 +86,8 @@ Play Game Zero: `godot --path games/game-zero -- --scene=slice` (the vertical sl
 | [docs/SUBSTRATE.md](docs/SUBSTRATE.md) | Sandbox tiers, live channel, snapshots, statecharts, guardian (F4) |
 | [docs/acceptance-tests/F5.md](docs/acceptance-tests/F5.md) | Balance runner, Optuna tuning, soft-lock detection, save migration, first boss (F5) |
 | [docs/acceptance-tests/F6.md](docs/acceptance-tests/F6.md) | Vertical slice: quests, farming/craft, loot, adaptive music, cave ↔ open world, save/quit/reload (F6) |
+| [docs/acceptance-tests/F7.md](docs/acceptance-tests/F7.md) | Launch candidates: Linux/Windows/Android/Web builds, G-WEB-01, G-SAVE-01, G-NET-01, sizes + SHA-256 (F7) |
+| [docs/packaging.md](docs/packaging.md) | How to build, verify and host every platform build; signing/store TODO (F7) |
 | [docs/hardware-fleet.md](docs/hardware-fleet.md) | AMD-first node inventory |
 | [docs/INFERENCES.md](docs/INFERENCES.md) | Register of `[INFERENCE]` decisions |
 

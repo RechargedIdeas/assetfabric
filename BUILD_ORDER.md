@@ -22,7 +22,7 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 | **F4** | 21–25 | Sandbox/micro-VM, hot reload, snapshots, statecharts | Live tune without full rebuild | ✅ |
 | **F5** | 26–29 | Monte Carlo balance, soft-lock, save migration | First boss | ✅ |
 | **F6** | 30–33 | Quest SM, farming, loot, adaptive music | **Vertical slice 15–20 min** | ✅ |
-| **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | |
+| **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | ✅ |
 | **F8** | optional | Retro/console-style | Confirm scope first | |
 | **F9** | post | LiveOps foundation | Readiness only | |
 
@@ -37,6 +37,7 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 - **F4** ✅ accepted 2026-11-12 — Substrate sandbox (bwrap / process tiers; Firecracker + gVisor detected, no launcher — no usable KVM), live channel with atomic hot reload (ticket → stage/validate → 2PC → probe → rollback), Tier-2 snapshots + WAL replay, parallel statecharts with soft-lock analysis, Guardian (crash/hang → backoff restart → resume + poison-ticket quarantine). Game: `live-tune`. See [docs/SUBSTRATE.md](docs/SUBSTRATE.md).
 - **F5** ✅ accepted 2026-11-12 — Monte Carlo balance runner (headless Godot workers, CRN seeds, Wilson CIs; G-BAL-01 2400 fights, choice deviation 3.0 pp, mean 0.73), Optuna TPE tuning on CPU, soft-lock detection (static statecharts + encounter reachability + runtime stall detector with probe), versioned Player State save v1→v2→v3 with GDScript↔Python parity and `.bak` recovery. Game: `first-boss` (tier-3 Cave Warden). Per-combination spread 12.7 pp is open balance debt. See [docs/acceptance-tests/F5.md](docs/acceptance-tests/F5.md).
 - **F6** ✅ accepted 2026-11-12 — Codegen-World (economy, crops, recipes, tiered loot tables, quest statechart compiled from `content/world/quests.yaml`, adaptive-music rules, area graph) with schema / cross-ref / quest soft-lock / economy-solvability / loot / music gates; G1-Tile open-world features (farm plots, workbench, gather nodes) for field + tunnels + deep cave; Player State save v4 (farm, checkpoint, counters, buffs, gear). Game: `vertical-slice` (GAME_SPEC §6.1, all 8 items) played headless by a scripted QA autopilot for all 12 leader × pet selections; save/quit/reload in a new process is byte-identical to an uninterrupted run. Step 0: pet↔character affinity brought the per-pair spread to 3.2 pp (gated). Bot length ≈ 3 game-min vs the 15–20 min human target — needs a GUI playtest. See [docs/acceptance-tests/F6.md](docs/acceptance-tests/F6.md).
+- **F7** ✅ accepted 2026-11-12 — `forge build --target` (Linux, Windows, debug APK, Web PWA) with hermetic Godot home + pinned 4.3 templates, PWAPipeline (G-WEB-01: 9.3 MB gzip of 45 MB, offline SW, COOP/COEP), ShuttleLine `shuttleline.contract/1` verified against every shipped PCK/APK + `generic-folder` adapter, BoltPack CycloneDX SBOM + license audit (unsigned). Game: `launch-candidates` — G-SAVE-01 ring desktop → Android → Web → desktop, G-NET-01 offline solo, G-A11Y-01 partial. Unsigned/debug only; Windows and Android verified without a Windows host or device. See [docs/acceptance-tests/F7.md](docs/acceptance-tests/F7.md).
 
 ### Entry criteria for any F(n+1)
 
