@@ -605,6 +605,50 @@ def save_migrate(src: Path, dst: Path) -> None:
     click.echo(json.dumps({"migrated_from": steps, "version": s["version"], "checksum": s["checksum"]}))
 
 
+@main.group("link")
+def link_grp() -> None:
+    """LoomLink (C5/C6): pair a PocketLoom phone with this desktop, accept offload + sync."""
+
+
+@link_grp.command("serve")
+@click.option("--bind", default="127.0.0.1", show_default=True,
+              help="Address to listen on: a LAN IP or this machine's Tailscale IP (100.x). Loopback by default.")
+@click.option("--port", type=int, default=8765, show_default=True)
+@click.option("--allow", default="offload,sync", show_default=True,
+              help="Capabilities this desktop grants (subset of offload,sync,drive_studio,mirror).")
+@click.option("--state-dir", type=click.Path(path_type=Path), default=None,
+              help="Paired devices + synced store (default .fabric/loomlink).")
+def link_serve(bind: str, port: int, allow: str, state_dir: Path | None) -> None:
+    """Show a one-time pairing code / loomlink:// URI (QR if `qrcode` is installed) and serve."""
+    from forge import loomlink
+
+    caps = tuple(c for c in allow.split(",") if c)
+    bad = set(caps) - set(loomlink.ALL_CAPS)
+    if bad:
+        raise click.BadParameter(f"unknown capabilities {sorted(bad)}")
+    srv = loomlink.LinkServer(state_dir or find_repo_root() / ".fabric" / "loomlink", allow=caps, bind=bind, port=port)
+
+    def ready(s: "loomlink.LinkServer") -> None:
+        click.echo(f"LOOMLINK_READY {s.url}")
+        click.echo(f"pairing code: {s.code}   (one-time; rotates after use or {loomlink.MAX_FAILS} bad tries)")
+        click.echo(f"uri: {s.uri()}")
+        qr = loomlink.qr_text(s.uri())
+        click.echo(qr if qr else "(install the optional `qrcode` package for a terminal QR)")
+
+    def on_event(ev: dict) -> None:
+        if ev["ev"] == "paired":
+            click.echo(f"paired {ev['client']} caps={ev['caps']}")
+        elif ev["ev"] == "code_rotated":
+            click.echo(f"new pairing code: {srv.code}   uri: {srv.uri()}")
+
+    srv.on_event = on_event
+
+    try:
+        srv.serve(ready=ready)
+    except KeyboardInterrupt:
+        pass
+
+
 @main.command("report")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
 def report_cmd(root: Path | None) -> None:

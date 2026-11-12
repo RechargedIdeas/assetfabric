@@ -27,6 +27,8 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+    // Shared Python↔Kotlin vectors (HMAC, hashchain, canonical JSON, sync plans) — tests/fixtures.
+    systemProperty("fabric.fixtures", rootProject.file("../../tests/fixtures").absolutePath)
     testLogging { events("failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL }
 }
 

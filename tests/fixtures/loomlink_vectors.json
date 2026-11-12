@@ -1,0 +1,334 @@
+{
+  "canonical": [
+    {
+      "text": "{\"a\":\"é\\n\\\"x\\\"\",\"b\":[1,2.5,true,null]}",
+      "value": {
+        "a": "é\n\"x\"",
+        "b": [
+          1,
+          2.5,
+          true,
+          null
+        ]
+      }
+    }
+  ],
+  "hashchain": [
+    {
+      "digest": "23117b9a5fac86a7dc5ddb053236fcc96ec2974fa32745f47ac76654bec56985",
+      "rounds": 1000,
+      "seed": "7"
+    },
+    {
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rounds": 1,
+      "seed": ""
+    }
+  ],
+  "hmac": [
+    {
+      "key_hex": "4142434432333435",
+      "mac": "505fe1989281e502ffc88279b79972f56627a0528bce5dac6f3b117be6ee2506",
+      "parts": [
+        "srv",
+        "n1",
+        "n2",
+        "pl-1"
+      ]
+    },
+    {
+      "key_hex": "00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff",
+      "mac": "a554aaa9678807b5d4e31808b7cbbbdffd062b7d905dcd6685a4d347dcfd604e",
+      "parts": [
+        "POST",
+        "/offload",
+        "1700000000000",
+        "e3b0"
+      ]
+    }
+  ],
+  "sync_plan": [
+    {
+      "expected": {
+        "conflicts": [],
+        "pull": [
+          {
+            "id": "s1",
+            "kind": "sprite",
+            "media": "image/png",
+            "provenance": {},
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 10,
+            "updated_by": "x",
+            "vv": {
+              "desktop": 1
+            }
+          }
+        ],
+        "push": [
+          "p1"
+        ]
+      },
+      "name": "disjoint",
+      "phone": {
+        "p1": {
+          "id": "p1",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        }
+      },
+      "phone_id": "pl-1",
+      "server": {
+        "s1": {
+          "id": "s1",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "desktop": 1
+          }
+        }
+      }
+    },
+    {
+      "expected": {
+        "conflicts": [],
+        "pull": [
+          {
+            "id": "x",
+            "kind": "sprite",
+            "media": "image/png",
+            "provenance": {},
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 10,
+            "updated_by": "x",
+            "vv": {
+              "desktop": 2,
+              "pl-1": 1
+            }
+          }
+        ],
+        "push": [
+          "y"
+        ]
+      },
+      "name": "dominates_each_way",
+      "phone": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        },
+        "y": {
+          "id": "y",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 2
+          }
+        }
+      },
+      "phone_id": "pl-1",
+      "server": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "desktop": 2,
+            "pl-1": 1
+          }
+        },
+        "y": {
+          "id": "y",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        }
+      }
+    },
+    {
+      "expected": {
+        "conflicts": [],
+        "pull": [],
+        "push": []
+      },
+      "name": "equal",
+      "phone": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        }
+      },
+      "phone_id": "pl-1",
+      "server": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        }
+      }
+    },
+    {
+      "expected": {
+        "conflicts": [
+          {
+            "id": "x",
+            "resolution": "merged_identical"
+          }
+        ],
+        "pull": [
+          {
+            "id": "x",
+            "kind": "sprite",
+            "media": "image/png",
+            "provenance": {},
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 10,
+            "updated_by": "x",
+            "vv": {
+              "desktop": 1,
+              "pl-1": 2
+            }
+          }
+        ],
+        "push": []
+      },
+      "name": "concurrent_identical",
+      "phone": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 2
+          }
+        }
+      },
+      "phone_id": "pl-1",
+      "server": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "desktop": 1,
+            "pl-1": 1
+          }
+        }
+      }
+    },
+    {
+      "expected": {
+        "conflicts": [
+          {
+            "id": "x",
+            "phone_copy": "x~pl-1",
+            "resolution": "keep_both"
+          }
+        ],
+        "pull": [
+          {
+            "id": "x",
+            "kind": "sprite",
+            "media": "image/png",
+            "provenance": {},
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "size": 10,
+            "updated_by": "x",
+            "vv": {
+              "desktop": 1
+            }
+          }
+        ],
+        "push": [
+          "x"
+        ]
+      },
+      "name": "concurrent_conflict",
+      "phone": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "pl-1": 1
+          }
+        }
+      },
+      "phone_id": "pl-1",
+      "server": {
+        "x": {
+          "id": "x",
+          "kind": "sprite",
+          "media": "image/png",
+          "provenance": {},
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 10,
+          "updated_by": "x",
+          "vv": {
+            "desktop": 1
+          }
+        }
+      }
+    }
+  ]
+}

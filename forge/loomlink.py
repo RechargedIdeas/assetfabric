@@ -153,6 +153,32 @@ def plan_sync(server: dict[str, dict[str, Any]], phone: dict[str, dict[str, Any]
     return {"pull": pull, "push": push, "conflicts": conflicts}
 
 
+# ------------------------------------------------------------------------------- ops
+# Jobs a paired phone may offload (C6). LoomCluster (C7) will route these across nodes later;
+# for now the desktop runs them itself.
+
+def op_hashchain(payload: dict[str, Any]) -> dict[str, Any]:
+    """sha256 chain — identical to fabric.core.hashchain (seed rendered with str())."""
+    h = str(payload.get("seed", "")).encode()
+    for _ in range(int(payload.get("rounds", 20000))):
+        h = hashlib.sha256(h).digest()
+    return {"digest": h.hex()}
+
+
+def op_gen(payload: dict[str, Any]) -> dict[str, Any]:
+    """Run one desktop Content Forge brief (heavier than LocalForge) and return artifact digests."""
+    from forge.generators import load_all
+    from forge.pipeline import Context, load_briefs
+
+    ctx = Context.create()
+    brief = {b["id"]: b for b in load_briefs(ctx.root)}[payload["brief_id"]]
+    out = load_all()[brief["kind"]](brief, ctx)
+    return {"ok": out.ok, "artifacts": {a.name: hashlib.sha256(a.data).hexdigest() for a in out.artifacts}}
+
+
+OPS = {"hashchain": op_hashchain, "gen": op_gen}
+
+
 # ------------------------------------------------------------------------------- server
 
 @dataclass
@@ -177,6 +203,7 @@ class LinkServer:
         self.offload_log = self.state_dir / "offload.jsonl"
         self.url = ""
         self.events: list[dict[str, Any]] = []
+        self.on_event: Any = None   # callable(ev) — the CLI prints pairings / the new code
 
     def uri(self) -> str:
         q = urllib.parse.urlencode({"u": self.url, "c": self.code, "n": self.node_id})
@@ -184,7 +211,12 @@ class LinkServer:
 
     def rotate(self) -> None:
         self.code, self.fails = new_code(), 0
-        self.events.append({"ev": "code_rotated"})
+        self._emit({"ev": "code_rotated"})
+
+    def _emit(self, ev: dict[str, Any]) -> None:
+        self.events.append(ev)
+        if self.on_event:
+            self.on_event(ev)
 
     def _save_sessions(self) -> None:
         tmp = self.sessions_path.with_suffix(".tmp")
@@ -218,7 +250,7 @@ class LinkServer:
             self.sessions[cid] = {"key": key, "caps": granted, "paired_at": time.time(), "last_ts": 0}
             self._save_sessions()
             self.rotate()   # one-time code
-            self.events.append({"ev": "paired", "client": cid, "caps": granted})
+            self._emit({"ev": "paired", "client": cid, "caps": granted})
             return {"ok": True, "granted": granted, "server_id": self.node_id}
 
     # --- signed requests
@@ -243,17 +275,19 @@ class LinkServer:
 
     # --- offload / sync
     def offload(self, cid: str, job: dict[str, Any]) -> dict[str, Any]:
-        from forge import loomcluster
-
         op = job.get("op")
         if op == "recon.capture":
-            data = base64.b64decode(job["payload"]["data_b64"])
-            e = self.store.put(job["payload"].get("id") or job["id"], "capture", data,
-                               {"from": cid, "note": "queued for RealityLoom (C10–C12 stub: not reconstructed)"},
-                               media=job["payload"].get("media", "image/jpeg"))
-            res = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub"}}
-        elif op in loomcluster.OPS:
-            res = {"ok": True, "value": loomcluster.OPS[op](job.get("payload") or {})}
+            payload = job.get("payload") or {}
+            data = base64.b64decode(payload["data_b64"])
+            e = self.store.put(payload.get("id") or job["id"], "capture", data,
+                               {"from": cid, "note": "stored for RealityLoom — reconstruction (C10–C12) not implemented"},
+                               media=payload.get("media", "image/jpeg"))
+            res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub"}}
+        elif op in OPS:
+            try:
+                res = {"ok": True, "value": OPS[op](job.get("payload") or {})}
+            except Exception as ex:  # noqa: BLE001 — reported to the phone, not raised
+                res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
         else:
             res = {"ok": False, "error": f"unsupported op {op!r}"}
         res.update(job_id=job["id"], node=self.node_id)

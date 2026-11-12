@@ -27,7 +27,7 @@ interface JobExecutor {
     fun execute(job: JobSpec): Map<String, Any?>
 }
 
-/** sha256 chain — identical to forge.loomcluster.op_hashchain (seed rendered with str()). */
+/** sha256 chain — identical to forge.loomlink.op_hashchain (seed rendered with str()). */
 fun hashchain(seed: Any?, rounds: Int): String {
     val md = MessageDigest.getInstance("SHA-256")
     var h = (seed?.toString() ?: "").toByteArray()
@@ -37,6 +37,7 @@ fun hashchain(seed: Any?, rounds: Int): String {
 
 /** CPU executor for everything PocketLoom can do offline. */
 class LocalExecutor(private val store: AssetStore?, private val palettes: (String) -> List<String>) : JobExecutor {
+    companion object { const val MAX_ATTEMPTS = 4 }
     override val ops = setOf("hashchain", "local.cave", "local.sprite")
     override val devices = listOf("cpu")
 
@@ -47,10 +48,19 @@ class LocalExecutor(private val store: AssetStore?, private val palettes: (Strin
             "local.cave", "local.sprite" -> {
                 val seed = (p["seed"] as Number? ?: 1L).toLong()
                 val pal = palettes(p["palette"] as String? ?: if (job.op == "local.cave") "cave_stone" else "hero_teal")
-                val a = if (job.op == "local.cave") LocalForge.cave(seed, palette = pal) else LocalForge.sprite(seed, palette = pal)
+                // Gate-rejected outputs are retried on derived sub-seeds (deterministic), like the
+                // desktop forge's gate→retry loop; `attempts` is reported in meta.
+                var attempt = 0
+                var a: LocalAsset
+                while (true) {
+                    val s = if (attempt == 0) seed else seed * 1_000_003L + attempt
+                    a = if (job.op == "local.cave") LocalForge.cave(s, palette = pal) else LocalForge.sprite(s, palette = pal)
+                    if (a.ok || ++attempt >= MAX_ATTEMPTS) break
+                }
+                a = LocalAsset(a.kind, a.seed, a.width, a.height, a.argb, a.gates, a.meta + ("attempts" to attempt + (if (a.ok) 1 else 0)))
                 if (store != null && a.ok) {
                     store.put(p["id"] as String? ?: "${a.kind}_$seed", a.kind, a.png,
-                        mapOf("seed" to seed, "backend" to a.meta["backend"], "gates" to a.gates.map { it.gate }))
+                        mapOf("seed" to seed, "sub_seed" to a.seed, "attempts" to a.meta["attempts"], "backend" to a.meta["backend"], "gates" to a.gates.map { it.gate }))
                 }
                 mapOf("ok" to a.ok, "sha256" to a.sha256, "gates" to a.gates.associate { it.gate to it.ok }, "meta" to a.meta)
             }
@@ -90,6 +100,12 @@ class OffloadQueue(private val file: File) {
     private val done = LinkedHashMap<String, Map<String, Any?>>()
 
     init {
+        // A torn final line (power loss mid-append) is dropped and the journal truncated to its
+        // last complete record, so the next append starts on a fresh line.
+        if (file.exists()) {
+            val text = file.readText()
+            if (text.isNotEmpty() && !text.endsWith("\n")) file.writeText(text.substring(0, text.lastIndexOf('\n') + 1))
+        }
         if (file.exists()) file.readLines().forEach { line ->
             val rec = try { Json.obj(line) } catch (e: Exception) { return@forEach }
             val id = rec["id"] as String
