@@ -37,3 +37,8 @@ companions/pocketloom/local.properties
 /.fabric/cache/
 /.fabric/jdk/
 games/game-zero/*.import
+
+# Gradle (PocketLoom)
+.gradle/
+.kotlin/
+companions/pocketloom/**/build/
