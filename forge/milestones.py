@@ -160,6 +160,21 @@ INCREMENTS["F7"] = Increment("F7", "launch-candidates", ("--net-report",), f7_ch
                              f7_perf, f7_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
 
+# Companion track (parallel, not an F-gate — BUILD_ORDER.md): PocketLoom C1–C6.
+from forge import accept_companions as _ac  # noqa: E402
+
+C_ORDER = ["C1", "C2", "C3", "C4", "C5", "C6"]
+_C_DESC = {
+    "C1": "PocketLoom / FabricCore: Kotlin core (JobExecutor, store, queue, telemetry) + debug APK (aapt/apksigner verified)",
+    "C2": "On-device generation: LocalForge CPU caves/sprites via backend ladder (ONNX rung = labelled stub), 2-core budget",
+    "C3": "Standalone UI: Generate / Library / Capture / Link / Telemetry, string resources only, offline by construction",
+    "C4": "Local capture: camera intent / import → content-addressed store + capture telemetry + queued recon offload",
+    "C5": "Pairing: LoomLink code / loomlink:// QR URI / Tailscale address; HMAC proofs, caps intersection, signed requests",
+    "C6": "Offload + sync: durable OffloadQueue drains to desktop; version-vector sync, conflicts keep both",
+}
+for _m in C_ORDER:
+    INCREMENTS[_m] = Increment(_m, "pocketloom", (), _ac.check(_m), _C_DESC[_m], _ac.perf(_m), _ac.runner(_m))
+
 
 def register(inc: Increment) -> None:
     INCREMENTS[inc.milestone] = inc

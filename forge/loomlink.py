@@ -37,6 +37,8 @@ from typing import Any
 CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 CODE_LEN = 8
 MAX_FAILS = 5
+CODE_TTL_S = 300          # an unused pairing code expires (limits offline guessing of the 8-char code)
+MAX_PENDING = 32
 TS_WINDOW_S = 120
 DEFAULT_ALLOW = ("offload", "sync")
 ALL_CAPS = ("offload", "sync", "drive_studio", "mirror")
@@ -195,6 +197,7 @@ class LinkServer:
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
         self.fails = 0
+        self.code_issued = time.time()
         self.pending: dict[str, dict[str, str]] = {}   # client_id → nonces
         self.sessions_path = self.state_dir / "paired.json"
         self.sessions: dict[str, dict[str, Any]] = (
@@ -210,7 +213,8 @@ class LinkServer:
         return f"loomlink://pair?{q}"
 
     def rotate(self) -> None:
-        self.code, self.fails = new_code(), 0
+        self.code, self.fails, self.code_issued = new_code(), 0, time.time()
+        self.pending.clear()
         self._emit({"ev": "code_rotated"})
 
     def _emit(self, ev: dict[str, Any]) -> None:
@@ -229,6 +233,10 @@ class LinkServer:
         cid, nc = str(body["client_id"]), str(body["nc"])
         ns = secrets.token_hex(16)
         with self.lock:
+            if time.time() - self.code_issued > CODE_TTL_S:
+                self.rotate()
+            if len(self.pending) >= MAX_PENDING:
+                self.pending.pop(next(iter(self.pending)))
             self.pending[cid] = {"nc": nc, "ns": ns, "code": self.code}
         return {"ns": ns, "server_id": self.node_id,
                 "proof": _mac(self.code.encode(), "srv", nc, ns, cid)}
@@ -239,6 +247,8 @@ class LinkServer:
             p = self.pending.pop(cid, None)
             if p is None:
                 raise PermissionError("no pairing in progress")
+            if p["code"] != self.code or time.time() - self.code_issued > CODE_TTL_S:
+                raise PermissionError("pairing code expired — use the current code")
             want = _mac(p["code"].encode(), "cli", p["nc"], p["ns"], cid)
             if not hmac.compare_digest(want, str(body.get("proof", ""))):
                 self.fails += 1
@@ -298,6 +308,12 @@ class LinkServer:
     def sync_manifest(self, cid: str, index: dict[str, Any]) -> dict[str, Any]:
         with self.store.lock:
             plan = plan_sync(self.store.entries, index, cid)
+            # identical bytes edited on both sides: adopt the merged vector here too, so the next
+            # round is a no-op on both ends
+            merged = {c["id"] for c in plan["conflicts"] if c["resolution"] == "merged_identical"}
+            for e in plan["pull"]:
+                if e["id"] in merged:
+                    self.store.install(e, None)
         return plan
 
     def sync_push(self, cid: str, entry: dict[str, Any], data: bytes, conflict_of: str | None) -> dict[str, Any]:
