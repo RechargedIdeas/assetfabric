@@ -21,6 +21,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 source .venv/bin/activate
 pytest -q                         # unit + component (≈ 14 min with Godot)
 forge accept F7                   # F7 full: exports + platform proofs (local; see docs/packaging.md)
+forge accept C1-C6                # PocketLoom: gradle tests + debug APK + lint + Kotlin↔Python LoomLink interop (JDK 17 + Android SDK)
+(cd companions/pocketloom && ./gradlew :fabriccore:test)   # FabricCore JVM unit tests only
 forge validate manifest           # forge.yaml against schema
 forge status                      # exit 0 == healthy
 forge doctor                      # env checks (godot binary advisory)
@@ -56,16 +58,19 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F4 | [F4.md](docs/acceptance-tests/F4.md) | live-tune (custom runner: backlog run + guardian-supervised serve run) |
 | F5 | [F5.md](docs/acceptance-tests/F5.md) | first-boss (custom runner: boss clear ×2 + save round-trip + 2400-fight balance matrix + soft-lock probe; ≈ 2 min on 8 vCPU, ≈ 7–9 min on 2 cores) |
 | F6 | [F6.md](docs/acceptance-tests/F6.md) | vertical-slice (custom runner: slice playthrough + quit/resume parity + selection matrix + parity + world gates; ≈ 30 s on 8 vCPU full, ≈ 15 s fast) |
+| C1–C6 | [C1-C6.md](docs/acceptance-tests/C1-C6.md) | pocketloom (companion track, not an F-gate: Gradle build once → JUnit + aapt/apksigner/lint + `fabriccore-all.jar` driven against the Python LoomLink server; ≈ 75 s with warm Gradle caches; fast mode = Python half + static scans) |
 | F7 | [F7.md](docs/acceptance-tests/F7.md) | launch-candidates (custom runner: `forge build --target all` + desktop slice in a network-less namespace + Android content slice + G-SAVE-01 ring desktop → Android → Web → desktop + PWA smoke + remap; ≈ 2.5 min full, ≈ 3 s fast) |
 
 ## 4. CI gates
 
-Workflow: `.github/workflows/ci.yml` (Ubuntu, `uv`, cached Godot 4.3 download). On every push to `main` and every PR:
+Workflow: `.github/workflows/ci.yml` (Ubuntu, `uv`, cached Godot 4.3 download). On every push to `main` / `feat/**` and every PR:
 
 1. Install `.[dev]` into a venv.
 2. `forge status` (must exit 0 — includes the offset guard).
 3. `pytest -q` — unit, pipeline, **determinism gate** (regenerated assets == committed), and **headless Godot increments** for every registered milestone.
 4. `REQUIRE_GODOT=1 scripts/smoke_godot.sh`.
+
+PocketLoom: job **`pocketloom`** (setup-java 17, Gradle cache via `gradle/actions/setup-gradle`, runner Android SDK) runs `forge accept C1-C6 --no-write` in full mode; `tests/test_companions.py` (Python half, shared vectors, fast-mode accepts) runs in the main job. Pushes to `feat/**` branches also run CI.
 
 F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, ShuttleLine vs sources, BoltPack SBOM + license audit for every target, network-API scan, editor save/remap round-trip). Platform exports + `forge accept F7` (full) are **local-only** (≈1 GB templates, JDK + Android SDK, headless Chrome; ≈ 2.5 min) — see [docs/packaging.md §CI](docs/packaging.md#ci). Planned: cached `package` job, Windows runner for DirectML. `[INFERENCE: workflow shape]`
 

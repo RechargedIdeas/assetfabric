@@ -6,7 +6,7 @@
   "passed": true,
   "perf": {
     "apk_bytes": 972815,
-    "apk_sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46",
+    "apk_sha256": "3ac8c1c9df10cf2ae5089c73312afdbd17c4c42ea13b1e8fcec49bce2c18212b",
     "mode": "full"
   },
   "result": {
@@ -14,12 +14,12 @@
       "apk": {
         "bytes": 972815,
         "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
-        "sha256": "d52f423a476b30a93b5fd6f197afd7a1c060adab8bebae6188ee5d40ca5dcc46"
+        "sha256": "3ac8c1c9df10cf2ae5089c73312afdbd17c4c42ea13b1e8fcec49bce2c18212b"
       },
       "junit_failures": 0,
       "junit_tests": 26,
       "ok": true,
-      "seconds": 50.9
+      "seconds": 56.0
     },
     "c3": {
       "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
@@ -72,8 +72,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 62.7,
-              "mean_ms": 39.1,
+              "max_ms": 81.5,
+              "mean_ms": 55.3,
               "n": 2
             }
           }

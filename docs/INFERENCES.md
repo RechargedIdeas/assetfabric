@@ -130,3 +130,65 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 98. **F7-16 CI scope**: platform exports and the full F7 acceptance stay local (≈1 GB templates, JDK + Android SDK, Chrome, ≈ 2.5 min) to keep the ≈ 14 min pytest job from growing; CI runs the F7 fast subset. A cached `package` job is a TODO.
 99. **F7-17 "Tier1+Tier2 launches"**: SPEC §13 names the F7 game milestone "Tier1+Tier2 launches" without defining the tiers. Read as Tier 1 = desktop (Linux + Windows, GAME_SPEC §5 "Desktop signed builds"), Tier 2 = Android + Web PWA (GAME_SPEC §6.2 G-WEB-01 / G-SAVE-01). "Launch" = a launch **candidate** build that passes the gates locally; nothing is published (producer direction: no public releases).
 100. **F7-18 Windows proof without Windows**: no Windows host or wine on the build box, so the Windows build is accepted on static evidence (PE32+ x86-64 headers, PCK content == Linux, same template set) rather than a runtime smoke; the BUILD.json records `wine_smoke.ran = false`. A Windows run is a TODO before any external hand-off.
+
+## C1–C6 — PocketLoom companion (standalone Android + LoomLink)
+
+SPEC §8 / §13 give C1–C6 one-line focuses ("PocketLoom / FabricCore", "On-device generation", "Standalone UI",
+"Local capture", "Pairing (QR/codes/Tailscale)", "Offload + sync") plus the §8 bullet list. Everything below is how
+those lines were made concrete.
+
+1. **C-1 FabricCore is JVM-only Kotlin, not Kotlin Multiplatform yet.** SPEC says "Kotlin Multiplatform shared module".
+   The module is pure Kotlin with zero third-party runtime dependencies (own JSON, PNG encoder, HMAC via `javax.crypto`),
+   so adding KMP targets later is mechanical; today the Android app and a desktop JVM (the `fabriccore-all.jar` CLI used
+   by `forge accept C*`) share it. Desktop *Studio* integration is Python (`forge/loomlink.py`), wire-compatible.
+2. **C-2 What "C1" means.** C1 = the FabricCore runtime contract (JobSpec/JobExecutor, Dispatcher, AssetStore with
+   version vectors, OffloadQueue, Telemetry) + an installable APK shell, verified by unit tests, aapt and apksigner.
+3. **C-3 "On-device generation" = LocalForge CPU procedural** (CA caves, mirrored sprites) with the same gate vocabulary
+   as desktop F1 generators (solvability, floor ratio, palette lock, symmetry, fill). Gate rejections retry on derived
+   sub-seeds `seed·1 000 003 + k` (k ≤ 3) — deterministic; `attempts` recorded. Not byte-identical to the desktop
+   generators (different algorithms), only the same contract.
+4. **C-4 "small ONNX" is a labelled stub.** No ONNX Runtime is bundled (≈ +10–20 MB per ABI, no trained small models exist
+   yet). The backend ladder lists `onnx-small` first and reports it unavailable with the reason; the CPU rung always
+   runs (GroundWeave rule: CPU fallback for every ML path). `ModelCache` (byte-budget LRU, pins) is real and tested so the
+   ONNX rung can plug in.
+5. **C-5 UI toolkit = platform widgets, no AndroidX/Compose**: keeps the APK ≈ 1 MB and the Gradle build offline-friendly.
+   Tabs: Generate · Library · Capture · Link · Telemetry ("telemetry UI, generate screen, local asset store" in §8).
+   All text in string/plural resources (English only for now; locale files later).
+6. **C-6 Capture = stills via the system camera app or import**, not an in-app camera (Camera2/CameraX) — no CAMERA
+   permission, no AndroidX. The camera writes through a private non-exported `ContentProvider`. Captures are stored with
+   telemetry (source, time, device, size, dimensions) and a `recon.capture` job is queued; the desktop only *stores* the
+   capture (reconstruction is C10–C12). Video/burst/ARCore depth are C10–C11.
+7. **C-7 Transport security.** LoomLink speaks HTTP to the address the user pairs with (LAN IP or Tailscale 100.x).
+   Pairing: 8-char one-time code (31-symbol alphabet ≈ 39.6 bits) proven by HMAC-SHA256 over fresh nonces from both
+   sides; per-device session key derived from code + nonces; every later request HMAC-signed over
+   `METHOD|PATH|ts|sha256(body)` with a ±120 s window and strictly increasing ts. That gives authentication, integrity
+   and replay protection, **not confidentiality** — Tailscale provides encryption; raw LAN payloads are readable.
+   Android therefore allows cleartext app-wide (user-chosen IPs can't be enumerated in a network-security config).
+   Known limit: the `hello` proof lets a LAN attacker brute-force the code offline; mitigated by one-time use, a
+   **300 s code TTL** and rotation after 5 bad proofs / every pairing — a PAKE (e.g. SPAKE2) or TLS with a pinned
+   desktop fingerprint is the fix (TODO). `last_ts` is not persisted, so after a desktop restart a captured request
+   could be replayed within its 120 s window (TODO).
+8. **C-8 QR = `loomlink://pair?u=<url>&c=<code>&n=<id>`** rendered by the desktop (`forge link serve`, terminal QR with
+   the optional `qrcode` package). The phone does not embed a QR decoder: any camera/QR app opens the URI and Android
+   routes it to PocketLoom's intent filter, which **pre-fills** the Link tab — the user must still tap Pair (no ambient
+   authority).
+9. **C-9 Capabilities** = `offload`, `sync` (granted by default), `drive_studio`, `mirror` (reserved for C9; never granted
+   unless the desktop user passes `--allow`). Granted = requested ∩ allowed.
+10. **C-10 Sync model.** Same on-disk store format both sides (`index.json` + `objects/aa/<sha>`), per-asset version
+    vectors. Dominates → copy; equal → skip; concurrent with identical bytes → merge vectors on **both** sides;
+    concurrent different bytes → **keep both**: desktop copy keeps the id, the phone copy becomes `<id>~<phone id>` on
+    both sides (`conflict_of` recorded). Deletions are not synced yet (no tombstones) — TODO.
+11. **C-11 Offload ops** accepted by the desktop today: `hashchain` (test/benchmark), `gen` (run one Content Forge brief),
+    `recon.capture` (store only). LoomCluster (C7) will route these across nodes; until then the paired desktop runs them.
+12. **C-12 Acceptance without a device.** No Android device and no KVM emulator on the build host, so the APK is accepted
+    on static evidence (aapt/apksigner/lint/dex contents) + the **same FabricCore code** exercised on the JVM against the
+    real desktop server. UI/intent behaviour on hardware is unverified and labelled so.
+13. **C-13 Session key at rest** lives in app-private storage (`files/pocketloom/link/session.json`), excluded from cloud
+    backup and device transfer; Android Keystore wrapping is a TODO.
+14. **C-14 Versioning.** PocketLoom has its own `versionName` `0.1.0-c6`; the Fabric package became `0.7.1+f7` (patch
+    bump — new `forge link` / `forge accept C*` commands; the Fabric milestone stays F7).
+15. **C-15 Taken from `wip/f5-companions`:** the FabricCore draft (`Json`, `Store`, `Jobs`, `LocalForge`), the Gradle
+    layout, and `forge/loomlink.py` (made self-contained: its `loomcluster` import replaced by a local ops table).
+    **Left on the branch for the C7/C8 run:** `forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`,
+    `content/groundweave/ladder.yaml`, the `cluster:` block in `forge.yaml`. The branch's F5 game/balance files were
+    superseded by `main` long ago and were not touched.

@@ -14,8 +14,9 @@
 |---|---|
 | Fabric milestone | **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** ✅ accepted (`forge accept F7`) |
 | Game increment | `launch-candidates` — unsigned Linux + Windows builds, debug Android APK, Web PWA (9.3 MB gzip, offline) of the vertical slice; saves round-trip desktop → Android → Web → desktop |
-| Version | `0.7.0+f7` |
-| Next | Companion track (verify + land `wip/f5-companions`: PocketLoom C1–C6, LoomCluster C7, GroundWeave C8; C9–C12 interfaces); F8 retro is optional — confirm scope first |
+| Companion track | **PocketLoom C1–C6** ✅ accepted (`forge accept C1-C6`) — standalone offline Android companion, debug APK ≈ 0.97 MB: on-device generation, library, capture, LoomLink pairing (code / QR URI / Tailscale), offload + sync. Not yet run on a phone (no device/KVM) |
+| Version | `0.7.1+f7` (PocketLoom `0.1.0-c6`) |
+| Next | LoomCluster C7 + GroundWeave C8 (drafts on `wip/f5-companions`); C9–C12 interfaces + labelled stubs; F8 retro is optional — confirm scope first |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -37,6 +38,8 @@ pytest -q
 forge build           # regenerate content from content/briefs/ (deterministic)
 forge accept F6       # headless Godot acceptance (needs Godot 4.3); FORGE_ACCEPT_FAST=1 for the CI subset
 forge build --target all   # F7 platform builds → dist/ (needs `forge templates fetch`, JDK 17, Android SDK; see docs/packaging.md)
+forge accept C1-C6    # PocketLoom: Gradle build + debug APK verify + Kotlin↔Python LoomLink interop (JDK 17, Android SDK)
+forge link serve --bind <LAN/Tailscale IP>   # pair a PocketLoom phone (code + loomlink:// QR)
 forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
 forge live serve --headless &   # Game Zero under the guardian; then: forge live set sim.leash=72
 ```
@@ -56,7 +59,7 @@ Play Game Zero: `godot --path games/game-zero -- --scene=slice` (the vertical sl
 | `docs/acceptance-tests/` | Milestone acceptance checklists |
 | `games/game-zero/` | Game Zero Godot 4 project ([README](games/game-zero/README.md)) |
 | `studio/` | Desktop Studio (PySide6) — stub |
-| `companions/pocketloom/` | Android companion — placeholder |
+| `companions/pocketloom/` | PocketLoom Android companion + FabricCore (Kotlin) — C1–C6 ([README](companions/pocketloom/README.md)) |
 | `cluster/loomcluster/` | Compute clustering — placeholder |
 | `store/` | Content-addressed asset store (blobs gitignored) |
 | `locales/` | Locale string tables (no hard-coded strings) |

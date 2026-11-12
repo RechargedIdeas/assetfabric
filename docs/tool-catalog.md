@@ -20,10 +20,14 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **SplatForge** | — | 3DGS training | C12 / F3–F4 backdrop | deferred |
 | **MeshWeaver** | — | Splat→mesh | Phase 2 | deferred |
 | **LensForge** | Lens | Camera intelligence | C10–C11 | deferred |
-| **LoomCluster** | Loom | Equal-node clustering | C7 | placeholder |
-| **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | principle only |
+| **LoomCluster** | Loom | Equal-node clustering | C7 | placeholder (unverified draft on `wip/f5-companions`) |
+| **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | principle only (unverified draft on `wip/f5-companions`; PocketLoom applies the rule locally: CPU rung always available) |
 | **MirrorWeave** | Mirror | Cross-device control/stream | C9 | deferred |
-| **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | deferred |
+| **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | **real (C5/C6)**: one-time code + `loomlink://` QR URI + Tailscale address, HMAC-SHA256 mutual proof, capability ∩, signed requests; offload + version-vector sync (`forge link serve`, `forge/loomlink.py`, `fabric.core.LoomLinkClient`). No TLS/PAKE yet |
+| **PocketLoom** | — | Standalone Android companion | C1–C6 | **real, debug APK (C1–C6)**: Generate · Library · Capture · Link · Telemetry; offline-first; not yet run on a device |
+| **FabricCore** | — | Shared Kotlin runtime (JobExecutor, store, queue, telemetry) | C1 | **real, JVM-only** (KMP targets later); also a desktop CLI jar |
+| **LocalForge** | — | On-device generation | C2 | **CPU procedural real** (caves, sprites, gates + retry); ONNX rung = labelled stub |
+| **OffloadQueue** | — | Deferred heavy work until paired | C6 | **real** (durable JSONL journal, torn-line safe, drains via LoomLink) |
 | **GIRT** | — | Inference runtime | F3 | **real (CPU/GDScript)** — `autoload/girt.gd`: registry, latency budgets, telemetry, LM refusal inside tick; backends `mlp-gdscript`, `persona-bigram`. ONNX Runtime GDExtension deferred |
 | **CascadeHub** | — | Multi-agent bus | F3 | **real** — `autoload/cascade_hub.gd`: typed topics, drained after each tick |
 | **Substrate sandbox** | — | Isolated generator/authoring execution | F4 | **real** bwrap + process tiers (`forge sandbox`); Firecracker/gVisor detected only (no KVM launcher) |
@@ -54,6 +58,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge gen <id> [--seed N]` | One brief; exit 1 on gate failure |
 | `forge palette [name] [--variant]` | Lists/echoes PatternVault swatches |
 | `forge accept <F>` | Headless Godot increment passes; result recorded |
+| `forge accept C1-C6` / `C<n>` | PocketLoom Gradle build + APK verify + Kotlin↔Python interop pass; `results/C<n>.json` recorded |
+| `forge link serve` | Prints one-time code + `loomlink://` URI (QR if `qrcode` installed); serves pairing/offload/sync |
 | `forge report` | Regenerates STATUS.md |
 | `forge sandbox doctor` / `run <brief>` | Lists real tiers; runs one brief sandboxed |
 | `forge build --sandbox auto` | Every generator job sandboxed; output identical |

@@ -4,6 +4,49 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.1+f7] — 2026-11-12 — Companion track C1–C6: PocketLoom (standalone offline Android companion) + LoomLink
+
+### Added
+- `companions/pocketloom/` — **PocketLoom** `0.1.0-c6` (Gradle 8.9 wrapper, AGP 8.7.3, Kotlin 2.0.21, minSdk 26 / targetSdk 35):
+  - **FabricCore** (`fabriccore/`, pure Kotlin/JVM, no third-party runtime deps): `JobSpec`/`JobExecutor`, `LocalExecutor`,
+    `Dispatcher` (run locally or queue), content-addressed `AssetStore` with per-asset version vectors, durable
+    `OffloadQueue` (torn-line safe), `Telemetry` (JSONL, rotated), `ModelCache` (byte-budget LRU + pins), `GenBackends`
+    ladder (ONNX rung = labelled stub, CPU always), **LocalForge** caves/sprites with gates + deterministic retry,
+    `Captures` (JPEG/PNG/WebP sniffing + dimensions), `LoomLinkClient` (HMAC pairing, signed requests), `SyncPlan` /
+    `SyncClient`, `PocketLoomCore` facade, `fabriccore-all.jar` CLI. 26 JUnit tests.
+  - **App** (`app/`): Generate · Library · Capture · Link · Telemetry on platform widgets; all text in string/plural
+    resources; camera intent via a private `CaptureProvider` (no CAMERA permission) + document import; `loomlink://pair`
+    intent filter (QR → pre-filled Link tab); data-extraction rules exclude everything from backup/transfer.
+- `forge/loomlink.py` (from `wip/f5-companions`, made self-contained): desktop pairing server + offload ops
+  (`hashchain`, `gen`, `recon.capture` → store) + sync planner/store; `forge link serve` (code, `loomlink://` URI, QR if
+  `qrcode` is installed).
+- `forge accept C1…C6` / `forge accept C1-C6` (`forge/accept_companions.py`): one Gradle build (tests, fat jar, debug APK,
+  lint), aapt/apksigner/dex checks, 2-core generation run with independent PNG palette check, manifest/string/offline
+  scans, Kotlin↔Python pairing/offload/sync interop; results `docs/acceptance-tests/results/C1…C6.json`; fast mode for
+  pytest. STATUS.md gains a companion table.
+- `tests/test_companions.py`; shared vectors `tests/fixtures/loomlink_vectors.json` (HMAC, hashchain, canonical JSON,
+  sync plans) checked by both Python and Kotlin; `tests/fixtures/capture_640x480.jpg`.
+- CI job `pocketloom` (setup-java 17, Gradle cache, runner Android SDK) running `forge accept C1-C6 --no-write`.
+- Docs: `docs/acceptance-tests/C1-C6.md`, `companions/pocketloom/README.md`, INFERENCES C-1…C-15, packaging/TESTING/
+  ARCHITECTURE/SECURITY/tool-catalog/GLOSSARY updates.
+
+### Changed
+- Version `0.7.1+f7` (Fabric milestone stays F7). CI also runs on pushes to `feat/**`.
+- LoomLink hardening vs the draft: pairing codes expire after 300 s, a `hello` issued before a code rotation cannot be
+  confirmed, pending hellos capped; identical-bytes concurrent edits converge on both sides (second sync is a no-op).
+- `.gitignore`: `.gradle/`, `.kotlin/`, `companions/pocketloom/**/build/`.
+
+### Measured
+- `forge accept C1-C6`: all passed (full mode) in ≈ 75 s on 8 vCPU with warm Gradle caches (build ≈ 56 s).
+  Debug APK 972 815 bytes, `apksigner` v2 verified (debug key; SHA-256 per machine — see C1-C6.md).
+  LocalForge on 2 cores: cave mean 13 ms / max 53 ms, sprite mean 12 ms / max 62 ms (budget 250 ms); 16/16 gates each,
+  byte-identical across homes.
+
+### Known
+- Not run on a phone/emulator (no device, no KVM). ONNX rung is a stub. LoomLink: no TLS/PAKE (integrity + replay
+  protection only; Tailscale for encryption), no sync of deletions, session key not Keystore-wrapped.
+- LoomCluster (C7) and GroundWeave (C8) drafts stay on `wip/f5-companions` for the next run.
+
 ## [0.7.0+f7] — 2026-11-12 — F7 Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack
 
 ### Added

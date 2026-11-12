@@ -50,16 +50,18 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 
 ## Companion / Cluster (parallel)
 
-| ID | Focus | F0 depth |
+C1–C6 acceptance: `forge accept C1-C6` → `docs/acceptance-tests/results/C*.json`, checklist [docs/acceptance-tests/C1-C6.md](docs/acceptance-tests/C1-C6.md).
+
+| ID | Focus | State |
 |---|---|---|
-| C1 | PocketLoom / FabricCore | placeholder README |
-| C2 | On-device generation | deferred |
-| C3 | Standalone UI | deferred |
-| C4 | Local capture | deferred |
-| C5 | Pairing (QR/codes/Tailscale) | deferred |
-| C6 | Offload + sync | deferred |
-| C7 | LoomCluster | fleet in `forge.yaml` only |
-| C8 | GroundWeave | principle documented; ladder later |
+| C1 | PocketLoom / FabricCore | ✅ accepted 2026-11-12 — Kotlin core + debug APK |
+| C2 | On-device generation | ✅ accepted — LocalForge CPU (ONNX rung stub) |
+| C3 | Standalone UI | ✅ accepted — 5 tabs, string resources, lint clean (no device run yet) |
+| C4 | Local capture | ✅ accepted — camera intent / import → store + queued recon offload |
+| C5 | Pairing (QR/codes/Tailscale) | ✅ accepted — LoomLink HMAC pairing, `forge link serve` |
+| C6 | Offload + sync | ✅ accepted — OffloadQueue drain, version-vector sync (keep both) |
+| C7 | LoomCluster | **next** — unverified draft on `wip/f5-companions`; fleet in `forge.yaml` |
+| C8 | GroundWeave | **next** — unverified draft on `wip/f5-companions`; principle documented |
 | C9 | MirrorWeave | deferred |
 | C10–C12 | LensForge / depth / SplatForge path | deferred |
 

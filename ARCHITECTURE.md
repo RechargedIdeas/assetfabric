@@ -78,7 +78,9 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/shuttleline.py` | ShuttleLine `shuttleline.contract/1`, per-target shipped-content verification, `generic-folder` adapter | F7 |
 | `forge/boltpack.py` | BoltPack: CycloneDX SBOM (engine copyright info + platform extras + content), license audit, `LICENSES/`, `.fabricbolt` | F7 |
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
-| `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
+| `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
+| `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
+| `studio/`, `cluster/loomcluster/` | Studio / cluster tracks | stub (LoomCluster/GroundWeave drafts on `wip/f5-companions`) |
 
 ### Content flow (F1)
 
@@ -107,6 +109,19 @@ games/game-zero ─► dist/.stage (no .gdignore; PNG/WAV importer="keep") ─�
    ─► ShuttleLine contract vs shipped PCK/APK ─► BoltPack SBOM + license audit ─► dist/bolt/*.fabricbolt
 ```
 
+### PocketLoom flow (C1–C6)
+
+```
+PocketLoom (standalone, offline)                          desktop (optional, paired)
+ Generate ─► Dispatcher ─► LocalExecutor (LocalForge CPU) ─► AssetStore (sha256 blobs + version vectors)
+ Capture (camera intent / import) ─► AssetStore + OffloadQueue[recon.capture]
+ Link: code / loomlink:// QR / Tailscale IP ─► HMAC pairing ─► session key ─► signed requests
+ OffloadQueue.drain ───────────────────────────────────────► forge/loomlink.py /offload (hashchain · gen · recon.capture→store)
+ SyncClient ─► /sync/manifest (plan) ─► /sync/push · /sync/blob ◄──► SyncStore (same format; conflicts keep both)
+```
+
+FabricCore (Kotlin) and `forge/loomlink.py` (Python) are wire-compatible; shared vectors in `tests/fixtures/loomlink_vectors.json`.
+
 The sim is separated from rendering so it can run headless (acceptance, balance, RL) at thousands of ticks per second and stay deterministic (state hash).
 
 ## Core technical decisions
@@ -115,6 +130,7 @@ The sim is separated from rendering so it can run headless (acceptance, balance,
 |---|---|
 | Engine | Godot 4, Compatibility renderer |
 | Android (game) | Thin Kotlin plugins; game logic not primarily Kotlin |
+| Android (companion) | PocketLoom: Kotlin, platform widgets (no AndroidX), FabricCore JVM module shared with a desktop CLI; LoomLink = HTTP + HMAC (Tailscale for encryption) |
 | Desktop Studio | Python + PySide6 |
 | Inference | ONNX Runtime (NNAPI / WASM SIMD128 / CPU / DirectML / Vulkan); AMD: DirectML or ROCm, not CUDA-first |
 | RL training | PyTorch + Ray RLlib / CleanRL ↔ headless Godot gRPC |

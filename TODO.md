@@ -2,14 +2,25 @@
 
 Last updated: 2026-11-12 America/New_York
 
-## Current sprint — companion track (next)
+## Current sprint — companion track (next: C7/C8)
 
-- [ ] Branch from `main`; review + verify `wip/f5-companions` (do not merge blind): PocketLoom FabricCore (Kotlin), `forge/loomcluster.py`, `forge/loomlink.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, cluster settings in `forge.yaml`
-- [ ] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync)
+- [x] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync) — accepted 2026-11-12 (`forge accept C1-C6`)
+- [ ] Review + verify the rest of `wip/f5-companions` (do not merge blind): `forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, `content/groundweave/ladder.yaml`, cluster settings in `forge.yaml`
 - [ ] LoomCluster C7 (node registry + scheduler) and GroundWeave C8 (CPU fallback ladder) with acceptance on a 2-core / no-GPU node
 - [ ] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs
 - [ ] **Human GUI playtest of the vertical slice** (F6 carry-over): measure real length vs 15–20 min; HUD/quest/overlay readability; controls (E interact, H salve, Tab freeze, `/` command); music mix and fades; art legibility of plots/bench/nodes. Checklist: docs/acceptance-tests/F6.md §Human playtest
 - [ ] Slice length: if humans also finish well under 15 min, add content (more field/tunnel areas, a second crop cycle, side quests) rather than slowing the bot
+
+## PocketLoom follow-ups (C1–C6)
+
+- [ ] On-device run (Redmi Note 12 Pro 5G, D-002): install the debug APK; Generate/Library/Capture/Link/Telemetry by hand; QR → intent → pair; drain + sync with `forge link serve`; record on-device generation timings
+- [ ] ONNX rung for LocalForge (onnxruntime-android + small sprite/tile models, NNAPI → CPU) behind the existing ladder + ModelCache
+- [ ] LoomLink security: PAKE (SPAKE2) or TLS with pinned desktop fingerprint; persist desktop `last_ts` across restarts; Android Keystore-wrapped session key
+- [ ] Sync deletions (tombstones) and a conflict-resolution UI (today: keep both, shown as "sync conflict copy")
+- [ ] In-app QR scanner (today: system camera app opens `loomlink://`); `forge link serve` QR needs the optional `qrcode` package
+- [ ] Translations (strings are resources; only `values/` English exists); fix lint `DataExtractionRules` warning (legacy `allowBackup` for API 26–30)
+- [ ] Kotlin Multiplatform targets for FabricCore (desktop-native / iOS) if needed (INFERENCE C-1)
+- [ ] Release signing + AAB + Play listing (Producer keys)
 
 ## Packaging follow-ups (F7)
 
@@ -43,6 +54,7 @@ Last updated: 2026-11-12 America/New_York
 - [x] F5 Balance (accepted 2026-11-12): Monte Carlo runner (G-BAL-01 pass), Optuna TPE tuning, soft-lock detection, save v3 + migrations; first tier-3 boss
 - [x] F7 Packaging (accepted 2026-11-12): `forge build --target` Linux / Windows / debug APK / Web PWA, PWAPipeline (G-WEB-01), ShuttleLine contract + generic-folder adapter, BoltPack SBOM + license audit; G-SAVE-01 ring, G-NET-01 offline; G-A11Y-01 partial; unsigned
 - [x] F6 Vertical slice (accepted 2026-11-12): quest statechart, farming/gather/craft economy, tiered loot, adaptive music, field ⇄ tunnels ⇄ cave ⇄ lair, save v4 + quit/reload parity, QA autopilot, 12-selection matrix; per-pair balance gate
+- [x] PocketLoom C1–C6 (accepted 2026-11-12): FabricCore, LocalForge, standalone UI, capture, LoomLink pairing, offload + sync; debug APK; CI `pocketloom` job
 - [x] Private repo + proprietary license (D-003, D-004)
 
 ## Backlog (later milestones)
@@ -55,7 +67,7 @@ Last updated: 2026-11-12 America/New_York
 
 ## Companion / cluster (parallel)
 
-- [ ] C1 PocketLoom FabricCore (Kotlin) — JobExecutor contract, local store (unverified draft on `wip/f5-companions`)
+- [x] C1–C6 PocketLoom (accepted 2026-11-12) — see docs/acceptance-tests/C1-C6.md
 - [ ] C7 LoomCluster node registry + scheduler; C8 GroundWeave fallback ladder (unverified draft on `wip/f5-companions`)
 
 ## Blockers

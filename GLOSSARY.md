@@ -27,7 +27,9 @@
 | **Game increment** | Playable Game Zero step that proves a Fabric milestone (`forge.yaml` `game.increment`). |
 | **HeadlessSim** | Deterministic simulation harness for RL/balance. |
 | **GodotIPC / PWAPipeline** | Android data-plane bridge / Web export orchestrator. |
-| **FabricCore** | Kotlin Multiplatform shared module for PocketLoom. |
+| **FabricCore** | Shared Kotlin module for PocketLoom (JVM-only today; KMP targets later — INFERENCE C-1); also runs as a desktop CLI jar. |
+| **LocalForge** | PocketLoom on-device generation (CPU procedural caves/sprites; ONNX rung later). |
+| **OffloadQueue** | PocketLoom durable queue of jobs waiting for a paired desktop. |
 | **RC family** | Reality-capture models (chat "R1"), renamed to avoid the Retro R1 clash. |
 | **SwatchStudio** | Live material tuning UI with CLI echo. |
 | **docs/design/** | Frozen imports of the authoritative design specs. |

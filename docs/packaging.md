@@ -114,11 +114,34 @@ Android app-private storage, Web IndexedDB (`/userfs`). `--scene=savecheck --imp
 save from another device. On Web, Godot persists `user://` to IndexedDB from the main loop, so the game waits a few
 frames before quitting after a save (`Save.quit_after_persist`) [INFERENCE F7-5]. Cloud sync is out of scope (GAME_SPEC §5).
 
+## PocketLoom companion APK (C1–C6)
+
+PocketLoom is a separate, native Kotlin app (not a Godot export) built with Gradle from `companions/pocketloom/`:
+
+```bash
+forge accept C1-C6     # builds + verifies + records results; copies the APK to dist/pocketloom/pocketloom-0.1.0-c6-debug.apk
+# or by hand:
+cd companions/pocketloom && ./gradlew :fabriccore:test :fabriccore:fatJar :app:assembleDebug :app:lintDebug
+```
+
+| | |
+|---|---|
+| Toolchain | Gradle 8.9 (wrapper, committed), AGP 8.7.3, Kotlin 2.0.21, JDK 17 (same discovery as above), Android SDK `platforms;android-35` + build-tools 35 |
+| SDK path | `ANDROID_HOME` / `ANDROID_SDK_ROOT`, or `companions/pocketloom/local.properties` (`sdk.dir=…`, **gitignored**) |
+| Output | `app/build/outputs/apk/debug/app-debug.apk` → `dist/pocketloom/` (both gitignored), ≈ 0.97 MB, no native libs |
+| Signing | Android Gradle **debug** keystore (`~/.android/debug.keystore`, auto-created) — so the APK SHA-256 differs per machine. Release keystore / AAB / Play listing: TODO (below) |
+| Verify | `aapt dump badging`, `apksigner verify`, Android lint (0 errors, 0 i18n issues), dex contains FabricCore — see docs/acceptance-tests/C1-C6.md |
+| Install | `adb install -r dist/pocketloom/pocketloom-0.1.0-c6-debug.apk` (not yet done on hardware — no device on the build box) |
+
+Unlike the Game Zero APK (no `INTERNET`), PocketLoom requests `INTERNET` — used only after the user pairs with a desktop
+(LoomLink, INFERENCES C-7). It requests no camera/storage permissions.
+
 ## Signing & stores (TODO)
 
 - [ ] Windows Authenticode signing (`codesign/enable`, rcedit for icon/version resources) — needs a code-signing cert.
 - [ ] Linux: AppImage/Flatpak packaging + signature.
 - [ ] macOS (out of scope for v1 targets; needs notarisation).
+- [ ] PocketLoom release signing (own release keystore via env, `signingConfigs`), AAB, Play listing.
 - [ ] Android release keystore (never committed; `GODOT_ANDROID_KEYSTORE_RELEASE_*` env), AAB via gradle build, Play listing, D-002 device test on the Redmi Note 12 Pro 5G.
 - [ ] Web: host choice + HTTPS + headers; itch.io/own host listing.
 - [ ] BoltPack detached signature over `bolt.json` (release key).
@@ -130,3 +153,6 @@ Exports are **local-only** for now: the templates are ≈1 GB, the APK needs JDK
 acceptance takes ≈ 2.5 min on top of a ≈ 14 min pytest job. CI runs the F7 **fast** subset inside pytest (presets,
 targets, ShuttleLine vs sources, BoltPack SBOM/audit, network-API scan, editor save/remap round-trip). A separate
 cached `package` job is a TODO once a runner budget is agreed.
+
+PocketLoom **does** build in CI: job `pocketloom` (setup-java 17 + Gradle cache + the runner's Android SDK) runs
+`forge accept C1-C6 --no-write` — Gradle with warm caches is ≈ 1 min, so it stays cheap.
