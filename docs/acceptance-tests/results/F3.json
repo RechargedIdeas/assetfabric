@@ -5,16 +5,16 @@
   "milestone": "F3",
   "passed": true,
   "perf": {
-    "field_warm_ms": 144.01,
-    "lm_p95_us": 49,
-    "policy_p95_us": 20,
+    "field_warm_ms": 127.37,
+    "lm_p95_us": 59,
+    "policy_p95_us": 22,
     "swap_target_met": false,
     "swap_target_ms": 50.0,
     "swap_threaded": true,
-    "swap_wall_ms": 103.89
+    "swap_wall_ms": 94.55
   },
   "result": {
-    "abilities_loaded": 14,
+    "abilities_loaded": 17,
     "abilities_used": [
       "arrow",
       "bite",
@@ -64,8 +64,8 @@
         },
         {
           "event": "kill",
-          "line": "That's done.",
-          "tick": 490,
+          "line": "One less thing.",
+          "tick": 471,
           "who": "kael"
         },
         {
@@ -82,62 +82,50 @@
         },
         {
           "event": "kill",
-          "line": "That's done.",
-          "tick": 610,
+          "line": "One less thing.",
+          "tick": 591,
           "who": "kael"
         },
         {
-          "event": "kill",
-          "line": "Rest now.",
-          "tick": 638,
-          "who": "bram"
-        },
-        {
-          "event": "kill",
-          "line": "Target down.",
-          "tick": 641,
-          "who": "nyra"
-        },
-        {
           "event": "victory",
-          "line": "Not a single wasted arrow.",
-          "tick": 641,
+          "line": "Easy, partner.",
+          "tick": 613,
           "who": "nyra"
         }
       ],
-      "callouts_total": 12,
+      "callouts_total": 10,
       "cascade": {
-        "callout": 12,
+        "callout": 10,
         "callout_request": 15,
         "dialogue_request": 2,
         "intent": 2
       },
       "decisions": {
-        "bt_ticks": 8678,
-        "policy": 109,
-        "rule": 2554
+        "bt_ticks": 8403,
+        "policy": 121,
+        "rule": 2534
       },
       "dialogue": [
         {
-          "e2e_ms": 0.09,
+          "e2e_ms": 0.1,
           "persona": "kael",
           "reply": "the old tunnels lead to the cave remembers every step we take"
         },
         {
-          "e2e_ms": 0.14,
+          "e2e_ms": 0.15,
           "persona": "sola",
           "reply": "the water"
         }
       ],
-      "field_warm_ms": 144.01,
+      "field_warm_ms": 127.37,
       "girt": {
-        "callouts_served": 12,
+        "callouts_served": 10,
         "lm_calls": 2,
-        "lm_p95_us": 49,
+        "lm_p95_us": 59,
         "lm_refused_in_tick": 0,
-        "policy_calls": 109,
+        "policy_calls": 121,
         "policy_fallbacks": 0,
-        "policy_p95_us": 20,
+        "policy_p95_us": 22,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -210,28 +198,28 @@
       "swap_recs": [
         [
           "nyra",
-          11
+          18
         ],
         [
           "kael",
-          7.26
+          12.5
         ],
         [
           "sola",
-          5
+          10
         ],
         [
           "bram",
-          -17
+          -14
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 103.89,
+      "swap_wall_ms": 94.55,
       "swaps": [
         {
           "tick": 260,
           "to": "nyra",
-          "wall_ms": 103.89
+          "wall_ms": 94.55
         }
       ]
     },
@@ -252,23 +240,23 @@
     "entities": {
       "bram": {
         "alive": true,
-        "casts": 12,
-        "damage": 104,
+        "casts": 10,
+        "damage": 98,
         "healing": 0,
-        "hits": 24,
-        "hp": 35,
-        "kills": 3,
+        "hits": 22,
+        "hp": 44,
+        "kills": 4,
         "kind": "fighter",
-        "max_hp": 81,
+        "max_hp": 83,
         "team": 0
       },
       "bram_stone_tortle": {
         "alive": true,
-        "casts": 4,
-        "damage": 6,
+        "casts": 3,
+        "damage": 5,
         "healing": 0,
-        "hits": 4,
-        "hp": 22,
+        "hits": 3,
+        "hp": 38,
         "kills": 1,
         "kind": "pet",
         "max_hp": 40,
@@ -312,6 +300,18 @@
       },
       "emberling_1": {
         "alive": false,
+        "casts": 6,
+        "damage": 9,
+        "healing": 0,
+        "hits": 6,
+        "hp": 0,
+        "kills": 0,
+        "kind": "enemy",
+        "max_hp": 24,
+        "team": 1
+      },
+      "emberling_2": {
+        "alive": false,
         "casts": 7,
         "damage": 10,
         "healing": 0,
@@ -322,24 +322,12 @@
         "max_hp": 24,
         "team": 1
       },
-      "emberling_2": {
-        "alive": false,
-        "casts": 8,
-        "damage": 11,
-        "healing": 0,
-        "hits": 8,
-        "hp": 0,
-        "kills": 0,
-        "kind": "enemy",
-        "max_hp": 24,
-        "team": 1
-      },
       "emberling_3": {
         "alive": false,
-        "casts": 8,
-        "damage": 8,
+        "casts": 7,
+        "damage": 7,
         "healing": 0,
-        "hits": 8,
+        "hits": 7,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -348,14 +336,14 @@
       },
       "kael": {
         "alive": true,
-        "casts": 15,
-        "damage": 91,
+        "casts": 14,
+        "damage": 77,
         "healing": 0,
-        "hits": 14,
-        "hp": 26,
-        "kills": 3,
+        "hits": 12,
+        "hp": 38,
+        "kills": 2,
         "kind": "fighter",
-        "max_hp": 62,
+        "max_hp": 64,
         "team": 0
       },
       "kael_ember_fox": {
@@ -372,14 +360,14 @@
       },
       "nyra": {
         "alive": true,
-        "casts": 13,
-        "damage": 53,
+        "casts": 12,
+        "damage": 61,
         "healing": 0,
         "hits": 19,
-        "hp": 46,
-        "kills": 1,
+        "hp": 49,
+        "kills": 0,
         "kind": "fighter",
-        "max_hp": 46,
+        "max_hp": 49,
         "team": 0
       },
       "nyra_lumen_wisp": {
@@ -397,9 +385,9 @@
       "rock_brute_7": {
         "alive": false,
         "casts": 4,
-        "damage": 55,
+        "damage": 53,
         "healing": 0,
-        "hits": 7,
+        "hits": 6,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -408,10 +396,10 @@
       },
       "rock_brute_8": {
         "alive": false,
-        "casts": 8,
-        "damage": 100,
+        "casts": 7,
+        "damage": 63,
         "healing": 0,
-        "hits": 15,
+        "hits": 10,
         "hp": 0,
         "kills": 2,
         "kind": "enemy",
@@ -420,24 +408,25 @@
       },
       "sola": {
         "alive": true,
-        "casts": 13,
-        "damage": 8,
-        "healing": 33,
-        "hits": 8,
-        "hp": 20,
-        "kills": 0,
+        "casts": 12,
+        "damage": 10,
+        "healing": 36,
+        "hits": 7,
+        "hp": 33,
+        "kills": 1,
         "kind": "fighter",
-        "max_hp": 39,
+        "max_hp": 41,
         "team": 0
       }
     },
-    "hits": 138,
+    "hits": 123,
     "increment": "party-ai",
     "music_loaded": true,
+    "music_stem": "combat",
     "outcome": "victory",
-    "sim_ms": 506.1,
-    "state_hash": "1a4d499c041bf169",
-    "ticks": 641,
-    "tres_loaded": 14
+    "sim_ms": 417.67,
+    "state_hash": "b234f43d20579141",
+    "ticks": 613,
+    "tres_loaded": 17
   }
 }

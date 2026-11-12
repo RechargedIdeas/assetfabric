@@ -13,7 +13,7 @@ PLAN = {
     "F2": "Codegen (chars/abilities/stats), G1-Audio",
     "F3": "GIRT, CascadeHub, micro LM path, callouts",
     "F4": "Sandbox (bwrap/process tiers), atomic hot reload, snapshots + WAL, statecharts, guardian",
-    "F5": "Monte Carlo balance, soft-lock detection, save migration",
+    "F5": "Monte Carlo balance (G-BAL-01) + Optuna tuning, soft-lock detection, versioned save migration, tier-3 boss",
     "F6": "Quest SM, farming, loot, adaptive music",
     "F7": "Desktop/Android/Web packaging, ShuttleLine multi, BoltPack",
 }

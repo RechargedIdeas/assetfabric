@@ -6,7 +6,7 @@
   "passed": true,
   "perf": {},
   "result": {
-    "abilities_loaded": 14,
+    "abilities_loaded": 17,
     "abilities_used": [
       "claw",
       "slash"
@@ -46,10 +46,11 @@
     "hits": 6,
     "increment": "sandbox-encounter",
     "music_loaded": false,
+    "music_stem": "",
     "outcome": "victory",
-    "sim_ms": 10.04,
+    "sim_ms": 10.94,
     "state_hash": "3b2bd97029c2a7fb",
     "ticks": 400,
-    "tres_loaded": 14
+    "tres_loaded": 17
   }
 }

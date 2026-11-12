@@ -6,8 +6,8 @@
   "passed": true,
   "perf": {
     "ack_ms": [
-      170.3,
-      161.9
+      82.7,
+      107.4
     ],
     "ack_target_met": true,
     "ack_target_ms": 500.0,
@@ -16,19 +16,19 @@
       0.5
     ],
     "commit_apply_us": [
-      52179,
-      50670
+      69324,
+      63131
     ],
     "recover_s": [
-      0.86,
-      3.96
+      0.91,
+      4.06
     ],
     "recover_target_met": true,
     "recover_target_s": 10.0,
-    "snapshot_bytes": 36274
+    "snapshot_bytes": 39902
   },
   "result": {
-    "abilities_loaded": 14,
+    "abilities_loaded": 17,
     "abilities_used": [
       "arrow",
       "bite",
@@ -84,56 +84,50 @@
         },
         {
           "event": "kill",
-          "line": "Target down.",
-          "tick": 481,
-          "who": "nyra"
-        },
-        {
-          "event": "kill",
-          "line": "One less thing.",
-          "tick": 519,
+          "line": "That's done.",
+          "tick": 490,
           "who": "kael"
         },
         {
           "event": "kill",
-          "line": "Gone.",
-          "tick": 533,
-          "who": "bram"
+          "line": "Target down.",
+          "tick": 491,
+          "who": "nyra"
         },
         {
           "event": "kill",
-          "line": "Got it!",
-          "tick": 557,
-          "who": "sola"
+          "line": "Rest now.",
+          "tick": 546,
+          "who": "bram"
         },
         {
           "event": "victory",
-          "line": "Not a single wasted arrow.",
-          "tick": 557,
+          "line": "Easy, hotshot.",
+          "tick": 546,
           "who": "nyra"
         }
       ],
-      "callouts_total": 11,
+      "callouts_total": 10,
       "cascade": {
-        "callout": 11,
+        "callout": 10,
         "callout_request": 14,
         "intent": 4
       },
       "decisions": {
-        "bt_ticks": 13730,
-        "policy": 658,
-        "rule": 3988
+        "bt_ticks": 13440,
+        "policy": 664,
+        "rule": 3960
       },
       "dialogue": [],
-      "field_warm_ms": 94.44,
+      "field_warm_ms": 139.06,
       "girt": {
-        "callouts_served": 11,
+        "callouts_served": 10,
         "lm_calls": 0,
         "lm_p95_us": 0,
         "lm_refused_in_tick": 0,
-        "policy_calls": 658,
-        "policy_fallbacks": 1,
-        "policy_p95_us": 30,
+        "policy_calls": 664,
+        "policy_fallbacks": 0,
+        "policy_p95_us": 49,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -206,28 +200,28 @@
       "swap_recs": [
         [
           "kael",
-          12.5
+          16.63
         ],
         [
           "nyra",
-          8.5
+          14
         ],
         [
           "sola",
-          6.5
+          10
         ],
         [
           "bram",
-          -19.99
+          -18.48
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 84,
+      "swap_wall_ms": 92.2,
       "swaps": [
         {
           "tick": 300,
           "to": "nyra",
-          "wall_ms": 84
+          "wall_ms": 92.2
         }
       ]
     },
@@ -248,14 +242,14 @@
     "entities": {
       "bram": {
         "alive": true,
-        "casts": 8,
-        "damage": 56,
+        "casts": 7,
+        "damage": 68,
         "healing": 0,
-        "hits": 11,
-        "hp": 58,
+        "hits": 13,
+        "hp": 65,
         "kills": 2,
         "kind": "fighter",
-        "max_hp": 81,
+        "max_hp": 83,
         "team": 0
       },
       "bram_stone_tortle": {
@@ -272,10 +266,10 @@
       },
       "cave_mite_4": {
         "alive": false,
-        "casts": 5,
-        "damage": 5,
+        "casts": 4,
+        "damage": 4,
         "healing": 0,
-        "hits": 4,
+        "hits": 3,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -296,10 +290,10 @@
       },
       "cave_mite_6": {
         "alive": false,
-        "casts": 4,
-        "damage": 4,
+        "casts": 5,
+        "damage": 5,
         "healing": 0,
-        "hits": 4,
+        "hits": 5,
         "hp": 0,
         "kills": 0,
         "kind": "enemy",
@@ -320,7 +314,7 @@
       },
       "emberling_2": {
         "alive": false,
-        "casts": 5,
+        "casts": 6,
         "damage": 8,
         "healing": 0,
         "hits": 5,
@@ -345,13 +339,13 @@
       "kael": {
         "alive": true,
         "casts": 10,
-        "damage": 60,
+        "damage": 68,
         "healing": 0,
         "hits": 9,
-        "hp": 42,
-        "kills": 2,
+        "hp": 46,
+        "kills": 3,
         "kind": "fighter",
-        "max_hp": 62,
+        "max_hp": 64,
         "team": 0
       },
       "kael_ember_fox": {
@@ -369,23 +363,23 @@
       "nyra": {
         "alive": true,
         "casts": 10,
-        "damage": 50,
+        "damage": 38,
         "healing": 0,
-        "hits": 15,
-        "hp": 46,
-        "kills": 2,
+        "hits": 11,
+        "hp": 49,
+        "kills": 3,
         "kind": "fighter",
-        "max_hp": 46,
+        "max_hp": 49,
         "team": 0
       },
       "nyra_lumen_wisp": {
         "alive": true,
         "casts": 7,
-        "damage": 5,
+        "damage": 10,
         "healing": 0,
-        "hits": 5,
-        "hp": 7,
-        "kills": 1,
+        "hits": 6,
+        "hp": 18,
+        "kills": 0,
         "kind": "pet",
         "max_hp": 18,
         "team": 0
@@ -405,9 +399,9 @@
       "rock_brute_8": {
         "alive": false,
         "casts": 4,
-        "damage": 52,
+        "damage": 25,
         "healing": 0,
-        "hits": 7,
+        "hits": 4,
         "hp": 0,
         "kills": 1,
         "kind": "enemy",
@@ -416,26 +410,26 @@
       },
       "sola": {
         "alive": true,
-        "casts": 9,
-        "damage": 16,
-        "healing": 22,
-        "hits": 7,
-        "hp": 29,
-        "kills": 1,
+        "casts": 8,
+        "damage": 11,
+        "healing": 24,
+        "hits": 5,
+        "hp": 41,
+        "kills": 0,
         "kind": "fighter",
-        "max_hp": 39,
+        "max_hp": 41,
         "team": 0
       }
     },
-    "hits": 89,
+    "hits": 83,
     "increment": "live-tune",
     "live": {
       "acks": [
         {
-          "apply_us": 52179,
+          "apply_us": 69324,
           "assets": [],
-          "hash_after": "63e1fe7a2420ef01",
-          "hash_before": "d6a7a918b2299c11",
+          "hash_after": "e62070de00a1b863",
+          "hash_before": "ee9be104e09cc564",
           "restatted": 2,
           "source": "accept F4: tune",
           "status": "committed",
@@ -443,12 +437,12 @@
           "ticket": 1
         },
         {
-          "apply_us": 50670,
+          "apply_us": 63131,
           "assets": [
             "spr_rock_brute"
           ],
-          "hash_after": "63e1fe7a2420ef01",
-          "hash_before": "63e1fe7a2420ef01",
+          "hash_after": "e62070de00a1b863",
+          "hash_before": "e62070de00a1b863",
           "restatted": 0,
           "source": "forge live sprite spr_rock_brute seed=4242 sandbox=bwrap",
           "status": "committed",
@@ -456,8 +450,8 @@
           "ticket": 2
         },
         {
-          "hash_after": "63e1fe7a2420ef01",
-          "hash_before": "63e1fe7a2420ef01",
+          "hash_after": "e62070de00a1b863",
+          "hash_before": "e62070de00a1b863",
           "reason": "fault injected (acceptance test of the rollback path)",
           "restored_equal": true,
           "source": "accept F4: probe fault",
@@ -555,27 +549,27 @@
         "committing>probing",
         "probing>idle"
       ],
-      "final_hash": "06e0e45f9c8a4c37",
-      "live_dir": "/tmp/fabric-f4-o41hh2sf/backlog",
+      "final_hash": "272ccc28f928a284",
+      "live_dir": "/tmp/fabric-f4-addywonc/backlog",
       "replay": {
-        "final_hash": "06e0e45f9c8a4c37",
+        "final_hash": "272ccc28f928a284",
         "outcome": "victory",
         "replayed": 5,
         "restored_hash_equal": true,
-        "tick": 557
+        "tick": 546
       },
       "replay_equal": true,
       "restarts": 0,
-      "snapshot_bytes": 36274,
+      "snapshot_bytes": 39902,
       "snapshots": [
         "pre_tune"
       ],
-      "summary_hash": "924275576a626619",
+      "summary_hash": "ff74dd5392e4079d",
       "tuned": {
         "leash": 72,
         "rock_brute_max_hp": 30,
         "separation": 9,
-        "sprite_override": "/tmp/fabric-f4-o41hh2sf/backlog/stage/2/spr_rock_brute.png"
+        "sprite_override": "/tmp/fabric-f4-addywonc/backlog/stage/2/spr_rock_brute.png"
       },
       "wal": [
         {
@@ -601,6 +595,7 @@
       ]
     },
     "music_loaded": true,
+    "music_stem": "combat",
     "outcome": "victory",
     "sandbox": {
       "profiles": {
@@ -665,13 +660,13 @@
             "kind": "crash",
             "rc": -6,
             "signal": 6,
-            "t": 1794492185.307
+            "t": 1794498314.748
           },
           {
             "event": "failure",
-            "heartbeat_age_s": 3.03,
+            "heartbeat_age_s": 3.06,
             "kind": "hang",
-            "t": 1794492189.429
+            "t": 1794498318.871
           }
         ],
         "policy": {
@@ -690,7 +685,7 @@
       },
       "steps": [
         {
-          "ack_ms": 170.3,
+          "ack_ms": 82.7,
           "status": "committed",
           "step": "tune",
           "ticket": 1,
@@ -702,13 +697,13 @@
           }
         },
         {
-          "recover_s": 0.86,
+          "recover_s": 0.91,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "5a4096705e3e6b38",
+            "full_hash": "4a262935b150bc42",
             "quarantined": 2,
             "reapplied": [],
-            "tick": 18
+            "tick": 12
           },
           "status": "quarantined",
           "step": "crash",
@@ -721,7 +716,7 @@
           }
         },
         {
-          "ack_ms": 161.9,
+          "ack_ms": 107.4,
           "status": "committed",
           "step": "tune_after_restart",
           "ticket": 3,
@@ -733,13 +728,13 @@
           }
         },
         {
-          "recover_s": 3.96,
+          "recover_s": 4.06,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "ca30ea54216efab4",
+            "full_hash": "54955b2c4c4122ec",
             "quarantined": 4,
             "reapplied": [],
-            "tick": 36
+            "tick": 24
           },
           "status": "quarantined",
           "step": "hang",
@@ -758,8 +753,8 @@
         }
       ]
     },
-    "sim_ms": 736.49,
-    "state_hash": "924275576a626619",
+    "sim_ms": 1038.02,
+    "state_hash": "ff74dd5392e4079d",
     "statechart_analysis": {
       "id": "live_session",
       "ok": true,
@@ -816,7 +811,7 @@
       "events": 30,
       "transitions_equal": true
     },
-    "ticks": 557,
-    "tres_loaded": 14
+    "ticks": 546,
+    "tres_loaded": 17
   }
 }
