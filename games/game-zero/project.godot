@@ -9,7 +9,7 @@ config_version=5
 
 config/name="Game Zero"
 config/description="AssetFabric MVP — 8-bit fighter/farming hybrid"
-config/version="0.6.0+f6"
+config/version="0.7.0+f7"
 run/main_scene="res://scenes/boot.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -33,6 +33,8 @@ window/stretch/mode="canvas_items"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/canvas_textures/default_texture_filter=0
+; F7: Android export requires ETC2/ASTC import support enabled (no effect on the runtime-loaded PNGs).
+textures/vram_compression/import_etc2_astc=true
 
 [internationalization]
 

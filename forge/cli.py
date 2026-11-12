@@ -168,14 +168,92 @@ def store_cmd(action: str, file_path: Path | None, root: Path | None) -> None:
 @click.option("--no-export", is_flag=True, help="Generate + gate + store only; do not write into the game.")
 @click.option("--sandbox", "sandbox_tier", default=None, type=click.Choice(["auto", "bwrap", "process"]),
               help="Run every generator job inside a Substrate sandbox tier (F4).")
+@click.option("--target", "targets", multiple=True,
+              type=click.Choice(["desktop-linux", "desktop-windows", "android", "web", "all"]),
+              help="F7: package Game Zero for a platform (repeatable; 'all' = every target) instead of a content build.")
+@click.option("--skip-smoke", is_flag=True, help="With --target: export + contract + BoltPack only, no smoke runs.")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
-def build_cmd(pattern: str, no_export: bool, sandbox_tier: str | None, root: Path | None) -> None:
-    """Run content briefs through generators → gates → store → Godot export."""
+def build_cmd(pattern: str, no_export: bool, sandbox_tier: str | None, targets: tuple[str, ...], skip_smoke: bool,
+              root: Path | None) -> None:
+    """Run content briefs through generators → gates → store → Godot export.
+
+    With --target: package Game Zero (Godot 4.3 export + smoke + ShuttleLine contract + BoltPack) into dist/.
+    """
+    root = root or find_repo_root()
+    if targets:
+        from forge.packaging import ORDER, build_targets
+
+        sel = ORDER if "all" in targets else [t for t in ORDER if t in targets]
+        report = build_targets(root, sel, skip_smoke=skip_smoke, log=lambda m: console.print(f"[dim]{m}[/dim]", highlight=False))
+        summary = {"ok": report["ok"], "version": report.get("version"), "error": report.get("error"),
+                   "targets": {t: {"ok": r["ok"], "artifact": r.get("artifact"), "total_size": r.get("total_size"),
+                                   "verify_ok": (r.get("verify") or r.get("pwa") or {}).get("ok"),
+                                   "shuttle_ok": (r.get("shuttle") or {}).get("ok"), "bolt": (r.get("bolt") or {}).get("bolt"),
+                                   "errors": r.get("errors") or r.get("error")}
+                               for t, r in report.get("targets", {}).items()}}
+        click.echo(json.dumps(summary, indent=2))
+        sys.exit(0 if report["ok"] else 1)
     from forge.pipeline import build_all
 
-    report = build_all(root or find_repo_root(), pattern, export=not no_export, sandbox=sandbox_tier)
+    report = build_all(root, pattern, export=not no_export, sandbox=sandbox_tier)
     click.echo(json.dumps(report, indent=2))
     sys.exit(0 if report["ok"] else 1)
+
+
+@main.group("templates")
+def templates_grp() -> None:
+    """F7: Godot 4.3-stable export templates (hermetic, under .fabric/godot-home; gitignored)."""
+
+
+@templates_grp.command("status")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def templates_status_cmd(root: Path | None) -> None:
+    """Show the packaging toolchain: Godot, templates, JDK, Android SDK, wine, bwrap, Chrome."""
+    from forge.packaging import toolchain
+
+    click.echo(json.dumps(toolchain(root or find_repo_root()), indent=2))
+
+
+@templates_grp.command("fetch")
+@click.option("--tpz", type=click.Path(path_type=Path, exists=True), default=None, help="Use a local .tpz instead of downloading.")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def templates_fetch_cmd(tpz: Path | None, root: Path | None) -> None:
+    """Download (≈1 GB, sha256-pinned) and install the templates the F7 targets need."""
+    from forge.packaging import fetch_templates
+
+    rep = fetch_templates(root or find_repo_root(), tpz)
+    click.echo(json.dumps(rep, indent=2))
+    sys.exit(0 if rep["ok"] else 1)
+
+
+@main.group("shuttle")
+def shuttle_grp() -> None:
+    """F7 ShuttleLine: multi-target import contract."""
+
+
+@shuttle_grp.command("contract")
+@click.option("--check", is_flag=True, help="Verify the contract against the game tree.")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def shuttle_contract(check: bool, root: Path | None) -> None:
+    """Print the shuttleline.contract/1 for the current registry (or --check it)."""
+    from forge.shuttleline import check_sources, contract
+
+    root = root or find_repo_root()
+    rep = check_sources(root) if check else contract(root)
+    click.echo(json.dumps(rep, indent=2))
+    sys.exit(0 if rep.get("ok", True) else 1)
+
+
+@shuttle_grp.command("export")
+@click.option("--adapter", type=click.Choice(["generic-folder"]), default="generic-folder")
+@click.option("--out", type=click.Path(path_type=Path), default=None, help="Default dist/shuttle/<adapter>.")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def shuttle_export(adapter: str, out: Path | None, root: Path | None) -> None:
+    """Write an engine-neutral bundle (files by kind + shuttle.json)."""
+    from forge.shuttleline import export_generic
+
+    root = root or find_repo_root()
+    click.echo(json.dumps(export_generic(root, out or root / "dist" / "shuttle" / adapter), indent=2))
 
 
 @main.command("gen")

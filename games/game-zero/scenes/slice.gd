@@ -538,6 +538,7 @@ func _run_headless_slice() -> void:
 	_record_party()
 	var final: Dictionary = ws.to_save()
 	var result := {"slice": _slice_report(final, (Time.get_ticks_usec() - t0) / 1000.0)}
+	result["slice"]["net"] = Fabric.net_report()    # F7 G-NET-01: solo run with the network stack dormant
 	print("FABRIC_RESULT " + JSON.stringify(result))
 	var ok: bool = result["slice"]["completed"]
 	print("SLICE %s %s" % [ws.leader + "+" + ws.pet, "OK" if ok else "FAIL"])

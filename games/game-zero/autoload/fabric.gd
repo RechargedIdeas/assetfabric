@@ -63,6 +63,69 @@ func _parse_args() -> Dictionary:
 	return out
 
 
+## Process id for diagnostics; the Web platform has none (returns -1 instead of erroring).
+func pid() -> int:
+	return -1 if OS.has_feature("web") else OS.get_process_id()
+
+
+## Platform label used in cross-platform reports (F7): desktop / android / web.
+func platform_id() -> String:
+	if OS.has_feature("web"):
+		return "web"
+	if OS.has_feature("android"):
+		return "android"
+	return "desktop"
+
+
+## G-NET-01: Game Zero v1 is solo/offline. Nothing in the game opens a socket; the multiplayer API stays
+## on Godot's OfflineMultiplayerPeer. This report is printed by the F7 acceptance on every target.
+func net_report() -> Dictionary:
+	var peer := get_tree().get_multiplayer().multiplayer_peer
+	return {"peer": peer.get_class() if peer else "null", "offline_peer": peer is OfflineMultiplayerPeer,
+		"has_multiplayer_peer": get_tree().get_multiplayer().has_multiplayer_peer(), "platform": platform_id()}
+
+
+## G-A11Y-01 (data level): `profile.settings.input_remap` = {action: ["Key name", ...]} replaces that
+## action's keyboard events (names as OS.find_keycode_from_string, e.g. "F", "Shift"). Unknown actions /
+## keys are skipped and reported. Empty remap restores INPUT_SCHEMA.
+var input_remap_applied: Dictionary = {}
+
+func apply_input_remap(remap: Dictionary) -> Dictionary:
+	var rep := {"applied": {}, "skipped": []}
+	for action in INPUT_SCHEMA:
+		InputMap.action_erase_events(action)
+		var keys: Array = []
+		if remap.has(action) and typeof(remap[action]) == TYPE_ARRAY and not remap[action].is_empty():
+			for name in remap[action]:
+				var code := OS.find_keycode_from_string(str(name))
+				if code == KEY_NONE:
+					rep["skipped"].append("%s:%s" % [action, name])
+				else:
+					keys.append(code)
+		if keys.is_empty():
+			keys = INPUT_SCHEMA[action]
+		elif remap.has(action):
+			rep["applied"][action] = remap[action]
+		for key in keys:
+			var ev := InputEventKey.new()
+			ev.physical_keycode = key
+			InputMap.action_add_event(action, ev)
+	for action in remap:
+		if not INPUT_SCHEMA.has(action):
+			rep["skipped"].append(str(action))
+	input_remap_applied = rep
+	return rep
+
+
+## Keys currently bound to an action (for reports / the remap round-trip check).
+func action_keys(action: String) -> Array:
+	var out := []
+	for ev in InputMap.action_get_events(action):
+		if ev is InputEventKey:
+			out.append(OS.get_keycode_string(ev.physical_keycode))
+	return out
+
+
 func flag(name: String) -> bool:
 	return args.has(name)
 

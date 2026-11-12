@@ -3,7 +3,7 @@ extends Node
 ## Forge writes tickets (forge/live.py); this autoload polls HEAD, validates, and hands
 ## tickets to the active scene, which commits them at a tick boundary, probes, and acks.
 ## Everything is file based (no sockets): works headless, on desktop dev builds and in CI.
-## Disabled in release builds unless `--live-dir=` is passed explicitly.
+## Disabled in exported builds unless `--live-dir=` is passed explicitly.
 
 const POLL_FRAMES := 6          # physics frames between HEAD polls (~10 Hz)
 
@@ -18,7 +18,8 @@ var _frames := 0
 
 func _ready() -> void:
 	var explicit: String = str(Fabric.arg("live-dir", ""))
-	enabled = explicit != "" or (OS.is_debug_build() and not Fabric.flag("no-live"))
+	# F7: exported builds (even debug APK/web) never open the channel implicitly — only the editor/dev runtime does.
+	enabled = explicit != "" or (OS.has_feature("editor") and not Fabric.flag("no-live"))
 	dir = explicit if explicit != "" else ProjectSettings.globalize_path("res://").path_join("../../.fabric/live/game-zero").simplify_path()
 	allow_fault = Fabric.flag("allow-fault-injection")
 	if enabled:
@@ -209,7 +210,7 @@ func status(d: Dictionary) -> void:
 ## in-flight ticket with no ack quarantines it instead of re-applying a poison ticket.
 func begin(n: int) -> void:
 	if enabled:
-		_atomic_write(dir.path_join("inflight.json"), {"ticket": n, "pid": OS.get_process_id()})
+		_atomic_write(dir.path_join("inflight.json"), {"ticket": n, "pid": Fabric.pid()})
 
 
 func end_flight() -> void:

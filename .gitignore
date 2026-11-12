@@ -18,7 +18,6 @@ store/manifests/**
 store/index.sqlite
 store/index.sqlite-*
 games/game-zero/.godot/
-games/game-zero/export_presets.cfg
 *.pck
 .DS_Store
 godot-bin/
@@ -32,3 +31,9 @@ godot-bin/
 *.pem
 /.fabric/live/
 companions/pocketloom/local.properties
+
+# F7 packaging toolchain (hermetic Godot home: export templates, editor settings, debug keystore; caches)
+/.fabric/godot-home/
+/.fabric/cache/
+/.fabric/jdk/
+games/game-zero/*.import

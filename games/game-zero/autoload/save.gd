@@ -17,6 +17,12 @@ func _ready() -> void:
 	var d := str(Fabric.arg("save-dir", ""))
 	dir = d if d != "" else ProjectSettings.globalize_path("user://saves")
 	DirAccess.make_dir_recursive_absolute(dir)
+	# G-A11Y-01: a remap stored in the profile follows the player across devices (F7).
+	var raw := _read(path())
+	if typeof(raw.get("profile")) == TYPE_DICTIONARY and typeof(raw["profile"].get("settings")) == TYPE_DICTIONARY:
+		var rm = raw["profile"]["settings"].get("input_remap", {})
+		if typeof(rm) == TYPE_DICTIONARY and not rm.is_empty():
+			Fabric.apply_input_remap(rm)
 
 
 # --------------------------------------------------------------------------- canonical form
@@ -209,5 +215,8 @@ func load_slot(slot: String = "slot0") -> Dictionary:
 		last_load["ok"] = true
 		last_load["migrated_from"] = m[1]
 		last_load["recovered_from_backup"] = candidate.ends_with(".bak")
+		var rm = s["profile"].get("settings", {}).get("input_remap", {})
+		if typeof(rm) == TYPE_DICTIONARY and not rm.is_empty():
+			Fabric.apply_input_remap(rm)
 		return s
 	return {}

@@ -350,7 +350,7 @@ func _tuned() -> Dictionary:
 
 
 func _publish_status(ready: bool) -> void:
-	Live.status({"ready": ready, "scene": encounter["id"], "tick": sim.tick, "pid": OS.get_process_id(), "applied": Live.applied,
+	Live.status({"ready": ready, "scene": encounter["id"], "tick": sim.tick, "pid": Fabric.pid(), "applied": Live.applied,
 		"outcome": sim.outcome(), "tuned": _tuned(), "resume": resume_info, "full_hash": sim.full_hash(),
 		"hb_unix": Time.get_unix_time_from_system()})
 
