@@ -1,0 +1,28 @@
+# F6 quest state machines. Each quest compiles to one region of a parallel statechart
+# (forge/statechart.py + sim/statechart.gd), so the F4/F5 static soft-lock analysis applies.
+# A stage advances on `when` (a world event; not `on`, which YAML 1.1 reads as true) when its guard holds; guards read world counters:
+#   have:<item>>=n  · total:<counter>>=n  · flag:<name>
+# World events: select, plant, harvest, gather, craft, enter:<area>, cleared:<area>, defeated:<ref>, save
+# Rewards (coin / item / xp / unlock (roster) / flag) are granted when that stage completes.
+schema_version: "1.0"
+quests:
+  - id: q_warden
+    title: quest.q_warden.title
+    main: true
+    stages:
+      - {id: choose, when: select}
+      - {id: plant, when: plant, guard: "total:planted>=2", reward: {xp: 0}}
+      - {id: forage, when: gather, guard: "have:flint>=3", reward: {coin: 3}}
+      - {id: enter_cave, when: "enter:cave_deep"}
+      - {id: moss, when: gather, guard: "have:cave_moss>=2"}
+      - {id: clear_cave, when: "cleared:cave_deep", reward: {xp: 40}}
+      - {id: return_farm, when: "enter:field"}
+      - {id: harvest, when: harvest, guard: "total:harvested>=4"}
+      - {id: craft, when: craft, guard: "have:ember_tonic>=1&have:moss_salve>=1"}
+      - {id: warden, when: "defeated:cave_warden", reward: {unlock: vex, flag: warden_down}}
+      - {id: open_world, when: "enter:field"}
+      - {id: rest, when: save}
+  - id: q_forager
+    title: quest.q_forager.title
+    stages:
+      - {id: gather_any, when: gather, guard: "total:gathered>=6", reward: {coin: 10, item: {glowcap_spore: 1}}}

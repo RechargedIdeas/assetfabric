@@ -1,0 +1,16 @@
+# F6 adaptive music — G1-Audio stems layered by biome + macro state (GAME_SPEC §7
+# "audio stems remixable by macro state (ambient/tension/combat/boss)").
+# Every stem of a biome set has the same loop length (G1-Audio `layers` gate), so all of a set's
+# players start together and the director only moves volumes (crossfade, no restart seams).
+# Volumes in dB; -80 = silent. `fade_ticks` = crossfade length at 60 Hz.
+schema_version: "1.0"
+fade_ticks: 45
+tension_range: 176          # px: a living hostile this close (not yet engaged) → tension layer
+biomes:
+  field: {track: music_field}
+  cave: {track: music_cave}
+states:                     # macro state → per-stem target volume
+  explore: {ambient: -8}
+  tension: {ambient: -10, tension: -9}
+  combat: {ambient: -80, tension: -14, combat: -7}
+  boss: {combat: -16, boss: -6}

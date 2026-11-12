@@ -108,6 +108,36 @@
         "encounter:boss"
       ]
     },
+    "cave_deep": {
+      "files": {
+        "cave_deep.json": {
+          "res": "res://assets/generated/tilemap/cave_deep.json",
+          "sha256": "012a9c4fee2e50ef4dba29ebfc07e1a9fbccc317b3d49e6c05b9208940424ad0"
+        },
+        "cave_deep_tiles.png": {
+          "res": "res://assets/generated/tilemap/cave_deep_tiles.png",
+          "sha256": "f988b2b1a8e36168e8e97c409203628aa748e4570b0cecaf5e4527ed122c2f1a"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 78,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:cave",
+        "slice"
+      ]
+    },
     "enemy_emberling": {
       "files": {
         "enemy_emberling.png": {
@@ -140,6 +170,36 @@
       "tags": [
         "enemy",
         "tier1"
+      ]
+    },
+    "field_01": {
+      "files": {
+        "field_01.json": {
+          "res": "res://assets/generated/tilemap/field_01.json",
+          "sha256": "a5fa1476a1660b3a4d241c136c005f865c6edbc13d539ff1185f082aaf5e53ea"
+        },
+        "field_01_tiles.png": {
+          "res": "res://assets/generated/tilemap/field_01_tiles.png",
+          "sha256": "d007762fe038b9ee2a44a224bee36b0562cf853f04dafc05438aecc9d8c9d716"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 70,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:field",
+        "slice"
       ]
     },
     "hero_kael": {
@@ -253,6 +313,40 @@
       "tags": [
         "audio",
         "biome:cave"
+      ]
+    },
+    "music_field": {
+      "files": {
+        "music_field_ambient.wav": {
+          "res": "res://assets/generated/audio/music_field_ambient.wav",
+          "sha256": "95294939f932d6298e0f4d01cca2eff8328a73f1265b3243c7fcc2ae78e8243c"
+        },
+        "music_field_combat.wav": {
+          "res": "res://assets/generated/audio/music_field_combat.wav",
+          "sha256": "2280b3684c8152aa35ff8cfdac179dc6f4d7affca4fb341def04f2afda301b02"
+        },
+        "music_field_tension.wav": {
+          "res": "res://assets/generated/audio/music_field_tension.wav",
+          "sha256": "4da5b2ca587b3a7cf5859b8d7b33f0fa601ab1552d202a7722593ef76a9aae47"
+        }
+      },
+      "kind": "audio",
+      "meta": {
+        "kind": "audio",
+        "model_id": "G1-Audio",
+        "model_version": "chiptune-1",
+        "rate": 22050,
+        "seconds": 4.0,
+        "stems": [
+          "ambient",
+          "tension",
+          "combat",
+          "boss"
+        ]
+      },
+      "tags": [
+        "audio",
+        "biome:field"
       ]
     },
     "persona_lm": {
@@ -881,6 +975,66 @@
       "tags": [
         "character",
         "roster:vex"
+      ]
+    },
+    "world": {
+      "files": {
+        "world.json": {
+          "res": "res://data/generated/world.json",
+          "sha256": "ca073e0ed04454e1d514d2b6ca518657bcd5e86fb9d9de3fcd83a122447fb5f3"
+        }
+      },
+      "kind": "world",
+      "meta": {
+        "kind": "world",
+        "loot_ev": {
+          "1": {
+            "coin": 0.667,
+            "ember_shard": 0.333,
+            "sunroot_seed": 0.083
+          },
+          "2": {
+            "brute_hide": 0.5,
+            "coin": 3.0,
+            "ember_shard": 0.5,
+            "glowcap_spore": 0.333
+          },
+          "3": {
+            "brute_hide": 0.857,
+            "coin": 25.0,
+            "ember_shard": 2.143,
+            "glowcap_spore": 0.857,
+            "warden_core": 1.0
+          }
+        },
+        "model_id": "Codegen-World",
+        "model_version": "1",
+        "node_counts": {
+          "cave_moss": 4,
+          "flint": 4
+        },
+        "quests": [
+          "q_warden",
+          "q_forager"
+        ],
+        "supply": {
+          "cave_moss": 4,
+          "coin": 38.0,
+          "ember_tonic": 3.0,
+          "flint": 4,
+          "flint_edge": 0,
+          "glowcap": 6.0,
+          "glowcap_spore": 3.0,
+          "moss_salve": 4,
+          "sunroot": 4.0,
+          "sunroot_seed": 2.0,
+          "warden_charm": 1,
+          "warden_core": 1
+        }
+      },
+      "tags": [
+        "data",
+        "world"
       ]
     }
   },

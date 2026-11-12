@@ -1,0 +1,54 @@
+# F6 briefs — vertical slice world: open-world field (farm + forage + cave mouth), a deeper
+# exploration cave (packs spread along the route + moss nodes), the field music stems, and the
+# world codegen (economy, loot, quests, adaptive music, world graph → data/generated/world.json).
+# The boss arena is the F5 `cave_boss` tilemap, reused.
+briefs:
+  - id: field_01
+    kind: tilemap
+    seed: 61
+    tile_size: 16
+    wall_palette: cave_stone
+    floor_palette: cave_moss
+    marker_palette: hero_amber
+    constraints:          # narrative constraint vector: open world, farm near home, cave mouth far
+      width: 52
+      height: 30
+      density: 0.30
+      smoothing: 4
+      min_path: 44
+      floor_ratio: [0.55, 0.95]
+      enemies: 1
+      spawn_at: [0.82]    # an ember pack guards the approach to the cave mouth
+      plots: 4
+      bench: true
+      nodes: 4            # flint
+    tags: [biome:field, slice]
+  - id: cave_deep
+    kind: tilemap
+    seed: 67
+    tile_size: 16
+    constraints:
+      width: 56
+      height: 30
+      density: 0.43
+      smoothing: 5
+      min_path: 52
+      enemies: 3
+      spawn_at: [0.3, 0.58, 0.85]
+      nodes: 4            # cave moss
+    tags: [biome:cave, slice]
+  - id: music_field
+    kind: audio
+    bpm: 112
+    root_midi: 48               # C3, major-ish field theme
+    seconds: 4.0
+    rate: 22050
+    seed: 6
+    stems: [ambient, tension, combat]
+    tags: [audio, biome:field]
+  - id: world
+    kind: world
+    source: content/world
+    export_base: data
+    export_dir: generated
+    tags: [data, world]

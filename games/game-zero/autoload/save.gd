@@ -1,12 +1,12 @@
 extends Node
-## SaveSystem (F5) — Player State layers profile / roster / world, versioned + migratable.
+## SaveSystem (F5, v4 in F6) — Player State layers profile / roster / world, versioned + migratable.
 ## Mirrors forge/save.py exactly (same migrations, same canonical JSON, same sha256), so
 ## saves written by either side validate on the other. Atomic: write tmp → rename, the
 ## previous good save is kept as `.bak` and used if the primary is torn or tampered.
 ## Directory: user://saves (override with `--save-dir=<abs path>` for tests/tools).
 
 const FORMAT := "gamezero-save"
-const CURRENT := 3
+const CURRENT := 4
 const TICK_HZ := 60
 
 var dir := ""
@@ -83,6 +83,27 @@ static func _v2_to_v3(s: Dictionary) -> Dictionary:
 	return out
 
 
+## v4 (F6 vertical slice): roster.unlocked / party_hp / gear; world.farm / checkpoint / counters /
+## seed / rng / tick / visits / depleted / packs_cleared / buffs. Everything the slice needs to resume.
+static func _v3_to_v4(s: Dictionary) -> Dictionary:
+	var out: Dictionary = s.duplicate(true)
+	out["version"] = 4
+	var r: Dictionary = out["roster"]
+	if not r.has("unlocked"):
+		r["unlocked"] = []
+	if not r.has("party_hp"):
+		r["party_hp"] = {}
+	if not r.has("gear"):
+		r["gear"] = {"shared": [], "unique": {}}
+	var w: Dictionary = out["world"]
+	var defaults := {"farm": {"plots": []}, "checkpoint": {"area": "", "arrive": ""}, "counters": {}, "seed": 0, "rng": 0,
+		"tick": 0, "visits": {}, "depleted": {}, "packs_cleared": {}, "buffs": []}
+	for k in defaults:
+		if not w.has(k):
+			w[k] = defaults[k]
+	return out
+
+
 ## Returns [migrated save, steps taken]. Pushes an error and returns {} for future versions.
 static func migrate(save: Dictionary) -> Array:
 	var s: Dictionary = save.duplicate(true)
@@ -95,6 +116,7 @@ static func migrate(save: Dictionary) -> Array:
 		match v:
 			1: s = _v1_to_v2(s)
 			2: s = _v2_to_v3(s)
+			3: s = _v3_to_v4(s)
 		steps.append(v)
 		v = int(s["version"])
 	s["checksum"] = checksum(s)
@@ -122,8 +144,11 @@ static func new_save(leader: String, fighters: Dictionary, pets: Array) -> Dicti
 	var s := {"format": FORMAT, "version": CURRENT,
 		"profile": {"playtime_ticks": 0, "settings": {"palette_variant": "default", "input_remap": {}},
 			"stats": {"encounters_won": 0, "bosses_defeated": 0}},
-		"roster": {"leader": leader, "fighters": f, "pets": {"owned": pets.duplicate(), "assigned": {leader: pets.slice(0, 1)}}},
-		"world": {"area": "", "cleared": [], "bosses_defeated": [], "inventory": {}, "quests": {}, "flags": {}}}
+		"roster": {"leader": leader, "fighters": f, "pets": {"owned": pets.duplicate(), "assigned": {leader: pets.slice(0, 1)}},
+			"unlocked": [], "party_hp": {}, "gear": {"shared": [], "unique": {}}},
+		"world": {"area": "", "cleared": [], "bosses_defeated": [], "inventory": {}, "quests": {}, "flags": {},
+			"farm": {"plots": []}, "checkpoint": {"area": "", "arrive": ""}, "counters": {}, "seed": 0, "rng": 0, "tick": 0,
+			"visits": {}, "depleted": {}, "packs_cleared": {}, "buffs": []}}
 	s["checksum"] = checksum(s)
 	return s
 

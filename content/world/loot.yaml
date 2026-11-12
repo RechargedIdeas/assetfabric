@@ -1,0 +1,31 @@
+# F6 loot tables tied to the tier system (GAME_SPEC §4.4: trash mobs + bosses with tiers).
+# A defeated hostile rolls its tier table `rolls` times (weighted, with an explicit "none" slot),
+# plus every `guaranteed` entry. Per-enemy `extra` tables stack on top. Seeded 31-bit LCG,
+# identical in forge/world.py and games/game-zero/world/loot.gd (parity-checked in F6 acceptance).
+schema_version: "1.0"
+tiers:
+  1:
+    rolls: 1
+    table:
+      - {item: ember_shard, weight: 4, qty: [1, 1]}
+      - {item: coin, weight: 4, qty: [1, 3]}
+      - {item: sunroot_seed, weight: 1, qty: [1, 1]}
+      - {item: none, weight: 3}
+  2:
+    rolls: 2
+    table:
+      - {item: brute_hide, weight: 3, qty: [1, 1]}
+      - {item: coin, weight: 4, qty: [3, 6]}
+      - {item: glowcap_spore, weight: 2, qty: [1, 1]}
+      - {item: ember_shard, weight: 2, qty: [1, 2]}
+      - {item: none, weight: 1}
+  3:
+    rolls: 2
+    guaranteed: [{item: warden_core, qty: [1, 1]}, {item: coin, qty: [20, 30]}]
+    table:
+      - {item: brute_hide, weight: 2, qty: [1, 2]}
+      - {item: ember_shard, weight: 3, qty: [2, 3]}
+      - {item: glowcap_spore, weight: 2, qty: [1, 2]}
+enemies:      # optional per-enemy extras on top of the tier table
+  cave_mite:
+    table: [{item: cave_moss, weight: 1, qty: [1, 1]}, {item: none, weight: 3}]

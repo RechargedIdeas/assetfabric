@@ -1,0 +1,647 @@
+{
+ "areas": {
+  "cave_deep": {
+   "biome": "cave",
+   "id": "cave_deep",
+   "links": {
+    "E": {
+     "arrive": "S",
+     "requires": "stage:q_warden>=warden",
+     "to": "warden_lair"
+    },
+    "S": {
+     "arrive": "E",
+     "to": "field"
+    }
+   },
+   "nodes": {
+    "G": "cave_moss"
+   },
+   "packs": [
+    {
+     "spawn": 0,
+     "units": [
+      {
+       "count": 3,
+       "ref": "cave_mite"
+      }
+     ]
+    },
+    {
+     "spawn": 1,
+     "units": [
+      {
+       "count": 2,
+       "ref": "emberling"
+      },
+      {
+       "count": 1,
+       "ref": "cave_mite"
+      }
+     ]
+    },
+    {
+     "spawn": 2,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      }
+     ]
+    }
+   ],
+   "tilemap": "cave_deep"
+  },
+  "field": {
+   "biome": "field",
+   "id": "field",
+   "links": {
+    "E": {
+     "arrive": "S",
+     "to": "cave_deep"
+    }
+   },
+   "nodes": {
+    "G": "flint"
+   },
+   "packs": [
+    {
+     "spawn": 0,
+     "units": [
+      {
+       "count": 2,
+       "ref": "emberling"
+      }
+     ]
+    }
+   ],
+   "tilemap": "field_01"
+  },
+  "warden_lair": {
+   "biome": "cave",
+   "encounter": "boss_warden",
+   "id": "warden_lair",
+   "links": {
+    "E": {
+     "arrive": "E",
+     "requires": "flag:warden_down",
+     "to": "field"
+    },
+    "S": {
+     "arrive": "E",
+     "to": "cave_deep"
+    }
+   },
+   "tilemap": "cave_boss"
+  }
+ },
+ "crops": {
+  "glowcap": {
+   "grow_ticks": 3600,
+   "id": "glowcap",
+   "seed": "glowcap_spore",
+   "yield": 2
+  },
+  "sunroot": {
+   "grow_ticks": 2400,
+   "id": "sunroot",
+   "seed": "sunroot_seed",
+   "yield": 2
+  }
+ },
+ "farm": {
+  "plots": 4
+ },
+ "items": {
+  "brute_hide": {
+   "id": "brute_hide",
+   "kind": "material",
+   "name_key": "item.brute_hide",
+   "sell": 6
+  },
+  "cave_moss": {
+   "id": "cave_moss",
+   "kind": "material",
+   "name_key": "item.cave_moss",
+   "sell": 1
+  },
+  "coin": {
+   "id": "coin",
+   "kind": "currency",
+   "name_key": "item.coin"
+  },
+  "ember_shard": {
+   "id": "ember_shard",
+   "kind": "material",
+   "name_key": "item.ember_shard",
+   "sell": 4
+  },
+  "ember_tonic": {
+   "id": "ember_tonic",
+   "kind": "consumable",
+   "name_key": "item.ember_tonic",
+   "use": {
+    "buff": {
+     "atk_pct": 0.15
+    }
+   }
+  },
+  "flint": {
+   "id": "flint",
+   "kind": "material",
+   "name_key": "item.flint",
+   "sell": 1
+  },
+  "flint_edge": {
+   "bonus": {
+    "atk_pct": 0.06
+   },
+   "id": "flint_edge",
+   "kind": "gear",
+   "name_key": "item.flint_edge",
+   "slot": "shared"
+  },
+  "glowcap": {
+   "id": "glowcap",
+   "kind": "crop",
+   "name_key": "item.glowcap",
+   "sell": 3
+  },
+  "glowcap_spore": {
+   "crop": "glowcap",
+   "id": "glowcap_spore",
+   "kind": "seed",
+   "name_key": "item.glowcap_spore"
+  },
+  "moss_salve": {
+   "id": "moss_salve",
+   "kind": "consumable",
+   "name_key": "item.moss_salve",
+   "use": {
+    "heal_pct": 0.5
+   }
+  },
+  "sunroot": {
+   "id": "sunroot",
+   "kind": "crop",
+   "name_key": "item.sunroot",
+   "sell": 2
+  },
+  "sunroot_seed": {
+   "crop": "sunroot",
+   "id": "sunroot_seed",
+   "kind": "seed",
+   "name_key": "item.sunroot_seed"
+  },
+  "warden_charm": {
+   "bonus": {
+    "def_flat": 1.5
+   },
+   "id": "warden_charm",
+   "kind": "gear",
+   "name_key": "item.warden_charm",
+   "slot": "unique"
+  },
+  "warden_core": {
+   "id": "warden_core",
+   "kind": "material",
+   "name_key": "item.warden_core"
+  }
+ },
+ "loot": {
+  "enemies": {
+   "cave_mite": {
+    "table": [
+     {
+      "item": "cave_moss",
+      "qty": [
+       1,
+       1
+      ],
+      "weight": 1
+     },
+     {
+      "item": "none",
+      "weight": 3
+     }
+    ]
+   }
+  },
+  "tiers": {
+   "1": {
+    "rolls": 1,
+    "table": [
+     {
+      "item": "ember_shard",
+      "qty": [
+       1,
+       1
+      ],
+      "weight": 4
+     },
+     {
+      "item": "coin",
+      "qty": [
+       1,
+       3
+      ],
+      "weight": 4
+     },
+     {
+      "item": "sunroot_seed",
+      "qty": [
+       1,
+       1
+      ],
+      "weight": 1
+     },
+     {
+      "item": "none",
+      "weight": 3
+     }
+    ]
+   },
+   "2": {
+    "rolls": 2,
+    "table": [
+     {
+      "item": "brute_hide",
+      "qty": [
+       1,
+       1
+      ],
+      "weight": 3
+     },
+     {
+      "item": "coin",
+      "qty": [
+       3,
+       6
+      ],
+      "weight": 4
+     },
+     {
+      "item": "glowcap_spore",
+      "qty": [
+       1,
+       1
+      ],
+      "weight": 2
+     },
+     {
+      "item": "ember_shard",
+      "qty": [
+       1,
+       2
+      ],
+      "weight": 2
+     },
+     {
+      "item": "none",
+      "weight": 1
+     }
+    ]
+   },
+   "3": {
+    "guaranteed": [
+     {
+      "item": "warden_core",
+      "qty": [
+       1,
+       1
+      ]
+     },
+     {
+      "item": "coin",
+      "qty": [
+       20,
+       30
+      ]
+     }
+    ],
+    "rolls": 2,
+    "table": [
+     {
+      "item": "brute_hide",
+      "qty": [
+       1,
+       2
+      ],
+      "weight": 2
+     },
+     {
+      "item": "ember_shard",
+      "qty": [
+       2,
+       3
+      ],
+      "weight": 3
+     },
+     {
+      "item": "glowcap_spore",
+      "qty": [
+       1,
+       2
+      ],
+      "weight": 2
+     }
+    ]
+   }
+  }
+ },
+ "music": {
+  "biomes": {
+   "cave": {
+    "track": "music_cave"
+   },
+   "field": {
+    "track": "music_field"
+   }
+  },
+  "fade_ticks": 45,
+  "schema_version": "1.0",
+  "states": {
+   "boss": {
+    "boss": -6,
+    "combat": -16
+   },
+   "combat": {
+    "ambient": -80,
+    "combat": -7,
+    "tension": -14
+   },
+   "explore": {
+    "ambient": -8
+   },
+   "tension": {
+    "ambient": -10,
+    "tension": -9
+   }
+  },
+  "tension_range": 176
+ },
+ "quest_chart": {
+  "id": "quests",
+  "regions": {
+   "q_forager": {
+    "initial": "gather_any",
+    "states": {
+     "done": {
+      "final": true
+     },
+     "gather_any": {
+      "on": {
+       "gather": {
+        "guard": "total:gathered>=6",
+        "target": "done"
+       }
+      }
+     }
+    }
+   },
+   "q_warden": {
+    "initial": "choose",
+    "states": {
+     "choose": {
+      "on": {
+       "select": "plant"
+      }
+     },
+     "clear_cave": {
+      "on": {
+       "cleared:cave_deep": "return_farm"
+      }
+     },
+     "craft": {
+      "on": {
+       "craft": {
+        "guard": "have:ember_tonic>=1&have:moss_salve>=1",
+        "target": "warden"
+       }
+      }
+     },
+     "done": {
+      "final": true
+     },
+     "enter_cave": {
+      "on": {
+       "enter:cave_deep": "moss"
+      }
+     },
+     "forage": {
+      "on": {
+       "gather": {
+        "guard": "have:flint>=3",
+        "target": "enter_cave"
+       }
+      }
+     },
+     "harvest": {
+      "on": {
+       "harvest": {
+        "guard": "total:harvested>=4",
+        "target": "craft"
+       }
+      }
+     },
+     "moss": {
+      "on": {
+       "gather": {
+        "guard": "have:cave_moss>=2",
+        "target": "clear_cave"
+       }
+      }
+     },
+     "open_world": {
+      "on": {
+       "enter:field": "rest"
+      }
+     },
+     "plant": {
+      "on": {
+       "plant": {
+        "guard": "total:planted>=2",
+        "target": "forage"
+       }
+      }
+     },
+     "rest": {
+      "on": {
+       "save": "done"
+      }
+     },
+     "return_farm": {
+      "on": {
+       "enter:field": "harvest"
+      }
+     },
+     "warden": {
+      "on": {
+       "defeated:cave_warden": "open_world"
+      }
+     }
+    }
+   }
+  }
+ },
+ "quests": [
+  {
+   "id": "q_warden",
+   "main": true,
+   "stages": [
+    {
+     "id": "choose",
+     "when": "select"
+    },
+    {
+     "guard": "total:planted>=2",
+     "id": "plant",
+     "reward": {
+      "xp": 0
+     },
+     "when": "plant"
+    },
+    {
+     "guard": "have:flint>=3",
+     "id": "forage",
+     "reward": {
+      "coin": 3
+     },
+     "when": "gather"
+    },
+    {
+     "id": "enter_cave",
+     "when": "enter:cave_deep"
+    },
+    {
+     "guard": "have:cave_moss>=2",
+     "id": "moss",
+     "when": "gather"
+    },
+    {
+     "id": "clear_cave",
+     "reward": {
+      "xp": 40
+     },
+     "when": "cleared:cave_deep"
+    },
+    {
+     "id": "return_farm",
+     "when": "enter:field"
+    },
+    {
+     "guard": "total:harvested>=4",
+     "id": "harvest",
+     "when": "harvest"
+    },
+    {
+     "guard": "have:ember_tonic>=1&have:moss_salve>=1",
+     "id": "craft",
+     "when": "craft"
+    },
+    {
+     "id": "warden",
+     "reward": {
+      "flag": "warden_down",
+      "unlock": "vex"
+     },
+     "when": "defeated:cave_warden"
+    },
+    {
+     "id": "open_world",
+     "when": "enter:field"
+    },
+    {
+     "id": "rest",
+     "when": "save"
+    }
+   ],
+   "title": "quest.q_warden.title"
+  },
+  {
+   "id": "q_forager",
+   "stages": [
+    {
+     "guard": "total:gathered>=6",
+     "id": "gather_any",
+     "reward": {
+      "coin": 10,
+      "item": {
+       "glowcap_spore": 1
+      }
+     },
+     "when": "gather"
+    }
+   ],
+   "title": "quest.q_forager.title"
+  }
+ ],
+ "recipes": {
+  "ember_tonic": {
+   "id": "ember_tonic",
+   "in": {
+    "flint": 1,
+    "glowcap": 2
+   },
+   "out": {
+    "ember_tonic": 1
+   }
+  },
+  "flint_edge": {
+   "id": "flint_edge",
+   "in": {
+    "ember_shard": 2,
+    "flint": 2
+   },
+   "out": {
+    "flint_edge": 1
+   }
+  },
+  "moss_salve": {
+   "id": "moss_salve",
+   "in": {
+    "cave_moss": 1,
+    "sunroot": 1
+   },
+   "out": {
+    "moss_salve": 1
+   }
+  },
+  "warden_charm": {
+   "id": "warden_charm",
+   "in": {
+    "glowcap": 1,
+    "warden_core": 1
+   },
+   "out": {
+    "warden_charm": 1
+   }
+  }
+ },
+ "schema_version": "1.0",
+ "shop": {
+  "glowcap_spore": 4,
+  "sunroot_seed": 3
+ },
+ "start_area": "field",
+ "start_kit": {
+  "coin": 5,
+  "glowcap_spore": 2,
+  "sunroot_seed": 2
+ },
+ "xp": {
+  "level_at": [
+   0,
+   30,
+   90,
+   200,
+   360
+  ],
+  "per_tier": 10,
+  "start_level": 2
+ }
+}

@@ -20,6 +20,9 @@ from forge.generators.dyeworks import material
 from forge.imaging import Image
 
 TILE_INDEX = {"#": 0, ".": 1, "S": 2, "E": 3}
+# F6 feature glyphs (passable): G gather node · P farm plot · W workbench / stall. Only layouts that
+# use them get the extra tileset columns, so F1–F5 caves stay byte-identical.
+FEATURE_INDEX = {"G": 4, "P": 5, "W": 6}
 
 
 def _ca(w: int, h: int, fill: float, steps: int, rng: random.Random) -> list[list[bool]]:
@@ -74,6 +77,55 @@ def _farthest(grid: list[list[str]], start: tuple[int, int]) -> tuple[tuple[int,
     return far, dist
 
 
+def _place_features(grid: list[list[str]], dist: dict[tuple[int, int], int], c: dict[str, Any], spawns: list[tuple[int, int]],
+                    rng: random.Random) -> dict[str, Any]:
+    """F6: gather nodes (G) spread along the route, farm plots (P) + workbench (W) near the entry.
+    Features only replace plain floor that is not a spawn and keep 4-neighbour access."""
+    out: dict[str, Any] = {}
+    taken = set(spawns)
+    far = max(dist.values())
+
+    def free(p: tuple[int, int]) -> bool:
+        x, y = p
+        if grid[y][x] != "." or p in taken:
+            return False
+        open_n = sum(1 for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)) if grid[ny][nx] == ".")
+        return open_n >= 2
+
+    plots = int(c.get("plots", 0))
+    if plots or c.get("bench"):
+        near = sorted((d, p[1], p[0]) for p, d in dist.items() if 2 <= d <= 8)
+        got: list[tuple[int, int]] = []
+        for d, y, x in near:
+            if len(got) >= plots + (1 if c.get("bench") else 0):
+                break
+            if free((x, y)):
+                got.append((x, y))
+                taken.add((x, y))
+        if c.get("bench") and got:
+            bx, by = got[0]
+            grid[by][bx] = "W"
+            out["bench"] = [bx, by]
+            got = got[1:]
+        for x, y in got:
+            grid[y][x] = "P"
+        out["plots"] = [[x, y] for x, y in got]
+    n = int(c.get("nodes", 0))
+    if n:
+        nodes = []
+        for i in range(n):
+            target = far * (0.15 + 0.75 * (i + 0.5) / n)
+            cands = sorted((abs(d - target), p[1], p[0]) for p, d in dist.items() if free(p))[:6]
+            if not cands:
+                break
+            _, y, x = cands[rng.randrange(len(cands))]
+            grid[y][x] = "G"
+            taken.add((x, y))
+            nodes.append([x, y])
+        out["nodes"] = nodes
+    return out
+
+
 def make_cave(constraints: dict[str, Any], seed: int, attempts: int = 20) -> tuple[list[str], dict[str, Any]]:
     w = int(constraints.get("width", 40))
     h = int(constraints.get("height", 22))
@@ -110,12 +162,21 @@ def make_cave(constraints: dict[str, Any], seed: int, attempts: int = 20) -> tup
             boss_info = {"boss_room": {"center": [cx, cy], "radius": r}}
         grid[sy][sx] = "S"
         grid[ey][ex] = "E"
-        # enemy spawns: floor cells ~60% of the way along entry->exit distance
-        target = dist[end] * 0.6
-        cands = sorted((abs(d - target), p) for p, d in dist.items() if grid[p[1]][p[0]] == ".")
-        spawns = [p for _, p in cands[:enemies]]
+        spawn_at = constraints.get("spawn_at")
+        if spawn_at:   # F6: one spawn per path fraction (packs spread along the route)
+            spawns = []
+            for f in spawn_at:
+                cands = sorted((abs(d - dist[end] * float(f)), p[1], p[0]) for p, d in dist.items()
+                               if grid[p[1]][p[0]] == "." and p not in spawns)
+                spawns.append((cands[0][2], cands[0][1]))
+        else:
+            # enemy spawns: floor cells ~60% of the way along entry->exit distance
+            target = dist[end] * 0.6
+            cands = sorted((abs(d - target), p) for p, d in dist.items() if grid[p[1]][p[0]] == ".")
+            spawns = [p for _, p in cands[:enemies]]
+        feats = _place_features(grid, dist, constraints, spawns, rng)
         rows = ["".join(r) for r in grid]
-        return rows, {"start": list(start), "exit": list(end), "spawns": [list(p) for p in spawns], "attempt": attempt, "path_len": dist[end], **boss_info}
+        return rows, {"start": list(start), "exit": list(end), "spawns": [list(p) for p in spawns], "attempt": attempt, "path_len": dist[end], **boss_info, **feats}
     raise RuntimeError("G1-Tile: no layout satisfied constraints")
 
 
@@ -130,7 +191,9 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
     wall, _, _ = material(wall_b, ctx)
     floor, _, _ = material(floor_b, ctx)
     marker = ctx.vault.get(brief.get("marker_palette", "cave_moss"))
-    tileset = Image(ts * 4, ts)
+    used = [g for g in FEATURE_INDEX if any(g in r for r in rows)]
+    legend = dict(TILE_INDEX) | {g: FEATURE_INDEX[g] for g in used}
+    tileset = Image(ts * (4 + (len(FEATURE_INDEX) if used else 0)), ts)
     tileset.blit(wall, 0, 0)
     tileset.blit(floor, ts, 0)
     for i, col in ((2, marker[4]), (3, marker[3])):
@@ -139,15 +202,28 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
             for x in range(3, ts - 3):
                 if (x in (3, ts - 4)) or (y in (3, ts - 4)) or (i == 3 and x == y):
                     tileset.set(ts * i + x, y, col)
-    layout = {"schema_version": "1.0", "tile_size": ts, "width": len(rows[0]), "height": len(rows), "legend": TILE_INDEX, "rows": rows, **info}
+    if used:   # F6 feature tiles drawn over floor with marker/wall ramps (palette-safe)
+        wall_pal = ctx.vault.get(brief.get("wall_palette", "cave_stone"))
+        for g, i in FEATURE_INDEX.items():
+            tileset.blit(floor, ts * i, 0)
+            for y in range(ts):
+                for x in range(ts):
+                    if g == "G" and abs(x - ts // 2) + abs(y - ts // 2) <= ts // 4:
+                        tileset.set(ts * i + x, y, marker[4] if (x + y) % 3 else marker[2])
+                    elif g == "P" and 2 <= x < ts - 2 and 2 <= y < ts - 2:
+                        tileset.set(ts * i + x, y, wall_pal[1] if y % 4 < 2 else wall_pal[2])
+                    elif g == "W" and 2 <= x < ts - 2 and 4 <= y < ts - 4:
+                        tileset.set(ts * i + x, y, wall_pal[3] if y in (4, ts - 5) or x in (2, ts - 3) else wall_pal[2])
+    layout = {"schema_version": "1.0", "tile_size": ts, "width": len(rows[0]), "height": len(rows), "legend": legend, "rows": rows, **info}
     layout_bytes = (json.dumps(layout, indent=1) + "\n").encode()
     ts_png = tileset.to_png()
     elapsed = (time.perf_counter() - t0) * 1000
-    path = bfs_path(rows, tuple(info["start"]), tuple(info["exit"]))
+    path = bfs_path(rows, tuple(info["start"]), tuple(info["exit"]), passable=".SEGPW")
     gates = [
         solvability_gate(rows),
-        floor_ratio_gate(rows),
-        palette_gate(tileset, [ctx.vault.get("cave_stone"), marker]),
+        floor_ratio_gate(rows, *brief.get("constraints", {}).get("floor_ratio", (0.3, 0.7))),
+        palette_gate(tileset, [ctx.vault.get("cave_stone"), ctx.vault.get(brief.get("wall_palette", "cave_stone")),
+                               ctx.vault.get(brief.get("floor_palette", "cave_stone")), marker]),
         budget_gate(elapsed, len(ts_png) + len(layout_bytes), float(brief.get("budget_ms", 2000)), 256 * 1024),
     ]
     return GeneratorOutput(

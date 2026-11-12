@@ -33,6 +33,7 @@ var crit_chance := 0.0         # seeded encounters: chance of a ×1.5 hit
 var rng_state := 0             # 31-bit LCG state; part of the snapshot
 var last_progress_tick := 0    # last tick with damage or healing (soft-lock detector)
 var summons := 0
+var explore := false           # F6 world areas: no "victory" while exploring; only a wipe ends the area
 
 
 func _init(grid_) -> void:
@@ -68,6 +69,7 @@ func clone():
 	c.rng_state = rng_state
 	c.last_progress_tick = last_progress_tick
 	c.summons = summons
+	c.explore = explore
 	return c
 
 
@@ -96,6 +98,8 @@ func outcome() -> String:
 				foes += 1
 	if party == 0:
 		return "defeat"
+	if explore:
+		return "running"
 	if foes == 0:
 		return "victory"
 	return "running"
@@ -484,7 +488,7 @@ func to_snapshot() -> Dictionary:
 	return {"v": SNAPSHOT_VERSION, "tick": tick, "tactic": tactic, "focus_kind": focus_kind, "engaged": engaged,
 		"leader_manual": leader_manual, "think_interval": think_interval, "leash": leash, "separation": separation,
 		"variance": variance, "crit_chance": crit_chance, "rng_state": rng_state, "last_progress_tick": last_progress_tick, "summons": summons,
-		"entities": ents, "events": events.duplicate(true)}
+		"explore": explore, "entities": ents, "events": events.duplicate(true)}
 
 
 ## Restore in place (keeps grid, brain hook and forward flag).
@@ -508,6 +512,7 @@ func restore(snap: Dictionary) -> void:
 	rng_state = int(snap.get("rng_state", 0))
 	last_progress_tick = int(snap.get("last_progress_tick", tick))
 	summons = int(snap.get("summons", 0))
+	explore = bool(snap.get("explore", false))
 	events = []
 	for ev in snap["events"]:
 		events.append(_int_fields(ev))

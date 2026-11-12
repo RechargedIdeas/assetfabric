@@ -528,15 +528,7 @@ func _sync_view() -> void:
 		s.modulate = Color(1, 0.4, 0.4) if e.hit_flash > 0 else (Color(1, 1, 0.6) if e.taunt_left > 0 else Color.WHITE)
 	var lines := []
 	if frozen:
-		var ol := [tr("hud.freeze.title") + " (%.1f ms)" % swap_recs.get("wall_ms", 0.0)]
-		var i := 1
-		for r in swap_recs.get("recommendations", []):
-			ol.append("%d. %s  %s %d/%d  score %.1f" % [i, tr("roster." + r["id"]), tr("hud.hp"), r["hp"], r["max_hp"], r["score"]])
-			i += 1
-		var near: Array = sim.entities.filter(func(o): return o.team == 1 and o.alive()).map(func(o): return "%s %d" % [o.id, o.hp])
-		ol.append(tr("hud.freeze.threats") + ": " + ", ".join(near.slice(0, 3)))
-		ol.append(tr("hud.freeze.hint"))
-		overlay.text = "\n".join(ol)
+		overlay.text = "\n".join(freeze_overlay())
 	else:
 		overlay.text = "%s: %s%s" % [tr("hud.tactic"), sim.tactic, (" · focus " + sim.focus_kind) if sim.focus_kind != "" else ""]
 	for e in sim.entities:
@@ -549,6 +541,40 @@ func _sync_view() -> void:
 		_: lines.append(tr("hud.objective.defeat"))
 	lines.append(tr("hud.hint.controls"))
 	hud.text = "\n".join(lines)
+
+
+## Time-freeze overlay (GAME_SPEC §4.1): ranked swaps with each fighter's HP, target, cooldowns and
+## cell; nearby threats with a threat score; pet status. Also captured headless (F6 acceptance).
+func freeze_overlay() -> Array:
+	var ol := [tr("hud.freeze.title") + " (%.1f ms)" % swap_recs.get("wall_ms", 0.0)]
+	var i := 1
+	for r in swap_recs.get("recommendations", []):
+		var e = sim.by_id.get(r["id"])
+		var cds := []
+		for k in r.get("cooldowns", {}):
+			if int(r["cooldowns"][k]) > 0:
+				cds.append("%s %.1fs" % [tr("ability." + str(k)), int(r["cooldowns"][k]) / 60.0])
+		var cell: Vector2i = sim.grid.to_cell(e.pos) if e else Vector2i(-1, -1)
+		var tgt: String = str(r.get("target", ""))
+		ol.append("%d. %s  %s %d/%d  %s %.1f  %s %s  %s %s  @%d,%d" % [i, tr("roster." + r["id"]), tr("hud.hp"), r["hp"], r["max_hp"],
+			tr("hud.freeze.score"), r["score"], tr("hud.freeze.target"), tgt if tgt != "" else "-",
+			tr("hud.freeze.cooldowns"), ", ".join(cds) if not cds.is_empty() else tr("hud.freeze.ready"), cell.x, cell.y])
+		i += 1
+	var l = sim.leader()
+	var threats := []
+	for o in sim.entities:
+		if o.team == 1 and o.alive():
+			var d: float = o.pos.distance_to(l.pos) if l else 999.0
+			threats.append([snappedf(o.atk * (2.0 if d <= o.aggro_range else 1.0) * (1.0 + o.tier) / maxf(1.0, d / 32.0), 0.1), o])
+	threats.sort_custom(func(a, b): return a[0] > b[0])
+	ol.append(tr("hud.freeze.threats") + ": " + ", ".join(threats.slice(0, 3).map(func(t): return "%s %d (%.1f)" % [str(t[1].get_meta("ref", t[1].id)), t[1].hp, t[0]])))
+	var pets := []
+	for p in sim.entities:
+		if p.kind == "pet" and p.team == 0:
+			pets.append("%s→%s %d/%d" % [str(p.get_meta("ref", p.id)), tr("roster." + p.owner_id), p.hp, p.max_hp])
+	ol.append(tr("hud.freeze.pets") + ": " + (", ".join(pets) if not pets.is_empty() else "-"))
+	ol.append(tr("hud.freeze.hint"))
+	return ol
 
 
 func _scripted_swap(s: Dictionary) -> void:

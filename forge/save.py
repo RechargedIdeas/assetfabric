@@ -10,6 +10,8 @@ Version history ([INFERENCE] F5-4 — v1/v2 model the prototype formats we migra
   v1  flat prototype: {version, leader, levels{id:int}, pets[], cleared[], playtime (s)}
   v2  layered: profile{playtime_ticks}, roster{leader, fighters{id:int}, pets{owned, assigned}}, world{area, cleared}
   v3  fighters{id:{level,xp}}, profile.settings + stats, world.bosses_defeated/inventory/quests/flags, checksum
+  v4  (F6 vertical slice) roster.unlocked/party_hp/gear; world.farm/checkpoint/counters/seed/rng/tick/visits/
+      depleted/packs_cleared/buffs — everything needed to resume the slice at a checkpoint [INFERENCE F6-6]
 """
 
 from __future__ import annotations
@@ -20,7 +22,7 @@ import json
 from typing import Any, Callable
 
 FORMAT = "gamezero-save"
-CURRENT = 3
+CURRENT = 4
 TICK_HZ = 60
 
 
@@ -69,7 +71,23 @@ def _v2_to_v3(s: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-MIGRATIONS: dict[int, Callable[[dict[str, Any]], dict[str, Any]]] = {1: _v1_to_v2, 2: _v2_to_v3}
+V4_WORLD_DEFAULTS: dict[str, Any] = {"farm": {"plots": []}, "checkpoint": {"area": "", "arrive": ""}, "counters": {}, "seed": 0,
+                                     "rng": 0, "tick": 0, "visits": {}, "depleted": {}, "packs_cleared": {}, "buffs": []}
+
+
+def _v3_to_v4(s: dict[str, Any]) -> dict[str, Any]:
+    out = copy.deepcopy(s)
+    out["version"] = 4
+    r = out["roster"]
+    r.setdefault("unlocked", [])
+    r.setdefault("party_hp", {})
+    r.setdefault("gear", {"shared": [], "unique": {}})
+    for k, v in V4_WORLD_DEFAULTS.items():
+        out["world"].setdefault(k, copy.deepcopy(v))
+    return out
+
+
+MIGRATIONS: dict[int, Callable[[dict[str, Any]], dict[str, Any]]] = {1: _v1_to_v2, 2: _v2_to_v3, 3: _v3_to_v4}
 
 
 def migrate(save: dict[str, Any]) -> tuple[dict[str, Any], list[int]]:
@@ -91,8 +109,10 @@ def new_save(leader: str, fighters: dict[str, int], pets: list[str]) -> dict[str
          "profile": {"playtime_ticks": 0, "settings": {"palette_variant": "default", "input_remap": {}},
                      "stats": {"encounters_won": 0, "bosses_defeated": 0}},
          "roster": {"leader": leader, "fighters": {k: {"level": v, "xp": 0} for k, v in fighters.items()},
-                    "pets": {"owned": list(pets), "assigned": {leader: list(pets[:1])}}},
-         "world": {"area": "", "cleared": [], "bosses_defeated": [], "inventory": {}, "quests": {}, "flags": {}}}
+                    "pets": {"owned": list(pets), "assigned": {leader: list(pets[:1])}},
+                    "unlocked": [], "party_hp": {}, "gear": {"shared": [], "unique": {}}},
+         "world": {"area": "", "cleared": [], "bosses_defeated": [], "inventory": {}, "quests": {}, "flags": {},
+                   **copy.deepcopy(V4_WORLD_DEFAULTS)}}
     s["checksum"] = checksum(s)
     return s
 
@@ -118,4 +138,11 @@ FIXTURES: dict[str, dict[str, Any]] = {
            "roster": {"leader": "bram", "fighters": {"kael": 3, "nyra": 3, "bram": 4, "sola": 3},
                       "pets": {"owned": ["stone_tortle"], "assigned": {"bram": ["stone_tortle"]}}},
            "world": {"area": "cave_02", "cleared": ["sandbox", "first_combat", "party_ai"]}},
+    "v3": {"format": FORMAT, "version": 3,
+           "profile": {"playtime_ticks": 1760, "settings": {"palette_variant": "default", "input_remap": {}},
+                       "stats": {"encounters_won": 1, "bosses_defeated": 1}},
+           "roster": {"leader": "kael", "fighters": {"kael": {"level": 3, "xp": 70}, "nyra": {"level": 3, "xp": 70}},
+                      "pets": {"owned": ["ember_fox"], "assigned": {"kael": ["ember_fox"]}}},
+           "world": {"area": "cave_boss", "cleared": ["boss_warden"], "bosses_defeated": ["cave_warden"],
+                     "inventory": {}, "quests": {}, "flags": {}}},
 }

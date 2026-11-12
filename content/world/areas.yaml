@@ -1,0 +1,27 @@
+# F6 vertical-slice world graph. Tilemaps come from G1-Tile (content/briefs/f6/slice.yaml).
+# Transitions are tile glyphs S/E (field: S = home, E = cave mouth) · links name the target
+# area and which glyph the party arrives on. Packs pin a hostile group to a G1-Tile spawn index.
+schema_version: "1.0"
+start_area: field
+areas:
+  - id: field
+    tilemap: field_01
+    biome: field
+    links: {E: {to: cave_deep, arrive: S}}
+    nodes: {G: flint}
+    packs:
+      - {spawn: 0, units: [{ref: emberling, count: 2}]}
+  - id: cave_deep
+    tilemap: cave_deep
+    biome: cave
+    links: {S: {to: field, arrive: E}, E: {to: warden_lair, arrive: S, requires: "stage:q_warden>=warden"}}
+    nodes: {G: cave_moss}
+    packs:
+      - {spawn: 0, units: [{ref: cave_mite, count: 3}]}
+      - {spawn: 1, units: [{ref: emberling, count: 2}, {ref: cave_mite, count: 1}]}
+      - {spawn: 2, units: [{ref: rock_brute, count: 1}, {ref: cave_mite, count: 2}]}
+  - id: warden_lair
+    tilemap: cave_boss
+    biome: cave
+    encounter: boss_warden      # F5 boss encounter (Cave Warden + adds) reused as-is
+    links: {S: {to: cave_deep, arrive: E}, E: {to: field, arrive: E, requires: "flag:warden_down"}}

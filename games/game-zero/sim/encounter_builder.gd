@@ -56,12 +56,20 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 		sim.variance = float(encounter.get("variance", 0.1))
 		sim.crit_chance = float(encounter.get("crit", 0.1))
 	var taken := {}
-	var party_cells := _free_cells_near(grid, grid.start, 16, taken)
+	var origin0: Vector2i = grid.start
+	if encounter.has("start_cell"):     # F6: arrive at another link tile (e.g. back at the cave mouth)
+		origin0 = Vector2i(int(encounter["start_cell"][0]), int(encounter["start_cell"][1]))
+	var party_cells := _free_cells_near(grid, origin0, 16, taken)
 	var pi := 0
 	var rules: Dictionary = data.get("pet_rules", {})
 	var caps: Dictionary = rules.get("bonus_caps", {})
 	var share := float(rules.get("ally_share", 0.0))
 	var party_bonus := {"atk_pct": 0.0, "def_flat": 0.0, "hp_pct": 0.0}
+	# F6 items: shared gear / consumable buffs → party; character-unique gear → its holder.
+	# Same diminishing-returns caps as pet bonuses (GAME_SPEC §4.1 shared vs unique items).
+	var item_bonus: Dictionary = encounter.get("bonus", {})
+	for k in item_bonus.get("party", {}):
+		party_bonus[k] += float(item_bonus["party"][k])
 	var fighters := []
 	for m in encounter.get("party", []):
 		var f: Dictionary = data["fighters"][m["ref"]]
@@ -80,6 +88,9 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 		var owner = pair[0]
 		var m: Dictionary = pair[1]
 		var own := {"atk_pct": 0.0, "def_flat": 0.0, "hp_pct": 0.0}
+		var gear: Dictionary = item_bonus.get("own", {}).get(str(m["ref"]), {})
+		for k in gear:
+			own[k] += float(gear[k])
 		var pets: Array = m.get("pets", [])
 		pets = pets.slice(0, int(rules.get("max_pets_per_character", 2)))
 		for pid in pets:
@@ -115,6 +126,8 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 		var en: Dictionary = data["enemies"][h["ref"]]
 		for i in int(h.get("count", 1)):
 			var origin: Vector2i = spawns[si % spawns.size()]
+			if h.has("spawn"):              # F6: packs pinned to a G1-Tile spawn index
+				origin = spawns[int(h["spawn"]) % spawns.size()]
 			if str(h.get("at", "")) == "boss_room" and layout.has("boss_room"):
 				origin = Vector2i(int(layout["boss_room"]["center"][0]), int(layout["boss_room"]["center"][1]))
 			var cell: Vector2i
@@ -130,6 +143,8 @@ static func build(encounter: Dictionary, layout: Dictionary, data: Dictionary, a
 				en["abilities"].map(func(a): return abilities[a]), grid.center(cell))
 			e.tier = int(en["tier"])
 			e.set_meta("ref", h["ref"])
+			if h.has("pack"):
+				e.set_meta("pack", int(h["pack"]))
 			if en.has("phases"):
 				e.phases = boss_phases(en, data, abilities)
 				e.abilities = e.phases[0]["abilities"]

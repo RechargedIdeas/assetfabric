@@ -83,13 +83,13 @@ def solvability_gate(grid: list[str]) -> GateResult:
     ends = [(x, y) for y, row in enumerate(grid) for x, ch in enumerate(row) if ch == "E"]
     if len(starts) != 1 or len(ends) != 1:
         return GateResult("solvability", False, {"error": "need exactly one S and one E"})
-    path = bfs_path(grid, starts[0], ends[0])
+    path = bfs_path(grid, starts[0], ends[0], passable=".SEGPW")   # F6 feature glyphs are walkable
     return GateResult("solvability", path is not None, {"path_len": len(path) if path else None})
 
 
 def floor_ratio_gate(grid: list[str], lo: float = 0.3, hi: float = 0.7) -> GateResult:
     cells = sum(len(r) for r in grid)
-    floor = sum(r.count(".") + r.count("S") + r.count("E") for r in grid)
+    floor = sum(len(r) - r.count("#") for r in grid)   # every non-wall glyph is floor
     ratio = floor / cells
     return GateResult("floor_ratio", lo <= ratio <= hi, {"ratio": round(ratio, 3), "range": [lo, hi]})
 
