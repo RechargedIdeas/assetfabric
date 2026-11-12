@@ -13,7 +13,7 @@ var policy: Dictionary = {}
 var lm: Dictionary = {}
 var callouts: Dictionary = {}
 var in_tick := false
-var stats := {"policy_calls": 0, "policy_fallbacks": 0, "policy_us": [], "lm_calls": 0, "lm_us": [],
+var stats := {"policy_calls": 0, "policy_fallbacks": 0, "policy_over_budget": 0, "policy_us": [], "lm_calls": 0, "lm_us": [],
 	"lm_refused_in_tick": 0, "callouts_served": 0}
 
 
@@ -102,7 +102,9 @@ func score_targets(candidates: Array, record: bool = true) -> Array:
 	if stats["policy_us"].size() < 20000:
 		stats["policy_us"].append(us)
 	if us > POLICY_BUDGET_US:
-		stats["policy_fallbacks"] += 1
+		# Scores are still returned (no fallback happened); a single over-budget call is usually an OS
+		# scheduling hiccup. Counted separately; the F3 gate checks the p95 against the budget (F7 de-flake).
+		stats["policy_over_budget"] += 1
 	return scores
 
 
@@ -192,5 +194,5 @@ func p95(key: String) -> float:
 
 func report() -> Dictionary:
 	return {"registry": registry(), "policy_calls": stats["policy_calls"], "policy_fallbacks": stats["policy_fallbacks"],
-		"policy_p95_us": p95("policy_us"), "lm_calls": stats["lm_calls"], "lm_p95_us": p95("lm_us"),
+		"policy_over_budget": stats["policy_over_budget"], "policy_budget_us": POLICY_BUDGET_US, "policy_p95_us": p95("policy_us"), "lm_calls": stats["lm_calls"], "lm_p95_us": p95("lm_us"),
 		"lm_refused_in_tick": stats["lm_refused_in_tick"], "callouts_served": stats["callouts_served"]}

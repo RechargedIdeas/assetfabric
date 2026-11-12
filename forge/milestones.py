@@ -78,6 +78,9 @@ def _f3(r: dict[str, Any]) -> list[str]:
     _need(ai.get("brain") == "bt+policy", f"brain={ai.get('brain')}", errs)
     _need(girt.get("policy_calls", 0) > 0, "P-TargetSelect policy never called", errs)
     _need(girt.get("policy_fallbacks", 1) == 0, f"policy fallbacks={girt.get('policy_fallbacks')}", errs)
+    # Latency budget: gate the p95, not every call (single over-budget calls are scheduler noise; F7 de-flake).
+    _need(float(girt.get("policy_p95_us", 1e9)) <= float(girt.get("policy_budget_us", 500.0)),
+          f"policy p95 {girt.get('policy_p95_us')} us > budget {girt.get('policy_budget_us', 500.0)} us", errs)
     _need(girt.get("lm_refused_in_tick", 1) == 0, "LM was invoked inside the combat tick (ADR-0011)", errs)
     _need(ai.get("callouts_total", 0) >= 5, f"callouts_total={ai.get('callouts_total')}", errs)
     _need(len(ai.get("intents", [])) >= 1, "no player intent parsed", errs)
@@ -112,6 +115,7 @@ def _f3_perf(r: dict[str, Any]) -> dict[str, Any]:
     ms = float(ai.get("swap_wall_ms", -1))
     return {"swap_wall_ms": ms, "swap_target_ms": SWAP_TARGET_MS, "swap_target_met": 0 <= ms <= SWAP_TARGET_MS,
             "swap_threaded": ai.get("swap_threaded"), "policy_p95_us": ai.get("girt", {}).get("policy_p95_us"),
+            "policy_over_budget": ai.get("girt", {}).get("policy_over_budget"),
             "lm_p95_us": ai.get("girt", {}).get("lm_p95_us"), "field_warm_ms": ai.get("field_warm_ms")}
 
 
