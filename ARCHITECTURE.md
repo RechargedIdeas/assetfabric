@@ -73,6 +73,11 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `games/game-zero/world/` | `world_state.gd` (inventory, farm, nodes, packs, buffs, gear, XP, quest counters, save ↔ state), `quest_log.gd` (statechart + guards), `loot.gd`, `autopilot.gd` (scripted QA agent) | F6 |
 | `games/game-zero/audio/music_director.gd` | Adaptive music: per-biome stem sets, explore / tension / combat / boss layer maps with fades | F6 |
 | `forge/accept_f6.py`, `scenes/slice.tscn` | F6 vertical slice (select → farm → tunnels → cave → craft → boss → open world → save) + quit/reload parity, 12-selection matrix, quest/loot/save parity, locale coverage | F6 |
+| `forge/packaging.py`, `games/game-zero/export_presets.cfg` | F7 packaging: toolchain discovery (Godot, pinned 4.3 templates, JDK 17, Android SDK), hermetic Godot home (`.fabric/godot-home`), stage with keep-import, exports, per-target verify (PE, aapt/apksigner, exported-binary smoke), PCK/APK readers, `BUILD.json` | F7 |
+| `forge/pwa.py` | PWAPipeline: G-WEB-01 budget, SW cache list, `_headers`, fragment-args hook, local server + headless Chrome harness (`WebHarness`) | F7 |
+| `forge/shuttleline.py` | ShuttleLine `shuttleline.contract/1`, per-target shipped-content verification, `generic-folder` adapter | F7 |
+| `forge/boltpack.py` | BoltPack: CycloneDX SBOM (engine copyright info + platform extras + content), license audit, `LICENSES/`, `.fabricbolt` | F7 |
+| `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `studio/`, `companions/pocketloom/`, `cluster/loomcluster/` | Studio / companion / cluster tracks | stub |
 
 ### Content flow (F1)
@@ -91,6 +96,15 @@ forge live set/sprite/push ─► stage (sandbox regen) + validate (tune_limits)
    ─► game polls HEAD at a tick boundary ─► re-validate (limits + sha256) ─► inflight marker ─► snapshot
    ─► apply + restat ─► health probe (90-tick clone) ─► commit | rollback ─► ack n ─► session snapshot + WAL
 guardian: crash/hang ─► kill ─► backoff ─► restart --live-resume (snapshot + quarantine + re-apply)
+```
+
+### Packaging flow (F7)
+
+```
+games/game-zero ─► dist/.stage (no .gdignore; PNG/WAV importer="keep") ─► godot --import
+   ─► godot --export-{release,debug} <preset> ─► dist/<target>/ (Linux · Windows · debug APK · Web PWA)
+   ─► verify (exported binary / PE / aapt+apksigner / PWAPipeline + headless Chrome)
+   ─► ShuttleLine contract vs shipped PCK/APK ─► BoltPack SBOM + license audit ─► dist/bolt/*.fabricbolt
 ```
 
 The sim is separated from rendering so it can run headless (acceptance, balance, RL) at thousands of ticks per second and stay deterministic (state hash).

@@ -19,7 +19,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 
 ```bash
 source .venv/bin/activate
-pytest -q                         # unit + component
+pytest -q                         # unit + component (≈ 14 min with Godot)
+forge accept F7                   # F7 full: exports + platform proofs (local; see docs/packaging.md)
 forge validate manifest           # forge.yaml against schema
 forge status                      # exit 0 == healthy
 forge doctor                      # env checks (godot binary advisory)
@@ -55,6 +56,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F4 | [F4.md](docs/acceptance-tests/F4.md) | live-tune (custom runner: backlog run + guardian-supervised serve run) |
 | F5 | [F5.md](docs/acceptance-tests/F5.md) | first-boss (custom runner: boss clear ×2 + save round-trip + 2400-fight balance matrix + soft-lock probe; ≈ 2 min on 8 vCPU, ≈ 7–9 min on 2 cores) |
 | F6 | [F6.md](docs/acceptance-tests/F6.md) | vertical-slice (custom runner: slice playthrough + quit/resume parity + selection matrix + parity + world gates; ≈ 30 s on 8 vCPU full, ≈ 15 s fast) |
+| F7 | [F7.md](docs/acceptance-tests/F7.md) | launch-candidates (custom runner: `forge build --target all` + desktop slice in a network-less namespace + Android content slice + G-SAVE-01 ring desktop → Android → Web → desktop + PWA smoke + remap; ≈ 2.5 min full, ≈ 3 s fast) |
 
 ## 4. CI gates
 
@@ -65,14 +67,14 @@ Workflow: `.github/workflows/ci.yml` (Ubuntu, `uv`, cached Godot 4.3 download). 
 3. `pytest -q` — unit, pipeline, **determinism gate** (regenerated assets == committed), and **headless Godot increments** for every registered milestone.
 4. `REQUIRE_GODOT=1 scripts/smoke_godot.sh`.
 
-Planned: Windows runner for DirectML, SBOM/license audit (F7). `[INFERENCE: workflow shape]`
+F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, ShuttleLine vs sources, BoltPack SBOM + license audit for every target, network-API scan, editor save/remap round-trip). Platform exports + `forge accept F7` (full) are **local-only** (≈1 GB templates, JDK + Android SDK, headless Chrome; ≈ 2.5 min) — see [docs/packaging.md §CI](docs/packaging.md#ci). Planned: cached `package` job, Windows runner for DirectML. `[INFERENCE: workflow shape]`
 
 ## 5. Performance & fidelity contracts
 
 - **Weakest acceptance node:** 2 CPU cores, no GPU. Every acceptance test must pass there.
 - Generator runtime budgets (SPEC §5.1): authoring 50–500 ms; runtime <100 ms where claimed.
 - Optimal swap forward-sim <50 ms; mobile upscale <5 ms (target).
-- Web PWA <45 MB compressed.
+- Web PWA <45 MB compressed (G-WEB-01, gated by PWAPipeline at F7: sum of gzip-9 sizes).
 
 ## 6. Game acceptance (later milestones)
 

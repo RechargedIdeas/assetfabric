@@ -12,8 +12,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **G1-Audio** | — | Chiptune stems | F2 | **procedural real** (`kind: audio`, 4 macro-state stems + SFX, WAV) |
 | **Codegen** | — | Stats/abilities/chars → GDScript/`.tres` | F2 | **real** (`kind: codegen`, game_data.json + ability `.tres`, derived sprite briefs) |
 | **SwatchStudio** | Swatch | Live material tuning + CLI echo | F1 | **CLI** (`forge palette`, `forge gen --seed`); GUI with Studio |
-| **ShuttleLine** | Shuttle | Multi-engine export | Godot@F1; multi@F7 | **Godot target real** (`fabric_assets.json`) |
-| **BoltPack** | Bolt | Signed SBOM packages | F7 | deferred |
+| **ShuttleLine** | Shuttle | Multi-engine export | Godot@F1; multi@F7 | **real (F7)**: `shuttleline.contract/1` (`forge shuttle contract [--check]`), verified against every shipped PCK/APK (`dist/<target>/shuttle.json`); adapters `godot` + `generic-folder` (`forge shuttle export`) real, Unity/Unreal not built |
+| **BoltPack** | Bolt | Signed SBOM packages | F7 | **real, unsigned (F7)**: CycloneDX 1.5 SBOM from the engine's own copyright info + platform extras + game content, license allow-list audit (copyleft fails), `LICENSES/`, `dist/bolt/*.fabricbolt`; release signing TODO |
 | **PatternVault** | Vault | Versioned palettes/patterns | F1 | **real** (`content/patternvault/`, colour-blind variants) |
 | **WhisperWeft** | Weft | Voice-driven Studio commands | F7+ | deferred |
 | **RealityLoom** | Loom | Reconstruction orchestrator | C10+ | deferred |
@@ -33,13 +33,15 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **BalanceSchema / Monte Carlo runner** | — | Parameterized rule space + Monte Carlo runner | F5 | **real** (`forge balance run`; headless Godot workers, CPU only) |
 | **Bayesian optimizer** | — | Balance tuning (Optuna/Ax) | F5 | **real, Optuna TPE on CPU** (`forge balance tune`, optional extra `tune`); surrogate model / Ax not used |
 | **Soft-lock detector** | — | Static + runtime soft-lock detection | F5 | **real** (`forge softlock`; runtime stall/timeout flags in the sim) |
-| **Player State save** | — | Versioned save + migration (Profile/Roster/World) | F5 | **real** (`forge save inspect/migrate`; `autoload/save.gd`; v4 world layer at F6); cross-device round-trip (G-SAVE-01) is F7 |
+| **Player State save** | — | Versioned save + migration (Profile/Roster/World) | F5 | **real** (`forge save inspect/migrate`; `autoload/save.gd`; v4 world layer at F6); cross-device round-trip **G-SAVE-01 proven at F7** (desktop → Android → Web → desktop) |
 | **Quest state machine** | — | Quest SM | F6 | **real** (quests compiled to a parallel statechart by Codegen-World; `world/quest_log.gd` + Python twin; static soft-lock analysis) |
 | **Farming / economy** | — | Farm, gather, grow, craft feeding economy + combat | F6 | **real** (`content/world/economy.yaml`; plots, crops, gather nodes, recipes, buffs, gear; economy-solvability gate) — content placeholders (D-005) |
 | **Loot tables** | — | Loot tied to tiers | F6 | **real** (`content/world/loot.yaml`; deterministic LCG rolls, GDScript ↔ Python parity, EV in registry) |
 | **Adaptive music** | — | Stems layered by biome/state | F6 | **real** (`audio/music_director.gd` + `content/world/music.yaml`; G1-Audio stems `music_field`, `music_cave`) |
 | **QA autopilot** | — | AI agent playtests (hybrid QA) | F6 | **scripted** deterministic agent (`world/autopilot.gd`), not learned; humans still needed for length/feel |
-| **GodotIPC / PWAPipeline / …** | — | Platform toolkit layers | staged | deferred |
+| **PWAPipeline** | — | Web export orchestrator: size budgets, COOP/COEP, offline SW, smoke tests | F7 | **real** (`forge/pwa.py`): G-WEB-01 gzip budget, SW cache-list check, `_headers`, URL-fragment arg hook, headless-Chrome smoke (headers, isolation, SW, offline reload, header-less host) |
+| **Packaging (`forge build --target`)** | — | Desktop / Android / Web exports | F7 | **real** (`forge/packaging.py`): hermetic Godot home, pinned 4.3 templates (`forge templates`), staged keep-import, Linux/Windows/debug APK/Web PWA, per-target verify, `BUILD.json` |
+| **GodotIPC / ConsoleReadiness** | — | Android data-plane bridge / console porting gate | staged | deferred |
 
 ### CLI acceptance
 

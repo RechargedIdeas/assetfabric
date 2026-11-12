@@ -15,7 +15,7 @@ from tests.conftest import requires_godot
 def test_increment_acceptance(root: Path, milestone: str, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FORGE_ACCEPT_FAST", "1")      # F6: 2-selection matrix (full 12 via `forge accept F6`)
     report = accept(milestone, root, write=False)
-    assert report["passed"], report
+    assert report["passed"], (report["errors"], report.get("perf"))
 
 
 @requires_godot
