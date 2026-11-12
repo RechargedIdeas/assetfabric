@@ -12,7 +12,8 @@ from tests.conftest import requires_godot
 
 @requires_godot
 @pytest.mark.parametrize("milestone", sorted(INCREMENTS))
-def test_increment_acceptance(root: Path, milestone: str) -> None:
+def test_increment_acceptance(root: Path, milestone: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FORGE_ACCEPT_FAST", "1")      # F6: 2-selection matrix (full 12 via `forge accept F6`)
     report = accept(milestone, root, write=False)
     assert report["passed"], report
 
