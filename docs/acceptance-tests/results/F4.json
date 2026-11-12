@@ -6,8 +6,8 @@
   "passed": true,
   "perf": {
     "ack_ms": [
-      61.3,
-      80.7
+      64.2,
+      161.8
     ],
     "ack_target_met": true,
     "ack_target_ms": 500.0,
@@ -16,12 +16,12 @@
       0.5
     ],
     "commit_apply_us": [
-      47288,
-      46953
+      44612,
+      45217
     ],
     "recover_s": [
       0.87,
-      3.88
+      3.92
     ],
     "recover_target_met": true,
     "recover_target_s": 10.0,
@@ -119,14 +119,16 @@
         "rule": 3960
       },
       "dialogue": [],
-      "field_warm_ms": 80.43,
+      "field_warm_ms": 77.19,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 0,
         "lm_p95_us": 0,
         "lm_refused_in_tick": 0,
+        "policy_budget_us": 500,
         "policy_calls": 664,
-        "policy_fallbacks": 1,
+        "policy_fallbacks": 0,
+        "policy_over_budget": 0,
         "policy_p95_us": 26,
         "registry": [
           {
@@ -216,12 +218,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 60.56,
+      "swap_wall_ms": 69.97,
       "swaps": [
         {
           "tick": 300,
           "to": "nyra",
-          "wall_ms": 60.56
+          "wall_ms": 69.97
         }
       ]
     },
@@ -426,7 +428,7 @@
     "live": {
       "acks": [
         {
-          "apply_us": 47288,
+          "apply_us": 44612,
           "assets": [],
           "hash_after": "cb4c3575d67ed0ce",
           "hash_before": "35896434e6ecbb0e",
@@ -437,7 +439,7 @@
           "ticket": 1
         },
         {
-          "apply_us": 46953,
+          "apply_us": 45217,
           "assets": [
             "spr_rock_brute"
           ],
@@ -550,7 +552,7 @@
         "probing>idle"
       ],
       "final_hash": "85ceb9560ba64d81",
-      "live_dir": "/tmp/fabric-f4-s2w2tdtk/backlog",
+      "live_dir": "/tmp/fabric-f4-ghwzckf6/backlog",
       "replay": {
         "final_hash": "85ceb9560ba64d81",
         "outcome": "victory",
@@ -569,7 +571,7 @@
         "leash": 72,
         "rock_brute_max_hp": 30,
         "separation": 9,
-        "sprite_override": "/tmp/fabric-f4-s2w2tdtk/backlog/stage/2/spr_rock_brute.png"
+        "sprite_override": "/tmp/fabric-f4-ghwzckf6/backlog/stage/2/spr_rock_brute.png"
       },
       "wal": [
         {
@@ -660,13 +662,13 @@
             "kind": "crash",
             "rc": -6,
             "signal": 6,
-            "t": 1794502505.237
+            "t": 1794507220.894
           },
           {
             "event": "failure",
-            "heartbeat_age_s": 3.08,
+            "heartbeat_age_s": 3.02,
             "kind": "hang",
-            "t": 1794502509.341
+            "t": 1794507224.901
           }
         ],
         "policy": {
@@ -685,7 +687,7 @@
       },
       "steps": [
         {
-          "ack_ms": 61.3,
+          "ack_ms": 64.2,
           "status": "committed",
           "step": "tune",
           "ticket": 1,
@@ -700,10 +702,10 @@
           "recover_s": 0.87,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "a43ca3d4c2a2449c",
+            "full_hash": "ffe1b0812845be24",
             "quarantined": 2,
             "reapplied": [],
-            "tick": 6
+            "tick": 12
           },
           "status": "quarantined",
           "step": "crash",
@@ -716,7 +718,7 @@
           }
         },
         {
-          "ack_ms": 80.7,
+          "ack_ms": 161.8,
           "status": "committed",
           "step": "tune_after_restart",
           "ticket": 3,
@@ -728,13 +730,13 @@
           }
         },
         {
-          "recover_s": 3.88,
+          "recover_s": 3.92,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "c96a103cdfcb3a99",
+            "full_hash": "5d3ae9c28e88e3e9",
             "quarantined": 4,
             "reapplied": [],
-            "tick": 18
+            "tick": 30
           },
           "status": "quarantined",
           "step": "hang",
@@ -753,7 +755,7 @@
         }
       ]
     },
-    "sim_ms": 669.41,
+    "sim_ms": 642.3,
     "state_hash": "5c7396f38c8c6327",
     "statechart_analysis": {
       "id": "live_session",
