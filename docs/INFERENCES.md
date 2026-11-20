@@ -423,8 +423,19 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     rendered views of a textured box on a ground plane with exact cameras (not real photos): 12 views/120° → 0.38° rotation,
     1.1 % centre error, all tested configurations ≤ 1.24° / ≤ 3.3 %. Acceptance floors: 2° / 5 % / 2 px RMSE. Drift on long or
     real captures is untested; real-photo validation needs a capture run.
-75. **C-75 SplatForge training stays a stub (`gpu_required`).** A CPU 3DGS trainer needs a differentiable splat rasteriser
-    (forward + backward) — PyTorch CPU would add ~200 MB and still take hours per real scene; a toy trainer on a tiny scene
-    would prove only the toy. Training stays on a ROCm LoomCluster node (`opensplat-rocm`, `planned`); the import, mesh and
-    validator halves around it are real.
+75. **C-75 Full-scale SplatForge training stays a stub (`gpu_required`).** Production 3DGS (anisotropic covariance, SH degree 3,
+    adaptive densification, capture resolution, tile-based raster) on CPU would take hours per scene; it stays on a ROCm
+    LoomCluster node (`opensplat-rocm`, `planned`). The bounded CPU rung below (C-77) is real; the import, mesh and validator
+    halves around it are real.
 76. **C-76 Versions.** Patch bump `0.7.6+f7` → `0.7.7+f7`; no Kotlin/APK change (`0.4.0-c11`).
+77. **C-77 SplatForge CPU rung = own NumPy trainer, tiny scenes only.** Instead of PyTorch CPU (~200 MB, C-75's earlier
+    objection) the trainer is ~250 lines of NumPy: isotropic Gaussians (one world σ, screen σ = f·σ/z), SH degree 0, dense
+    rasterisation (every splat × every pixel, O(N·P)), depth-sorted front-to-back compositing with α ≤ 0.99, analytic
+    backward pass (the 3DGS gradient specialised to isotropic splats; verified against central finite differences), Adam
+    (lr μ 0.01, log σ 0.02, opacity logit 0.05, colour 0.03), opacity pruning every 100 steps, photometric L2 (no D-SSIM).
+    Matmuls go through `einsum(optimize=False)` (no BLAS) so the `.ply` is byte-identical pinned/unpinned. Bounds: ≤ 2000
+    splats, ≤ 96 px width, ≤ 24 views — beyond that it refuses (`recon.splat.cpu_too_large`). Measured only on rendered
+    synthetic views (textured box + ground), poses from the CPU SfM: held-out PSNR 23.3 dB (init 10.2 dB). It proves the
+    capture → SfM → 3DGS → `.ply` → MeshWeaver/GDGS chain on CPU; it is not production quality and real-photo captures are
+    untested. It is a separate op (`recon.splat_cpu`), not a rung of `recon.splat`, so routing/placement of full-scale jobs is
+    unchanged.

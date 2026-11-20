@@ -4,7 +4,7 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
-## [0.7.7+f7] — 2026-11-20 — Stub replacement batch 3: C12 CPU photogrammetry, MeshWeaver, GDGS Godot import
+## [0.7.7+f7] — 2026-11-20 — Stub replacement batch 3: C12 CPU photogrammetry, SplatForge CPU rung, MeshWeaver, GDGS Godot import
 
 ### Added
 - **CPU photogrammetry** (`forge/photogrammetry.py`, `realityloom.Photogrammetry`): OpenCV SIFT features, ratio test +
@@ -21,15 +21,23 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
   (colour from SH DC, alpha from opacity, size from scale), Compatibility renderer. CLI `forge recon godot-import PLY --project
   DIR [--verify]`; op `shuttle.gdgs` (`gdgs-multimesh-billboard-cpu`). Verified in Godot 4.3 under Xvfb (opengl3): instance
   read-back + a 320×240 render with 5637 lit pixels.
-- Accept C12: `photogrammetry`, `meshweaver`, `gdgs`; tests `tests/test_c12_real.py`.
+- **SplatForge CPU rung** (`forge/splattrain.py`, `realityloom.SplatForgeCPU`): own NumPy 3D Gaussian Splatting trainer —
+  isotropic Gaussians, SH degree 0, dense depth-sorted front-to-back alpha compositing (α ≤ 0.99), analytic backward pass
+  (checked against finite differences to ~1e-8 relative), Adam, opacity pruning; BLAS-free matmuls so the trained `.ply` is
+  byte-identical at any thread count. Bundle → CPU SfM poses + sparse init → training → `<bundle>/splat/point_cloud.ply`
+  (validated) + `train.json`. CLI `forge recon train BUNDLE --stage splat-cpu [--splats --width --iters --focal-px
+  --holdout]`; bounded to ≤ 2000 splats, ≤ 96 px, ≤ 24 views (refuses beyond). GroundWeave op `recon.splat_cpu`
+  (`splatforge-numpy-cpu`). Rendered 9-view scene, SfM poses, middle view held out: held-out PSNR 23.3 dB vs 10.2 dB untrained
+  (+13.1 dB), 600 splats × 400 steps at 64×48 in ≈ 60 s on one core (floors 20 dB / +10 dB). C-77.
+- Accept C12: `photogrammetry`, `splat_cpu`, `meshweaver`, `gdgs`; tests `tests/test_c12_real.py`.
 
 ### Changed
-- Register: `recon.photogrammetry`, `recon.meshweaver`, `recon.gdgs_import` → `real`. Register now 24 real ·
-  8 real_unverified_on_device · **1 stub** (`recon.splatforge`, GPU training — C-75) · 3 deferred. RealityLoom CPU plans
-  are now runnable end to end (`runnable_today: true`); the GPU splat route is blocked only by SplatForge training.
+- Register: `recon.photogrammetry`, `recon.meshweaver`, `recon.gdgs_import` → `real`; new row `recon.splatforge_cpu` (`real`). Register now 25 real ·
+  8 real_unverified_on_device · **1 stub** (`recon.splatforge`, full-scale GPU training — C-75) · 3 deferred. RealityLoom CPU plans
+  are now runnable end to end (`runnable_today: true`); the GPU splat route is blocked only by full-scale SplatForge training.
 - `recon.splat` stays `gpu_required` (rungs `planned`); the COLMAP rung is replaced by `recon.sfm` (C-73).
 - `opencv-python-headless` added to the `dev` extra and a new `recon` extra.
-- Version `0.7.6+f7` → `0.7.7+f7` (PocketLoom app unchanged, `0.4.0-c11`). INFERENCES C-71…C-76.
+- Version `0.7.6+f7` → `0.7.7+f7` (PocketLoom app unchanged, `0.4.0-c11`). INFERENCES C-71…C-77.
 
 ## [0.7.6+f7] — 2026-11-20 — Stub replacement batch 2b: ARCore session (C10) + ARCore depth (C11), `real_unverified_on_device`
 
