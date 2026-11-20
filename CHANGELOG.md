@@ -4,6 +4,29 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.11+f7] — 2026-11-20 — Quality gaps Q3: swap advisor < 50 ms on 2 cores (GAME_SPEC §4.1)
+
+### Changed
+- **Swap advisor meets the < 50 ms target** (quality gap P3, was ≈ 50–100 ms): `tools/swapbench.gd` (`--scene=swapbench`)
+  samples 17 real freeze states (party_ai pack fight + Cave Warden, every 60 ticks while ≥ 2 fighters live) and times
+  `SwapAdvisor.rank` 5× each. `forge accept F3` runs it **pinned to 2 CPU cores** (`taskset`, weakest node) and gates
+  p95 ≤ 50 ms, max ≤ 150 ms, threaded == serial ranking, and LOD fidelity (shipped 15 Hz-LOD top pick inside the
+  full-fidelity LOD-1 top 2 in every state, top-1 agreement ≥ 80 %). Recorded on the 8-vCPU box pinned to CPUs 0,1:
+  **p50 23.4 ms, p95 37.0 ms, max 48.6 ms**; LOD fidelity 17/17 top-1 agreement. In-game freezes: party scene 28 ms;
+  F4 live-tune freeze 73.6 → 32.7 ms.
+- Pure GDScript, no GDExtension: hot-path data-layout work in the forward sims — a struct-of-arrays mirror of the fields
+  entities read off each other inside `step()` (packed-array reads instead of script-property reads, which serialised
+  worker threads: 2 threads ran 2.2× slower than 1), BT memory as plain members instead of `set_meta`/`get_meta`
+  (global StringName table), ready abilities computed once per think, the 7-feature policy dot product unrolled in the
+  same operation order (bit-identical scores), per-clone private Strings/containers (`isolate()`), BFS field tables
+  cached per layout, no per-tick `outcome()` scan in the forward horizon.
+- **Behaviour unchanged**: F2–F6 re-recorded — fight outcomes, ticks, state hashes, G-BAL-01 matrices, per-pair spreads
+  and slice results identical to 0.7.10; only timings moved. Side effect: F5 Monte Carlo 280 → 161 ms per encounter per
+  worker, F6 slice wall 4.6 → 2.7 s.
+
+### Added
+- `tests/test_f3_ai.py`: swapbench gate unit tests (target, ceiling, pinning, sample count, parity, fidelity).
+
 ## [0.7.10+f7] — 2026-11-20 — Quality gaps Q2: G-A11Y-01 full (Settings screen, rebinding, live colour-blind palette)
 
 ### Added

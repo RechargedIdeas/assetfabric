@@ -493,3 +493,17 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     default (text entry needs a keyboard). Menus use Godot's `ui_*` actions plus explicit pad A/B/d-pad/stick events.
     Rebinding swaps conflicts inside a context instead of refusing. The render check runs on Mesa llvmpipe under Xvfb, not a
     GPU; a real gamepad and a phone have not been used (hardware-gated).
+
+### Quality gaps Q3 (0.7.11+f7) — swap advisor < 50 ms
+
+88. **C-88 How "< 50 ms wall time" is measured.** GAME_SPEC §4.1 gives the number, not the method. We gate the **p95** over
+    ≥ 10 freeze states sampled from real fights (17 today: party_ai + boss_warden, every 60 ticks while ≥ 2 fighters
+    live) × 5 reps, with the Godot process pinned to **2 CPUs** via `taskset` (weakest node = 2 cores, AGENTS rule 6).
+    Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
+    so a slower machine may exceed it on some states. 150 ms stays the hard ceiling for any single freeze.
+89. **C-89 LOD fidelity bar.** The advisor runs brains at 15 Hz in its forward sims (LOD 4). We accept that as long as the
+    shipped top pick is inside the full-fidelity (LOD 1) top 2 in every sampled state and agrees on top-1 in ≥ 80 % (17/17
+    today; exact full order 10/17). Our bar, not the spec's.
+90. **C-90 No behaviour change.** The optimisation is accepted only because every recorded F2–F6 outcome, tick count,
+    state hash and balance number is identical to 0.7.10 (timings excepted); unrolled policy maths keeps the operation
+    order so float results are bit-identical.
