@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "note": "PatternVault capture profiles (SPEC §7 'PatternVault capture profiles', §4 LensForge). Thresholds are advisory heuristics [INFERENCE C-38], not measured against a reconstruction run: nothing here has been validated end-to-end because SplatForge/photogrammetry are not built (C12 stub).",
+  "metrics": {
+    "gray": "integer luma (299R+587G+114B)//1000",
+    "sharpness": "variance of the 4-neighbour Laplacian over interior pixels of the gray image",
+    "exposure": "mean gray, plus fractions of pixels <=5 (dark clip) and >=250 (bright clip)"
+  },
+  "thresholds": {
+    "min_sharpness": 60.0,
+    "mean_luma": [40.0, 215.0],
+    "max_clip_fraction": 0.05
+  },
+  "modes": {
+    "still":  {"status": "real", "route_hint": "any", "min_views": 1, "min_long_edge_px": 640, "describe": "single still (import or camera)"},
+    "burst":  {"status": "real", "route_hint": "any", "min_views": 3, "min_long_edge_px": 640, "describe": "short burst of stills; best-of selection by sharpness"},
+    "orbit":  {"status": "real", "route_hint": "hero_prop", "min_views": 24, "min_long_edge_px": 1280, "describe": "walk around one object (photogrammetry / MeshWeaver input)"},
+    "sweep":  {"status": "real", "route_hint": "backdrop", "min_views": 40, "min_long_edge_px": 1280, "describe": "slow room/scene sweep (3DGS backdrop input)"},
+    "video":  {"status": "stub", "reason_key": "stub.lens.video_capture", "describe": "continuous video capture (frame extraction)"},
+    "depth_assist": {"status": "stub", "reason_key": "stub.lens.arcore_session", "describe": "ARCore depth/pose-assisted capture"}
+  }
+}

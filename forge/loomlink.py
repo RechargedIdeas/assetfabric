@@ -34,6 +34,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+from forge.stubs import StubError
+
 CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 CODE_LEN = 8
 MAX_FAILS = 5
@@ -213,6 +215,8 @@ class LinkServer:
             json.loads(self.sessions_path.read_text()) if self.sessions_path.exists() else {})
         self.store = SyncStore(self.state_dir / "store", self.node_id)
         self.offload_log = self.state_dir / "offload.jsonl"
+        from forge.mirrorweave import FrameHub          # C9: sink for `mirror` frames (lazy: keeps import graph flat)
+        self.mirror = FrameHub(self.state_dir / "mirror")
         self.url = ""
         self.events: list[dict[str, Any]] = []
         self.on_event: Any = None   # callable(ev) — the CLI prints pairings / the new code
@@ -298,10 +302,13 @@ class LinkServer:
         if op == "recon.capture":
             payload = job.get("payload") or {}
             data = base64.b64decode(payload["data_b64"])
+            from forge import lensforge          # C10: real CPU quality assessment; reconstruction itself stays a stub (C12)
+            quality = lensforge.assess_or_reason(data)
             e = self.store.put(payload.get("id") or job["id"], "capture", data,
-                               {"from": cid, "note": "stored for RealityLoom — reconstruction (C10–C12) not implemented"},
+                               {"from": cid, "quality": quality,
+                                "note": "stored for RealityLoom — reconstruction (C12 SplatForge) is a labelled stub"},
                                media=payload.get("media", "image/jpeg"))
-            res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub"}}
+            res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub", "quality": quality}}
         elif op in OPS:
             res = self._offload_cluster(job) if self.cluster is not None else None
             if res is None:
@@ -371,6 +378,9 @@ class LinkServer:
                 try:
                     if self.path == "/link/info":
                         return self._send({"server_id": srv_self.node_id, "allow": list(srv_self.allow)})
+                    if self.path == "/mirror/info":      # public, read-only: what MirrorWeave does and does not do
+                        from forge import registry
+                        return self._send(registry.descriptor("C9"))
                     if self.path.startswith("/sync/blob/"):
                         srv_self.verify("GET", self.path, self.headers, b"", "sync")
                         data = srv_self.store.read(self.path.rsplit("/", 1)[1])
@@ -390,6 +400,18 @@ class LinkServer:
                     if self.path == "/offload":
                         cid = srv_self.verify("POST", self.path, self.headers, raw, "offload")
                         return self._send(srv_self.offload(cid, body))
+                    if self.path == "/mirror/frame":
+                        from forge.mirrorweave import FrameEnvelope
+                        cid = srv_self.verify("POST", self.path, self.headers, raw, "mirror")
+                        return self._send({**srv_self.mirror.accept(FrameEnvelope.from_wire(body)), "node": srv_self.node_id})
+                    if self.path == "/mirror/latest":
+                        cid = srv_self.verify("POST", self.path, self.headers, raw, "mirror")
+                        env = srv_self.mirror.latest(str(body.get("stream", "")))
+                        return self._send({"frame": env.to_wire() if env else None, "stats": srv_self.mirror.stats()})
+                    if self.path == "/mirror/control":
+                        from forge.mirrorweave import ControlMessage, handle_control
+                        cid = srv_self.verify("POST", self.path, self.headers, raw, "drive_studio")
+                        return self._send(handle_control(ControlMessage.from_wire(body), srv_self.mirror))
                     if self.path == "/sync/manifest":
                         cid = srv_self.verify("POST", self.path, self.headers, raw, "sync")
                         return self._send(srv_self.sync_manifest(cid, body.get("index", {})))
@@ -400,6 +422,8 @@ class LinkServer:
                     self._send({"error": "not found"}, 404)
                 except PermissionError as e:
                     self._send({"error": str(e)}, 403)
+                except StubError as e:               # labelled stub (C9–C12): 501, never a fabricated result
+                    self._send({"error": str(e), "stub": True, "feature": e.feature, "key": e.key}, 501)
                 except Exception as e:  # noqa: BLE001
                     self._send({"error": f"{type(e).__name__}: {e}"}, 400)
 
@@ -464,3 +488,13 @@ class LinkClient:
 
     def offload(self, job: dict[str, Any]) -> dict[str, Any]:
         return self._post("/offload", job)
+
+    # C9 MirrorWeave
+    def mirror_frame(self, env: Any) -> dict[str, Any]:
+        return self._post("/mirror/frame", env.to_wire())
+
+    def mirror_latest(self, stream: str) -> dict[str, Any]:
+        return self._post("/mirror/latest", {"stream": stream})
+
+    def mirror_control(self, msg: Any) -> dict[str, Any]:
+        return self._post("/mirror/control", msg.to_wire())
