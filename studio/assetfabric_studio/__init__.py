@@ -1,3 +1,3 @@
-"""AssetFabric Studio — PySide6 authoring shell (stub)."""
+"""AssetFabric Studio — PySide6 authoring shell (minimal: status, mirror viewer, remote-input console)."""
 
-__version__ = "0.0.0+f0.0"
+__version__ = "0.1.0"

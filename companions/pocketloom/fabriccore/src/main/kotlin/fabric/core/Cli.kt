@@ -16,6 +16,9 @@ import kotlin.system.exitProcess
  *    put --id ID --file F [--kind K]                          (edit the local store; sync tests)
  *    mirror-push --file F --stream S [--kind screen|camera_still|telemetry] [--codec png|jpeg|webp|json] [--seq N]   (C9)
  *    mirror-latest --stream S | mirror-query --name N [--action query|input|focus] [--target desktop|android]       (C9)
+ *    mirror-video-push --file F.ivf|F.h264 --codec vp8|vp9|h264 --stream S       (C9: push a recorded packet stream)
+ *    mirror-input-poll [--after N]      (C9: fetch + verify desktop-queued events; executes into a recording sink, prints it)
+ *    studio-key --key K [--shift true]  (C9: phone → Studio key event)
  *    stubs                                                     (C9–C12: every Kotlin stub must refuse — prints each refusal)
  */
 fun main(args: Array<String>) {
@@ -53,6 +56,18 @@ fun main(args: Array<String>) {
                     System.currentTimeMillis(), opts["kind"] ?: "screen", opts["codec"] ?: "png", 0, 0, File(opts["file"]!!).readBytes()))
                 "mirror-latest" -> MirrorClient(core.link).latest(opts["stream"] ?: "screen")
                 "mirror-query" -> MirrorClient(core.link).control(opts["target"] ?: "desktop", opts["action"] ?: "query", opts["name"] ?: "")
+                "mirror-video-push" -> {
+                    val codec = opts["codec"] ?: "vp8"; val raw = File(opts["file"]!!).readBytes()
+                    val pkts = if (codec == "h264") Ivf.splitH264Aus(raw) else Ivf.parse(raw)
+                    val src = VideoStreamSource(opts["stream"] ?: "kvideo", pkts.asSequence().map { VideoPacket(it) }, codec, 32, 32)
+                    MirrorClient(core.link).push(src).let { acks -> mapOf("pushed" to acks.size, "last" to acks.lastOrNull()) }
+                }
+                "mirror-input-poll" -> {
+                    val sink = RecordingSink()
+                    val r = AndroidInputInjector(core.link, sink, (opts["after"] ?: "-1").toLong()).pollOnce()
+                    mapOf("results" to r, "performed" to sink.log)
+                }
+                "studio-key" -> MirrorClient(core.link).studioKey(opts["key"] ?: "a", opts["shift"] == "true")
                 else -> usage()
             }
         }
@@ -74,10 +89,6 @@ private fun usage(): Nothing {
 /** C9–C12: invoke every Kotlin stub; each must throw [StubException] (reported here), never return. */
 fun allStubs(): Map<String, Any?> {
     val probes: Map<String, () -> Unit> = mapOf(
-        "mirror.screen_capture" to { ScreenCaptureSource().frames() },
-        "mirror.video_stream" to { VideoStreamSource().frames() },
-        "mirror.android_input" to { AndroidInputInjector().send("tap") },
-        "mirror.camera_focus" to { FocusController().setFocus(1.0) },
         "lens.arcore_session" to { ArCoreSession().start() },
         "depth.dense_estimate" to { DepthEstimator().estimate(ByteArray(0)) },
         "recon.splatforge" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
@@ -86,5 +97,35 @@ fun allStubs(): Map<String, Any?> {
     )
     return probes.mapValues { (id, f) ->
         try { f(); mapOf("refused" to false, "feature" to id) } catch (e: StubException) { e.toMap() + ("refused" to true) }
+    }
+}
+
+/** JVM stand-in for the phone's AccessibilityService: records what would be performed (used by the interop check). */
+class RecordingSink(private val w: Int = 1080, private val h: Int = 2400) : InputSink {
+    val log = ArrayList<Map<String, Any?>>()
+    override fun screenSize() = w to h
+    override fun gesture(strokes: List<Stroke>): Boolean { log.add(mapOf("gesture" to strokes.map { s -> mapOf("points" to s.points.map { listOf(it.first.toDouble(), it.second.toDouble()) }, "duration_ms" to s.durationMs) })); return true }
+    override fun globalAction(key: String): Boolean { log.add(mapOf("global" to key)); return true }
+    override fun typeText(text: String): Boolean { log.add(mapOf("text" to text)); return true }
+    override fun focus(req: FocusRequest): Boolean { log.add(mapOf("focus" to req.mode, "diopters" to req.diopters(10f)?.toDouble())); return true }
+}
+
+/** Minimal IVF demuxer + H.264 access-unit splitter (same rules as forge.mirrorvideo). */
+object Ivf {
+    fun parse(d: ByteArray): List<ByteArray> {
+        require(d.size >= 32 && String(d, 0, 4, Charsets.US_ASCII) == "DKIF") { "not an IVF stream" }
+        val bb = java.nio.ByteBuffer.wrap(d).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        var i = bb.getShort(6).toInt(); val out = ArrayList<ByteArray>()
+        while (i + 12 <= d.size) { val n = bb.getInt(i); out.add(d.copyOfRange(i + 12, minOf(d.size, i + 12 + n))); i += 12 + n }
+        return out
+    }
+
+    fun splitH264Aus(d: ByteArray): List<ByteArray> {
+        val starts = ArrayList<Int>(); var i = 0
+        while (i + 4 < d.size) {
+            if (d[i] == 0.toByte() && d[i + 1] == 0.toByte() && d[i + 2] == 0.toByte() && d[i + 3] == 1.toByte() && (d[i + 4].toInt() and 0x1F) == 9) { starts.add(i); i += 4 } else i++
+        }
+        starts.add(d.size)
+        return starts.zipWithNext().filter { it.second > it.first }.map { d.copyOfRange(it.first, it.second) }
     }
 }

@@ -10,10 +10,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-from forge import depth, lensforge, mirrorweave, realityloom
+from forge import depth, lensforge, mirrorvideo, mirrorweave, realityloom
 from forge.paths import find_repo_root
 
 PATH = Path("tests") / "fixtures" / "c9_c12_vectors.json"
+VIDEO_DIR = Path("tests") / "fixtures" / "video"     # tiny committed VP8/VP9/H.264 streams (ffmpeg testsrc2, 32x32, 8 frames)
 
 
 def make_vectors() -> dict[str, Any]:
@@ -41,8 +42,24 @@ def make_vectors() -> dict[str, Any]:
               {"codec": "jpeg", "data_b64": base64.b64encode(png).decode(), "valid": False},
               {"codec": "json", "data_b64": base64.b64encode(b'{"iso": 100}').decode(), "valid": True},
               {"codec": "json", "data_b64": base64.b64encode(b"{nope").decode(), "valid": False}]
-    return {"schema": "c9_c12_vectors/1", "lens_gray": lens, "luma": luma, "focal_px": focal, "distance": dist,
-            "route": routes, "frames": frames, "max_frame_bytes": mirrorweave.MAX_FRAME_BYTES}
+    root = find_repo_root()
+    video: dict[str, Any] = {}
+    for codec, name in (("vp8", "tiny_vp8.ivf"), ("vp9", "tiny_vp9.ivf"), ("h264", "tiny_h264.h264")):
+        raw = (root / VIDEO_DIR / name).read_bytes()
+        pkts = mirrorvideo.parse_ivf(raw)[1] if name.endswith(".ivf") else mirrorvideo.split_h264_aus(raw)
+        video[codec] = [{"data_b64": base64.b64encode(p).decode(), "keyframe": mirrorvideo.is_keyframe(codec, p),
+                         "sniff": mirrorvideo.sniff_video(codec, p)} for p in pkts]
+    key = bytes(range(32))
+    events = []
+    for i, ev in enumerate(({"type": "tap", "x": 0.5, "y": 0.25}, {"type": "swipe", "x": 0.1, "y": 0.9, "x2": 0.1, "y2": 0.1,
+                                                                     "duration_ms": 250},
+                            {"type": "key", "key": "back"}, {"type": "text", "text": "héllo \"q\""},
+                            {"type": "focus", "mode": "manual", "distance_m": 0.35, "x": 0.5, "y": 0.5})):
+        ej = mirrorweave.event_json(mirrorweave.validate_android_event(ev))
+        events.append({"seq": i, "event_json": ej, "sig": mirrorweave.event_mac(key, "phone-v", i, ej)})
+    return {"schema": "c9_c12_vectors/2", "lens_gray": lens, "luma": luma, "focal_px": focal, "distance": dist,
+            "route": routes, "frames": frames, "max_frame_bytes": mirrorweave.MAX_FRAME_BYTES, "video": video,
+            "input": {"key_hex": key.hex(), "client": "phone-v", "events": events}}
 
 
 def write(root: Path | None = None) -> Path:

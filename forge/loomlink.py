@@ -520,7 +520,7 @@ class LinkClient:
         evs = self._post("/mirror/input/poll", {"after": after})["events"]
         if verify:
             for e in evs:
-                if not hmac.compare_digest(e["sig"], event_mac(self.key, self.client_id, e["seq"], e["event"])):
+                if not hmac.compare_digest(e["sig"], event_mac(self.key, self.client_id, e["seq"], e["event_json"])):
                     raise PermissionError("input event signature mismatch")
-                validate_android_event(e["event"])
+                e["event"] = validate_android_event(json.loads(e["event_json"]))
         return evs

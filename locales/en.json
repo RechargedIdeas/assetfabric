@@ -38,5 +38,12 @@
   "mirror.control.android_local_only": "Phone input and camera focus are queued only by the desktop operator (forge mirror input), never relayed from another device.",
   "mirror.studio.no_sink": "No Studio input sink is attached to this LoomLink server.",
   "mirror.studio.key_not_allowed": "Key {key!r} is not on the Studio input allow-list.",
-  "mirror.ws.auth_failed": "MirrorWeave WebSocket authentication failed: {reason}"
+  "mirror.ws.auth_failed": "MirrorWeave WebSocket authentication failed: {reason}",
+  "studio.title": "AssetFabric Studio",
+  "studio.mirror.empty": "No mirrored frame yet — pair a phone with forge link serve and start mirroring.",
+  "studio.console.placeholder": "Type here (remote Studio input from a paired phone lands here; nothing is executed)",
+  "studio.tab.status": "Status",
+  "studio.tab.mirror": "Mirror",
+  "studio.tab.console": "Console",
+  "studio.missing_pyside": "Studio needs PySide6 (uv pip install -e '.[studio]'): {err}"
 }

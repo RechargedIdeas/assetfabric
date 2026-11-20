@@ -93,6 +93,19 @@ def h264_nal_types(data: bytes) -> list[int]:
     return types
 
 
+def split_h264_aus(data: bytes) -> list[bytes]:
+    """Split an Annex-B stream into access units at AUD (NAL 9) start codes (fixtures are encoded with aud=1)."""
+    starts, i, n = [], 0, len(data)
+    while i + 4 < n:
+        if data[i:i + 4] == b"\0\0\0\1" and (data[i + 4] & 0x1F) == 9:
+            starts.append(i)
+            i += 4
+        else:
+            i += 1
+    starts.append(n)
+    return [data[a:b] for a, b in zip(starts, starts[1:]) if b > a]
+
+
 def sniff_video(codec: str, pkt: bytes) -> bool:
     """Structural check of one packet (cheap; full validity is the decoder's job)."""
     if not pkt:

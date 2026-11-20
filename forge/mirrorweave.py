@@ -352,10 +352,17 @@ def validate_android_event(ev: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def event_mac(key: bytes, client: str, seq: int, ev: dict[str, Any]) -> str:
-    from forge.loomlink import _mac, canonical
+def event_json(ev: dict[str, Any]) -> str:
+    from forge.loomlink import canonical
 
-    return _mac(key, "input", client, str(seq), canonical(ev))
+    return canonical(ev)
+
+
+def event_mac(key: bytes, client: str, seq: int, ev_json: str) -> str:
+    """MAC over the exact JSON text the phone receives (no cross-language re-canonicalisation)."""
+    from forge.loomlink import _mac
+
+    return _mac(key, "input", client, str(seq), ev_json)
 
 
 class InputOutbox:
@@ -391,7 +398,11 @@ class InputOutbox:
         return [r for r in rows if r["seq"] > after]
 
     def deliver(self, device: str, key: bytes, after: int = -1, limit: int = 32) -> list[dict[str, Any]]:
-        return [{**r, "sig": event_mac(key, device, r["seq"], r["event"])} for r in self.read(device, after)[:limit]]
+        out = []
+        for r in self.read(device, after)[:limit]:
+            ej = event_json(r["event"])
+            out.append({"seq": r["seq"], "queued_ms": r["queued_ms"], "event_json": ej, "sig": event_mac(key, device, r["seq"], ej)})
+        return out
 
 
 def validate_studio_event(ev: dict[str, Any]) -> dict[str, Any]:
