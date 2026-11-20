@@ -189,6 +189,25 @@ for _m in CL_ORDER:
     INCREMENTS[_m] = Increment(_m, "loomcluster" if _m == "C7" else "groundweave", (), _acl.check(_m), _CL_DESC[_m],
                                _acl.perf(_m), _acl.runner(_m))
 
+# Companion track C9–C12: MirrorWeave, LensForge capture, metric depth, SplatForge path — interfaces + labelled stubs, real CPU
+# paths where cheap and spec-grounded (forge/accept_c9_c12.py, register: content/companions/c9_c12.yaml).
+from forge import accept_c9_c12 as _a9  # noqa: E402
+
+CX_ORDER = ["C9", "C10", "C11", "C12"]
+_CX_DESC = {
+    "C9": "MirrorWeave: typed frame/control contract, signed LoomLink stills+telemetry stream and allow-listed read-only control; "
+          "screen capture, video, input injection are labelled stubs",
+    "C10": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, "
+           "desktop assessment of offloaded captures; ARCore/video/focus are labelled stubs",
+    "C11": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth); dense DepthAnything V2 / "
+           "ARCore depth are labelled stubs",
+    "C12": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply "
+           "validator; SplatForge/photogrammetry/MeshWeaver/GDGS import are labelled stubs",
+}
+_CX_NAME = {"C9": "mirrorweave", "C10": "lensforge", "C11": "metric-depth", "C12": "splatforge-path"}
+for _m in CX_ORDER:
+    INCREMENTS[_m] = Increment(_m, _CX_NAME[_m], (), _a9.check(_m), _CX_DESC[_m], _a9.perf(_m), _a9.runner(_m))
+
 
 def register(inc: Increment) -> None:
     INCREMENTS[inc.milestone] = inc
