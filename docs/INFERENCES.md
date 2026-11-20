@@ -378,3 +378,26 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 65. **C-65 Model licence gate.** `forge models audit` (also in `forge accept C11`) requires every registry licence to be on
     BoltPack's permissive allow-list, rejects non-commercial markers, and requires pinned revision URLs + SHA-256.
 66. **C-66 Versions.** Patch bump `0.7.4+f7` → `0.7.5+f7`; PocketLoom app `0.2.0-c9` → `0.3.0-c10` (versionCode 3, adds Camera2Video).
+
+### Stub replacement batch 2b (0.7.6+f7) — ARCore session + ARCore depth
+
+67. **C-67 ARCore payload layout.** SPEC §9 names "ARCore + DepthAnything V2" without a format. A frame is
+    `{width, height, depth_u16_b64 (DEPTH16 mm, little-endian, 0 = none), conf_u8_b64 (raw-depth confidence 0..255),
+    pose [tx,ty,tz,qx,qy,qz,qw] camera-to-world, intrinsics {fx,fy,cx,cy,image_w,image_h}, timestamp_ns, image_b64?}`.
+    Anchors = centres of a ⌈√12⌉² grid with depth > 0 and confidence ≥ 128, mapped to camera-image pixels with integer maths
+    (Python `forge.arcore` ⇄ Kotlin `ArDepth`, shared vectors). With the camera image, DepthAnything V2 Small is aligned to
+    the ARCore anchors (C-36 maths) → dense metric depth. Acceptance uses synthetic frames + the analytic scene (GT quantised
+    to mm at ¼ resolution): median error 1.0 %, anchor RMSE 0.30 m at ~8.6 m median depth. No real ARCore frame was ever seen.
+68. **C-68 ARCore SDK licence.** `com.google.ar:core` is not open source: use is under the Google APIs Terms of Service + ARCore
+    Additional Terms (commercial use allowed). Obligations: the app's terms must tell users it includes ARCore by Google and
+    that its use is subject to the Google Terms of Service and Privacy Policy (in-app `arcore_notice` string now; the store
+    listing / app ToS must repeat it before any release); no Cloud Anchors/Geospatial in child-directed apps (not used); no
+    re-creating Google products. Pulls `androidx.annotation` (Apache-2.0, annotations only) → `android.useAndroidX=true`.
+    **Producer to confirm** acceptance of these terms before any public release; removing ARCore is one dependency + one file.
+69. **C-69 Pose coverage = parallax proxy.** `depth_assist` mode (now real): ≥ 12 views, ≥ 30° angular spread of view
+    directions (`min_angular_spread_deg`, advisory like C-38). Coverage reports path length, max baseline, angular spread,
+    max step between consecutive views — computed only from ARCore poses; image-only sets still report overlap `not_measured`.
+70. **C-70 ARCore session is headless.** `ArCoreCapture` owns a 1×1 EGL pbuffer + external-OES texture (ARCore requires a
+    camera texture) and samples one frame per 500 ms while tracking, 12 frames, 15 s timeout; no AR preview is drawn. ARCore is
+    declared optional (`com.google.ar.core` = optional), so phones without Play Services for AR keep every other feature.
+    App `0.4.0-c11` (versionCode 4); APK ≈ 1.9 MB (ARCore client library ≈ +0.9 MB). Version `0.7.5+f7` → `0.7.6+f7`.

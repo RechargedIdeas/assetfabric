@@ -5,7 +5,7 @@ import java.io.File
 /** PocketLoom's whole offline runtime in one place (used by the Android app and the desktop CLI).
  *  Everything works with nothing connected; pairing only adds offload + sync. */
 class PocketLoomCore(val home: File, nodeId: String? = null, modelBudgetBytes: Long = 64L * 1024 * 1024) {
-    companion object { const val VERSION = "0.3.0-c10" }
+    companion object { const val VERSION = "0.4.0-c11" }
 
     val nodeId: String = nodeId ?: loadOrCreateNodeId()
     val store = AssetStore(File(home, "store"), this.nodeId)

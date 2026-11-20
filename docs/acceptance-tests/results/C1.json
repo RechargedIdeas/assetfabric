@@ -5,34 +5,39 @@
   "milestone": "C1",
   "passed": true,
   "perf": {
-    "apk_bytes": 975223,
-    "apk_sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
+    "apk_bytes": 1943150,
+    "apk_sha256": "dd0c8943f8cf89aac6bb4b71de84e57655bdbd269efde3436aeaf04beacc3950",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 975223,
-        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
-        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df"
+        "bytes": 1943150,
+        "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
+        "sha256": "dd0c8943f8cf89aac6bb4b71de84e57655bdbd269efde3436aeaf04beacc3950"
       },
       "junit_failures": 0,
-      "junit_tests": 41,
+      "junit_tests": 46,
       "ok": true,
-      "seconds": 8.0
+      "seconds": 27.8
     },
     "c1": {
       "apk": {
         "apksigner_verified": true,
-        "bytes": 975223,
+        "bytes": 1943150,
         "debuggable": true,
         "dex_has_app": true,
         "dex_has_fabriccore": true,
         "launchable": "fabric.pocketloom.MainActivity",
         "min_sdk": 26,
-        "native_libs": [],
+        "native_libs": [
+          "arm64-v8a",
+          "armeabi-v7a",
+          "x86",
+          "x86_64"
+        ],
         "package": "com.rechargedideas.pocketloom",
-        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
+        "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
         "permissions": [
           "android.permission.CAMERA",
           "android.permission.FOREGROUND_SERVICE",
@@ -40,12 +45,12 @@
           "android.permission.INTERNET",
           "android.permission.POST_NOTIFICATIONS"
         ],
-        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
+        "sha256": "dd0c8943f8cf89aac6bb4b71de84e57655bdbd269efde3436aeaf04beacc3950",
         "signature_schemes": [
           "v2"
         ],
         "target_sdk": 35,
-        "version_name": "0.2.0-c9"
+        "version_name": "0.4.0-c11"
       },
       "core_suites": {
         "ok": true,
@@ -89,7 +94,7 @@
           "hero_violet",
           "ui_retro"
         ],
-        "version": "0.2.0-c9"
+        "version": "0.4.0-c11"
       },
       "jar_top_level": [
         "META-INF",

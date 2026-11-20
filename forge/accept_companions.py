@@ -54,7 +54,7 @@ from forge.accept_f6 import fast_mode
 PL = Path("companions") / "pocketloom"
 APK_REL = PL / "app" / "build" / "outputs" / "apk" / "debug" / "app-debug.apk"
 JAR_REL = PL / "fabriccore" / "build" / "libs" / "fabriccore-all.jar"
-VERSION = "0.3.0-c10"
+VERSION = "0.4.0-c11"
 PACKAGE = "com.rechargedideas.pocketloom"
 GEN_BUDGET_MS = 250.0          # per asset on 2 cores (CPU rung); measured ~1–20 ms on the T1 box
 _BUILD: dict[str, Any] = {}

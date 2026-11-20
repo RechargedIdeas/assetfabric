@@ -187,7 +187,8 @@ PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; se
                                   └─ phone: AccessibilityService · Camera2Focus · MediaProjection    real_unverified_on_device
  desktop: x11grab ─▶ libvpx (system ffmpeg, separate process) ─▶ hub / WS                            real
  capture (still/burst/orbit/sweep) ─▶ LensForge.assess (integer luma · Laplacian var · clip %)       real, Kotlin = Python
- metres ◀─ Depth: pinhole + inverse-depth alignment (dense estimator DepthAnything V2 ─▶ [STUB])     real / stub
+ metres ◀─ Depth: pinhole + inverse-depth alignment ◀─ DepthAnything V2 Small (onnxruntime CPU)      real
+          ◀─ ARCore DEPTH16 anchors + poses (desktop ingest real; phone ArCoreCapture)           real / real_unverified_on_device
  recon.capture ─▶ RealityLoom: route (backdrop→splat · hero_prop→photogrammetry→MeshWeaver) · bundle · plan
                   └─ submit: cluster placement check (rocm node?) ─▶ SplatForge [STUB] — nothing is queued
 ```

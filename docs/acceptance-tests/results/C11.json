@@ -5,22 +5,21 @@
   "milestone": "C11",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 41,
+    "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.009
+      "depth.distance": 0.009,
+      "depth.estimate": 1.097
     },
-    "planned_ops": [
-      "depth.estimate"
-    ],
-    "real": 3,
-    "stubs": 2
+    "planned_ops": [],
+    "real": 4,
+    "stubs": 0
   },
   "result": {
     "align": {
       "anchor_rmse_m": 2.0025091597477093e-15,
       "max_abs_error_m": 3.552713678800501e-15,
-      "note": "scales a relative map from \u22652 metric anchors; producing the relative map is the DepthAnything V2 stub",
+      "note": "scales a relative map from \u22652 metric anchors (the dense map comes from DepthAnything V2 Small, check `dense`)",
       "ok": true,
       "rejects": {
         "negative_depth": true,
@@ -30,25 +29,46 @@
         "wrong_polarity": true
       }
     },
+    "arcore": {
+      "anchors": 4,
+      "dense": {
+        "anchor_rmse_m": 0.2993315713901661,
+        "height": 192,
+        "median_m": 8.519441421610697,
+        "scale": 0.03456571201417217,
+        "shift": 0.10005727947141674,
+        "width": 256
+      },
+      "gt_median_m": 8.60565707202007,
+      "median_rel_err": 0.01,
+      "no_image": {
+        "skipped": "no_image"
+      },
+      "ok": true,
+      "shared_vectors": true
+    },
     "build": {
       "junit_failures": 0,
-      "junit_tests": 41,
+      "junit_tests": 46,
       "ok": true
     },
-    "cli_stubs": {
-      "commands": {
-        "depth estimate tests/fixtures/capture_640x480.jpg": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "depth estimate tests/fixtures/capture_640x480.jpg --backend arcore": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        }
+    "cli": {
+      "arcore_cli": {
+        "exit": 0,
+        "ok": true
       },
-      "ok": true
+      "estimate_exit": 0,
+      "metric": {
+        "anchor_rmse_m": 3.820199830714189e-15,
+        "invalid_fraction": 0.19742838541666666,
+        "max_m": 127553.77611526087,
+        "median_m": 2.4933416385371325,
+        "min_m": 0.4132236651781733,
+        "scale": 0.9815711324799156,
+        "shift": -2.405250322866458
+      },
+      "ok": true,
+      "png16": true
     },
     "cpu_2core": {
       "cores": 2,
@@ -66,21 +86,47 @@
           "wall_s": 0.009
         },
         {
-          "backend": null,
-          "budget_s": null,
-          "cores": null,
-          "device": null,
-          "identical_to_unpinned": null,
-          "identical_with_simulated_gpu": null,
+          "backend": "depthanything-v2-onnx-cpu",
+          "budget_s": 30,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
           "op": "depth.estimate",
-          "status": "planned",
-          "wall_s": null
+          "status": "ok",
+          "wall_s": 1.097
         }
       ]
     },
-    "dense_refuses": {
-      "message": "[STUB depth.dense_estimate C11] Dense monocular depth (DepthAnything V2) is not implemented: no model weights or ONNX ru",
-      "ok": true
+    "dense": {
+      "bit_reproducible_1_thread": true,
+      "floors": {
+        "abs_rel_max": 0.1,
+        "delta1_min": 0.9,
+        "spearman_min": 0.9
+      },
+      "infer_s_1_thread": 0.911,
+      "metrics_12_anchors": {
+        "abs_rel": 0.024602137795421513,
+        "delta1": 0.99835205078125,
+        "pixels": 49152,
+        "spearman": 0.9868618655408768
+      },
+      "metrics_2_anchors": {
+        "abs_rel": 0.18886521325140315,
+        "delta1": 0.59149169921875,
+        "pixels": 49152,
+        "spearman": 0.9868618655408768
+      },
+      "metrics_jpeg_path": {
+        "abs_rel": 0.023756799632296825,
+        "delta1": 0.99761962890625,
+        "pixels": 49152,
+        "spearman": 0.9891810423639461
+      },
+      "model": "depth-anything-v2-small",
+      "ok": true,
+      "scene": "render_scene(256x192): ground + brick wall + crate, depth 2.6\u20139.1 m"
     },
     "distance": {
       "distance": {
@@ -106,6 +152,17 @@
         "zero_size": true
       }
     },
+    "girt_onnx": {
+      "arch": "mlp-7-12-1-tanh",
+      "candidates": 4000,
+      "dtype": "float64",
+      "max_abs_diff_vs_gdscript_probe": 4.047141608509719e-07,
+      "max_abs_diff_vs_numpy": 1.0658141036401503e-14,
+      "model_bytes": 1218,
+      "ok": true,
+      "provider": "CPUExecutionProvider",
+      "same_choice_all_sets": true
+    },
     "groundweave": {
       "ok": true,
       "ops": {
@@ -116,13 +173,22 @@
           "with_all_gpus_present": "pinhole-align-cpu"
         },
         "depth.estimate": {
+          "backend": "depthanything-v2-onnx-cpu",
+          "device": "cpu",
           "ok": true,
-          "route": "loomcluster",
-          "status": "planned"
+          "with_all_gpus_present": "depthanything-v2-onnx-cpu"
         }
       },
       "problems": [],
       "static_ok": true
+    },
+    "kotlin_depth": {
+      "bottom_nearer_than_top": true,
+      "exit": 0,
+      "metric_median_m": 8.689347626843109,
+      "ok": true,
+      "true_median_m": 8.60565707202007,
+      "width": 256
     },
     "kotlin_parity": {
       "ok": true,
@@ -130,28 +196,52 @@
         "C9C12Test": {
           "failures": 0,
           "skipped": 0,
-          "tests": 15
+          "tests": 17
         }
       }
     },
     "mode": "full",
+    "model_licences": {
+      "models": [
+        "depth-anything-v2-small"
+      ],
+      "ok": true,
+      "problems": []
+    },
+    "model_ready": true,
+    "offload": {
+      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f46ecf8a520>",
+      "bad_image_refused": true,
+      "metric": {
+        "anchor_rmse_m": 0.15766392751650302,
+        "invalid_fraction": 0.0,
+        "max_m": 9.040980142571158,
+        "median_m": 8.689347626843109,
+        "min_m": 2.64716182170482,
+        "scale": 0.03913181217630722,
+        "shift": 0.09673037693755678
+      },
+      "ok": true,
+      "size": [
+        256,
+        192
+      ],
+      "true_median_m": 8.60565707202007
+    },
     "register": {
       "ok": true,
       "problems": [],
       "real": [
         "depth.focal_px",
         "depth.distance",
-        "depth.align"
+        "depth.align",
+        "depth.dense_estimate"
       ],
-      "real_unverified_on_device": [],
-      "refusals": {
-        "depth.arcore": "[STUB depth.arcore C11] ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).",
-        "depth.dense_estimate": "[STUB depth.dense_estimate C11] Dense monocular depth (DepthAnything V2) is not implemented: no model weights "
-      },
-      "stubs": [
-        "depth.dense_estimate",
+      "real_unverified_on_device": [
         "depth.arcore"
-      ]
+      ],
+      "refusals": {},
+      "stubs": []
     }
   }
 }

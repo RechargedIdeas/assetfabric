@@ -5,10 +5,10 @@
   "milestone": "C9",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 41,
+    "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "mirror.encode": 0.076
+      "mirror.encode": 0.077
     },
     "planned_ops": [],
     "real": 7,
@@ -16,9 +16,11 @@
   },
   "result": {
     "apk": {
-      "apk_bytes": 975223,
+      "apk_bytes": 1943150,
       "classes_in_dex": {
+        "ArCoreCapture": true,
         "Camera2Focus": true,
+        "Camera2Video": true,
         "MirrorAccessibilityService": true,
         "ScreenMirrorService": true
       },
@@ -37,7 +39,7 @@
     },
     "build": {
       "junit_failures": 0,
-      "junit_tests": 41,
+      "junit_tests": 46,
       "ok": true
     },
     "cli": {
@@ -101,7 +103,7 @@
           "identical_with_simulated_gpu": true,
           "op": "mirror.encode",
           "status": "ok",
-          "wall_s": 0.076
+          "wall_s": 0.077
         }
       ]
     },
@@ -188,7 +190,7 @@
       },
       "kotlin_stubs": {
         "all_refuse": true,
-        "count": 5
+        "count": 1
       },
       "ok": true,
       "pair_caps": [
@@ -225,7 +227,7 @@
           "C9C12Test": {
             "failures": 0,
             "skipped": 0,
-            "tests": 15
+            "tests": 17
           }
         }
       },

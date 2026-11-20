@@ -4,6 +4,32 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.6+f7] — 2026-11-20 — Stub replacement batch 2b: ARCore session (C10) + ARCore depth (C11), `real_unverified_on_device`
+
+### Added
+- `forge/arcore.py`: ARCore frame payload (DEPTH16 mm + confidence + pose + intrinsics + optional camera image), decode,
+  stats, confident metric anchors, pose coverage (path, max baseline, angular spread, max step), `ingest` that aligns
+  DepthAnything V2 Small to the ARCore anchors when the image is present. LoomLink offload op `depth.arcore`.
+- FabricCore `ArCore.kt`: `ArDepthFrame`, `ArDepth` (payload/anchors/stats), `ArPoses.coverage`, `ArCoreSession`
+  (collect, `sufficient()` for `depth_assist`, upload). Shared vectors `tests/fixtures/arcore_vectors.json`; 3 JUnit tests (46 total).
+- App `ArCoreCapture` on the ARCore SDK 1.47.0: headless session (EGL pbuffer camera texture), 12 tracked frames with pose,
+  intrinsics, DEPTH16 + raw confidence (Depth API devices), camera JPEG; Capture-tab button + ARCore/Google terms notice.
+  ARCore declared optional in the manifest. **Never run on a phone.**
+- CLI: `forge lens session --kind arcore --poses FILE` (coverage), `forge depth estimate PAYLOAD.json --backend arcore` (ingest).
+- Accept: C10 `arcore` (analytic 24-view orbit: spread 180°, step 15°, baseline 1.2 m), C11 `arcore` (shared vectors +
+  analytic-scene ARCore-anchored dense depth: median error 1.0 %).
+
+### Changed
+- Register: `lens.arcore_session`, `depth.arcore` → `real_unverified_on_device`; capture mode `depth_assist` → real
+  (≥ 12 views, ≥ 30° spread). Register now 21 real · 8 real_unverified_on_device · 4 stub (all C12) · 3 deferred.
+  Stub locale keys / Android strings for ARCore removed.
+- PocketLoom app `0.4.0-c11` (versionCode 4), APK ≈ 1.9 MB; `android.useAndroidX=true` (only `androidx.annotation`, via ARCore).
+- Version `0.7.5+f7` → `0.7.6+f7`. INFERENCES C-67…C-70.
+
+### Needs a decision
+- ARCore is under Google's terms, not an OSS licence (C-68): commercial use is allowed, with a disclosure duty. Confirm
+  before any public release.
+
 ## [0.7.5+f7] — 2026-11-20 — Stub replacement batch 2: C10 video capture, C11 dense depth (DepthAnything V2 Small, CPU), GIRT ONNX tooling
 
 ### Added

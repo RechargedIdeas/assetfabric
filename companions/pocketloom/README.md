@@ -54,6 +54,6 @@ java -jar fabriccore/build/libs/fabriccore-all.jar drain|sync|status --home /tmp
 
 ONNX runtime + small models (C2 stub rung) · TLS / certificate pinning on raw LAN (HMAC integrity only; use Tailscale for
 encryption) · Android Keystore wrapping of the session key (stored in app-private storage, excluded from backup) ·
-in-app QR scanner (relies on the system camera app) · MirrorWeave / drive-desktop (C9) · LensForge depth / ARCore (C10–C11)
-· reconstruction (C12) · Kotlin Multiplatform targets for FabricCore (JVM only) · release signing / Play listing.
+in-app QR scanner (relies on the system camera app) · reconstruction (C12) · *(MirrorWeave, Camera2 video/focus and ARCore capture
+are compiled in since 0.7.4–0.7.6 but have never run on a phone — `real_unverified_on_device`)* · Kotlin Multiplatform targets for FabricCore (JVM only) · release signing / Play listing.
 See `docs/INFERENCES.md` §C and `TODO.md`.

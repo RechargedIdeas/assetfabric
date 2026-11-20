@@ -5,21 +5,21 @@
   "milestone": "C3",
   "passed": true,
   "perf": {
-    "apk_bytes": 975223,
-    "apk_sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
+    "apk_bytes": 1943150,
+    "apk_sha256": "dd0c8943f8cf89aac6bb4b71de84e57655bdbd269efde3436aeaf04beacc3950",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 975223,
-        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
-        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df"
+        "bytes": 1943150,
+        "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
+        "sha256": "dd0c8943f8cf89aac6bb4b71de84e57655bdbd269efde3436aeaf04beacc3950"
       },
       "junit_failures": 0,
-      "junit_tests": 41,
+      "junit_tests": 46,
       "ok": true,
-      "seconds": 8.0
+      "seconds": 27.8
     },
     "c3": {
       "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
@@ -28,7 +28,9 @@
         "i18n_issues": 0,
         "issues": {
           "Warning:ClickableViewAccessibility": 1,
-          "Warning:UnusedResources": 4
+          "Warning:GradleDependency": 1,
+          "Warning:PluralsCandidate": 1,
+          "Warning:UnusedResources": 1
         },
         "ok": true
       },
@@ -47,18 +49,15 @@
       },
       "ok": true,
       "strings": {
-        "defined": 83,
+        "defined": 90,
         "hardcoded_ui_literals": [],
         "missing": [],
         "ok": true,
         "unused": [
           "a11y_description",
-          "stub_depth_arcore",
-          "stub_depth_model_missing",
-          "stub_lens_arcore_session",
           "stub_recon_splatforge"
         ],
-        "used": 78
+        "used": 88
       },
       "telemetry_status": {
         "models": {
@@ -79,8 +78,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 22.5,
-              "mean_ms": 12.9,
+              "max_ms": 24.7,
+              "mean_ms": 14.3,
               "n": 2
             }
           }
@@ -96,18 +95,15 @@
       "ok": true
     },
     "strings": {
-      "defined": 83,
+      "defined": 90,
       "hardcoded_ui_literals": [],
       "missing": [],
       "ok": true,
       "unused": [
         "a11y_description",
-        "stub_depth_arcore",
-        "stub_depth_model_missing",
-        "stub_lens_arcore_session",
         "stub_recon_splatforge"
       ],
-      "used": 78
+      "used": 88
     },
     "toolchain": {
       "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",

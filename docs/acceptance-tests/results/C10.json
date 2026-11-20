@@ -5,34 +5,61 @@
   "milestone": "C10",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 41,
+    "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
       "lens.assess": 0.009
     },
     "planned_ops": [],
     "real": 5,
-    "stubs": 2
+    "stubs": 0
   },
   "result": {
+    "apk": {
+      "apk_bytes": 1943150,
+      "classes_in_dex": {
+        "ArCoreCapture": true,
+        "Camera2Focus": true,
+        "Camera2Video": true,
+        "MirrorAccessibilityService": true,
+        "ScreenMirrorService": true
+      },
+      "lint_errors": 0,
+      "manifest_permissions": {
+        "BIND_ACCESSIBILITY_SERVICE": true,
+        "FOREGROUND_SERVICE_MEDIA_PROJECTION": true,
+        "android.permission.CAMERA": true
+      },
+      "manifest_services": {
+        "MirrorAccessibilityService": true,
+        "ScreenMirrorService": true
+      },
+      "ok": true,
+      "verified_on_device": false
+    },
+    "arcore": {
+      "cli_exit": 0,
+      "device": "never run on a phone \u2014 synthetic poses (real_unverified_on_device)",
+      "ok": true,
+      "orbit": {
+        "angular_spread_deg": 180.0,
+        "max_baseline_m": 1.2,
+        "max_step_deg": 15.0,
+        "path_m": 3.602523,
+        "views": 24
+      },
+      "static": {
+        "angular_spread_deg": 0.0,
+        "max_baseline_m": 0.0,
+        "max_step_deg": 0.0,
+        "path_m": 0.0,
+        "views": 3
+      },
+      "want_path_m": 3.602523
+    },
     "build": {
       "junit_failures": 0,
-      "junit_tests": 41,
-      "ok": true
-    },
-    "cli_stubs": {
-      "commands": {
-        "lens session --kind arcore": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "lens session --kind video": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        }
-      },
+      "junit_tests": 46,
       "ok": true
     },
     "cpu_2core": {
@@ -71,9 +98,16 @@
         "C9C12Test": {
           "failures": 0,
           "skipped": 0,
-          "tests": 15
+          "tests": 17
         }
       }
+    },
+    "kotlin_video": {
+      "desktop_keyframes": 3,
+      "desktop_video_entries": 1,
+      "ok": true,
+      "queued_job": "lensvid_4be141d3acb0",
+      "sent": 1
     },
     "mode": "full",
     "offload": {
@@ -156,19 +190,18 @@
         "lens.offload_quality"
       ],
       "real_unverified_on_device": [
+        "lens.arcore_session",
+        "lens.video_capture",
         "lens.focus_control"
       ],
-      "refusals": {
-        "lens.arcore_session": "[STUB lens.arcore_session C10] ARCore-assisted capture is not implemented (Android-only SDK, not bundled in Fa",
-        "lens.video_capture": "[STUB lens.video_capture C10] Continuous video capture and keyframe extraction are not implemented; use still,"
-      },
-      "stubs": [
-        "lens.arcore_session",
-        "lens.video_capture"
-      ]
+      "refusals": {},
+      "stubs": []
     },
     "sets": {
       "burst_ok": "pass",
+      "depth_assist_3_views": [
+        "too_few_usable_views"
+      ],
       "duplicates": [
         {
           "duplicate_of": 0,
@@ -178,10 +211,7 @@
       "mixed_usable": 3,
       "ok": true,
       "overlap": "not_measured",
-      "stub_modes": {
-        "depth_assist": "refused",
-        "video": "refused"
-      },
+      "stub_modes": {},
       "too_few": [
         "too_few_usable_views"
       ]
@@ -207,6 +237,45 @@
         "unknown_field": true
       },
       "roundtrip_equal": true
+    },
+    "video": {
+      "assessment": {
+        "min_views": 12,
+        "reasons": [
+          "too_few_usable_views"
+        ],
+        "usable_views": 0,
+        "verdict": "warn"
+      },
+      "blurred_picks": 0,
+      "cli_exit": 0,
+      "cli_matches": true,
+      "keyframes_t_s": [
+        0.0,
+        4.0,
+        5.0
+      ],
+      "offload_keyframes_stored": 3,
+      "offload_ok": true,
+      "ok": true,
+      "pngs": 3,
+      "rejects": {
+        "not_video": true,
+        "truncated_mp4": true
+      },
+      "sampled_frames": 12,
+      "sharp_picks": [
+        4.0,
+        5.0
+      ],
+      "static_picks": [
+        0.0
+      ],
+      "store_media": [
+        "image/png",
+        "video/mp4"
+      ],
+      "video_entry": "video/mp4"
     }
   }
 }
