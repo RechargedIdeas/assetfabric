@@ -208,6 +208,7 @@ class CpuVideoEncoder:
     fps: int = 15
     bitrate_k: int = 1500
     gop: int = 30
+    threads: int = 2           # fixed thread count → output does not depend on how many cores the host has
 
     def __post_init__(self) -> None:
         if self.codec not in CPU_ENCODERS:
@@ -220,7 +221,7 @@ class CpuVideoEncoder:
         extra = ["-row-mt", "1"] if self.codec == "vp9" else []
         return [ffmpeg_bin(), "-hide_banner", "-loglevel", "error", *src, "-an", "-c:v", enc, "-deadline", "realtime",
                 "-cpu-used", "8", "-lag-in-frames", "0", "-auto-alt-ref", "0", "-g", str(self.gop), "-b:v", f"{self.bitrate_k}k",
-                "-threads", "2", *extra, "-pix_fmt", "yuv420p", "-f", "ivf", "-flush_packets", "1", "pipe:1"]
+                "-threads", str(self.threads), *extra, "-pix_fmt", "yuv420p", "-f", "ivf", "-flush_packets", "1", "pipe:1"]
 
     def encode(self, frames: list[np.ndarray]) -> list[bytes]:
         """Batch encode (deterministic for a given ffmpeg/libvpx build)."""

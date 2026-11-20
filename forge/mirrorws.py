@@ -122,7 +122,8 @@ class MirrorWsClient:
     def __enter__(self) -> "MirrorWsClient":
         from websockets.sync.client import connect
 
-        self.ws = connect(self.url, max_size=MAX_MSG, compression=None, open_timeout=10)
+        self._cm = connect(self.url, max_size=MAX_MSG, compression=None, open_timeout=10)
+        self.ws = self._cm.__enter__()
         hdr = self.link._sign("WS", PATH + "/hello", b"hello")
         self.ws.send(json.dumps({"type": "hello", "client": hdr["X-Loom-Client"], "ts": hdr["X-Loom-Ts"],
                                  "sig": hdr["X-Loom-Sig"]}))
@@ -133,7 +134,7 @@ class MirrorWsClient:
 
     def __exit__(self, *a: Any) -> None:
         if self.ws is not None:
-            self.ws.close()
+            self._cm.__exit__(None, None, None)
 
     def send(self, env: FrameEnvelope) -> dict[str, Any]:
         self.ws.send(pack(self.link, env))

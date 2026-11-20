@@ -642,7 +642,9 @@ def link_grp() -> None:
               help="Paired devices + synced store (default .fabric/loomlink).")
 @click.option("--cluster", "cluster_url", default=None,
               help="URL of any LoomCluster node: offloaded hashchain/gen jobs run on the fleet (C7).")
-def link_serve(bind: str, port: int, allow: str, state_dir: Path | None, cluster_url: str | None) -> None:
+@click.option("--ws-port", type=int, default=None,
+              help="Also serve the MirrorWeave WebSocket (C9 low-latency frame/video push; needs the `mirror` extra). 0 = any port.")
+def link_serve(bind: str, port: int, allow: str, state_dir: Path | None, cluster_url: str | None, ws_port: int | None) -> None:
     """Show a one-time pairing code / loomlink:// URI (QR if `qrcode` is installed) and serve."""
     from forge import loomlink
 
@@ -662,6 +664,11 @@ def link_serve(bind: str, port: int, allow: str, state_dir: Path | None, cluster
         click.echo(f"uri: {s.uri()}")
         qr = loomlink.qr_text(s.uri())
         click.echo(qr if qr else "(install the optional `qrcode` package for a terminal QR)")
+        if ws_port is not None:
+            from forge.mirrorws import MirrorWsServer
+
+            ws = MirrorWsServer(s, bind=bind, port=ws_port).start()
+            click.echo(f"MIRROR_WS {ws.url}")
 
     def on_event(ev: dict) -> None:
         if ev["ev"] == "paired":

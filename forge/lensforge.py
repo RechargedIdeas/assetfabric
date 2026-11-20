@@ -318,16 +318,25 @@ class VideoCapture:
 
 
 class FocusController:
-    """STUB: camera focus control (also reachable remotely via MirrorWeave `focus`)."""
+    """Camera focus control for a paired phone. Desktop side (real): queues a validated focus event for the device through the
+    MirrorWeave outbox (signed per event at delivery). Phone side: `fabric.pocketloom.Camera2Focus` — Camera2 AF / manual
+    diopters — compiled into the APK, **not verified on a phone** (`real_unverified_on_device`)."""
 
-    def set_focus(self, distance_m: float) -> None:
-        refuse("lens.focus_control", "stub.mirror.camera_focus", MILESTONE)
+    def __init__(self, state_dir: Any = None, device: str = "") -> None:
+        self.state_dir, self.device = state_dir, device
+
+    def set_focus(self, distance_m: float) -> dict[str, Any]:
+        from forge.mirrorweave import AndroidController
+        return AndroidController(self.state_dir, self.device).focus("manual", distance_m)
+
+    def auto(self, x: float | None = None, y: float | None = None) -> dict[str, Any]:
+        from forge.mirrorweave import AndroidController
+        return AndroidController(self.state_dir, self.device).focus("auto", None, x, y)
 
 
 STUB_PROBES = {
     "lens.arcore_session": lambda: ARCoreSession().start(),
     "lens.video_capture": lambda: VideoCapture().start(),
-    "lens.focus_control": lambda: FocusController().set_focus(1.0),
 }
 
 

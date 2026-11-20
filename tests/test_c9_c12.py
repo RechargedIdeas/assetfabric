@@ -36,9 +36,19 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    assert len(r["stubs"]) == 14 and len(r["real"]) == 16
+    # 0.7.4 (stub batch 1, C9): 20 real · 5 real_unverified_on_device (Android-only, compiled, never on a phone) · 8 stubs
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (20, 5, 8)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
+
+
+def test_register_check_catches_unverified_without_android_impl(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    reg = registry.load(root)
+    for f in reg["features"]:
+        if f["id"] == "mirror.android_input":
+            f["android_impl"] = "NoSuchService"
+    monkeypatch.setattr(registry, "load", lambda r=None: reg)
+    assert any("android_impl" in p for p in registry.check(root, "C9")["problems"])
 
 
 def test_register_check_catches_a_stub_that_returns(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -75,9 +85,10 @@ def test_frame_envelope_validates_and_round_trips() -> None:
         kw = dict(stream="s", seq=0, ts_ms=0, kind="screen", codec="png", width=0, height=0, data=data) | bad
         with pytest.raises(ValueError):
             mirrorweave.FrameEnvelope(**kw)
-    with pytest.raises(StubError) as e:
+    with pytest.raises(ValueError):                         # video kind needs video bytes; still bytes are refused
         mirrorweave.FrameEnvelope("s", 0, 0, "camera_video", "h264", 0, 0, data)
-    assert is_stub_message(str(e.value)) and e.value.key == "stub.mirror.video_codec"
+    with pytest.raises(ValueError):
+        mirrorweave.FrameEnvelope("s", 0, 0, "screen", "av1", 0, 0, data)
 
 
 def test_hub_orders_drops_and_persists(tmp_path: Path) -> None:
@@ -93,7 +104,7 @@ def test_hub_orders_drops_and_persists(tmp_path: Path) -> None:
     assert meta["seq"] == 5 and blob == data
 
 
-def test_loomlink_mirror_routes_enforce_capabilities_and_label_stubs(tmp_path: Path) -> None:
+def test_loomlink_mirror_routes_enforce_capabilities(tmp_path: Path) -> None:
     from forge.accept_companions import Desktop
     from forge.loomlink import LinkClient
 
@@ -105,15 +116,15 @@ def test_loomlink_mirror_routes_enforce_capabilities_and_label_stubs(tmp_path: P
         assert c.mirror_frame(mirrorweave.FrameEnvelope("screen", 0, 1, "screen", "png", 0, 0, data))["accepted"]
         assert base64.b64decode(c.mirror_latest("screen")["frame"]["data_b64"]) == data
         assert c.mirror_control(mirrorweave.ControlMessage("desktop", "query", "forge.status"))["ok"]
+        assert c.mirror_control(mirrorweave.ControlMessage("desktop", "input", "key", {"key": "a"}))["ok"]
         for msg, code in ((mirrorweave.ControlMessage("desktop", "query", "rm -rf /"), 403),
-                          (mirrorweave.ControlMessage("android", "input", "tap"), 501),
-                          (mirrorweave.ControlMessage("desktop", "input", "k"), 501)):
+                          (mirrorweave.ControlMessage("android", "input", "tap"), 403),      # phone input is desktop-local only
+                          (mirrorweave.ControlMessage("desktop", "focus", "x"), 403),
+                          (mirrorweave.ControlMessage("desktop", "input", "key", {"key": "F13"}), 403),   # not allow-listed
+                          (mirrorweave.ControlMessage("desktop", "input", "shell", {"cmd": "ls"}), 400)):
             with pytest.raises(urllib.error.HTTPError) as e:
                 c.mirror_control(msg)
-            body = json.loads(e.value.read())
-            assert e.value.code == code
-            if code == 501:
-                assert body["stub"] is True and is_stub_message(body["error"])
+            assert e.value.code == code, msg
         weak = LinkClient(d.srv.url, "w")
         weak.pair(d.srv.code, ["offload"])
         with pytest.raises(urllib.error.HTTPError) as e:
@@ -154,13 +165,14 @@ def test_linkclient_rapid_signed_queries_are_not_false_replays(tmp_path: Path, m
         d.halt()
 
 
-def test_mirror_cli_stubs_exit_3() -> None:
-    for argv in (["mirror", "stream", "--source", "screen"], ["mirror", "stream", "--source", "camera-video"],
-                 ["mirror", "control", "--target", "android"]):
-        r = CliRunner().invoke(main, argv)
-        assert r.exit_code == 3, (argv, r.output)
-        doc = json.loads(r.output)
-        assert doc["stub"] is True and is_stub_message(doc["message"])
+def test_mirror_input_cli_queues_signed_events(tmp_path: Path) -> None:
+    r = CliRunner().invoke(main, ["mirror", "input", "--state-dir", str(tmp_path), "--device", "phone-a", "tap", "--x", "0.5", "--y", "0.5"])
+    assert r.exit_code == 0, r.output
+    assert json.loads(r.output)["seq"] == 0
+    r = CliRunner().invoke(main, ["mirror", "input", "--state-dir", str(tmp_path), "--device", "phone-a", "tap", "--x", "2", "--y", "0"])
+    assert r.exit_code == 1                                     # out of range → refused, nothing queued
+    rows = mirrorweave.InputOutbox(tmp_path / "mirror" / "outbox").read("phone-a")
+    assert [x["event"] for x in rows] == [{"type": "tap", "x": 0.5, "y": 0.5}]
 
 
 # ----------------------------------------------------------------------------- C10 LensForge

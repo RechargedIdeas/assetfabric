@@ -101,10 +101,13 @@ ops:
     budget_s_2core: 10
     probe_brief: "runtime:mirror"
     note: >-
-      MirrorWeave frame encoding. The CPU rung is *stills* (png/jpeg/webp validated + canonical wire form); H.264 via a
-      hardware encoder (VAAPI/AMF/MediaCodec) is the planned top rung — video streaming is a labelled stub (C9).
+      MirrorWeave frame encoding on the desktop. CPU video = VP8/VP9 via libvpx through the system ffmpeg (realtime, no lag
+      frames; the probe encodes 12 frames single-threaded so the digest is host-independent); stills (png/jpeg/webp) are the
+      last rung. Desktop hardware H.264 (VAAPI/AMF via ffmpeg, Vulkan video) stays planned — no GPU on the build box. The phone
+      encodes H.264 on its own MediaCodec hardware (PocketLoom, real_unverified_on_device), outside this desktop ladder.
     ladder:
       - {id: mirror-h264-hw, device: vulkan, impl: planned}
+      - {id: mirror-vpx-cpu, device: cpu, impl: real}
       - {id: mirror-stills, device: cpu, impl: real}
   lens.assess:
     budget_s_2core: 10

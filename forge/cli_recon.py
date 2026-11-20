@@ -34,7 +34,8 @@ def _guard(fn: Callable[[], Any]) -> None:
 
 @click.group("mirror")
 def mirror_grp() -> None:
-    """MirrorWeave (C9): stills/telemetry stream + allow-listed read-only control over LoomLink. Video/screen/input are stubs."""
+    """MirrorWeave (C9): stills / CPU video / desktop capture over LoomLink (HTTP or signed WebSocket), desktop → phone input
+    and focus (queued, signed per event), phone → Studio input, allow-listed read-only queries."""
 
 
 @mirror_grp.command("info")
@@ -77,57 +78,118 @@ def _seq_offset(c: Any, stream: str) -> int:
 
 
 @mirror_grp.command("latest")
-@click.option("--state-dir", type=click.Path(path_type=Path), required=True, help="LoomLink state dir (<dir>/mirror/<stream>/latest.*).")
+@click.option("--state-dir", type=click.Path(path_type=Path), required=True, help="LoomLink state dir (<dir>/mirror/<stream>/…).")
 @click.option("--stream", default="screen")
-@click.option("--out", type=click.Path(path_type=Path), default=None, help="Write the latest frame's bytes here.")
+@click.option("--out", type=click.Path(path_type=Path), default=None, help="Write the latest still (or decoded video picture, PNG).")
 def mirror_latest(state_dir: Path, stream: str, out: Path | None) -> None:
-    """Read the newest persisted frame of a stream on this desktop."""
-    from forge.mirrorweave import load_persisted
+    """Read the newest persisted frame of a stream on this desktop (video streams are decoded with the system ffmpeg)."""
+    import json as _json
+
+    from forge.mirrorweave import decode_latest, load_persisted
 
     def run() -> Any:
-        got = load_persisted(state_dir / "mirror", stream)
-        if got is None:
+        meta_p = state_dir / "mirror" / stream / "latest.meta.json"
+        if not meta_p.exists():
             raise ValueError(f"no frames for stream {stream!r}")
-        meta, data = got
-        if out:
+        meta = _json.loads(meta_p.read_text(encoding="utf-8"))
+        data = decode_latest(state_dir / "mirror", stream) if meta.get("keyframe") is not None else load_persisted(state_dir / "mirror", stream)[1]
+        if out and data:
             out.write_bytes(data)
         return meta
     _guard(run)
 
 
 @mirror_grp.command("stream")
-@click.option("--source", type=click.Choice(["screen", "camera-video"]), required=True)
-def mirror_stream(source: str) -> None:
-    """Live screen/video streaming — STUB (refuses, exit 3)."""
+@click.option("--source", type=click.Choice(["desktop", "desktop-video"]), required=True,
+              help="desktop = X11 screen stills (PNG); desktop-video = X11 screen as CPU VP8/VP9 video.")
+@click.option("--url", required=True, help="Desktop LoomLink URL of the receiver.")
+@click.option("--code", required=True, help="One-time pairing code shown by the receiver's `forge link serve`.")
+@click.option("--ws", "ws_url", default=None, help="Receiver's MirrorWeave WebSocket URL (forge link serve --ws-port); else HTTP.")
+@click.option("--display", default=None, help="X11 display (default $DISPLAY).")
+@click.option("--fps", default=5, type=int)
+@click.option("--frames", "n", default=50, type=int, help="Stop after N frames.")
+@click.option("--codec", default="vp8", type=click.Choice(["vp8", "vp9"]))
+@click.option("--size", default=None, help="WxH capture region (video needs even sizes).")
+@click.option("--stream", default=None)
+@click.option("--client-id", default="forge-cli")
+def mirror_stream(source: str, url: str, code: str, ws_url: str | None, display: str | None, fps: int, n: int, codec: str,
+                  size: str | None, stream: str | None, client_id: str) -> None:
+    """Capture this desktop's screen and stream it to a paired MirrorWeave receiver."""
     from forge import mirrorweave
+    from forge.loomlink import LinkClient
 
     def run() -> Any:
-        s = mirrorweave.ScreenCaptureSource() if source == "screen" else mirrorweave.VideoStreamSource()
-        return next(s.frames())
+        c = LinkClient(url, client_id)
+        c.pair(code, ["mirror"])
+        if source == "desktop":
+            src: Any = mirrorweave.DesktopScreenSource(stream or "desktop", display, fps, n)
+        else:
+            w, h = (int(v) for v in size.split("x")) if size else (0, 0)
+            src = mirrorweave.VideoStreamSource(stream or "desktop-video", codec, w, h, fps, display=display, n=n)
+        acks = []
+        if ws_url:
+            from forge.mirrorws import MirrorWsClient
+            with MirrorWsClient(ws_url, c) as ws:
+                acks = [ws.send(e) for e in src.frames()]
+        else:
+            acks = [c.mirror_frame(e) for e in src.frames()]
+        return {"frames": len(acks), "last": acks[-1] if acks else None}
+    _guard(run)
+
+
+@mirror_grp.command("input")
+@click.option("--state-dir", type=click.Path(path_type=Path), required=True, help="State dir of the running `forge link serve`.")
+@click.option("--device", required=True, help="Paired phone's client id.")
+@click.argument("event", type=click.Choice(["tap", "long_press", "swipe", "key", "text", "focus"]))
+@click.option("--x", type=float)
+@click.option("--y", type=float)
+@click.option("--x2", type=float)
+@click.option("--y2", type=float)
+@click.option("--duration-ms", type=int)
+@click.option("--key", "key_name", default=None)
+@click.option("--text", default=None)
+@click.option("--mode", default="auto", type=click.Choice(["auto", "manual", "lock", "unlock"]))
+@click.option("--distance-m", type=float)
+def mirror_input(state_dir: Path, device: str, event: str, x: float | None, y: float | None, x2: float | None, y2: float | None,
+                 duration_ms: int | None, key_name: str | None, text: str | None, mode: str, distance_m: float | None) -> None:
+    """Queue a desktop → phone event (coordinates normalised 0..1). The phone's PocketLoom remote-control service polls it;
+    each event is HMAC-signed with that phone's pairing key at delivery."""
+    from forge.mirrorweave import AndroidController, ControlMessage
+
+    def run() -> Any:
+        args = {k: v for k, v in {"x": x, "y": y, "x2": x2, "y2": y2, "duration_ms": duration_ms, "key": key_name, "text": text,
+                                  "distance_m": distance_m}.items() if v is not None}
+        if event == "focus":
+            args["mode"] = mode
+        return AndroidController(state_dir, device).send(ControlMessage("android", "input", event, args))
     _guard(run)
 
 
 @mirror_grp.command("control")
-@click.option("--target", type=click.Choice(["android", "desktop"]), required=True)
-@click.option("--action", type=click.Choice(["query", "input", "focus"]), default="query")
-@click.option("--name", default="forge.status")
-@click.option("--url", default=None)
-@click.option("--code", default=None)
+@click.option("--action", type=click.Choice(["query", "input"]), default="query")
+@click.option("--name", default="forge.status", help="query name, or input type key|pointer|scroll")
+@click.option("--arg", "args", multiple=True, help="k=v for input events (e.g. key=a, x=0.5)")
+@click.option("--url", required=True)
+@click.option("--code", required=True)
 @click.option("--client-id", default="forge-cli")
-def mirror_control(target: str, action: str, name: str, url: str | None, code: str | None, client_id: str) -> None:
-    """Remote control. target=android is a STUB (refuses locally). target=desktop pairs (drive_studio) and runs an allow-listed query."""
+def mirror_control(action: str, name: str, args: tuple[str, ...], url: str, code: str, client_id: str) -> None:
+    """Drive a desktop over LoomLink (drive_studio): allow-listed read-only queries, or Studio input events."""
     from forge.loomlink import LinkClient
-    from forge.mirrorweave import AndroidController, ControlMessage
+    from forge.mirrorweave import ControlMessage
+
+    def conv(v: str) -> Any:
+        for f in (int, float):
+            try:
+                return f(v)
+            except ValueError:
+                pass
+        return {"true": True, "false": False}.get(v, v)
 
     def run() -> Any:
-        msg = ControlMessage(target, action, name)
-        if target == "android":
-            return AndroidController().send(msg)
-        if not (url and code):
-            raise ValueError("--url and --code are required for target=desktop")
         c = LinkClient(url, client_id)
         c.pair(code, ["drive_studio"])
-        return c.mirror_control(msg)
+        kv = dict(a.split("=", 1) for a in args)
+        return c.mirror_control(ControlMessage("desktop", action, name, {k: conv(v) for k, v in kv.items()}))
     _guard(run)
 
 

@@ -410,7 +410,7 @@ def validate_studio_event(ev: dict[str, Any]) -> dict[str, Any]:
     typ = ev.get("type")
     if typ == "key":
         if ev.get("key") not in STUDIO_KEYS:
-            raise PermissionError(t("mirror.studio.key_not_allowed", key=str(ev.get("key"))[:16]))
+            raise PermissionError(t("mirror.studio.key_not_allowed", name=str(ev.get("key"))[:16]))
         return {"type": "key", "key": ev["key"], "shift": bool(ev.get("shift", False))}
     if typ == "pointer":
         if ev.get("action") not in STUDIO_POINTER:

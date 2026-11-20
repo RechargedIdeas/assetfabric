@@ -15,6 +15,8 @@ from forge.stubs import StubError
 
 REGISTER = Path("content") / "companions" / "c9_c12.yaml"
 PL_KOTLIN = Path("companions") / "pocketloom" / "fabriccore" / "src" / "main" / "kotlin" / "fabric" / "core"
+PL_APP = Path("companions") / "pocketloom" / "app" / "src" / "main" / "kotlin" / "fabric" / "pocketloom"
+STATUSES = ("real", "real_unverified_on_device", "stub")
 PL_STRINGS = Path("companions") / "pocketloom" / "app" / "src" / "main" / "res" / "values" / "strings.xml"
 MODULES = {"C9": "forge.mirrorweave", "C10": "forge.lensforge", "C11": "forge.depth", "C12": "forge.realityloom"}
 
@@ -33,6 +35,8 @@ def descriptor(ms: str, root: Path | None = None) -> dict[str, Any]:
     rows = []
     for f in features(ms, root):
         row = {"id": f["id"], "status": f["status"], "spec": f["spec"]}
+        if f["status"] == "real_unverified_on_device":
+            row["verified_on_device"] = False
         if f["status"] == "stub":
             row["reason"] = t(f["reason_key"], root, codec="h264")
         rows.append(row)
@@ -62,10 +66,11 @@ def check(root: Path | None = None, ms: str | None = None) -> dict[str, Any]:
     loc = catalogue(root)
     strings = (root / PL_STRINGS).read_text(encoding="utf-8")
     kt = "\n".join(p.read_text(encoding="utf-8") for p in sorted((root / PL_KOTLIN).glob("*.kt")))
+    app_kt = "\n".join(p.read_text(encoding="utf-8") for p in sorted((root / PL_APP).glob("*.kt")))
     problems: list[str] = []
     seen: set[str] = set()
     stub_results: dict[str, Any] = {}
-    real_ids, stub_ids = [], []
+    real_ids, stub_ids, unverified_ids = [], [], []
     for f in reg["features"]:
         if ms and f["milestone"] != ms:
             continue
@@ -75,9 +80,17 @@ def check(root: Path | None = None, ms: str | None = None) -> dict[str, Any]:
         seen.add(fid)
         if f["milestone"] not in MODULES:
             problems.append(f"{fid}: bad milestone")
-        if f["status"] not in ("real", "stub"):
-            problems.append(f"{fid}: status must be real|stub")
+        if f["status"] not in STATUSES:
+            problems.append(f"{fid}: status must be one of {STATUSES}")
             continue
+        if f["status"] == "real_unverified_on_device":
+            # Android-only capability: a real platform implementation must exist in the app module (compiled into the APK by
+            # `forge accept` full mode); it has never run on a phone, and the status says exactly that.
+            ai = f.get("android_impl")
+            if not ai or not re.search(rf"\bclass\s+{re.escape(ai)}\b", app_kt):
+                problems.append(f"{fid}: android_impl {ai!r} not found in the PocketLoom app module")
+            if "reason_key" in f:
+                problems.append(f"{fid}: real_unverified_on_device must not carry a stub reason_key")
         try:
             _resolve(f["entry"])
         except Exception as e:  # noqa: BLE001
@@ -109,6 +122,9 @@ def check(root: Path | None = None, ms: str | None = None) -> dict[str, Any]:
                 except Exception as e:  # noqa: BLE001
                     problems.append(f"{fid}: stub raised {type(e).__name__}, not StubError")
         else:
-            real_ids.append(fid)
-    return {"ok": not problems, "problems": problems, "real": real_ids, "stubs": stub_ids,
+            probe = getattr(importlib.import_module(MODULES[f["milestone"]]), "STUB_PROBES", {}).get(fid)
+            if probe is not None:
+                problems.append(f"{fid}: marked {f['status']} but still has a STUB_PROBES entry")
+            (unverified_ids if f["status"] == "real_unverified_on_device" else real_ids).append(fid)
+    return {"ok": not problems, "problems": problems, "real": real_ids, "real_unverified_on_device": unverified_ids, "stubs": stub_ids,
             "stub_refusals": stub_results, "deferred": [d["id"] for d in reg.get("deferred", [])]}

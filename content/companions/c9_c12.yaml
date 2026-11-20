@@ -1,7 +1,9 @@
 # Companion-track register C9–C12 (MirrorWeave, LensForge capture, metric depth, SplatForge path).
 # One row per capability the SPEC names for these milestones. `status: real` = implemented on a CPU path, tested, and
-# accepted by `forge accept C9..C12`; `status: stub` = typed interface only, refuses with StubError carrying `reason_key`
-# (locales/en.json) — it never returns made-up output. Nothing here is a shipped GPU/video/ARCore/reconstruction feature.
+# accepted by `forge accept C9..C12`; `status: real_unverified_on_device` = an Android-only capability whose real platform code
+# (`android_impl`, app module) compiles into the APK and whose platform-free half is JVM-tested, but which has NEVER run on a
+# phone (no device/emulator on the build box) — the desktop side named by `entry` is real and tested; `status: stub` = typed
+# interface only, refuses with StubError carrying `reason_key` (locales/en.json) — it never returns made-up output.
 # `forge accept` cross-checks this file against the code (entries import, stubs refuse, Kotlin symbols exist, ladder ops
 # exist, locale + Android string keys exist).
 schema_version: "1.0"
@@ -18,16 +20,26 @@ features:
      spec: "§9 camera stills streaming", note: "streams a sequence of still images as frames; CPU rung of mirror.encode"}
   - {id: mirror.query_control, milestone: C9, status: real, entry: "forge.mirrorweave:handle_control", kotlin: MirrorClient,
      spec: "§8/§9 'Android remote control of desktop'", note: "drive_studio capability; allow-listed READ-ONLY queries only (forge.status, groundweave.show, mirror.stats)"}
-  - {id: mirror.screen_capture, milestone: C9, status: stub, entry: "forge.mirrorweave:ScreenCaptureSource.frames", kotlin: ScreenCaptureSource,
-     reason_key: stub.mirror.screen_capture, spec: "§9 'Android screen stream'"}
-  - {id: mirror.video_stream, milestone: C9, status: stub, entry: "forge.mirrorweave:VideoStreamSource.frames", kotlin: VideoStreamSource,
-     reason_key: stub.mirror.video_codec, ladder_op: mirror.encode, spec: "§9 'camera video … streaming'"}
-  - {id: mirror.android_input, milestone: C9, status: stub, entry: "forge.mirrorweave:AndroidController.send", kotlin: AndroidInputInjector,
-     reason_key: stub.mirror.android_input, spec: "§9 'Desktop remote control of Android'"}
-  - {id: mirror.studio_input, milestone: C9, status: stub, entry: "forge.mirrorweave:handle_control",
-     reason_key: stub.mirror.studio_input, spec: "§8 'phone can drive desktop Studio' (input events; Studio GUI is a stub)"}
-  - {id: mirror.camera_focus, milestone: C9, status: stub, entry: "forge.mirrorweave:handle_control", kotlin: FocusController,
-     reason_key: stub.mirror.camera_focus, spec: "§9 'camera … focus … streaming'"}
+  - {id: mirror.desktop_capture, milestone: C9, status: real, entry: "forge.mirrorweave:DesktopScreenSource.frames", ladder_op: mirror.encode,
+     spec: "§8 'desktop can drive phone' / §9 cross-device stream (desktop side)", note: "X11 capture via system ffmpeg x11grab (Xvfb-tested); Windows/Wayland not wired (C-51)"}
+  - {id: mirror.video_stream, milestone: C9, status: real, entry: "forge.mirrorweave:VideoStreamSource.frames", kotlin: VideoStreamSource, ladder_op: mirror.encode,
+     spec: "§9 'camera video … streaming'", note: "desktop CPU VP8/VP9 (libvpx via system ffmpeg), keyframes checked from the bitstream, decoder resync on gaps; decode-back PSNR gate"}
+  - {id: mirror.ws_transport, milestone: C9, status: real, entry: "forge.mirrorws:MirrorWsServer.start",
+     spec: "§9 low-latency stream transport", note: "WebSocket (websockets, BSD-3); every message HMAC-signed with the LoomLink session key (C-54)"}
+  - {id: mirror.screen_capture, milestone: C9, status: real_unverified_on_device, entry: "forge.mirrorweave:ScreenCaptureSource.frames",
+     kotlin: ScreenCaptureSource, android_impl: ScreenMirrorService, spec: "§9 'Android screen stream → desktop'",
+     note: "MediaProjection → ImageReader → JPEG stills; FabricCore pacing JVM-tested; desktop receiving end tested"}
+  - {id: mirror.android_video, milestone: C9, status: real_unverified_on_device, entry: "forge.mirrorweave:VideoTrack.add",
+     kotlin: VideoStreamSource, android_impl: ScreenMirrorService, spec: "§9 'Android screen stream' (video)",
+     note: "MediaCodec hardware H.264 → packets with SPS/PPS on keyframes; desktop H.264 decode tested with fixture packets"}
+  - {id: mirror.android_input, milestone: C9, status: real_unverified_on_device, entry: "forge.mirrorweave:AndroidController.send",
+     kotlin: AndroidInputInjector, android_impl: MirrorAccessibilityService, spec: "§9 'Desktop remote control of Android'",
+     note: "desktop outbox + per-event HMAC; Kotlin verify/gesture maths JVM-tested; dispatchGesture/global actions on the phone unverified"}
+  - {id: mirror.studio_input, milestone: C9, status: real, entry: "forge.mirrorweave:StudioInputSpool.push", kotlin: MirrorClient,
+     spec: "§8 'phone can drive desktop Studio'", note: "allow-listed key/pointer/scroll → spool → Studio window turns them into Qt events (offscreen-tested)"}
+  - {id: mirror.camera_focus, milestone: C9, status: real_unverified_on_device, entry: "forge.mirrorweave:AndroidController.focus",
+     kotlin: FocusController, android_impl: Camera2Focus, spec: "§9 'camera … focus … streaming'",
+     note: "desktop queues focus events; Camera2 AF/manual-diopter control; FocusRequest maths JVM-tested"}
   # ----------------------------------------------------------------------------------------------------- C10
   - {id: lens.profiles, milestone: C10, status: real, entry: "forge.lensforge:load_profiles", kotlin: CaptureModes,
      spec: "§9 'Capture modes'; §7 'PatternVault capture profiles'", note: "content/patternvault/capture_profiles.json (advisory thresholds, INFERENCE C-38)"}
@@ -43,8 +55,8 @@ features:
      reason_key: stub.lens.arcore_session, spec: "§9 'ARCore + DepthAnything V2'"}
   - {id: lens.video_capture, milestone: C10, status: stub, entry: "forge.lensforge:VideoCapture.start",
      reason_key: stub.lens.video_capture, spec: "§9 'Capture modes' (video)"}
-  - {id: lens.focus_control, milestone: C10, status: stub, entry: "forge.lensforge:FocusController.set_focus",
-     reason_key: stub.mirror.camera_focus, spec: "§9 'camera … focus'"}
+  - {id: lens.focus_control, milestone: C10, status: real_unverified_on_device, entry: "forge.lensforge:FocusController.set_focus",
+     kotlin: FocusController, android_impl: Camera2Focus, spec: "§9 'camera … focus'", note: "same Camera2 controller as mirror.camera_focus; live camera tap-to-focus in the Capture tab"}
   # ----------------------------------------------------------------------------------------------------- C11
   - {id: depth.focal_px, milestone: C11, status: real, entry: "forge.depth:focal_px", kotlin: Depth, ladder_op: depth.distance,
      spec: "§9 'monocular distance estimates'", note: "pixel focal length from EXIF-style optics"}

@@ -262,19 +262,28 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
                 "backend": "godot-headless-shards", "encounters": enc,
                 "digest": hashlib.sha256(json.dumps(agg.get("matchups", agg), sort_keys=True, default=str).encode()).hexdigest()}
     if name in ("mirror", "lens", "depth", "recon"):   # C9–C12 CPU rungs: pure-CPU, deterministic, no Godot
-        out = _probe_companion(name)
-        wall = time.perf_counter() - t0
-        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         sel = select({"mirror": "mirror.encode", "lens": "lens.assess", "depth": "depth.distance", "recon": "recon.plan"}[name],
                      root=root)
+        out = _probe_companion(name, sel.get("backend"))
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         return {"brief": f"{name}-probe", "ok": True, "wall_s": round(wall, 3), "cores": aff, "device": sel["device"],
                 "backend": sel["backend"], "digest": hashlib.sha256(json.dumps(out, sort_keys=True, default=str).encode()).hexdigest()}
     raise GroundWeaveError(f"unknown runtime probe {name!r}")
 
 
-def _probe_companion(name: str) -> Any:
+def _probe_companion(name: str, backend: str | None = None) -> Any:
     if name == "mirror":
         from forge import lensforge, mirrorweave
+        if backend == "mirror-vpx-cpu":     # CPU VP8 video rung: 12 synthetic frames, single-threaded libvpx (deterministic)
+            import numpy as np
+
+            from forge.mirrorvideo import CpuVideoEncoder
+            y, x = np.mgrid[0:64, 0:96]
+            frames = [np.stack([(x * 2 + i * 4) % 256, (y * 3) % 256, ((x + y) + i * 6) % 256], -1).astype(np.uint8)
+                      for i in range(12)]
+            pk = CpuVideoEncoder(96, 64, "vp8", gop=6, threads=1).encode(frames)
+            return hashlib.sha256(b"".join(pk)).hexdigest()
         return mirrorweave.encode_still(lensforge.synthetic_png(96, 64, 3)).decode()
     if name == "lens":
         from forge import lensforge
