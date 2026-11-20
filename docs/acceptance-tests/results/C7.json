@@ -1,0 +1,228 @@
+{
+  "description": "LoomCluster: equal nodes advertise/negotiate, steal work, checkpoint, retry; node-count-independent results; PocketLoom LoomLink offload runs on the fleet",
+  "errors": [],
+  "increment": "loomcluster",
+  "milestone": "C7",
+  "passed": true,
+  "perf": {
+    "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+    "batch_wall_s": {
+      "n1_2core_nogpu": 2.76,
+      "n2": 2.33,
+      "n3": 1.71
+    },
+    "lease_s": 6.0,
+    "max_gen_job_s_2core": 1.045,
+    "mode": "full"
+  },
+  "result": {
+    "cli_gen": {
+      "batch_digest": "0b4dfa383cdf8853f7c7744b8a098275b98707fb34a1d22d7d14607be7c2799d",
+      "executed_by_node": {
+        "a": 2,
+        "b": 1
+      },
+      "exit": 0,
+      "files_identical_to_local_build": true,
+      "ok": true
+    },
+    "determinism": {
+      "digests_equal": true,
+      "jobs": 36,
+      "ok": true,
+      "reference_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+      "runs": {
+        "n1_2core_nogpu": {
+          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "complete": true,
+          "executed_by_node": {
+            "a": 36
+          },
+          "max_gen_job_s": 1.045,
+          "mesh": true,
+          "nodes": 1,
+          "over_budget": [],
+          "stolen_in": {
+            "a": 0
+          },
+          "wall_s": 2.76,
+          "wrong": []
+        },
+        "n2": {
+          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "complete": true,
+          "executed_by_node": {
+            "a": 29,
+            "b": 7
+          },
+          "max_gen_job_s": 1.155,
+          "mesh": true,
+          "nodes": 2,
+          "over_budget": [],
+          "stolen_in": {
+            "a": 0,
+            "b": 7
+          },
+          "wall_s": 2.33,
+          "wrong": []
+        },
+        "n3": {
+          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "complete": true,
+          "executed_by_node": {
+            "a": 26,
+            "b": 2,
+            "c": 8
+          },
+          "max_gen_job_s": 1.267,
+          "mesh": true,
+          "nodes": 3,
+          "over_budget": [],
+          "stolen_in": {
+            "a": 0,
+            "b": 2,
+            "c": 8
+          },
+          "wall_s": 1.71,
+          "wrong": []
+        }
+      },
+      "spread": true
+    },
+    "failures": {
+      "kill_node": {
+        "completed": 48,
+        "elapsed_s": 7.56,
+        "executed_by_node": {
+          "a": 31,
+          "b": 15,
+          "c": 2
+        },
+        "killed": {
+          "c_held": 4,
+          "results_at_kill": 14
+        },
+        "lease_s": 6.0,
+        "ok": true,
+        "requeued_at_origin": 6,
+        "wrong": []
+      },
+      "ok": true,
+      "origin_restart": {
+        "completed": 24,
+        "executed_by_node": {
+          "a": 9,
+          "b": 15
+        },
+        "ok": true,
+        "parked_results_redelivered_by_peer": 6,
+        "recovered_from_journal": 15,
+        "wrong": []
+      },
+      "retry": {
+        "bad_brief_error": "RuntimeError: gen child failed rc=1: KeyError: 'no_such_brief'",
+        "gives_up_after": 3,
+        "max_attempts": 3,
+        "ok": true,
+        "recovers_after_attempts": 3
+      }
+    },
+    "loomlink": {
+      "fleet_down_fallback": {
+        "node": "desktop",
+        "ok": true
+      },
+      "kotlin_client": {
+        "drained": {
+          "paired": true,
+          "pending": 0,
+          "sent": 6
+        },
+        "executed_on": [
+          "a",
+          "b",
+          "c"
+        ],
+        "ok": true,
+        "via": [
+          "loomcluster"
+        ]
+      },
+      "ok": true,
+      "python_client": {
+        "executed_on": [
+          "a",
+          "b",
+          "c"
+        ],
+        "ok": true,
+        "via": [
+          "loomcluster"
+        ],
+        "wrong": []
+      }
+    },
+    "mode": "full",
+    "negotiation": {
+      "adverts": {
+        "a": {
+          "allocation_cap_pct": 100,
+          "cores": 2,
+          "devices": [
+            "cpu"
+          ],
+          "slots": 2
+        },
+        "b": {
+          "allocation_cap_pct": 25,
+          "cores": 8,
+          "devices": [
+            "cpu",
+            "vulkan"
+          ],
+          "slots": 2
+        },
+        "c": {
+          "allocation_cap_pct": 50,
+          "cores": 4,
+          "devices": [
+            "cpu",
+            "rocm"
+          ],
+          "slots": 2
+        }
+      },
+      "coordinator": {
+        "a": "a",
+        "b": "a",
+        "c": "a"
+      },
+      "ok": true,
+      "placed": {
+        "rocm": {
+          "c": 4
+        },
+        "vulkan": {
+          "b": 4
+        }
+      },
+      "refused_unadvertised_device": {
+        "error": "RuntimeError: no node advertises {'device': 'directml'}",
+        "status": 400
+      },
+      "slots": {
+        "a": 2,
+        "b": 2,
+        "c": 2
+      },
+      "unknown_op_status": 400
+    },
+    "not_proven": [
+      "cross-machine transport (LAN/Tailscale) and cluster auth",
+      "Kotlin/PocketLoom as a cluster peer node",
+      "real GPU devices (device placement uses simulated adverts)",
+      "origin loss without restart"
+    ],
+    "transport": "loopback processes (no LAN)"
+  }
+}

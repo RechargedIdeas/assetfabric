@@ -69,6 +69,9 @@ def status_cmd(as_json: bool, root: Path | None) -> None:
         table.add_row("schemas", str(comps["schemas"]["ok"]), "ok" if comps["schemas"]["ok"] else str(comps["schemas"].get("error")))
         table.add_row("asset_store", str(comps["asset_store"]["ok"]), f"bundles={comps['asset_store']['bundle_count']}")
         table.add_row("orchestrator", str(comps["orchestrator"]["ok"]), f"jobs={comps['orchestrator']['job_count']}")
+        gwc = comps["groundweave"]
+        table.add_row("groundweave", str(gwc["ok"]), f"{gwc['ops']} ops declared; devices={','.join(gwc['devices'])}"
+                      if gwc["ok"] else "; ".join(gwc["problems"]))
         g = comps["godot"]
         table.add_row(
             "godot",

@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from forge import __milestone__, __version__
-from forge.milestones import C_ORDER, INCREMENTS, ORDER, recorded
+from forge.milestones import CL_ORDER, C_ORDER, INCREMENTS, ORDER, recorded
 
 PLAN = {
     "F0": "Manifest, forge CLI, asset store, orchestrator, telemetry schema",
@@ -48,11 +48,17 @@ def render(root: Path) -> str:
             status += " (fast mode only)"
         ev = f"[results/{m}.json](docs/acceptance-tests/results/{m}.json)" if rec else "—"
         lines.append(f"| {m} | {INCREMENTS[m].description} | {status} | {ev} |")
-    for m, what in (("C7", "LoomCluster"), ("C8", "GroundWeave"), ("C9", "MirrorWeave"), ("C10", "LensForge capture"),
+    for m in CL_ORDER:
+        rec = recorded(root, m)
+        status = "not run" if rec is None else ("✅ passed" if rec.get("passed") else "❌ failed")
+        if rec is not None and rec.get("result", {}).get("mode") == "fast":
+            status += " (fast mode only)"
+        ev = f"[results/{m}.json](docs/acceptance-tests/results/{m}.json)" if rec else "—"
+        lines.append(f"| {m} | {INCREMENTS[m].description} | {status} | {ev} |")
+    for m, what in (("C9", "MirrorWeave"), ("C10", "LensForge capture"),
                     ("C11", "Metric depth"), ("C12", "Cluster reconstruction (SplatForge path)")):
-        state = "unverified draft on `wip/f5-companions`" if m in ("C7", "C8") else "not started"
-        lines.append(f"| {m} | {what} | {state} | — |")
-    lines += ["", "Run `forge accept <F|Cn|C1-C6>` to (re)record a milestone; `forge report` to refresh this file.", ""]
+        lines.append(f"| {m} | {what} | not started | — |")
+    lines += ["", "Run `forge accept <F|Cn|C1-C6|C7-C8>` to (re)record a milestone; `forge report` to refresh this file.", ""]
     return "\n".join(lines)
 
 

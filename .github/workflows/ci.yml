@@ -38,10 +38,26 @@ jobs:
         run: source .venv/bin/activate && REQUIRE_GODOT=1 ./scripts/smoke_godot.sh
 
   pocketloom:
-    # Companion track C1–C6: FabricCore JVM tests, debug APK (aapt/apksigner), lint, Kotlin↔Python LoomLink interop.
+    # Companion track C1–C6: FabricCore JVM tests, debug APK (aapt/apksigner), lint, Kotlin↔Python LoomLink interop;
+    # then C7/C8: LoomCluster loopback fleet + GroundWeave 2-core CPU-fallback proofs (runs here, in parallel with `test`,
+    # so the critical path is unchanged; pytest only carries tests/test_c7_c8.py ≈ 7 s).
     runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.3"
     steps:
       - uses: actions/checkout@v4
+      - name: Cache Godot            # C8's runtime probes (GIRT / balance on 2 pinned cores) run Godot headless
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: godot-bin
+          key: godot-${{ env.GODOT_VERSION }}-linux
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p godot-bin && cd godot-bin
+          curl -sSLo g.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q g.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm g.zip
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -60,3 +76,5 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0" > /dev/null
       - name: forge accept C1-C6 (full mode)
         run: source .venv/bin/activate && forge accept C1-C6 --no-write
+      - name: forge accept C7-C8 (LoomCluster loopback fleet + GroundWeave, full mode; incl. the Kotlin LoomLink hop)
+        run: source .venv/bin/activate && forge accept C7-C8 --no-write

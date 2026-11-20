@@ -14,6 +14,17 @@ from forge.store import AssetStore
 from forge.telemetry import load_event_schema
 
 
+def _groundweave_health(root: Path) -> dict[str, Any]:
+    """C8: every generator kind has a declared GPU→CPU ladder (static; `forge groundweave verify` proves budgets)."""
+    try:
+        from forge import groundweave
+
+        r = groundweave.check(root)
+        return {"ok": r["ok"], "ops": r["ops"], "problems": r["problems"], "devices": groundweave.detect_devices()}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "problems": [f"{type(exc).__name__}: {exc}"]}
+
+
 def _godot_project_health(root: Path, project_path: str) -> dict[str, Any]:
     godot_root = root / project_path
     project_file = godot_root / "project.godot"
@@ -94,6 +105,7 @@ def collect_status(root: Path | None = None) -> dict[str, Any]:
         "asset_store": {"ok": True, **store.health()},
         "orchestrator": {"ok": True, **orch.health()},
         "godot": godot,
+        "groundweave": _groundweave_health(root),
     }
     healthy = all(
         [
@@ -102,6 +114,7 @@ def collect_status(root: Path | None = None) -> dict[str, Any]:
             components["asset_store"]["ok"],
             components["orchestrator"]["ok"],
             components["godot"]["healthy"],
+            components["groundweave"]["ok"],
             offset_rule["ok"],
         ]
     )
