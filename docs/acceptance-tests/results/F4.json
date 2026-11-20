@@ -6,8 +6,8 @@
   "passed": true,
   "perf": {
     "ack_ms": [
-      61.0,
-      81.3
+      141.4,
+      161.4
     ],
     "ack_target_met": true,
     "ack_target_ms": 500.0,
@@ -16,11 +16,11 @@
       0.5
     ],
     "commit_apply_us": [
-      41518,
-      41588
+      39609,
+      41292
     ],
     "recover_s": [
-      0.86,
+      0.87,
       3.93
     ],
     "recover_target_met": true,
@@ -119,7 +119,7 @@
         "rule": 3960
       },
       "dialogue": [],
-      "field_warm_ms": 82.29,
+      "field_warm_ms": 87.39,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 0,
@@ -129,7 +129,7 @@
         "policy_calls": 664,
         "policy_fallbacks": 0,
         "policy_over_budget": 0,
-        "policy_p95_us": 15,
+        "policy_p95_us": 16,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -218,12 +218,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 32.74,
+      "swap_wall_ms": 27.08,
       "swaps": [
         {
           "tick": 300,
           "to": "nyra",
-          "wall_ms": 32.74
+          "wall_ms": 27.08
         }
       ]
     },
@@ -428,7 +428,7 @@
     "live": {
       "acks": [
         {
-          "apply_us": 41518,
+          "apply_us": 39609,
           "assets": [],
           "hash_after": "cb4c3575d67ed0ce",
           "hash_before": "35896434e6ecbb0e",
@@ -439,7 +439,7 @@
           "ticket": 1
         },
         {
-          "apply_us": 41588,
+          "apply_us": 41292,
           "assets": [
             "spr_rock_brute"
           ],
@@ -552,7 +552,7 @@
         "probing>idle"
       ],
       "final_hash": "85ceb9560ba64d81",
-      "live_dir": "/tmp/fabric-f4-i0ufhwvc/backlog",
+      "live_dir": "/tmp/fabric-f4-znjmfnfr/backlog",
       "replay": {
         "final_hash": "85ceb9560ba64d81",
         "outcome": "victory",
@@ -571,7 +571,7 @@
         "leash": 72,
         "rock_brute_max_hp": 30,
         "separation": 9,
-        "sprite_override": "/tmp/fabric-f4-i0ufhwvc/backlog/stage/2/spr_rock_brute.png"
+        "sprite_override": "/tmp/fabric-f4-znjmfnfr/backlog/stage/2/spr_rock_brute.png"
       },
       "wal": [
         {
@@ -662,13 +662,13 @@
             "kind": "crash",
             "rc": -6,
             "signal": 6,
-            "t": 1795201027.253
+            "t": 1795201464.578
           },
           {
             "event": "failure",
-            "heartbeat_age_s": 3.07,
+            "heartbeat_age_s": 3.0,
             "kind": "hang",
-            "t": 1795201031.335
+            "t": 1795201468.564
           }
         ],
         "policy": {
@@ -687,7 +687,7 @@
       },
       "steps": [
         {
-          "ack_ms": 61.0,
+          "ack_ms": 141.4,
           "status": "committed",
           "step": "tune",
           "ticket": 1,
@@ -699,13 +699,13 @@
           }
         },
         {
-          "recover_s": 0.86,
+          "recover_s": 0.87,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "ffe1b0812845be24",
+            "full_hash": "3d44ff8cd897f751",
             "quarantined": 2,
             "reapplied": [],
-            "tick": 12
+            "tick": 18
           },
           "status": "quarantined",
           "step": "crash",
@@ -718,7 +718,7 @@
           }
         },
         {
-          "ack_ms": 81.3,
+          "ack_ms": 161.4,
           "status": "committed",
           "step": "tune_after_restart",
           "ticket": 3,
@@ -733,10 +733,10 @@
           "recover_s": 3.93,
           "resume": {
             "from_snapshot": true,
-            "full_hash": "de17ecc719232a55",
+            "full_hash": "9fbca77c4e320b40",
             "quarantined": 4,
             "reapplied": [],
-            "tick": 24
+            "tick": 36
           },
           "status": "quarantined",
           "step": "hang",
@@ -755,7 +755,7 @@
         }
       ]
     },
-    "sim_ms": 499.92,
+    "sim_ms": 498.18,
     "state_hash": "5c7396f38c8c6327",
     "statechart_analysis": {
       "id": "live_session",

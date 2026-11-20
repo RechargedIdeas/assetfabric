@@ -5,14 +5,14 @@
   "milestone": "F3",
   "passed": true,
   "perf": {
-    "field_warm_ms": 135.48,
-    "lm_p95_us": 44,
+    "field_warm_ms": 121.28,
+    "lm_p95_us": 45,
     "policy_over_budget": 0,
     "policy_p95_us": 11,
     "swap_target_met": true,
     "swap_target_ms": 50.0,
     "swap_threaded": true,
-    "swap_wall_ms": 28.06,
+    "swap_wall_ms": 30.5,
     "swapbench_cores": 2,
     "swapbench_fidelity": {
       "exact_order": 10,
@@ -20,9 +20,9 @@
       "top1_agree": 17,
       "top1_in_ref_top2": 17
     },
-    "swapbench_max_ms": 48.61,
-    "swapbench_p50_ms": 23.38,
-    "swapbench_p95_ms": 36.99,
+    "swapbench_max_ms": 48.64,
+    "swapbench_p50_ms": 23.45,
+    "swapbench_p95_ms": 38.41,
     "swapbench_states": 17
   },
   "result": {
@@ -124,16 +124,16 @@
           "reply": "the old tunnels lead to the cave remembers every step we take"
         },
         {
-          "e2e_ms": 0.11,
+          "e2e_ms": 0.12,
           "persona": "sola",
           "reply": "the water"
         }
       ],
-      "field_warm_ms": 135.48,
+      "field_warm_ms": 121.28,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 2,
-        "lm_p95_us": 44,
+        "lm_p95_us": 45,
         "lm_refused_in_tick": 0,
         "policy_budget_us": 500,
         "policy_calls": 121,
@@ -228,12 +228,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 28.06,
+      "swap_wall_ms": 30.5,
       "swaps": [
         {
           "tick": 260,
           "to": "nyra",
-          "wall_ms": 28.06
+          "wall_ms": 30.5
         }
       ]
     },
@@ -438,7 +438,7 @@
     "music_loaded": true,
     "music_stem": "combat",
     "outcome": "victory",
-    "sim_ms": 215.74,
+    "sim_ms": 259.81,
     "state_hash": "372a2a8c69155f02",
     "swapbench": {
       "exit_code": 0,
@@ -469,7 +469,7 @@
           ],
           "threaded": true,
           "tick": 300,
-          "wall_ms_median": 39.35
+          "wall_ms_median": 41.2
         },
         {
           "candidates": 4,
@@ -488,7 +488,7 @@
           ],
           "threaded": true,
           "tick": 360,
-          "wall_ms_median": 35.89
+          "wall_ms_median": 32.67
         },
         {
           "candidates": 4,
@@ -507,7 +507,7 @@
           ],
           "threaded": true,
           "tick": 420,
-          "wall_ms_median": 25.22
+          "wall_ms_median": 25.43
         },
         {
           "candidates": 4,
@@ -526,7 +526,7 @@
           ],
           "threaded": true,
           "tick": 480,
-          "wall_ms_median": 22.93
+          "wall_ms_median": 21.7
         },
         {
           "candidates": 4,
@@ -545,7 +545,7 @@
           ],
           "threaded": true,
           "tick": 540,
-          "wall_ms_median": 14.58
+          "wall_ms_median": 13.03
         },
         {
           "candidates": 4,
@@ -564,7 +564,7 @@
           ],
           "threaded": true,
           "tick": 600,
-          "wall_ms_median": 6.33
+          "wall_ms_median": 6.26
         },
         {
           "candidates": 4,
@@ -583,7 +583,7 @@
           ],
           "threaded": true,
           "tick": 240,
-          "wall_ms_median": 30.41
+          "wall_ms_median": 30.57
         },
         {
           "candidates": 4,
@@ -602,7 +602,7 @@
           ],
           "threaded": true,
           "tick": 300,
-          "wall_ms_median": 21.66
+          "wall_ms_median": 25.53
         },
         {
           "candidates": 4,
@@ -621,7 +621,7 @@
           ],
           "threaded": true,
           "tick": 360,
-          "wall_ms_median": 26.21
+          "wall_ms_median": 23.64
         },
         {
           "candidates": 4,
@@ -640,7 +640,7 @@
           ],
           "threaded": true,
           "tick": 420,
-          "wall_ms_median": 28.68
+          "wall_ms_median": 24.28
         },
         {
           "candidates": 4,
@@ -659,7 +659,7 @@
           ],
           "threaded": true,
           "tick": 480,
-          "wall_ms_median": 22.17
+          "wall_ms_median": 21.81
         },
         {
           "candidates": 4,
@@ -678,7 +678,7 @@
           ],
           "threaded": true,
           "tick": 540,
-          "wall_ms_median": 23.83
+          "wall_ms_median": 26.28
         },
         {
           "candidates": 4,
@@ -697,7 +697,7 @@
           ],
           "threaded": true,
           "tick": 600,
-          "wall_ms_median": 24.25
+          "wall_ms_median": 23.78
         },
         {
           "candidates": 4,
@@ -716,7 +716,7 @@
           ],
           "threaded": true,
           "tick": 660,
-          "wall_ms_median": 19.84
+          "wall_ms_median": 18.62
         },
         {
           "candidates": 4,
@@ -735,7 +735,7 @@
           ],
           "threaded": true,
           "tick": 720,
-          "wall_ms_median": 15.93
+          "wall_ms_median": 19.74
         },
         {
           "candidates": 4,
@@ -754,7 +754,7 @@
           ],
           "threaded": true,
           "tick": 780,
-          "wall_ms_median": 13.84
+          "wall_ms_median": 15.08
         },
         {
           "candidates": 3,
@@ -771,7 +771,7 @@
           ],
           "threaded": true,
           "tick": 840,
-          "wall_ms_median": 7.1
+          "wall_ms_median": 6.55
         }
       ],
       "pinned_cores": 2,
@@ -783,9 +783,9 @@
       "reps": 5,
       "samples": 85,
       "states": 17,
-      "wall_ms_max": 48.61,
-      "wall_ms_p50": 23.38,
-      "wall_ms_p95": 36.99
+      "wall_ms_max": 48.64,
+      "wall_ms_p50": 23.45,
+      "wall_ms_p95": 38.41
     },
     "ticks": 613,
     "tres_loaded": 17

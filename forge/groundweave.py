@@ -241,6 +241,7 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         inc = milestones.INCREMENTS["F3"]
         code, out = milestones.run_godot(root, inc.godot_args, timeout=300)
         res = milestones.parse_output(out)
+        res["swapbench"] = milestones.swapbench_run(root)   # Q3: F3 gates the 2-core swap advisor bench too
         errs = inc.check(res) + ([f"godot exit {code}"] if code else [])
         girt = (res.get("ai") or {}).get("girt") or {}
         backends = sorted({r.get("backend") for r in girt.get("registry", [])})

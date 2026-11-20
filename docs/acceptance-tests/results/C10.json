@@ -16,7 +16,7 @@
   },
   "result": {
     "apk": {
-      "apk_bytes": 1944299,
+      "apk_bytes": 1943594,
       "classes_in_dex": {
         "ArCoreCapture": true,
         "Camera2Focus": true,

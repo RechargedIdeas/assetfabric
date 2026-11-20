@@ -25,6 +25,7 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
   worker, F6 slice wall 4.6 → 2.7 s.
 
 ### Added
+- GroundWeave `runtime.girt` probe (C8) runs the swapbench too, so the F3 gate holds on the 2-core GPU-hidden node.
 - `tests/test_f3_ai.py`: swapbench gate unit tests (target, ceiling, pinning, sample count, parity, fidelity).
 
 ## [0.7.10+f7] — 2026-11-20 — Quality gaps Q2: G-A11Y-01 full (Settings screen, rebinding, live colour-blind palette)

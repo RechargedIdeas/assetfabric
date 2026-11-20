@@ -8,8 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.011,
-      "depth.estimate": 1.079
+      "depth.distance": 0.011
     },
     "planned_ops": [],
     "real": 4,
@@ -31,21 +30,13 @@
     },
     "arcore": {
       "anchors": 4,
-      "dense": {
-        "anchor_rmse_m": 0.2993315713901661,
-        "height": 192,
-        "median_m": 8.519441421610697,
-        "scale": 0.03456571201417217,
-        "shift": 0.10005727947141674,
-        "width": 256
-      },
-      "gt_median_m": 8.60565707202007,
-      "median_rel_err": 0.01,
       "no_image": {
         "skipped": "no_image"
       },
+      "note": "heavy: run `forge models fetch depth-anything-v2-small` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)",
       "ok": true,
-      "shared_vectors": true
+      "shared_vectors": true,
+      "skipped": "model_absent"
     },
     "build": {
       "junit_failures": 0,
@@ -57,18 +48,9 @@
         "exit": 0,
         "ok": true
       },
-      "estimate_exit": 0,
-      "metric": {
-        "anchor_rmse_m": 3.820199830714189e-15,
-        "invalid_fraction": 0.19742838541666666,
-        "max_m": 127553.77611526087,
-        "median_m": 2.4933416385371325,
-        "min_m": 0.4132236651781733,
-        "scale": 0.9815711324799156,
-        "shift": -2.405250322866458
-      },
+      "note": "heavy: run `forge models fetch depth-anything-v2-small` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)",
       "ok": true,
-      "png16": true
+      "skipped": "model_absent"
     },
     "cpu_2core": {
       "cores": 2,
@@ -86,47 +68,22 @@
           "wall_s": 0.011
         },
         {
-          "backend": "depthanything-v2-onnx-cpu",
-          "budget_s": 30,
-          "cores": 2,
-          "device": "cpu",
-          "identical_to_unpinned": true,
-          "identical_with_simulated_gpu": true,
+          "backend": null,
+          "budget_s": null,
+          "cores": null,
+          "device": null,
+          "identical_to_unpinned": null,
+          "identical_with_simulated_gpu": null,
           "op": "depth.estimate",
-          "status": "ok",
-          "wall_s": 1.079
+          "status": "model_absent",
+          "wall_s": null
         }
       ]
     },
     "dense": {
-      "bit_reproducible_1_thread": true,
-      "floors": {
-        "abs_rel_max": 0.1,
-        "delta1_min": 0.9,
-        "spearman_min": 0.9
-      },
-      "infer_s_1_thread": 0.907,
-      "metrics_12_anchors": {
-        "abs_rel": 0.024602137795421513,
-        "delta1": 0.99835205078125,
-        "pixels": 49152,
-        "spearman": 0.9868618655408768
-      },
-      "metrics_2_anchors": {
-        "abs_rel": 0.18886521325140315,
-        "delta1": 0.59149169921875,
-        "pixels": 49152,
-        "spearman": 0.9868618655408768
-      },
-      "metrics_jpeg_path": {
-        "abs_rel": 0.023756799632296825,
-        "delta1": 0.99761962890625,
-        "pixels": 49152,
-        "spearman": 0.9891810423639461
-      },
-      "model": "depth-anything-v2-small",
+      "note": "heavy: run `forge models fetch depth-anything-v2-small` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)",
       "ok": true,
-      "scene": "render_scene(256x192): ground + brick wall + crate, depth 2.6\u20139.1 m"
+      "skipped": "model_absent"
     },
     "distance": {
       "distance": {
@@ -183,12 +140,9 @@
       "static_ok": true
     },
     "kotlin_depth": {
-      "bottom_nearer_than_top": true,
-      "exit": 0,
-      "metric_median_m": 8.689347626843109,
+      "note": "heavy: run `forge models fetch depth-anything-v2-small` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)",
       "ok": true,
-      "true_median_m": 8.60565707202007,
-      "width": 256
+      "skipped": "model_absent"
     },
     "kotlin_parity": {
       "ok": true,
@@ -210,25 +164,11 @@
       "ok": true,
       "problems": []
     },
-    "model_ready": true,
+    "model_ready": false,
     "offload": {
-      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f2ba018ea20>",
-      "bad_image_refused": true,
-      "metric": {
-        "anchor_rmse_m": 0.15766392751650302,
-        "invalid_fraction": 0.0,
-        "max_m": 9.040980142571158,
-        "median_m": 8.689347626843109,
-        "min_m": 2.64716182170482,
-        "scale": 0.03913181217630722,
-        "shift": 0.09673037693755678
-      },
+      "note": "heavy: run `forge models fetch depth-anything-v2-small` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)",
       "ok": true,
-      "size": [
-        256,
-        192
-      ],
-      "true_median_m": 8.60565707202007
+      "skipped": "model_absent"
     },
     "register": {
       "ok": true,

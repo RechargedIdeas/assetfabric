@@ -5,21 +5,21 @@
   "milestone": "C5",
   "passed": true,
   "perf": {
-    "apk_bytes": 1944299,
-    "apk_sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746",
+    "apk_bytes": 1943594,
+    "apk_sha256": "dc6b6042638aa7d74e8cc0c310d937ea3666d969189696f02407f73858e840c9",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 1944299,
+        "bytes": 1943594,
         "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
-        "sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746"
+        "sha256": "dc6b6042638aa7d74e8cc0c310d937ea3666d969189696f02407f73858e840c9"
       },
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 26.2
+      "seconds": 9.7
     },
     "c5": {
       "code_rotated": true,
@@ -29,10 +29,10 @@
           "offload",
           "sync"
         ],
-        "client_id": "pl-a88fa936",
-        "paired_at": 1795199564431,
+        "client_id": "pl-2c9ca31b",
+        "paired_at": 1795201655546,
         "server_id": "desktop",
-        "url": "http://127.0.0.1:36889"
+        "url": "http://127.0.0.1:60555"
       },
       "python_side": {
         "bad_proofs_refused": 5,
