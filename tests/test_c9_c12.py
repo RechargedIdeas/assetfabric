@@ -123,6 +123,37 @@ def test_loomlink_mirror_routes_enforce_capabilities_and_label_stubs(tmp_path: P
         d.halt()
 
 
+def test_linkclient_bumps_timestamp_when_two_signs_share_a_millisecond(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Server verify() rejects t <= last_ts (ms). Kotlin nextTs already bumps; Python must too."""
+    from forge import loomlink
+    from forge.loomlink import LinkClient
+
+    monkeypatch.setattr(loomlink.time, "time_ns", lambda: 42_000_000_000)  # always 42000 ms
+    c = LinkClient("http://example", "p")
+    c.key = b"\x00" * 16
+    tss = [int(c._sign("POST", "/mirror/control", b"{}")["X-Loom-Ts"]) for _ in range(8)]
+    assert tss == list(range(42_000, 42_008))
+
+
+def test_linkclient_rapid_signed_queries_are_not_false_replays(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from forge import loomlink
+    from forge.accept_companions import Desktop
+    from forge.loomlink import LinkClient
+
+    d = Desktop(tmp_path / "d", allow=("offload", "sync", "mirror", "drive_studio")).start()
+    try:
+        c = LinkClient(d.srv.url, "p")
+        c.pair(d.srv.code, ["mirror", "drive_studio"])
+        # Freeze the clock after pairing so every subsequent sign would collide without a bump.
+        frozen_ms = loomlink.time.time_ns() // 1_000_000
+        monkeypatch.setattr(loomlink.time, "time_ns", lambda: frozen_ms * 1_000_000)
+        monkeypatch.setattr(loomlink.time, "time", lambda: frozen_ms / 1000.0)
+        for _ in range(16):
+            assert c.mirror_control(mirrorweave.ControlMessage("desktop", "query", "forge.status"))["ok"]
+    finally:
+        d.halt()
+
+
 def test_mirror_cli_stubs_exit_3() -> None:
     for argv in (["mirror", "stream", "--source", "screen"], ["mirror", "stream", "--source", "camera-video"],
                  ["mirror", "control", "--target", "android"]):

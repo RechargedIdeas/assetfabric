@@ -458,6 +458,7 @@ def qr_text(data: str) -> str | None:
 class LinkClient:
     def __init__(self, url: str, client_id: str) -> None:
         self.url, self.client_id, self.key, self.caps = url.rstrip("/"), client_id, b"", []
+        self._last_ts = 0  # ms; bumped when two signs share a millisecond (matches Kotlin nextTs)
 
     def _post(self, path: str, body: dict[str, Any], signed: bool = True) -> dict[str, Any]:
         import urllib.request
@@ -471,7 +472,13 @@ class LinkClient:
             return json.loads(r.read().decode())
 
     def _sign(self, method: str, path: str, raw: bytes) -> dict[str, str]:
-        ts = str(time.time_ns() // 1_000_000)
+        # Server verify() rejects t <= last_ts (ms). A tight loop can issue two
+        # requests in the same millisecond — bump, as Kotlin LoomLinkClient.nextTs does.
+        ts_n = time.time_ns() // 1_000_000
+        if ts_n <= self._last_ts:
+            ts_n = self._last_ts + 1
+        self._last_ts = ts_n
+        ts = str(ts_n)
         return {"X-Loom-Client": self.client_id, "X-Loom-Ts": ts,
                 "X-Loom-Sig": _mac(self.key, method, path, ts, hashlib.sha256(raw).hexdigest())}
 

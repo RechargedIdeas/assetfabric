@@ -17,11 +17,14 @@ ARCore, dense depth or reconstruction exists; nothing ran on a phone or GPU (INF
 - **SplatForge path (C12)** `forge/realityloom.py`, `forge recon …`: route rule, deterministic capture bundle, plan (degraded route, `blocked_by`, unmeasured ETA), cluster placement check, 3DGS `.ply` validator. Stubs: SplatForge, CPU photogrammetry, MeshWeaver, GDGS import.
 - **GroundWeave** ops `mirror.encode`, `lens.assess`, `depth.distance`, `recon.plan` (real CPU rung) and a new `planned: true` op class (`depth.estimate`, `recon.mesh`, `shuttle.gdgs`); `recon.splat` stays `gpu_required` → loomcluster.
 - **FabricCore (Kotlin)** `Stubs/MirrorWeave/LensForge/Depth/Recon` + CLI commands; 35 JUnit tests; shared vectors `tests/fixtures/c9_c12_vectors.json`.
-- `forge accept C9`…`C12` (+ `C9-C12`), `tests/test_c9_c12.py` (27), CI step in the parallel `pocketloom` job, `docs/acceptance-tests/C9-C12.md`, results `C9–C12.json`.
+- `forge accept C9`…`C12` (+ `C9-C12`), `tests/test_c9_c12.py` (29), CI step in the parallel `pocketloom` job, `docs/acceptance-tests/C9-C12.md`, results `C9–C12.json`.
 
 ### Changed
 - `forge/loomlink.py` (mirror routes, 501 stubs, capture quality), `forge/groundweave.py` (planned ops), `forge/milestones.py`, `forge/report.py`; Pillow added as optional `lens`/`dev` extra.
 - Version `0.7.2+f7` → `0.7.3+f7`. HANDOVER next step now states F8 needs Producer scope confirmation and cites inferences §C7/C8.
+
+### Fixed
+- Python `LinkClient` now bumps `X-Loom-Ts` when two signed requests share a millisecond, matching Kotlin `nextTs()`. The server rejects `t <= last_ts`; a tight loop in `forge accept C9` (and `test_increment_acceptance[C9]`) could 403 as a false replay.
 
 ## [0.7.2+f7] — 2026-11-19 — Companion track C7 (LoomCluster) + C8 (GroundWeave)
 
