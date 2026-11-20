@@ -4,6 +4,33 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.5+f7] — 2026-11-20 — Stub replacement batch 2: C10 video capture, C11 dense depth (DepthAnything V2 Small, CPU), GIRT ONNX tooling
+
+### Added
+- **C11 dense depth** (`forge/depth.py` `DepthAnythingV2`): DepthAnything V2 **Small** (Apache-2.0) fp32 ONNX on the
+  onnxruntime CPU EP, 1 intra-op thread (bit-reproducible); `estimate_metric` aligns it with metric anchors; LoomLink offload
+  op `depth.estimate` (uint16 relative map + metric stats); FabricCore `DepthEstimator` sends captures from the phone.
+  Analytic-scene acceptance (256×192, 12 anchors): abs-rel 0.025, δ1 0.998, Spearman 0.987 (floors 0.10 / 0.90 / 0.90).
+- **Model registry** `content/models/models.yaml` + `forge/models.py`: pinned-revision URLs, SHA-256-verified fetch into
+  gitignored `store/models/`; CLI `forge models list|fetch|verify|audit`. `audit` = licence gate (BoltPack allow-list, no NC).
+- **C10 video capture**: desktop ingest `lensforge.ingest_video` (system ffmpeg sampling, best-of-window sharp + novel
+  keyframes, `video` set assessment), LoomLink op `lens.video`, FabricCore `VideoClips`, app `Camera2Video`
+  (Camera2 + MediaRecorder H.264; `real_unverified_on_device`).
+- **GIRT ONNX tooling** `forge/girt_onnx.py`, CLI `forge girt onnx-export|onnx-parity`: F3 target policy → ONNX, onnxruntime
+  CPU parity (≤1e-12 vs NumPy, identical choices); part of `forge accept C11`. The game keeps the GDScript MLP.
+- GroundWeave `depth.estimate`: `depthanything-v2-onnx-cpu@cpu` real (probe `runtime:depth-dense`, ≈1.0 s on 2 cores);
+  ROCm rung planned. `requires_model` ops report `model_absent` without weights (fail only with `FORGE_REQUIRE_MODELS=1`).
+- Tests: `tests/test_c11_dense.py` (model tests skip without weights), `tests/test_girt_onnx.py`; C10/C11 accept checks.
+
+### Changed
+- Register: `lens.video_capture` → `real_unverified_on_device`; `depth.dense_estimate` → `real`. Stub locale keys
+  `stub.lens.video_capture`, `stub.depth.model_missing` removed; `depth.ort_missing` added.
+- Extras: `depth` (onnxruntime, onnx, pillow); `dev` adds onnxruntime + onnx. PocketLoom app `0.3.0-c10` (versionCode 3).
+- Version `0.7.4+f7` → `0.7.5+f7`. INFERENCES C-60…C-66.
+
+### Not done (still stubs / planned)
+- ARCore session + ARCore depth (C10/C11), LocalForge `onnx-small` rung (no model exists, C-64), C12 reconstruction rows.
+
 ## [0.7.4+f7] — 2026-11-20 — Stub replacement batch 1: MirrorWeave (C9) real; Android paths compiled (`real_unverified_on_device`)
 
 ### Added

@@ -47,3 +47,8 @@ def test_offload_payload_round_trip() -> None:
     q = np.frombuffer(base64.b64decode(v["rel_u16_b64"]), dtype="<u2").reshape(96, 128)
     assert q.max() == 65535 and q.min() == 0
     assert abs(v["metric"]["median_m"] - float(np.nanmedian(sc["depth_m"]))) / float(np.nanmedian(sc["depth_m"])) < 0.1
+
+
+def test_model_registry_licence_audit(root: Path) -> None:
+    a = models.audit(root)
+    assert a["ok"], a["problems"]

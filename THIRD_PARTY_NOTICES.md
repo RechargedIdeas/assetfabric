@@ -21,3 +21,7 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | FFmpeg + libvpx (**system tool**, not a dependency) | MirrorWeave CPU VP8/VP9 encode, decode, `x11grab` capture — invoked as a separate process from the host install; never linked, vendored or redistributed | LGPL-2.1+/GPL (host build) · libvpx BSD-3-Clause |
 | Test fixtures `tests/fixtures/video/*` | generated once with the host ffmpeg (testsrc2; H.264 fixture via x264) — test data only, not shipped | own (CC0-equivalent) |
 | Android platform APIs (MediaProjection, MediaCodec, AccessibilityService, Camera2) | PocketLoom app (C9) — platform SDK only, no AndroidX/CameraX added | Android SDK licence (platform) |
+| onnxruntime (optional extra `depth`, in `dev`) | C11 dense depth + GIRT ONNX parity on the CPU EP (desktop tooling; not in game builds or the APK) | MIT |
+| onnx (optional extra `depth`, in `dev`) | GIRT policy → ONNX graph export (desktop tooling) | Apache-2.0 |
+| **Model weights** DepthAnything V2 **Small** (`onnx-community/depth-anything-v2-small`, pinned revision + SHA-256, `content/models/models.yaml`) | C11 dense relative depth; fetched by `forge models fetch` into gitignored `store/models/`, never committed or shipped. Base/Large/Giant checkpoints are CC-BY-NC-4.0 and are **never** used (`forge models audit`) | Apache-2.0 |
+| MediaRecorder (Android platform) | PocketLoom `Camera2Video` (C10) | Android SDK licence (platform) |

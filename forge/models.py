@@ -77,3 +77,22 @@ def fetch(model_id: str, root: Path | None = None, timeout: float = 600.0) -> di
             raise ValueError(f"{model_id}/{f['path']}: SHA-256 mismatch (got {h.hexdigest()}, want {f['sha256']})")
         tmp.replace(dst)
     return status(model_id, root, verify=False)
+
+
+NON_COMMERCIAL = ("CC-BY-NC", "NC-", "non-commercial", "research-only", "OpenRAIL")
+
+
+def audit(root: Path | None = None) -> dict[str, Any]:
+    """BoltPack-style licence audit of the model registry: every model licence must be on BoltPack's permissive allow-list
+    (proprietary commercial use) and none may be non-commercial; every file must be pinned (revision URL + SHA-256)."""
+    from forge.boltpack import ALLOWED
+
+    bad: list[str] = []
+    for mid, spec in registry(root).items():
+        lic = str(spec.get("licence", ""))
+        if lic not in ALLOWED or any(t.lower() in lic.lower() for t in NON_COMMERCIAL):
+            bad.append(f"{mid}: licence {lic!r} not allowed for proprietary commercial use")
+        for f in spec.get("files", []):
+            if len(str(f.get("sha256", ""))) != 64 or "/resolve/main/" in str(f.get("url", "")):
+                bad.append(f"{mid}/{f.get('path')}: not pinned (needs a revision URL + SHA-256)")
+    return {"ok": not bad, "problems": bad, "models": sorted(registry(root))}

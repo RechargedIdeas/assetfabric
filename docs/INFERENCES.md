@@ -348,3 +348,33 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 58. **C-58 Studio.** Minimal PySide6-Essentials (LGPL-3.0, unmodified wheel, dynamic import) window; phone→desktop events
     are allow-listed (key names in `STUDIO_KEYS`, normalised pointer coords, bounded scroll) before becoming Qt events.
 59. **C-59 Versions.** Patch bump `0.7.3+f7` → `0.7.4+f7`; PocketLoom app `0.1.0-c6` → `0.2.0-c9` (versionCode 2).
+
+### Stub replacement batch 2 (0.7.5+f7) — C10 video capture, C11 dense depth, GIRT ONNX tooling
+
+60. **C-60 Video capture = record on the phone, extract on the desktop.** SPEC §9 lists "video" as a capture mode without a
+    pipeline. The phone records with Camera2 + MediaRecorder (hardware H.264, ≤1080p30, no audio) and queues the clip as a
+    LoomLink `lens.video` offload; the desktop samples frames with the system ffmpeg (`extract_fps`, default 2/s), keeps the
+    sharpest frame per 1 s window, drops frames below the profile's `min_sharpness` or < 4 grey levels novel versus the last
+    pick, and assesses the keyframes as a `video` capture set. On-device keyframing is not built (keeps the APK dependency-free).
+    The Android recorder is `real_unverified_on_device` (C-57).
+61. **C-61 Dense depth model + floors.** `depth.dense_estimate` uses **DepthAnything V2 Small only** (Apache-2.0; Base/Large/
+    Giant are CC-BY-NC-4.0 and are refused by `forge models audit`), the `onnx-community/depth-anything-v2-small` fp32 ONNX
+    export pinned by revision + SHA-256, on the onnxruntime CPU EP with 1 intra-op thread (bit-reproducible). Input: long edge
+    ≤ 518, multiple of 14, ImageNet mean/std, bicubic. Acceptance renders an analytic scene with known metric depth, aligns
+    the relative output with 12 metric anchors (C-36 maths) and requires abs-rel < 0.10, δ1 > 0.90, Spearman > 0.90 — a
+    sanity floor on synthetic data, not a benchmark claim.
+62. **C-62 Weights are heavy and optional in CI.** The ~99 MB weights are never committed; `forge models fetch` downloads to a
+    `.part` file and only renames after the SHA-256 matches. Without weights the dense checks report `model_absent` and pass;
+    `FORGE_REQUIRE_MODELS=1` makes them fail. CI does not fetch them (keeps CI time and egress down); local/full runs do.
+    The phone does not run the model: `DepthEstimator` (FabricCore) offloads `depth.estimate` to the paired desktop and gets
+    a uint16-quantised relative map (+ metric stats when anchors are supplied).
+63. **C-63 GIRT ONNX = desktop tooling, not a runtime rung.** `forge girt onnx-export|onnx-parity` exports the F3 target policy
+    (mlp-7-12-1-tanh, float64) as an ONNX graph and proves onnxruntime-CPU parity (≤1e-12 vs NumPy, ≤1e-6 vs the recorded
+    GDScript probe, identical choices). The game still runs the GDScript MLP; the in-engine `onnxruntime-gdextension` rung
+    needs a GDExtension build + GPU and stays `planned`. No LLM or ONNX runs in the combat tick.
+64. **C-64 PocketLoom LocalForge `onnx-small` rung stays a stub.** It needs a trained small generative model (sprite/cave) and
+    onnxruntime-android in the APK; no such model exists in the specs or the repo (GroundWeave `g1-sprite-onnx-tiny` is also
+    `planned`). Bundling a runtime with nothing to run would be a fake rung, so the CPU procedural rung remains the one that runs.
+65. **C-65 Model licence gate.** `forge models audit` (also in `forge accept C11`) requires every registry licence to be on
+    BoltPack's permissive allow-list, rejects non-commercial markers, and requires pinned revision URLs + SHA-256.
+66. **C-66 Versions.** Patch bump `0.7.4+f7` → `0.7.5+f7`; PocketLoom app `0.2.0-c9` → `0.3.0-c10` (versionCode 3, adds Camera2Video).

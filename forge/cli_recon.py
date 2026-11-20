@@ -364,6 +364,16 @@ def models_verify(model_id: str) -> None:
         raise SystemExit(1)
 
 
+@models_grp.command("audit")
+def models_audit() -> None:
+    """Licence audit: every registered model must allow proprietary commercial use and be pinned by SHA-256."""
+    from forge import models
+    a = models.audit()
+    _emit(a)
+    if not a["ok"]:
+        raise SystemExit(1)
+
+
 # --------------------------------------------------------------------------------------------------- recon (C12)
 
 @click.group("recon")

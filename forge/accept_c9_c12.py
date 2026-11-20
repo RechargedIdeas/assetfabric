@@ -752,7 +752,7 @@ def _depth_align() -> dict[str, Any]:
             bad[name] = True
     return {"ok": err < 1e-9 and al["anchor_rmse_m"] < 1e-9 and al["invalid_fraction"] == 0.0 and all(bad.values()),
             "max_abs_error_m": err, "anchor_rmse_m": al["anchor_rmse_m"], "rejects": bad,
-            "note": "scales a relative map from ≥2 metric anchors; producing the relative map is the DepthAnything V2 stub"}
+            "note": "scales a relative map from ≥2 metric anchors (the dense map comes from DepthAnything V2 Small, check `dense`)"}
 
 
 DENSE_FLOORS = {"abs_rel_max": 0.10, "delta1_min": 0.90, "spearman_min": 0.90}   # INFERENCES C-61
@@ -870,6 +870,20 @@ def _depth_cli(root: Path, tmp: Path) -> dict[str, Any]:
             "arcore_stub": stub, "estimate_exit": p.returncode, "metric": doc.get("metric"), "png16": png_ok}
 
 
+def _model_audit(root: Path) -> dict[str, Any]:
+    from forge import models
+    return models.audit(root)
+
+
+def _girt_onnx(root: Path) -> dict[str, Any]:
+    """GIRT policy → ONNX → onnxruntime CPU parity with the NumPy/GDScript maths (shares C11's onnxruntime dependency)."""
+    try:
+        from forge import girt_onnx
+        return girt_onnx.parity(root, n=1000)
+    except ImportError as e:
+        return {"ok": False, "error": f"onnx/onnxruntime missing: {e}"}
+
+
 def c11_run(root: Path) -> tuple[int, dict[str, Any]]:
     full = full_possible(root)
     tmp = Path(tempfile.mkdtemp(prefix="fabric-c11-"))
@@ -881,6 +895,8 @@ def c11_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["dense"] = _depth_dense()
         r["offload"] = _depth_offload(root, tmp)
         r["cli"] = _depth_cli(root, tmp)
+        r["model_licences"] = _model_audit(root)
+        r["girt_onnx"] = _girt_onnx(root)
         r["groundweave"] = _ladder(root, ["depth.distance", "depth.estimate"], [])
         r["cpu_2core"] = _verify(root, "depth.distance", "depth.estimate")
         if full:
@@ -1027,7 +1043,7 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "cli_stubs", "groundweave", "cpu_2core"],
-    "C11": ["register", "distance", "align", "dense", "offload", "cli", "groundweave", "cpu_2core"],
+    "C11": ["register", "distance", "align", "dense", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
     "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
