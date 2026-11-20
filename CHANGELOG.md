@@ -25,6 +25,8 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
   worker, F6 slice wall 4.6 → 2.7 s.
 
 ### Added
+- `forge/cpus.py`: "2 cores" = two **physical** cores — the swapbench and GroundWeave's 2-core pinning take one logical
+  CPU per core (`thread_siblings_list`); on SMT CI runners `0,1` are one core's two threads (that measured p95 66 ms).
 - GroundWeave `runtime.girt` probe (C8) runs the swapbench too, so the F3 gate holds on the 2-core GPU-hidden node.
 - `tests/test_f3_ai.py`: swapbench gate unit tests (target, ceiling, pinning, sample count, parity, fidelity).
 

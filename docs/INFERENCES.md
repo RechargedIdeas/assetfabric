@@ -499,7 +499,9 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 88. **C-88 How "< 50 ms wall time" is measured.** GAME_SPEC §4.1 gives the number, not the method. We gate the **p95** over
     ≥ 10 freeze states sampled from real fights (17 today: party_ai + boss_warden, every 60 ticks while ≥ 2 fighters
     live) × 5 reps, with the Godot process pinned to **2 CPUs** via `taskset` (weakest node = 2 cores, AGENTS rule 6).
-    Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
+    "Cores" are physical cores: one logical CPU per `thread_siblings_list` group (`forge/cpus.py`); pinned to two SMT
+    siblings of one core, GitHub's runner measured p95 66 ms, which is a 1-core machine, not the weakest node. GitHub CI
+    (2 physical EPYC cores) passes the gate. Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
     so a slower machine may exceed it on some states. 150 ms stays the hard ceiling for any single freeze.
 89. **C-89 LOD fidelity bar.** The advisor runs brains at 15 Hz in its forward sims (LOD 4). We accept that as long as the
     shipped top pick is inside the full-fidelity (LOD 1) top 2 in every sampled state and agrees on top-1 in ≥ 80 % (17/17
