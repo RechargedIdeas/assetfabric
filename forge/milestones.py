@@ -66,7 +66,7 @@ def _f2(r: dict[str, Any]) -> list[str]:
     return errs
 
 
-SWAP_TARGET_MS = 50.0    # GAME_SPEC §4.1 target (soft; tracked in results "perf")
+SWAP_TARGET_MS = 50.0    # GAME_SPEC §4.1 target — gated since Q3 (p95, 2 pinned cores, tools/swapbench.gd)
 SWAP_CEILING_MS = 150.0  # hard gate: never a multi-frame hitch beyond ~9 frames
 
 
@@ -99,7 +99,65 @@ def _f3(r: dict[str, Any]) -> list[str]:
           f"GDScript MLP != numpy probe: {st} vs {probe}", errs)
     lm_probe = _generated("persona_lm.json").get("probes", {})
     _need(bool(lm_probe) and ai.get("lm_selftest") == lm_probe, "GDScript LM sampler != Python sampler probes", errs)
+    _swapbench_check(r.get("swapbench", {}), errs)
     return errs
+
+
+SWAPBENCH_CORES = 2      # weakest-node budget (2 cores, no GPU): the bench runs pinned to 2 CPUs
+SWAPBENCH_MIN_STATES = 10
+
+
+def _swapbench_check(sb: dict[str, Any], errs: list[str]) -> None:
+    """Q3: GAME_SPEC §4.1 swap advisor <50 ms, measured on 2 pinned cores over sampled freeze states."""
+    if not sb:
+        errs.append("swapbench did not run")
+        return
+    _need(sb.get("pinned_cores") == SWAPBENCH_CORES, f"swapbench must run pinned to {SWAPBENCH_CORES} cores: {sb.get('pinned_cores')}", errs)
+    _need(int(sb.get("states", 0)) >= SWAPBENCH_MIN_STATES, f"swapbench sampled {sb.get('states')} freeze states (< {SWAPBENCH_MIN_STATES})", errs)
+    _need(float(sb.get("wall_ms_p95", 1e9)) <= SWAP_TARGET_MS,
+          f"swap advisor p95 {sb.get('wall_ms_p95')} ms > {SWAP_TARGET_MS} ms target on {SWAPBENCH_CORES} cores", errs)
+    _need(float(sb.get("wall_ms_max", 1e9)) <= SWAP_CEILING_MS, f"swap advisor max {sb.get('wall_ms_max')} ms > ceiling", errs)
+    _need(sb.get("parity") is True, "swapbench: threaded ranking != serial ranking", errs)
+    fid = sb.get("fidelity", {})
+    of = int(fid.get("of", 0))
+    _need(of > 0 and fid.get("top1_in_ref_top2") == of,
+          f"LOD fidelity: shipped top pick outside the full-fidelity top 2 in {of - int(fid.get('top1_in_ref_top2', 0))} states", errs)
+    _need(of > 0 and int(fid.get("top1_agree", 0)) >= 0.8 * of, f"LOD fidelity: top-1 agreement {fid.get('top1_agree')}/{of} < 80%", errs)
+
+
+def swapbench_run(root: Path, cores: int = SWAPBENCH_CORES, reps: int = 5) -> dict[str, Any]:
+    """Run tools/swapbench pinned to `cores` CPUs (`taskset`); {} when Godot is missing."""
+    gb = godot_binary(root)
+    if not gb:
+        return {}
+    from forge.manifest import load_manifest
+
+    project = root / load_manifest(None, root).game.project_path
+    cpus = sorted(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else list(range(os.cpu_count() or 1))
+    pin = cpus[:cores]
+    argv = [gb, "--headless", "--path", str(project), "--", "--scene=swapbench", f"--reps={reps}", "--no-live"]
+    ts = shutil.which("taskset")
+    if ts and len(pin) == cores:
+        argv = [ts, "-c", ",".join(str(c) for c in pin)] + argv
+    else:
+        pin = []
+    proc = subprocess.run(argv, capture_output=True, text=True, timeout=600)
+    out: dict[str, Any] = {}
+    for line in proc.stdout.splitlines():
+        if line.startswith("SWAPBENCH "):
+            out = json.loads(line[len("SWAPBENCH "):])
+    if out:
+        out["pinned_cores"] = len(pin) if pin else None
+        out["pinned_cpus"] = pin
+        out["exit_code"] = proc.returncode
+    return out
+
+
+def _f3_run(root: Path) -> tuple[int, dict[str, Any]]:
+    code, out = run_godot(root, INCREMENTS["F3"].godot_args)
+    result = parse_output(out)
+    result["swapbench"] = swapbench_run(root)
+    return code, result
 
 
 def _generated(name: str) -> dict[str, Any]:
@@ -113,7 +171,14 @@ def _generated(name: str) -> dict[str, Any]:
 def _f3_perf(r: dict[str, Any]) -> dict[str, Any]:
     ai = r.get("ai", {})
     ms = float(ai.get("swap_wall_ms", -1))
-    return {"swap_wall_ms": ms, "swap_target_ms": SWAP_TARGET_MS, "swap_target_met": 0 <= ms <= SWAP_TARGET_MS,
+    sb = r.get("swapbench", {})
+    return {"swap_wall_ms": ms, "swap_target_ms": SWAP_TARGET_MS,
+            # Q3: the target is now gated on the 2-core swapbench (p95 over sampled freeze states);
+            # swap_wall_ms is the single in-game freeze on the unpinned acceptance host.
+            "swap_target_met": 0 <= float(sb.get("wall_ms_p95", -1)) <= SWAP_TARGET_MS,
+            "swapbench_p50_ms": sb.get("wall_ms_p50"), "swapbench_p95_ms": sb.get("wall_ms_p95"),
+            "swapbench_max_ms": sb.get("wall_ms_max"), "swapbench_cores": sb.get("pinned_cores"),
+            "swapbench_states": sb.get("states"), "swapbench_fidelity": sb.get("fidelity"),
             "swap_threaded": ai.get("swap_threaded"), "policy_p95_us": ai.get("girt", {}).get("policy_p95_us"),
             "policy_over_budget": ai.get("girt", {}).get("policy_over_budget"),
             "lm_p95_us": ai.get("girt", {}).get("lm_p95_us"), "field_warm_ms": ai.get("field_warm_ms")}
@@ -134,7 +199,8 @@ INCREMENTS: dict[str, Increment] = {
     "F2": Increment("F2", "first-combat", ("--scene=combat", "--autoplay"), _f2,
                     "First combat: party of 4 + pets + enemies, codegen data, G1-Audio stems"),
     "F3": Increment("F3", "party-ai", ("--scene=party", "--autoplay"), _f3,
-                    "Party AI: BT + GIRT policy, callouts, intents, dialogue, time-freeze swap advisor", _f3_perf),
+                    "Party AI: BT + GIRT policy, callouts, intents, dialogue, time-freeze swap advisor "
+                    "(<50 ms p95 on 2 pinned cores, swapbench)", _f3_perf, lambda root: _f3_run(root)),
 }
 from forge.accept_f4 import f4_check, f4_perf, f4_run  # noqa: E402  (needs Increment/_need above)
 

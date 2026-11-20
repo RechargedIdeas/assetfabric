@@ -73,6 +73,28 @@ func _flatten() -> void:
 func _mlp_score(x: Array) -> float:
 	var out := _b2
 	var n := x.size()
+	var h := _hidden
+	if n == 7 and _w1.size() == 7 * h:
+		# Q3: unrolled for the shipped 7-feature policy; same operation order as the loop below
+		# (acc = b1 + x0*w + x1*w + ...), so scores are bit-identical.
+		var x0 := float(x[0])
+		var x1 := float(x[1])
+		var x2 := float(x[2])
+		var x3 := float(x[3])
+		var x4 := float(x[4])
+		var x5 := float(x[5])
+		var x6 := float(x[6])
+		for j in h:
+			var acc: float = _b1[j]
+			acc += x0 * _w1[j]
+			acc += x1 * _w1[h + j]
+			acc += x2 * _w1[2 * h + j]
+			acc += x3 * _w1[3 * h + j]
+			acc += x4 * _w1[4 * h + j]
+			acc += x5 * _w1[5 * h + j]
+			acc += x6 * _w1[6 * h + j]
+			out += tanh(acc) * _w2[j]
+		return out
 	for j in _hidden:
 		var acc: float = _b1[j]
 		for i in n:

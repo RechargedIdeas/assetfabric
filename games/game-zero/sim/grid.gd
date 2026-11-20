@@ -15,8 +15,19 @@ var _apsp := PackedInt32Array()   # all-pairs BFS table: [goal * n + cell] -> st
 ## Precompute every walkable goal's distance field into one flat table
 ## (load-time, ~0.1 ms per walkable cell; ~3 MB for a 40x22 map). Pathing is then
 ## O(1) and allocation-free, and worker threads can read a private fork().
+## Q3: tables are cached per layout (walls never change at runtime), so the F5/F6 Monte Carlo
+## workers that rebuild the same encounter per seed pay the BFS once per process, not per fight.
+## Packed arrays are copy-on-write: grids share the table read-only. Main thread only (the swap
+## advisor warms before its worker threads start).
+static var _apsp_cache := {}
+
+
 func warm_fields() -> int:
 	if not _apsp.is_empty():
+		return _apsp.size() / (width * height)
+	var key := "%d|%d|%s" % [width, height, "\n".join(rows)]
+	if _apsp_cache.has(key):
+		_apsp = _apsp_cache[key]
 		return _apsp.size() / (width * height)
 	var walls := wall_mask()
 	var n := width * height
@@ -29,6 +40,7 @@ func warm_fields() -> int:
 			for i in n:
 				_apsp[g * n + i] = f[i]
 			goals += 1
+	_apsp_cache[key] = _apsp
 	return goals
 
 
