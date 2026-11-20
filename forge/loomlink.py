@@ -215,8 +215,10 @@ class LinkServer:
             json.loads(self.sessions_path.read_text()) if self.sessions_path.exists() else {})
         self.store = SyncStore(self.state_dir / "store", self.node_id)
         self.offload_log = self.state_dir / "offload.jsonl"
-        from forge.mirrorweave import FrameHub          # C9: sink for `mirror` frames (lazy: keeps import graph flat)
+        from forge.mirrorweave import FrameHub, InputOutbox, StudioInputSpool   # C9 (lazy: keeps import graph flat)
         self.mirror = FrameHub(self.state_dir / "mirror")
+        self.outbox = InputOutbox(self.state_dir / "mirror" / "outbox")         # desktop → phone input/focus events
+        self.studio = StudioInputSpool(self.state_dir / "mirror" / "studio_input.jsonl")   # phone → Studio input events
         self.url = ""
         self.events: list[dict[str, Any]] = []
         self.on_event: Any = None   # callable(ev) — the CLI prints pairings / the new code
@@ -411,7 +413,12 @@ class LinkServer:
                     if self.path == "/mirror/control":
                         from forge.mirrorweave import ControlMessage, handle_control
                         cid = srv_self.verify("POST", self.path, self.headers, raw, "drive_studio")
-                        return self._send(handle_control(ControlMessage.from_wire(body), srv_self.mirror))
+                        return self._send(handle_control(ControlMessage.from_wire(body), srv_self.mirror,
+                                                         studio=srv_self.studio, device=cid))
+                    if self.path == "/mirror/input/poll":     # phone fetches events its desktop queued (signed per event)
+                        cid = srv_self.verify("POST", self.path, self.headers, raw, "mirror")
+                        key = bytes.fromhex(srv_self.sessions[cid]["key"])
+                        return self._send({"events": srv_self.outbox.deliver(cid, key, int(body.get("after", -1)))})
                     if self.path == "/sync/manifest":
                         cid = srv_self.verify("POST", self.path, self.headers, raw, "sync")
                         return self._send(srv_self.sync_manifest(cid, body.get("index", {})))
@@ -505,3 +512,15 @@ class LinkClient:
 
     def mirror_control(self, msg: Any) -> dict[str, Any]:
         return self._post("/mirror/control", msg.to_wire())
+
+    def mirror_input_poll(self, after: int = -1, verify: bool = True) -> list[dict[str, Any]]:
+        """Fetch queued desktop → device events; with `verify` every event's HMAC is checked (as the Kotlin client does)."""
+        from forge.mirrorweave import event_mac, validate_android_event
+
+        evs = self._post("/mirror/input/poll", {"after": after})["events"]
+        if verify:
+            for e in evs:
+                if not hmac.compare_digest(e["sig"], event_mac(self.key, self.client_id, e["seq"], e["event"])):
+                    raise PermissionError("input event signature mismatch")
+                validate_android_event(e["event"])
+        return evs

@@ -28,5 +28,15 @@
   "recon.eta.none": "no runnable route on the available devices",
   "recon.splat.bad_ply": "Not a valid 3DGS splat .ply: {why}",
   "feature.status.real": "real",
-  "feature.status.stub": "stub (interface only, refuses)"
+  "feature.status.stub": "stub (interface only, refuses)",
+  "mirror.video.ffmpeg_missing": "ffmpeg was not found (set FORGE_FFMPEG or install it). MirrorWeave video and desktop capture use the system ffmpeg; they are never faked.",
+  "mirror.video.cpu_codec": "CPU video encoding supports vp8 and vp9 (libvpx); {codec} is not a CPU encoder here (H.264 is encoded on the phone's hardware).",
+  "mirror.video.unsupported_codec": "Codec {codec} is not supported by MirrorWeave (use vp8, vp9 or h264).",
+  "mirror.capture.no_display": "No X11 display to capture: set DISPLAY (or --display). Windows/Wayland desktop capture is not wired.",
+  "mirror.capture.android_only": "Phone screen capture runs on the phone (MediaProjection); on the desktop, frames arrive through a paired LoomLink FrameHub.",
+  "mirror.input.need_device": "Desktop-to-phone input needs the LoomLink state dir and a paired device id.",
+  "mirror.control.android_local_only": "Phone input and camera focus are queued only by the desktop operator (forge mirror input), never relayed from another device.",
+  "mirror.studio.no_sink": "No Studio input sink is attached to this LoomLink server.",
+  "mirror.studio.key_not_allowed": "Key {key!r} is not on the Studio input allow-list.",
+  "mirror.ws.auth_failed": "MirrorWeave WebSocket authentication failed: {reason}"
 }
