@@ -36,8 +36,9 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    # 0.7.7 (stub batch 3): 24 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 1 stub (SplatForge training, GPU)
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (24, 8, 1)
+    # 0.7.7 (stub batch 3): 25 real (incl. the tiny-scene CPU SplatForge rung) · 8 real_unverified_on_device (Android-only, compiled,
+    # never on a phone) · 1 stub (full-scale SplatForge training, GPU)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (25, 8, 1)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 

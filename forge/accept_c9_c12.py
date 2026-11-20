@@ -1173,6 +1173,44 @@ def _gdgs(root: Path, tmp: Path) -> dict[str, Any]:
             "display": g.get("display"), "xvfb": has_display}
 
 
+SPLAT_CPU_FLOORS = {"psnr_holdout_min": 20.0, "psnr_gain_min": 10.0}
+
+
+def _splat_cpu(root: Path, tmp: Path) -> dict[str, Any]:
+    """SplatForge CPU rung end to end through the CLI: rendered 9-view scene → bundle → `forge recon train --stage splat-cpu`
+    (CPU SfM poses + sparse init → tiny isotropic 3DGS) with the middle view held out; the held-out PSNR must clear a floor
+    and beat the untrained init, the .ply must validate, and the bounds must refuse an oversized job."""
+    from forge import photogrammetry as pg
+    sc = pg.render_views(9)
+    imgs = [pg.png_bytes(im) for im in sc["images"]]
+    b = tmp / "splat_bundle"
+    m = realityloom.write_bundle(b, imgs, "backdrop", "sweep", root)
+    order = [hashlib.sha256(x).hexdigest() for x in imgs]
+    hold = [v["sha256"] for v in m["views"]].index(order[4])          # bundle views are hash-sorted: hold out scene view 4
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "train", str(b), "--stage", "splat-cpu",
+                        "--focal-px", str(sc["K"][0, 0]), "--holdout", str(hold)], cwd=root, capture_output=True, text=True, timeout=600)
+    try:
+        doc = json.loads(p.stdout)
+    except ValueError:
+        return {"ok": False, "exit": p.returncode, "stderr": p.stderr[-800:]}
+    ply = b / "splat" / "point_cloud.ply"
+    try:
+        realityloom.check_splat_ply(ply.read_bytes())
+        ply_ok = True
+    except (ValueError, OSError):
+        ply_ok = False
+    big = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "train", str(b), "--stage", "splat-cpu", "--splats", "50000"],
+                         cwd=root, capture_output=True, text=True, timeout=120)
+    gain = (doc.get("psnr_holdout") or 0) - (doc.get("psnr_holdout_init") or 0)
+    ok = (p.returncode == 0 and ply_ok and doc.get("psnr_holdout", 0) >= SPLAT_CPU_FLOORS["psnr_holdout_min"]
+          and gain >= SPLAT_CPU_FLOORS["psnr_gain_min"] and doc.get("loss_last10", 1) < doc.get("loss_first10", 0)
+          and big.returncode == 1 and "bounded to tiny scenes" in big.stdout)
+    return {"ok": ok, **{k: doc.get(k) for k in ("splats", "iters", "seconds", "resolution", "views_registered", "views_train",
+                                                 "psnr_train_mean", "psnr_holdout", "psnr_holdout_init", "loss_first10", "loss_last10")},
+            "psnr_gain_db": round(gain, 3), "ply_valid": ply_ok, "oversize_refused": big.returncode == 1, "floors": SPLAT_CPU_FLOORS,
+            "input": "rendered textured box + ground (not real photos); poses from CPU SfM, not ground truth"}
+
+
 def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
     full = full_possible(root)
     tmp = Path(tempfile.mkdtemp(prefix="fabric-c12-"))
@@ -1184,16 +1222,17 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["cluster"] = _recon_cluster(root, tmp)
         r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", "splat"]])
         r["photogrammetry"] = _photogrammetry(root, tmp)
+        r["splat_cpu"] = _splat_cpu(root, tmp)
         r["meshweaver"] = _meshweaver(root, tmp)
         r["gdgs"] = _gdgs(root, tmp)
         ladder = gw.load_ladder(root)["ops"]
-        r["groundweave"] = _ladder(root, ["recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm"], [])
+        r["groundweave"] = _ladder(root, ["recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm", "recon.splat_cpu"], [])
         sp = gw.select("recon.splat", ["cpu"], root)
         r["groundweave"]["recon_splat"] = {"gpu_required": ladder["recon.splat"].get("gpu_required"), "route": sp.get("route"),
                                            "rungs_real": [x["id"] for x in ladder["recon.splat"]["ladder"] if x["impl"] == "real"]}
         r["groundweave"]["ok"] = bool(r["groundweave"]["ok"] and ladder["recon.splat"].get("gpu_required") and sp.get("route") == "loomcluster"
                                       and not r["groundweave"]["recon_splat"]["rungs_real"])
-        r["cpu_2core"] = _verify(root, "recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm")
+        r["cpu_2core"] = _verify(root, "recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm", "recon.splat_cpu")
         if full:
             b = gradle_build(root)
             r["build"] = {"ok": b["ok"], "junit_tests": b["junit"]["tests"], "junit_failures": b["junit"]["failures"],
@@ -1211,7 +1250,7 @@ KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "arcore", "groundweave", "cpu_2core"],
     "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
-    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "photogrammetry", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
+    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "photogrammetry", "splat_cpu", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 

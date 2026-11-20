@@ -459,12 +459,30 @@ def recon_check_splat(file: Path) -> None:
 
 
 @recon_grp.command("train")
-@click.option("--stage", type=click.Choice(["splat"]), default="splat")
-def recon_train(stage: str) -> None:
-    """Train a 3DGS splat — STUB (refuses, exit 3; needs a GPU trainer). Nothing here fabricates a reconstruction.
-    Photogrammetry, meshing and Godot import are real: `forge recon photogrammetry|mesh|godot-import`."""
+@click.argument("bundle", required=False, type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--stage", type=click.Choice(["splat", "splat-cpu"]), default="splat")
+@click.option("--splats", type=int, default=600, show_default=True, help="splat-cpu: Gaussians to train (≤ 2000).")
+@click.option("--width", type=int, default=64, show_default=True, help="splat-cpu: training width in px (≤ 96).")
+@click.option("--iters", type=int, default=400, show_default=True, help="splat-cpu: Adam steps.")
+@click.option("--focal-px", type=float, default=None, help="splat-cpu: focal length of the capture in pixels.")
+@click.option("--holdout", type=int, default=None, help="splat-cpu: bundle view index kept out of training for PSNR.")
+def recon_train(bundle: Path | None, stage: str, splats: int, width: int, iters: int, focal_px: float | None,
+                holdout: int | None) -> None:
+    """Train a 3DGS splat. `--stage splat` (full-scale, GPU) is a STUB — refuses, exit 3; nothing is fabricated.
+    `--stage splat-cpu BUNDLE` is real: bounded tiny-scene CPU training (SfM poses → isotropic 3DGS) →
+    BUNDLE/splat/point_cloud.ply + train.json. Photogrammetry, meshing and Godot import: `forge recon photogrammetry|mesh|godot-import`."""
     from forge import realityloom
-    _guard(lambda: realityloom.SplatForge().train({}))
+    if stage == "splat":
+        _guard(lambda: realityloom.SplatForge().train({}))
+        return
+    if bundle is None:
+        raise click.UsageError("--stage splat-cpu needs a BUNDLE directory (`forge recon bundle`)")
+
+    def run() -> Any:
+        sf = realityloom.SplatForgeCPU(splats, width, iters, focal_px, holdout)
+        sf.train(bundle)
+        return sf.last
+    _guard(run)
 
 
 @recon_grp.command("photogrammetry")

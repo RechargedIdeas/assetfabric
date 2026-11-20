@@ -11,21 +11,24 @@
     ],
     "op_wall_s_2core": {
       "depth.distance": 0.01,
-      "depth.estimate": 0.999,
-      "gen.audio": 0.473,
+      "depth.estimate": 1.143,
+      "gen.audio": 0.519,
       "gen.callouts": 0.036,
       "gen.codegen": 0.073,
-      "gen.material": 0.033,
-      "gen.persona_lm": 0.035,
-      "gen.policy": 0.927,
-      "gen.sprite": 0.034,
+      "gen.material": 0.041,
+      "gen.persona_lm": 0.037,
+      "gen.policy": 0.997,
+      "gen.sprite": 0.033,
       "gen.tilemap": 0.037,
-      "gen.world": 0.086,
-      "lens.assess": 0.009,
-      "mirror.encode": 0.086,
-      "qa.balance": 3.737,
-      "recon.plan": 0.01,
-      "runtime.girt": 0.869
+      "gen.world": 0.081,
+      "lens.assess": 0.01,
+      "mirror.encode": 0.082,
+      "qa.balance": 4.581,
+      "recon.mesh": 0.622,
+      "recon.plan": 0.013,
+      "recon.sfm": 1.307,
+      "runtime.girt": 1.167,
+      "shuttle.gdgs": 0.021
     },
     "planned_gpu_rungs_not_built": 13
   },
@@ -178,15 +181,21 @@
           "cpu_only_device": "cpu"
         },
         "recon.mesh": {
-          "all_gpus_present": "route:loomcluster",
-          "all_gpus_present_device": null,
-          "cpu_only": "route:loomcluster",
-          "cpu_only_device": null
+          "all_gpus_present": "meshweaver-density-surfacenets-cpu",
+          "all_gpus_present_device": "cpu",
+          "cpu_only": "meshweaver-density-surfacenets-cpu",
+          "cpu_only_device": "cpu"
         },
         "recon.plan": {
           "all_gpus_present": "realityloom-plan-cpu",
           "all_gpus_present_device": "cpu",
           "cpu_only": "realityloom-plan-cpu",
+          "cpu_only_device": "cpu"
+        },
+        "recon.sfm": {
+          "all_gpus_present": "opencv-sift-sfm-cpu",
+          "all_gpus_present_device": "cpu",
+          "cpu_only": "opencv-sift-sfm-cpu",
           "cpu_only_device": "cpu"
         },
         "recon.splat": {
@@ -202,10 +211,10 @@
           "cpu_only_device": "cpu"
         },
         "shuttle.gdgs": {
-          "all_gpus_present": "route:local",
-          "all_gpus_present_device": null,
-          "cpu_only": "route:local",
-          "cpu_only_device": null
+          "all_gpus_present": "gdgs-multimesh-billboard-cpu",
+          "all_gpus_present_device": "cpu",
+          "cpu_only": "gdgs-multimesh-billboard-cpu",
+          "cpu_only_device": "cpu"
         }
       },
       "planned_gpu_rungs_not_built": [
@@ -237,7 +246,7 @@
         "world"
       ],
       "ok": true,
-      "ops": 19,
+      "ops": 20,
       "problems": []
     },
     "verify": {
@@ -257,13 +266,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.sprite",
-          "process_s": 0.245,
+          "process_s": 0.258,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "g1-sprite-onnx-tiny@rocm:planned",
           "unpinned_device": "cpu",
           "unpinned_digest": "51e1e2049317523d089f45adcdda2abeae8f2adfea931e711ec8b79cc19ce54c",
-          "wall_s": 0.034
+          "wall_s": 0.033
         },
         {
           "backend": "g1-tile-ca",
@@ -277,7 +286,7 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.tilemap",
-          "process_s": 0.249,
+          "process_s": 0.25,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "g1-tile-nca@rocm:planned",
@@ -297,13 +306,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.material",
-          "process_s": 0.242,
+          "process_s": 0.273,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "dyeworks-sdxl@rocm:planned",
           "unpinned_device": "cpu",
           "unpinned_digest": "e0cd285d4635dcdcf397badc12096af745259922b04183bb28372955133f943a",
-          "wall_s": 0.033
+          "wall_s": 0.041
         },
         {
           "backend": "g1-audio-procedural",
@@ -317,13 +326,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.audio",
-          "process_s": 0.691,
+          "process_s": 0.733,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "g1-audio-procedural@cpu:real",
           "unpinned_device": "cpu",
           "unpinned_digest": "762724e197298f5fb03a5caba7fbc33d1a8974669eb30ddda6a48ffe6298bfb3",
-          "wall_s": 0.473
+          "wall_s": 0.519
         },
         {
           "backend": "codegen",
@@ -337,7 +346,7 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.codegen",
-          "process_s": 0.278,
+          "process_s": 0.284,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "codegen@cpu:real",
@@ -357,7 +366,7 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.callouts",
-          "process_s": 0.249,
+          "process_s": 0.248,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "persona-bigram@cpu:real",
@@ -377,13 +386,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.persona_lm",
-          "process_s": 0.234,
+          "process_s": 0.247,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "persona-bigram-train@cpu:real",
           "unpinned_device": "cpu",
           "unpinned_digest": "208bc675a26d5fd6da7d7c8d60271c097c68a72295839fc615d0247bae07eecf",
-          "wall_s": 0.035
+          "wall_s": 0.037
         },
         {
           "backend": "mlp-train-cpu",
@@ -397,13 +406,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.policy",
-          "process_s": 1.14,
+          "process_s": 1.235,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "mlp-train-rocm@rocm:planned",
           "unpinned_device": "cpu",
           "unpinned_digest": "f5f0fc7af3b58ae58de7943d981cca49a26ebf853747cffbf54ad9665dc6a103",
-          "wall_s": 0.927
+          "wall_s": 0.997
         },
         {
           "backend": "codegen-world",
@@ -417,13 +426,13 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "gen.world",
-          "process_s": 0.354,
+          "process_s": 0.37,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "top_rung": "codegen-world@cpu:real",
           "unpinned_device": "cpu",
           "unpinned_digest": "4943569bb6bf956758373ee0025428e71c787968de152027d0279f99c6d0d48f",
-          "wall_s": 0.086
+          "wall_s": 0.081
         },
         {
           "backend": "callout-cache,mlp-gdscript,persona-bigram",
@@ -439,13 +448,13 @@
           "op": "runtime.girt",
           "policy_budget_us": 500,
           "policy_fallbacks": 0,
-          "policy_p95_us": 19,
-          "process_s": 1.021,
+          "policy_p95_us": 22,
+          "process_s": 1.436,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
           "unpinned_digest": "b61d1d70af4c161269a663bc57151ebfa59391c36559e5940f4507c9a575d9d6",
-          "wall_s": 0.869
+          "wall_s": 1.167
         },
         {
           "backend": "godot-headless-shards",
@@ -459,17 +468,36 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "qa.balance",
-          "process_s": 3.888,
+          "process_s": 4.789,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
           "unpinned_digest": "d44ccb9d77fdff99189f90a8198f85a3263a5d7c7bd7212af3583f3cac507689",
-          "wall_s": 3.737
+          "wall_s": 4.581
         },
         {
-          "note": "3DGS training (SplatForge, C12) has no practical CPU path; COLMAP-CPU + photogrammetry is the honest degraded route (C10\u2013C12 stub)",
+          "note": "3DGS training (SplatForge, C12) has no practical CPU path; the honest degraded route is CPU photogrammetry, which is real since 0.7.7 as its own op `recon.sfm` (OpenCV SfM). A COLMAP-binary CPU rung stays planned (not bundled).",
           "op": "recon.splat",
           "status": "not_probed"
+        },
+        {
+          "backend": "opencv-sift-sfm-cpu",
+          "brief": "sfm-probe",
+          "budget_s": 60,
+          "cores": 2,
+          "device": "cpu",
+          "digest": "36f4c1036854ebf31dc2d6c9ac84460dd164991695f0968f98b9782ff1e2ca4b",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "ok": true,
+          "op": "recon.sfm",
+          "process_s": 1.489,
+          "rot_err_deg_max": 0.4984,
+          "simulated_gpu_selected": "cpu",
+          "status": "ok",
+          "unpinned_device": "cpu",
+          "unpinned_digest": "36f4c1036854ebf31dc2d6c9ac84460dd164991695f0968f98b9782ff1e2ca4b",
+          "wall_s": 1.307
         },
         {
           "backend": "mirror-vpx-cpu",
@@ -482,12 +510,12 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "mirror.encode",
-          "process_s": 0.223,
+          "process_s": 0.219,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
           "unpinned_digest": "8cfa514449848b6371a5a274df00c3e5c2114822bf7fa714b052692a6a4325f1",
-          "wall_s": 0.086
+          "wall_s": 0.082
         },
         {
           "backend": "lensforge-quality-cpu",
@@ -500,12 +528,12 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "lens.assess",
-          "process_s": 0.129,
+          "process_s": 0.142,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
           "unpinned_digest": "831cc28461fa592a5b03766f3c9d20806091e5781ba0486896decd3c69037dfa",
-          "wall_s": 0.009
+          "wall_s": 0.01
         },
         {
           "backend": "pinhole-align-cpu",
@@ -518,7 +546,7 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "depth.distance",
-          "process_s": 0.134,
+          "process_s": 0.156,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
@@ -537,12 +565,12 @@
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "depth.estimate",
-          "process_s": 1.144,
+          "process_s": 1.316,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
           "unpinned_digest": "2a15bb23cbb6db26a5cbc7e9446f7999d7d595fb756178cabe87876f488d0e9a",
-          "wall_s": 0.999
+          "wall_s": 1.143
         },
         {
           "backend": "realityloom-plan-cpu",
@@ -550,29 +578,55 @@
           "budget_s": 20,
           "cores": 2,
           "device": "cpu",
-          "digest": "2ad8cdf80921d36373eb7a2ed9ec3a6fc7b170637282ad9dca2031637439e3fa",
+          "digest": "324e7e5e9355c0d5e02c76f32594371eda95e7ee919e8fa6ae0abd213c099fa3",
           "identical_to_unpinned": true,
           "identical_with_simulated_gpu": true,
           "ok": true,
           "op": "recon.plan",
-          "process_s": 0.128,
+          "process_s": 0.141,
           "simulated_gpu_selected": "cpu",
           "status": "ok",
           "unpinned_device": "cpu",
-          "unpinned_digest": "2ad8cdf80921d36373eb7a2ed9ec3a6fc7b170637282ad9dca2031637439e3fa",
-          "wall_s": 0.01
+          "unpinned_digest": "324e7e5e9355c0d5e02c76f32594371eda95e7ee919e8fa6ae0abd213c099fa3",
+          "wall_s": 0.013
         },
         {
-          "note": "MeshWeaver splat\u2192mesh (spec \"Phase 2 reconstruction\") \u2014 not built; MeshWeaver.convert refuses.",
+          "backend": "meshweaver-density-surfacenets-cpu",
+          "brief": "recon-mesh-probe",
+          "budget_s": 60,
+          "bytes": 604877,
+          "cores": 2,
+          "device": "cpu",
+          "digest": "552eb241f1f3321b083c1a8db2ba36039334f781fafd1e20892a751f774748e2",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "ok": true,
           "op": "recon.mesh",
-          "route": "loomcluster",
-          "status": "planned"
+          "process_s": 0.761,
+          "simulated_gpu_selected": "cpu",
+          "status": "ok",
+          "unpinned_device": "cpu",
+          "unpinned_digest": "552eb241f1f3321b083c1a8db2ba36039334f781fafd1e20892a751f774748e2",
+          "wall_s": 0.622
         },
         {
-          "note": "ShuttleLine Godot 3DGS (GDGS) import adapter \u2014 not built; GdgsImport.into_godot refuses.",
+          "backend": "gdgs-multimesh-billboard-cpu",
+          "brief": "gdgs-probe",
+          "budget_s": 30,
+          "bytes": 155246,
+          "cores": 2,
+          "device": "cpu",
+          "digest": "7149cd317c5965c81cd07648014aa4ab36f1d8465ef408f7931acd4fa5a74125",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "ok": true,
           "op": "shuttle.gdgs",
-          "route": "local",
-          "status": "planned"
+          "process_s": 0.157,
+          "simulated_gpu_selected": "cpu",
+          "status": "ok",
+          "unpinned_device": "cpu",
+          "unpinned_digest": "7149cd317c5965c81cd07648014aa4ab36f1d8465ef408f7931acd4fa5a74125",
+          "wall_s": 0.021
         }
       ]
     }

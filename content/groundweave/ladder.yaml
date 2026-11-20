@@ -95,11 +95,23 @@ ops:
     gpu_required: true
     route: loomcluster
     note: >-
-      3DGS training (SplatForge, C12) has no practical CPU path; the honest degraded route is CPU photogrammetry, which is
-      real since 0.7.7 as its own op `recon.sfm` (OpenCV SfM). A COLMAP-binary CPU rung stays planned (not bundled).
+      Full-scale 3DGS training (SplatForge, C12: anisotropic, SH3, densification, capture resolution) has no practical CPU
+      path; the honest degraded route is CPU photogrammetry (`recon.sfm`, real since 0.7.7). A bounded tiny-scene CPU
+      trainer is real as its own op `recon.splat_cpu`; it is not a rung here because it cannot do this op's job at scale.
+      A COLMAP-binary CPU rung stays planned (not bundled).
     ladder:
       - {id: opensplat-rocm, device: rocm, impl: planned}
       - {id: colmap-cpu-photogrammetry, device: cpu, impl: planned}
+  recon.splat_cpu:
+    budget_s_2core: 60
+    probe_brief: "runtime:splat-cpu"
+    note: >-
+      SplatForge CPU rung (C12, 0.7.7): own NumPy 3DGS trainer — isotropic Gaussians, SH degree 0, dense depth-sorted alpha
+      compositing, analytic gradients, Adam, opacity pruning; BLAS-free matmuls so the trained .ply is byte-identical at any
+      thread count. Bounded to ≤ 2000 splats, ≤ 96 px, ≤ 24 views (refuses beyond). The probe: rendered 9-view scene → CPU
+      SfM → 250 splats × 200 steps at 40 px.
+    ladder:
+      - {id: splatforge-numpy-cpu, device: cpu, impl: real}
   recon.sfm:
     budget_s_2core: 60
     probe_brief: "runtime:sfm"

@@ -16,9 +16,10 @@ REAL (CPU, deterministic, no external tools):
   * (0.7.7) `MeshWeaver.convert` — splat density → surface nets → OBJ; `GdgsImport.into_godot` — splat → Godot MultiMesh
     billboard scene, verified in Godot (`forge.splats`).
 
+  * (0.7.7) `SplatForgeCPU.train` — bounded tiny-scene 3DGS training on CPU (`forge.splattrain`).
   * (0.7.7) `Photogrammetry.run` — incremental SIFT SfM on OpenCV (CPU) → sparse cloud + cameras (`forge.photogrammetry`).
 
-STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): `SplatForge.train` and `submit` (after the real
+STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): full-scale `SplatForge.train` (GPU) and `submit` (after the real
 placement check).
 Whether any of this beats the CPU-only photogrammetry route on the fleet is unmeasured: no trainer has ever run here.
 """
@@ -207,10 +208,67 @@ def make_test_ply(n: int, sh_rest: int = 0) -> bytes:
 # ------------------------------------------------------------------------------------------------ stubs
 
 class SplatForge:
-    """STUB (C12): 3DGS training from a capture bundle. GroundWeave op `recon.splat` (gpu_required, route loomcluster)."""
+    """STUB (C12): full-scale 3DGS training (anisotropic, SH 3, densification, full resolution) from a capture bundle.
+    GroundWeave op `recon.splat` (gpu_required, route loomcluster) — needs a ROCm/CUDA trainer (OpenSplat), none bundled.
+    The bounded tiny-scene CPU trainer is real: `SplatForgeCPU` (op `recon.splat_cpu`)."""
 
     def train(self, bundle: dict[str, Any]) -> Path:
         refuse("recon.splatforge", "stub.recon.splatforge", MILESTONE)
+
+
+class SplatForgeCPU:
+    """SplatForge CPU rung (C12, 0.7.7): tiny-scene 3DGS training on CPU (`forge.splattrain` — isotropic Gaussians, SH 0,
+    dense sorted alpha compositing, analytic gradients, Adam). Capture bundle → CPU SfM (poses + sparse init) → training
+    at ≤ `MAX_W` px → `splat/point_cloud.ply` (validated by `check_splat_ply`) + `splat/train.json`. Bounded on purpose:
+    beyond `MAX_SPLATS` / `MAX_W` / `MAX_VIEWS` it refuses (`recon.splat.cpu_too_large`) — full training is the GPU rung."""
+
+    MAX_SPLATS, MAX_W, MAX_VIEWS = 2000, 96, 24
+
+    def __init__(self, splats: int = 600, width: int = 64, iters: int = 400, focal_px: float | None = None,
+                 holdout: int | None = None, seed: int = 0) -> None:
+        self.splats, self.width, self.iters, self.focal_px, self.holdout, self.seed = splats, width, iters, focal_px, holdout, seed
+        self.last: dict[str, Any] = {}
+
+    def train(self, bundle: Path) -> Path:
+        import numpy as np
+
+        from forge import photogrammetry, splattrain
+        bundle = Path(bundle)
+        m = json.loads((bundle / "bundle.json").read_text(encoding="utf-8"))
+        n_views = len(m["views"])
+        if self.splats > self.MAX_SPLATS or self.width > self.MAX_W or n_views > self.MAX_VIEWS:
+            raise ValueError(t("recon.splat.cpu_too_large", splats=self.splats, width=self.width, views=n_views,
+                               max_splats=self.MAX_SPLATS, max_w=self.MAX_W, max_views=self.MAX_VIEWS))
+        imgs = [photogrammetry._decode((bundle / "objects" / v["sha256"][:2] / v["sha256"]).read_bytes()) for v in m["views"]]
+        rec = photogrammetry.reconstruct(imgs, focal_px=self.focal_px)
+        if len(rec["registered"]) < 3 or len(rec["points"]) < 20:
+            raise ValueError(t("recon.splat.sfm_failed", registered=len(rec["registered"]), points=len(rec["points"])))
+        d = splattrain.from_sfm(imgs, rec, self.width, self.holdout)
+        lo, hi, s0 = splattrain.scene_bounds(rec["points"], None)
+        p0 = splattrain.init_gaussians(self.splats, lo, hi, s0, self.seed, rec["points"], rec["colors"])
+        r = splattrain.train(d["train"], d["K"], p0, iters=self.iters, seed=self.seed)
+        w, h = d["w"], d["h"]
+
+        def score(p: dict[str, Any], v: dict[str, Any]) -> float:
+            return splattrain.psnr(splattrain.render_params(p, v["R"], v["t"], d["K"], w, h), v["image"])
+        out = bundle / "splat"
+        out.mkdir(exist_ok=True)
+        ply = splattrain.to_ply(r["params"])
+        check_splat_ply(ply)
+        (out / "point_cloud.ply").write_bytes(ply)
+        doc = {"method": "splatforge-numpy-cpu (isotropic 3DGS, SH0, dense raster)", "splats_init": self.splats,
+               "splats": int(len(r["params"]["mu"])), "iters": r["iters"], "seconds": r["seconds"], "resolution": [w, h],
+               "views_registered": len(rec["registered"]), "views_train": len(d["train"]),
+               "psnr_train_mean": round(float(np.mean([score(r["params"], v) for v in d["train"]])), 3),
+               "loss_first10": round(float(np.mean(r["curve"][:10])), 6), "loss_last10": round(float(np.mean(r["curve"][-10:])), 6),
+               "scale": "arbitrary (monocular SfM)", "ply_sha256": hashlib.sha256(ply).hexdigest()}
+        if d["test"] is not None:
+            doc["holdout_view"] = self.holdout
+            doc["psnr_holdout"] = round(score(r["params"], d["test"]), 3)
+            doc["psnr_holdout_init"] = round(score(p0, d["test"]), 3)
+        (out / "train.json").write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+        self.last = {**doc, "ply": str(out / "point_cloud.ply")}
+        return out / "point_cloud.ply"
 
 
 class Photogrammetry:

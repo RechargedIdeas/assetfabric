@@ -83,7 +83,11 @@ features:
   - {id: recon.splat_ply_check, milestone: C12, status: real, entry: "forge.realityloom:check_splat_ply", ladder_op: recon.plan,
      spec: "§7 '.ply/.splat → Godot GDGS'", note: "validates the INRIA-layout 3DGS .ply a trainer must emit"}
   - {id: recon.splatforge, milestone: C12, status: stub, entry: "forge.realityloom:SplatForge.train", kotlin: SplatForgeClient, ladder_op: recon.splat,
-     reason_key: stub.recon.splatforge, spec: "§4 'SplatForge — 3DGS training from capture (C12)'"}
+     reason_key: stub.recon.splatforge, spec: "§4 'SplatForge — 3DGS training from capture (C12)'",
+     note: "full-scale (anisotropic, SH3, densification, capture resolution) needs a GPU trainer — the CPU tiny-scene rung is recon.splatforge_cpu"}
+  - {id: recon.splatforge_cpu, milestone: C12, status: real, entry: "forge.realityloom:SplatForgeCPU.train", ladder_op: recon.splat_cpu,
+     spec: "§4 'SplatForge — 3DGS training from capture (C12)'; AMD honesty 'CPU COLMAP + burst GPU'",
+     note: "bounded tiny-scene 3DGS on CPU (NumPy, isotropic, SH0, dense sorted alpha, analytic grads checked vs finite differences): bundle → SfM poses/init → train → validated .ply; rendered 9-view scene, held-out view PSNR ≥ 20 dB and ≥ +10 dB over init (measured 23.3 dB, +13.1 dB)"}
   - {id: recon.photogrammetry, milestone: C12, status: real, entry: "forge.realityloom:Photogrammetry.run", ladder_op: recon.sfm,
      spec: "§7 'Photogrammetry (COLMAP/Meshroom)'; AMD honesty 'CPU COLMAP'", note: "OpenCV SIFT incremental SfM on CPU (sparse cloud + poses; no dense MVS); rendered 12-view scene with exact cameras: rot err ≤ 2°, centre err ≤ 5 %"}
   - {id: recon.meshweaver, milestone: C12, status: real, entry: "forge.realityloom:MeshWeaver.convert", ladder_op: recon.mesh,

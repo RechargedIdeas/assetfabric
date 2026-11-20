@@ -8,7 +8,7 @@
   "depth.no_intrinsics": "Cannot derive the focal length in pixels: give focal_length_mm with sensor_width_mm, or focal_length_35mm, or a horizontal field of view.",
   "depth.bad_anchors": "Metric alignment needs at least two anchors with distinct relative-depth values and positive distances.",
   "depth.non_monotone": "The fitted scale is not positive: the relative depth map disagrees with the anchors (wrong map polarity or bad anchors).",
-  "stub.recon.splatforge": "SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.",
+  "stub.recon.splatforge": "Full-scale SplatForge training (anisotropic 3D Gaussian Splatting at capture resolution) is not implemented: no GPU trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The bounded tiny-scene CPU trainer is real: `forge recon train --stage splat-cpu <bundle>`.",
   "recon.no_gpu_node": "No cluster node advertises {device}; the splat job cannot be placed (gpu_required, route loomcluster).",
   "recon.too_few_views": "Capture set has {have} usable views; mode {mode} needs at least {need}.",
   "recon.eta.gpu": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)",
@@ -34,5 +34,7 @@
   "studio.tab.mirror": "Mirror",
   "studio.tab.console": "Console",
   "studio.missing_pyside": "Studio needs PySide6 (uv pip install -e '.[studio]'): {err}",
-  "depth.ort_missing": "Dense depth needs onnxruntime: install the `depth` extra (pip install -e '.[depth]')."
+  "depth.ort_missing": "Dense depth needs onnxruntime: install the `depth` extra (pip install -e '.[depth]').",
+  "recon.splat.cpu_too_large": "CPU splat training is bounded to tiny scenes ({splats} splats, {width} px, {views} views requested; limits {max_splats} splats, {max_w} px, {max_views} views). Larger scenes need the GPU trainer (recon.splat, route loomcluster).",
+  "recon.splat.sfm_failed": "CPU SfM could not pose the capture for splat training ({registered} views registered, {points} points); need at least 3 views and 20 points."
 }

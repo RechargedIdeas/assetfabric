@@ -295,6 +295,24 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         return {"brief": "sfm-probe", "ok": ev["registered"] == 8 and ev["rot_err_deg_max"] < 2.0, "rot_err_deg_max": round(ev["rot_err_deg_max"], 4),
                 "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
                 "digest": hashlib.sha256(np.round(rec["points"], 6).tobytes()).hexdigest()}
+    if name == "splat-cpu":                 # C12 tiny-scene CPU 3DGS training on SfM poses (BLAS-free → byte-identical)
+        from forge import photogrammetry as pg
+        from forge import splattrain as st
+        sel = select("recon.splat_cpu", root=root)
+        sc = pg.render_views(9, w=160, h=120)
+        rec = pg.reconstruct(sc["images"], focal_px=float(sc["K"][0, 0]))
+        d = st.from_sfm(sc["images"], rec, 40, holdout=4)
+        lo, hi, s0 = st.scene_bounds(rec["points"], None)
+        p0 = st.init_gaussians(250, lo, hi, s0, 0, rec["points"], rec["colors"])
+        r = st.train(d["train"], d["K"], p0, iters=200)
+        ply = st.to_ply(r["params"])
+        ok = d["test"] is not None
+        gain = (st.psnr(st.render_params(r["params"], d["test"]["R"], d["test"]["t"], d["K"], d["w"], d["h"]), d["test"]["image"])
+                - st.psnr(st.render_params(p0, d["test"]["R"], d["test"]["t"], d["K"], d["w"], d["h"]), d["test"]["image"])) if ok else 0.0
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "splat-cpu-probe", "ok": ok and gain > 6.0, "psnr_gain_holdout_db": round(gain, 3), "wall_s": round(wall, 3),
+                "cores": aff, "device": sel["device"], "backend": sel["backend"], "digest": hashlib.sha256(ply).hexdigest()}
     if name in ("recon-mesh", "gdgs"):     # C12 CPU rungs on a synthetic sphere-splat set (deterministic bytes)
         from forge import splats
         sel = select("recon.mesh" if name == "recon-mesh" else "shuttle.gdgs", root=root)
