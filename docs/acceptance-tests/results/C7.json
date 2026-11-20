@@ -7,20 +7,20 @@
   "perf": {
     "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
     "batch_wall_s": {
-      "n1_2core_nogpu": 2.77,
-      "n2": 2.25,
-      "n3": 1.88
+      "n1_2core_nogpu": 3.21,
+      "n2": 2.68,
+      "n3": 2.17
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.099,
+    "max_gen_job_s_2core": 1.166,
     "mode": "full"
   },
   "result": {
     "cli_gen": {
       "batch_digest": "0b4dfa383cdf8853f7c7744b8a098275b98707fb34a1d22d7d14607be7c2799d",
       "executed_by_node": {
-        "a": 2,
-        "b": 1
+        "a": 1,
+        "b": 2
       },
       "exit": 0,
       "files_identical_to_local_build": true,
@@ -38,14 +38,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.099,
+          "max_gen_job_s": 1.166,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 2.77,
+          "wall_s": 3.21,
           "wrong": []
         },
         "n2": {
@@ -55,7 +55,7 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.082,
+          "max_gen_job_s": 1.241,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
@@ -63,7 +63,7 @@
             "a": 0,
             "b": 7
           },
-          "wall_s": 2.25,
+          "wall_s": 2.68,
           "wrong": []
         },
         "n3": {
@@ -71,19 +71,19 @@
           "complete": true,
           "executed_by_node": {
             "a": 26,
-            "b": 3,
-            "c": 7
+            "b": 4,
+            "c": 6
           },
-          "max_gen_job_s": 1.405,
+          "max_gen_job_s": 1.627,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
           "stolen_in": {
             "a": 0,
             "b": 4,
-            "c": 7
+            "c": 6
           },
-          "wall_s": 1.88,
+          "wall_s": 2.17,
           "wrong": []
         }
       },
@@ -92,31 +92,31 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.26,
+        "elapsed_s": 7.52,
         "executed_by_node": {
-          "a": 25,
-          "b": 20,
-          "c": 3
+          "a": 28,
+          "b": 16,
+          "c": 4
         },
         "killed": {
-          "c_held": 4,
-          "results_at_kill": 14
+          "c_held": 3,
+          "results_at_kill": 17
         },
         "lease_s": 6.0,
         "ok": true,
-        "requeued_at_origin": 5,
+        "requeued_at_origin": 4,
         "wrong": []
       },
       "ok": true,
       "origin_restart": {
         "completed": 24,
         "executed_by_node": {
-          "a": 9,
-          "b": 15
+          "a": 8,
+          "b": 16
         },
         "ok": true,
         "parked_results_redelivered_by_peer": 8,
-        "recovered_from_journal": 13,
+        "recovered_from_journal": 14,
         "wrong": []
       },
       "retry": {

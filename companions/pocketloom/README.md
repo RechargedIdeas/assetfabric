@@ -4,7 +4,7 @@ PocketLoom is the **standalone, offline** Android edition of AssetFabric (SPEC �
 phone-as-peripheral). Everything below works with **nothing else connected**; pairing with a desktop only adds
 offload and sync.
 
-**State (2026-11-12):** C1–C6 accepted as a **debug APK** (`0.1.0-c6`, ≈ 0.97 MB, arm-agnostic, no native code).
+**State (2026-11-12):** C1–C6 accepted as a **debug APK** (`0.1.0-c6`, ≈ 0.89 MB, arm-agnostic, no native code).
 Verified with `aapt`, `apksigner`, Android lint and JVM unit tests; the shared FabricCore code is exercised end to end
 on the JVM against the real desktop LoomLink server. **Not yet run on a phone or emulator** (no device, no KVM on the
 build box) — first on-device run is a TODO (Redmi Note 12 Pro 5G, D-002).

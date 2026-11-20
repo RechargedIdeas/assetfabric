@@ -22,6 +22,7 @@ ARCore, dense depth or reconstruction exists; nothing ran on a phone or GPU (INF
 ### Changed
 - `forge/loomlink.py` (mirror routes, 501 stubs, capture quality), `forge/groundweave.py` (planned ops), `forge/milestones.py`, `forge/report.py`; Pillow added as optional `lens`/`dev` extra.
 - Version `0.7.2+f7` → `0.7.3+f7`. HANDOVER next step now states F8 needs Producer scope confirmation and cites inferences §C7/C8.
+- Re-recorded `forge accept` F0–F7 and C1–C8 on 2026-11-20 (C9–C12 result files were unchanged). GroundWeave ladder is 19 ops (7 added by C9–C12); PocketLoom debug APK ≈ 0.89 MB with 35 JUnit tests.
 
 ### Fixed
 - Python `LinkClient` now bumps `X-Loom-Ts` when two signed requests share a millisecond, matching Kotlin `nextTs()`. The server rejects `t <= last_ts`; a tight loop in `forge accept C9` (and `test_increment_acceptance[C9]`) could 403 as a false replay.

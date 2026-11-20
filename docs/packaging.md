@@ -128,7 +128,7 @@ cd companions/pocketloom && ./gradlew :fabriccore:test :fabriccore:fatJar :app:a
 |---|---|
 | Toolchain | Gradle 8.9 (wrapper, committed), AGP 8.7.3, Kotlin 2.0.21, JDK 17 (same discovery as above), Android SDK `platforms;android-35` + build-tools 35 |
 | SDK path | `ANDROID_HOME` / `ANDROID_SDK_ROOT`, or `companions/pocketloom/local.properties` (`sdk.dir=…`, **gitignored**) |
-| Output | `app/build/outputs/apk/debug/app-debug.apk` → `dist/pocketloom/` (both gitignored), ≈ 0.97 MB, no native libs |
+| Output | `app/build/outputs/apk/debug/app-debug.apk` → `dist/pocketloom/` (both gitignored), ≈ 0.89 MB, no native libs |
 | Signing | Android Gradle **debug** keystore (`~/.android/debug.keystore`, auto-created) — so the APK SHA-256 differs per machine. Release keystore / AAB / Play listing: TODO (below) |
 | Verify | `aapt dump badging`, `apksigner verify`, Android lint (0 errors, 0 i18n issues), dex contains FabricCore — see docs/acceptance-tests/C1-C6.md |
 | Install | `adb install -r dist/pocketloom/pocketloom-0.1.0-c6-debug.apk` (not yet done on hardware — no device on the build box) |
