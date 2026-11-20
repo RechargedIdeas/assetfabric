@@ -189,8 +189,9 @@ for _m in CL_ORDER:
     INCREMENTS[_m] = Increment(_m, "loomcluster" if _m == "C7" else "groundweave", (), _acl.check(_m), _CL_DESC[_m],
                                _acl.perf(_m), _acl.runner(_m))
 
-# Companion track C9–C12: MirrorWeave, LensForge capture, metric depth, SplatForge path — interfaces + labelled stubs, real CPU
-# paths where cheap and spec-grounded (forge/accept_c9_c12.py, register: content/companions/c9_c12.yaml).
+# Companion track C9–C12: MirrorWeave, LensForge capture, metric depth, SplatForge path — real CPU paths since the
+# stub-replacement sprint (0.7.4–0.7.8); only full-scale SplatForge training stays a labelled stub
+# (forge/accept_c9_c12.py, register: content/companions/c9_c12.yaml).
 from forge import accept_c9_c12 as _a9  # noqa: E402
 
 CX_ORDER = ["C9", "C10", "C11", "C12"]
@@ -199,11 +200,13 @@ _CX_DESC = {
           "desktop->phone input/focus outbox (per-event MAC), phone->Studio input as Qt events; Android MediaProjection/H.264/"
           "Accessibility/Camera2 compiled into the APK but real_unverified_on_device",
     "C10": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, "
-           "desktop assessment of offloaded captures, focus requests (Camera2, real_unverified_on_device); ARCore/video are labelled stubs",
-    "C11": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth); dense DepthAnything V2 / "
-           "ARCore depth are labelled stubs",
+           "desktop assessment of offloaded captures, video keyframe ingest (ffmpeg), ARCore pose coverage; Camera2 focus/video + ARCore "
+           "capture compiled into the APK but real_unverified_on_device",
+    "C11": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth), dense DepthAnything V2 "
+           "Small on onnxruntime CPU, ARCore DEPTH16 ingest + anchor alignment (ARCore capture real_unverified_on_device)",
     "C12": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply "
-           "validator; SplatForge/photogrammetry/MeshWeaver/GDGS import are labelled stubs",
+           "validator, CPU photogrammetry (OpenCV SfM), MeshWeaver OBJ, GDGS Godot import, tiny-scene CPU splat trainer; full-scale "
+           "SplatForge training is the one labelled stub (GPU)",
 }
 _CX_NAME = {"C9": "mirrorweave", "C10": "lensforge", "C11": "metric-depth", "C12": "splatforge-path"}
 for _m in CX_ORDER:

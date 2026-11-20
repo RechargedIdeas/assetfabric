@@ -20,7 +20,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 
 ```bash
 source .venv/bin/activate
-pytest -q                         # unit + component (≈ 14 min with Godot)
+pytest -q                         # unit + component, whole suite (≈ 6 min on 8 vCPU with Godot)
+pytest -q --ci-group=game         # one CI shard (game | recon | core); the shards partition the suite
 forge accept F7                   # F7 full: exports + platform proofs (local; see docs/packaging.md)
 forge accept C9-C12               # MirrorWeave (video PSNR, WS signing, Xvfb capture, Studio Qt events, APK impls) / LensForge / depth / SplatForge-path; needs ffmpeg(libvpx) + Xvfb; fast mode skips Gradle
 forge accept C7-C8                # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (Godot for the GIRT/balance probes; JDK+SDK adds the Kotlin LoomLink hop)
@@ -72,12 +73,17 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 
 Workflow: `.github/workflows/ci.yml` (Ubuntu, `uv`, cached Godot 4.3 download). On every push to `main` / `feat/**` and every PR:
 
-1. Install `.[dev]` into a venv.
-2. `forge status` (must exit 0 — includes the offset guard).
-3. `pytest -q` — unit, pipeline, **determinism gate** (regenerated assets == committed), and **headless Godot increments** for every registered milestone.
-4. `REQUIRE_GODOT=1 scripts/smoke_godot.sh`.
+Since 0.7.9 the pytest job is a **3-way matrix** (`pytest --ci-group=game|recon|core`, `tests/conftest.py`): the groups
+partition the suite (anything not listed is `core`; `tests/test_ci_groups.py` fails on a stale shard reference), so CI runs
+exactly the tests plain `pytest -q` runs, just on three runners at once. uv and apt packages are cached; superseded runs on
+feature branches are cancelled (`main` runs are never cancelled).
 
-PocketLoom: job **`pocketloom`** (setup-java 17, Gradle cache via `gradle/actions/setup-gradle`, runner Android SDK) runs `forge accept C1-C6 --no-write` in full mode; `tests/test_companions.py` (Python half, shared vectors, fast-mode accepts) runs in the main job. Pushes to `feat/**` branches also run CI.
+1. Install `.[dev,studio]` into a venv (uv cache).
+2. `forge status` (core shard; must exit 0 — includes the offset guard).
+3. `pytest -q --ci-group=<g>` — `game` (headless Godot game increments: F5 full 2400-fight G-BAL-01 matrix, F6 slice, F4, F7 fast + world/balance units), `recon` (C9–C12 real CPU paths: ffmpeg, Xvfb, OpenCV, ONNX), `core` (everything else, incl. the **determinism gate** and F0–F3 / C1–C8 increments).
+4. `REQUIRE_GODOT=1 scripts/smoke_godot.sh` (core shard).
+
+PocketLoom: job **`pocketloom`** (setup-java 17, Gradle cache via `gradle/actions/setup-gradle`, runner Android SDK) runs `forge accept C1-C6`, `C7-C8` and `C9-C12 --no-write` in **full mode**, in parallel with the shards. Pushes to `feat/**` branches also run CI.
 
 F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, ShuttleLine vs sources, BoltPack SBOM + license audit for every target, network-API scan, editor save/remap round-trip). Platform exports + `forge accept F7` (full) are **local-only** (≈1 GB templates, JDK + Android SDK, headless Chrome; ≈ 2.5 min) — see [docs/packaging.md §CI](docs/packaging.md#ci). Planned: cached `package` job, Windows runner for DirectML. `[INFERENCE: workflow shape]`
 

@@ -1,18 +1,37 @@
 # AssetFabric CI — unit/component tests, content determinism, Godot headless acceptance.
+# 0.7.9 (quality gap "CI time"): pytest is split into three parallel shards that partition the suite
+# (`pytest --ci-group=game|recon|core`, tests/conftest.py; tests/test_ci_groups.py guards the partition), apt packages are
+# cached, and the full-mode companion accepts keep their own job. Plain `pytest -q` locally still runs everything.
 name: CI
 on:
   push:
     branches: [main, "feat/**"]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  GODOT_VERSION: "4.3"
+
 jobs:
   test:
+    name: pytest (${{ matrix.group }})
     runs-on: ubuntu-latest
-    env:
-      GODOT_VERSION: "4.3"
+    strategy:
+      fail-fast: false
+      matrix:
+        # game  = headless Godot game increments (F5 full 2400-fight G-BAL-01 matrix, F6 slice, F4, F7 fast) + world/balance units
+        # recon = C9–C12 real CPU paths (ffmpeg, Xvfb, OpenCV, ONNX) + their acceptance
+        # core  = everything else (F0–F3, C1–C8 fast, voice/LM, Studio, store, status, determinism gate)
+        group: [game, recon, core]
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: pyproject.toml
       - name: Cache Godot
         id: godot-cache
         uses: actions/cache@v4
@@ -25,27 +44,31 @@ jobs:
           mkdir -p godot-bin && cd godot-bin
           curl -sSLo g.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           unzip -q g.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm g.zip
-      - name: System tools for C9 (pytest runs forge accept C9 — ffmpeg/libvpx + Xvfb)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 > /dev/null
+      - name: System tools (ffmpeg/libvpx + Xvfb + Qt runtime libs; cached)
+        if: matrix.group != 'game'
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+          version: "1"
       - name: Install
         run: |
           uv venv .venv
           source .venv/bin/activate
           uv pip install -e ".[dev,studio]"
       - name: forge status
+        if: matrix.group == 'core'
         run: source .venv/bin/activate && forge status
-      - name: pytest (includes determinism gate + Godot increments)
-        run: source .venv/bin/activate && pytest -q
+      - name: pytest shard
+        run: source .venv/bin/activate && pytest -q --durations=15 --ci-group=${{ matrix.group }}
       - name: Godot smoke
+        if: matrix.group == 'core'
         run: source .venv/bin/activate && REQUIRE_GODOT=1 ./scripts/smoke_godot.sh
 
   pocketloom:
-    # Companion track C1–C6: FabricCore JVM tests, debug APK (aapt/apksigner), lint, Kotlin↔Python LoomLink interop;
-    # then C7/C8: LoomCluster loopback fleet + GroundWeave 2-core CPU-fallback proofs (runs here, in parallel with `test`,
-    # so the critical path is unchanged; pytest only carries tests/test_c7_c8.py ≈ 7 s), then C9–C12 (+ tests/test_c9_c12.py ≈ 4 s in pytest).
+    # Companion track full mode: C1–C6 (FabricCore JVM tests, debug APK, lint, Kotlin↔Python LoomLink interop), C7/C8
+    # (LoomCluster loopback fleet + GroundWeave 2-core proofs), C9–C12 (real desktop paths + compiled Android impls).
+    # Runs in parallel with the pytest shards (pytest carries the fast-mode accepts).
     runs-on: ubuntu-latest
-    env:
-      GODOT_VERSION: "4.3"
     steps:
       - uses: actions/checkout@v4
       - name: Cache Godot            # C8's runtime probes (GIRT / balance on 2 pinned cores) run Godot headless
@@ -68,8 +91,14 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       - uses: astral-sh/setup-uv@v3
-      - name: System tools for C9 (ffmpeg/libvpx video + X11 capture under Xvfb)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 > /dev/null
+        with:
+          enable-cache: true
+          cache-dependency-glob: pyproject.toml
+      - name: System tools for C9 (ffmpeg/libvpx video + X11 capture under Xvfb; cached)
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+          version: "1"
       - name: Install forge
         run: |
           uv venv .venv

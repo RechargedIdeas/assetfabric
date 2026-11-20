@@ -469,3 +469,13 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 83. **C-83 Versions.** Patch bump `0.7.7+f7` → `0.7.8+f7`; no Kotlin/APK change (`0.4.0-c11`). New Python deps `vosk`,
     `tokenizers` (both Apache-2.0); model weights only via `forge models fetch` (not in CI).
 
+
+### Quality gaps Q1 (0.7.9+f7) — CI shards, inventory
+
+84. **C-84 "Typical CI ≤ 10 min" reading.** Measured as the wall time of a `main` / `feat/**` workflow run from start to the
+    last job finishing, with warm caches (Godot, uv, apt, Gradle). Coverage is defined as "the same test ids plain `pytest -q`
+    runs": the three `--ci-group` shards partition the suite by construction (unlisted tests default to `core`), which
+    `tests/test_ci_groups.py` checks. Queue time on GitHub's side is not counted (runs that sat queued behind cancelled runs
+    were the "30 min" outliers).
+85. **C-85 Producer confirmed F8/F9.** t59u ("… then do F8 and F9") is the Producer confirmation HANDOVER asked for before F8;
+    F8 starts only after this quality-gap list is done or the rest is hardware/user-gated.

@@ -2,7 +2,30 @@
 
 Last updated: 2026-11-20 America/New_York
 
-## Current sprint — stub replacement (Producer t59u, 2026-11-20: "replace stubs with real code, fix quality gaps, then F8 and F9")
+## Current sprint — quality gaps (Producer t59u, 2026-11-20; phase 2 of "replace stubs, fix quality gaps, then F8 and F9")
+
+Inventory 2026-11-20 from TODO / HANDOVER / STATUS / docs/INFERENCES.md / acceptance docs / DECISIONS (D-001, D-005).
+Rule: each row lands as its own patch release on `main` (tests + `forge accept` gate + docs) or is marked blocked with the
+reason. Hardware / Producer-gated rows are listed at the end and are **not** worked here.
+
+| P | Gap | Source | Fix plan | Gate | Batch / state |
+|---|---|---|---|---|---|
+| 1 | CI wall ≈ 14.5 min (pytest 13 min single job; some runs 30 min with queueing) | F7-16, CI runs | pytest split into 3 parallel shards that partition the suite (`--ci-group`), uv + apt caches, superseded runs cancelled on feature branches | `tests/test_ci_groups.py` (partition + no stale shard refs) | Q1 `0.7.9+f7` |
+| 2 | **G-A11Y-01 partial**: no in-game rebinding screen, no runtime colour-blind palette switch, H / `/` / 1–4 hard-coded keys, no gamepad map | F7-11, F7.md | every game key becomes an InputMap action (keyboard + gamepad defaults); in-game Settings screen (locale keys, keyboard/gamepad navigable) to rebind any action and pick palette off/deuteranopia/protanopia; both persisted in the save (`profile.settings`) | F7 G-A11Y-01 → full pass (rebind + palette round-trip on desktop / Android content / Web) | Q2 |
+| 3 | Swap advisor 50–100 ms vs < 50 ms (GAME_SPEC §4.1) in the party scene | F3.md, HANDOVER perf debt | profile → algorithmic + data-layout hot-path work in the forward sim (no behaviour change outside forward clones), measure on 2 pinned cores; GDExtension only if that is not enough | F3 `swap_target_met` becomes a hard check on the 8-vCPU box **and** a 2-core pinned measurement | Q3 |
+| 4 | **D-005 / F6-3** economy, loot and quest content are placeholders | F6-3, D-005 | data-driven tables (crops, recipes, shop, loot, quest chain, XP) per GAME_SPEC §4.4/§5 shapes, generated + gated by Codegen-World, balanced with the existing sims; names/numbers stay Game-Design-owned (D-005 remains open for *sign-off*) | world gates + economy solvability + quest soft-lock | Q4 |
+| 5 | Vertical slice: bot 2.9 game-min vs 15–20 min | F6-12 | real content and pacing (second crop cycle, longer crop timers, quest chain steps, travel, boss gating) — not a slower bot; add a human-pace estimate model (reading, navigation, menu time) and gate it | F6 `length` hard check on the estimate (bot time reported as-is) | Q4 |
+| 6 | Per-pair balance spread on unseen seeds 5.25 pp (noise floor at 200 seeds/cell); thin Optuna evidence | F6-2, F6-14, F5-12 | faster balance worker (from Q3), more seeds per cell out-of-sample, longer Optuna study recorded | per-cell spread ≤ 3.5 pp on unseen seeds | Q5 |
+| 7 | World fights tuned by hand | TODO Balance | Monte Carlo over the slice's area packs | wipe-rate / clear-time bands | Q5 |
+| 8 | LoomCluster node↔node HTTP unauthenticated (C-17); large blobs inside result JSON (C-28) | C-17, C-28 | HMAC-signed node requests with a pairing secret (LoomLink scheme), refuse unsigned/replayed; content-addressed blob transfer (`/blob/<sha256>`) for large artifacts | C7 auth + blob checks | Q6 |
+| 9 | **D-001** Web single-thread fallback | F7-3, D-001 | decide + implement if feasible (`nothreads` export variant, advisor serial path) | F7 web checks on both variants | Q7 |
+| 10 | Doc nits / stale claims | STATUS, milestones.py C10–C12 text, HANDOVER | regenerate STATUS (`forge report`), fix stale "labelled stubs" descriptions | review | Q1 (+ each batch) |
+
+**Not worked here (hardware / Producer / Game-Design gated):** Windows runtime run; Android on a device (D-002); GPU rungs;
+signing + store listings (keys); human GUI playtest; final roster names/stats sign-off (D-005 owner); "hold"↔"go" voice
+grammar decision (C-79); F8 scope confirmation (now requested by the Producer: after this list).
+
+## Previous sprint — stub replacement (Producer t59u, 2026-11-20: "replace stubs with real code, fix quality gaps, then F8 and F9")
 
 Rule for this sprint: a stub becomes `real` only when a CPU code path runs **here** (8 vCPU, no GPU/KVM/phone/Windows) on real
 data with tests and `forge accept`. Android-only APIs get a real Kotlin implementation compiled into the APK (+ JVM unit tests of
@@ -34,7 +57,7 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 | 18 | GPU rungs: `g1-sprite-onnx-tiny@rocm/vulkan`, `g1-tile-nca@rocm`, `dyeworks-sdxl@rocm`, `dyeworks-sd15@directml`, `mlp-train-rocm`, `opensplat-rocm`, `mirror-h264-hw@vulkan`, `meshweaver-sugar@rocm`, `gdgs-raster-import@vulkan` | ladder | **stay `planned`** — no GPU, no ROCm/DirectML/Vulkan device on the build box; cannot be executed or verified here | — |
 | 19 | Deferred `recon.nerf_neural_sdf`, `recon.large_scene_lod`, `recon.rc_models` | C12 register | **stay deferred** — spec marks them research/future; `rc_models` needs real capture runs to train on | — |
 
-## Previous sprint — companion track (C9–C12 landed as interfaces + stubs; next needs Producer input)
+## Earlier sprint — companion track (C9–C12 landed as interfaces + stubs; next needs Producer input)
 
 - [x] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync) — accepted 2026-11-12 (`forge accept C1-C6`)
 - [x] LoomCluster C7 + GroundWeave C8 (drafts from `wip/f5-companions` reviewed, hardened, verified) — accepted 2026-11-19 (`forge accept C7-C8`, 0.7.2+f7)

@@ -4,6 +4,18 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.9+f7] — 2026-11-20 — Quality gaps Q1: CI shards, gap inventory, stale descriptions
+
+### Changed
+- **CI wall time** (quality gap P1): the single ≈ 13 min pytest job is now a 3-way matrix `pytest --ci-group=game|recon|core`
+  (`tests/conftest.py`). The groups partition the suite — every test is in exactly one shard, anything unlisted is `core` —
+  so coverage is unchanged; `tests/test_ci_groups.py` guards the partition and fails on stale shard references. uv download
+  cache and an apt package cache (ffmpeg/Xvfb/Qt libs, skipped on the `game` shard) replace the per-run `apt-get`;
+  superseded runs on `feat/**` are cancelled (`main` never). Full-mode companion accepts stay in the parallel `pocketloom` job.
+- `forge/milestones.py` C10–C12 descriptions (and so STATUS.md) no longer call ARCore / video / dense depth /
+  photogrammetry / MeshWeaver / GDGS "labelled stubs" — they became real in 0.7.5–0.7.7; STATUS regenerated (was `0.7.7+f7`).
+- TODO.md: prioritised quality-gap inventory (P1–P10) with gates and batches; hardware/Producer-gated items listed separately.
+
 ## [0.7.8+f7] — 2026-11-20 — Stub replacement batch 4: VoiceBridge (Vosk), persona micro-LM (Qwen2.5-0.5B), Studio surfaces
 
 ### Added
