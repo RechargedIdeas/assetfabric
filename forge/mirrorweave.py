@@ -279,3 +279,16 @@ def encode_still(data: bytes, kind: str = "screen", stream: str = "probe", seq: 
 
 __all__ = ["FrameEnvelope", "FrameHub", "ControlMessage", "handle_control", "MirrorSource", "StillsSource",
            "ScreenCaptureSource", "VideoStreamSource", "AndroidController", "StubError", "ALLOWED_QUERIES"]
+
+
+def _stub_control(target: str, action: str) -> Any:
+    return handle_control(ControlMessage(target, action, "x"))
+
+
+STUB_PROBES = {
+    "mirror.screen_capture": lambda: next(ScreenCaptureSource().frames()),
+    "mirror.video_stream": lambda: next(VideoStreamSource().frames()),
+    "mirror.android_input": lambda: AndroidController().send(ControlMessage("android", "input", "tap")),
+    "mirror.studio_input": lambda: _stub_control("desktop", "input"),
+    "mirror.camera_focus": lambda: _stub_control("desktop", "focus"),
+}
