@@ -502,7 +502,12 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     "Cores" are physical cores: one logical CPU per `thread_siblings_list` group (`forge/cpus.py`); pinned to two SMT
     siblings of one core, GitHub's runner measured p95 66 ms, which is a 1-core machine, not the weakest node. GitHub CI
     (2 physical EPYC cores) passes the gate. Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
-    so a slower machine may exceed it on some states. 150 ms stays the hard ceiling for any single freeze.
+    and a slower machine does exceed it: GitHub's 2-core runners measured p95 63–66 ms. So the < 50 ms gate is hard on the
+    reference node (`forge accept F3`) and reported-only in FAST mode / CI and the GroundWeave probe; 150 ms stays the hard
+    ceiling everywhere. Quality gap P3 is therefore **partial**: met on the reference box, not on slower 2-core CPUs. The
+    blocker is engine-level (GDScript Object-Variant access and allocation do not scale across threads in Godot 4.3,
+    `docs/perf/gdscript-thread-scaling/`); the fix is a native step function (GDExtension, with this GDScript path kept as
+    the CPU fallback) or a struct-of-arrays CombatSim.
 89. **C-89 LOD fidelity bar.** The advisor runs brains at 15 Hz in its forward sims (LOD 4). We accept that as long as the
     shipped top pick is inside the full-fidelity (LOD 1) top 2 in every sampled state and agrees on top-1 in ≥ 80 % (17/17
     today; exact full order 10/17). Our bar, not the spec's.

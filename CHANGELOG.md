@@ -4,7 +4,7 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
-## [0.7.11+f7] — 2026-11-20 — Quality gaps Q3: swap advisor < 50 ms on 2 cores (GAME_SPEC §4.1)
+## [0.7.11+f7] — 2026-11-20 — Quality gaps Q3: swap advisor < 50 ms on 2 cores of the reference box (GAME_SPEC §4.1; partial on slower CPUs)
 
 ### Changed
 - **Swap advisor meets the < 50 ms target** (quality gap P3, was ≈ 50–100 ms): `tools/swapbench.gd` (`--scene=swapbench`)
@@ -14,6 +14,12 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
   full-fidelity LOD-1 top 2 in every state, top-1 agreement ≥ 80 %). Recorded on the 8-vCPU box pinned to CPUs 0,1:
   **p50 23.4 ms, p95 37.0 ms, max 48.6 ms**; LOD fidelity 17/17 top-1 agreement. In-game freezes: party scene 28 ms;
   F4 live-tune freeze 73.6 → 32.7 ms.
+- **Where the target is hard-gated**: `forge accept F3` (reference node, recorded in `results/F3.json`). FAST mode
+  (pytest / CI) and the GroundWeave probe record the p95 but gate only the 150 ms ceiling, parity and fidelity, because
+  GitHub's 2-core runners measure **p50 ≈ 34–49 ms, p95 ≈ 63–66 ms** (two runs) — the target is **not** met there.
+  Root cause measured in `docs/perf/gdscript-thread-scaling/`: in Godot 4.3, GDScript Object-Variant access and small
+  allocations do not scale across worker threads (0.3–1.1× on 2 cores even with nothing shared), so threading gives the
+  advisor only ≈ 1.3×. A native step function (GDExtension) or a struct-of-arrays `CombatSim` is the remaining fix (TODO).
 - Pure GDScript, no GDExtension: hot-path data-layout work in the forward sims — a struct-of-arrays mirror of the fields
   entities read off each other inside `step()` (packed-array reads instead of script-property reads, which serialised
   worker threads: 2 threads ran 2.2× slower than 1), BT memory as plain members instead of `set_meta`/`get_meta`

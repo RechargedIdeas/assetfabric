@@ -133,3 +133,13 @@ def test_physical_core_pinning_skips_smt_siblings(monkeypatch: pytest.MonkeyPatc
     assert cpus.physical_core_cpus(2, [0, 1]) == [0, 1]
     monkeypatch.setattr(cpus, "_siblings", lambda c: frozenset({c}))
     assert cpus.physical_core_cpus(2, [3, 5, 7]) == [3, 5]
+
+
+def test_swapbench_target_only_reported_when_not_gated() -> None:
+    from forge.milestones import _swapbench_check
+
+    errs: list[str] = []
+    _swapbench_check(_sb(wall_ms_p95=63.0, target_gated=False), errs)
+    assert errs == []                     # FAST/CI + GroundWeave: ceiling, parity, fidelity still gated
+    _swapbench_check(_sb(wall_ms_p95=63.0, wall_ms_max=160.0, target_gated=False), errs)
+    assert errs and "ceiling" in errs[0]
