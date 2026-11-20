@@ -539,17 +539,18 @@ def _lens_sets(root: Path) -> dict[str, Any]:
     dup = lensforge.assess_set([imgs[0], imgs[0], imgs[1], imgs[2]], "burst", root)
     mixed = lensforge.assess_set([*imgs, _png("blurry"), b"junk"], "burst", root)
     stub_modes = {}
-    for m in ("depth_assist",):
+    for m in ():                                     # no stub capture modes left since 0.7.6 (depth_assist is real)
         try:
             lensforge.assess_set(imgs, m, root)
             stub_modes[m] = "returned"
         except StubError as e:
             stub_modes[m] = "refused" if is_stub_message(str(e)) else "unlabelled"
+    da = lensforge.assess_set(imgs, "depth_assist", root)
     ok = (ok_set["verdict"] == "pass" and ok_set["usable_views"] == 3 and ok_set["overlap"] == "not_measured"
           and short["reasons"] == ["too_few_usable_views"] and len(dup["duplicates"]) == 1 and dup["usable_views"] == 3
           and mixed["usable_views"] == 3 and mixed["per_view"][-1]["verdict"] == "unreadable"
-          and set(stub_modes.values()) == {"refused"})
-    return {"ok": ok, "burst_ok": ok_set["verdict"], "too_few": short["reasons"], "duplicates": dup["duplicates"],
+          and set(stub_modes.values()) <= {"refused"} and da["reasons"] == ["too_few_usable_views"])
+    return {"ok": ok, "burst_ok": ok_set["verdict"], "depth_assist_3_views": da["reasons"], "too_few": short["reasons"], "duplicates": dup["duplicates"],
             "mixed_usable": mixed["usable_views"], "stub_modes": stub_modes, "overlap": ok_set["overlap"]}
 
 
@@ -692,7 +693,7 @@ def c10_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["telemetry"] = _lens_telemetry()
         r["offload"] = _lens_offload(root, tmp)
         r["video"] = _lens_video(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["lens", "session", "--kind", "arcore"]])
+        r["arcore"] = _arcore_coverage(root, tmp)
         r["groundweave"] = _ladder(root, ["lens.assess"], [])
         r["cpu_2core"] = _verify(root, "lens.assess")
         if full:
@@ -852,10 +853,87 @@ def _kotlin_depth(root: Path, tmp: Path) -> dict[str, Any]:
             "bottom_nearer_than_top": out.get("bottom_mean", 0) > out.get("top_mean", 1)}
 
 
-def _depth_cli(root: Path, tmp: Path) -> dict[str, Any]:
-    stub = _cli_stubs(root, [["depth", "estimate", "tests/fixtures/capture_640x480.jpg", "--backend", "arcore"]])
+def _orbit_poses(n: int = 24, r: float = 0.6, h: float = 0.3) -> list[list[float]]:
+    """Camera-to-world poses on a circle, each looking at the origin (yaw about +Y; ARCore cameras look down -Z)."""
+    import math
+    out = []
+    for i in range(n):
+        a = 2 * math.pi * i / n
+        x, z = r * math.sin(a), r * math.cos(a)          # camera at angle a, looks toward origin → yaw = a
+        out.append([x, h, z, 0.0, math.sin(a / 2), 0.0, math.cos(a / 2)])
+    return out
+
+
+def _arcore_coverage(root: Path, tmp: Path) -> dict[str, Any]:
+    """C10 `lens.arcore_session` desktop half: pose coverage on an analytic 24-view orbit (known answer) + CLI."""
+    import math
+
+    from forge import arcore
+    poses = _orbit_poses()
+    cov = arcore.coverage(poses)
+    want_path = 23 * 2 * 0.6 * math.sin(math.pi / 24)
+    pf = tmp / "poses.json"
+    pf.write_text(json.dumps(poses))
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "lens", "session", "--kind", "arcore", "--poses", str(pf)],
+                       cwd=root, capture_output=True, text=True, timeout=60)
+    try:
+        cli = json.loads(p.stdout)
+    except ValueError:
+        cli = {}
+    still = arcore.coverage([poses[0]] * 3)
+    ok = (abs(cov["path_m"] - want_path) < 1e-5 and abs(cov["max_baseline_m"] - 1.2) < 1e-5
+          and abs(cov["angular_spread_deg"] - 180.0) < 1e-3 and abs(cov["max_step_deg"] - 15.0) < 1e-3
+          and still["angular_spread_deg"] == 0.0 and still["max_baseline_m"] == 0.0 and p.returncode == 0 and cli == cov)
+    return {"ok": ok, "orbit": cov, "want_path_m": round(want_path, 6), "static": still, "cli_exit": p.returncode,
+            "device": "never run on a phone — synthetic poses (real_unverified_on_device)"}
+
+
+def _arcore_depth(root: Path, tmp: Path) -> dict[str, Any]:
+    """C11 `depth.arcore` desktop half: synthetic DEPTH16 frame (shared Kotlin vectors) + ARCore-anchored dense depth on
+    the analytic scene (GT depth quantised to mm at 1/4 resolution, as the Depth API delivers it)."""
+    import io
+
+    import numpy as np
+
+    from forge import arcore
+    fr = arcore.synthetic_frame(160, 120)
+    pl = arcore.payload(fr["depth_mm"], fr["confidence"], [0, 0, 0, 0, 0, 0, 1], {"image_w": 640, "image_h": 480})
+    got = depth.ARCoreDepth().ingest(pl)
+    vec = json.loads((root / "tests" / "fixtures" / "arcore_vectors.json").read_text())
+    shared = got["anchors"] == vec["anchors_160x120_640x480"] and {k: got[k] for k in ("valid_fraction", "min_m", "median_m", "max_m")} == vec["stats_160x120"]
+    r: dict[str, Any] = {"shared_vectors": shared, "anchors": len(got["anchors"]), "no_image": got["dense"]}
     if not _model_ready():
-        return {**_skipped_no_model(), "ok": stub["ok"] and not _models_required(), "arcore_stub": stub}
+        return {**r, **_skipped_no_model(), "ok": shared and not _models_required()}
+    from PIL import Image
+    sc = depth.render_scene(256, 192)
+    gt = sc["depth_m"]
+    small = np.nan_to_num(gt[2::4, 2::4], nan=0.0)
+    mm = np.clip(np.round(small * 1000), 0, 65535).astype(np.uint16)
+    buf = io.BytesIO()
+    Image.fromarray(sc["rgb"]).save(buf, "PNG")
+    pl = arcore.payload(mm, np.full(mm.shape, 255, np.uint8), [0, 1.5, 0, 0, 0, 0, 1], {"image_w": 256, "image_h": 192},
+                        image=buf.getvalue(), media="image/png")
+    v = depth.ARCoreDepth(depth.DepthAnythingV2(threads=1)).ingest(pl)
+    med_gt = float(np.nanmedian(gt))
+    rel_err = abs(v["dense"]["median_m"] - med_gt) / med_gt
+    return {**r, "ok": shared and rel_err < 0.1 and v["dense"]["anchor_rmse_m"] < 0.5, "dense": v["dense"],
+            "gt_median_m": med_gt, "median_rel_err": round(rel_err, 4)}
+
+
+def _depth_cli(root: Path, tmp: Path) -> dict[str, Any]:
+    from forge import arcore
+    fr = arcore.synthetic_frame(64, 48)
+    pf = tmp / "arcore.json"
+    pf.write_text(json.dumps(arcore.payload(fr["depth_mm"], fr["confidence"], [0, 0, 0, 0, 0, 0, 1], {"image_w": 640, "image_h": 480})))
+    pa = subprocess.run([sys.executable, "-m", "forge.cli", "depth", "estimate", str(pf), "--backend", "arcore"],
+                        cwd=root, capture_output=True, text=True, timeout=60)
+    try:
+        ad = json.loads(pa.stdout)
+    except ValueError:
+        ad = {}
+    stub = {"ok": pa.returncode == 0 and ad.get("width") == 64 and len(ad.get("anchors", [])) > 0, "exit": pa.returncode}
+    if not _model_ready():
+        return {**_skipped_no_model(), "ok": stub["ok"] and not _models_required(), "arcore_cli": stub}
     out = tmp / "d.png"
     p = subprocess.run([sys.executable, "-m", "forge.cli", "depth", "estimate", "tests/fixtures/capture_640x480.jpg",
                         "--anchor", "100,400,1.0", "--anchor", "320,100,3.0", "--out", str(out)],
@@ -867,7 +945,7 @@ def _depth_cli(root: Path, tmp: Path) -> dict[str, Any]:
     from PIL import Image
     png_ok = out.exists() and Image.open(out).mode.startswith("I") and Image.open(out).size == (640, 480)
     return {"ok": stub["ok"] and p.returncode == 0 and doc.get("width") == 640 and "metric" in doc and png_ok,
-            "arcore_stub": stub, "estimate_exit": p.returncode, "metric": doc.get("metric"), "png16": png_ok}
+            "arcore_cli": stub, "estimate_exit": p.returncode, "metric": doc.get("metric"), "png16": png_ok}
 
 
 def _model_audit(root: Path) -> dict[str, Any]:
@@ -893,6 +971,7 @@ def c11_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["distance"] = _depth_real()
         r["align"] = _depth_align()
         r["dense"] = _depth_dense()
+        r["arcore"] = _arcore_depth(root, tmp)
         r["offload"] = _depth_offload(root, tmp)
         r["cli"] = _depth_cli(root, tmp)
         r["model_licences"] = _model_audit(root)
@@ -1042,8 +1121,8 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 
 KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
-    "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "cli_stubs", "groundweave", "cpu_2core"],
-    "C11": ["register", "distance", "align", "dense", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
+    "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "arcore", "groundweave", "cpu_2core"],
+    "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
     "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}

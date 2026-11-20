@@ -9,7 +9,7 @@ import kotlin.math.tan
 /** Metric depth (C11) — SPEC §5.2/§9. REAL: pinhole focal/distance maths (identical to Python `forge.depth`, shared vectors).
  *  REAL (0.7.5): [DepthEstimator] — dense DepthAnything V2 Small runs on the paired desktop (LoomLink offload op
  *  `depth.estimate`); the phone sends the capture (+ optional metric anchors) and gets the relative map back as uint16.
- *  ARCore depth stays a stub (see [ArCoreSession]). */
+ *  ARCore depth: [ArDepth] (ArCore.kt) packs DEPTH16 frames for the desktop (op `depth.arcore`). */
 object Depth {
     const val MILESTONE = "C11"
     const val FULL_FRAME_WIDTH_MM = 36.0

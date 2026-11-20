@@ -197,7 +197,7 @@ def mirror_control(action: str, name: str, args: tuple[str, ...], url: str, code
 
 @click.group("lens")
 def lens_grp() -> None:
-    """LensForge (C10): capture modes, per-image/per-set quality, telemetry. ARCore/video/focus are stubs."""
+    """LensForge (C10): capture modes, per-image/per-set quality, telemetry, video ingest, focus, ARCore pose coverage."""
 
 
 @lens_grp.command("modes")
@@ -230,10 +230,13 @@ def lens_exif(file: Path) -> None:
 
 @lens_grp.command("session")
 @click.option("--kind", type=click.Choice(["arcore"]), required=True)
-def lens_session(kind: str) -> None:
-    """ARCore-assisted capture session — STUB (refuses, exit 3). Video capture is `forge lens video`."""
+@click.option("--poses", "poses_file", type=click.Path(exists=True, dir_okay=False, path_type=Path), required=True,
+              help="JSON list of ARCore camera poses [tx,ty,tz,qx,qy,qz,qw] (camera-to-world, metres).")
+def lens_session(kind: str, poses_file: Path) -> None:
+    """ARCore-assisted capture: pose coverage (path, max baseline, angular spread) of a set's ARCore poses. The phone
+    recorder (`ArCoreCapture`) is compiled into the APK but never run on a device."""
     from forge import lensforge
-    _guard(lambda: lensforge.ARCoreSession().start())
+    _guard(lambda: lensforge.ARCoreSession().coverage(json.loads(poses_file.read_text())))
 
 
 @lens_grp.command("video")
@@ -276,7 +279,7 @@ def lens_focus(state_dir: Path, device: str, distance_m: float | None, x: float 
 
 @click.group("depth")
 def depth_grp() -> None:
-    """Metric depth (C11): pinhole distance, scale alignment and dense DepthAnything V2 Small (CPU) are real; ARCore is a stub."""
+    """Metric depth (C11): pinhole distance, scale alignment, dense DepthAnything V2 Small (CPU), ARCore DEPTH16 ingest."""
 
 
 @depth_grp.command("distance")
@@ -307,14 +310,17 @@ def depth_distance(size_m: float, size_px: float, width_px: int, focal_mm: float
 @click.option("--threads", type=int, default=1, show_default=True)
 def depth_estimate(file: Path, backend: str, anchors: tuple[str, ...], out: Path | None, threads: int) -> None:
     """Dense depth: DepthAnything V2 Small on onnxruntime CPU (needs `forge models fetch depth-anything-v2-small`);
-    `--backend arcore` is a stub (exit 3)."""
+    `--backend arcore`: FILE is an ARCore frame payload (JSON, FabricCore `ArDepth.payload`) → metric stats + anchors
+    (+ DepthAnything aligned to them when the payload carries the camera image and the weights are fetched)."""
     import numpy as np
 
     from forge import depth
 
     def run() -> Any:
         if backend == "arcore":
-            return depth.ARCoreDepth().estimate(file.read_bytes())
+            from forge import models
+            est = depth.DepthAnythingV2(threads=threads) if models.status(depth.MODEL_ID, verify=False)["ready"] else None
+            return depth.ARCoreDepth(est).ingest(json.loads(file.read_text()))
         rel = depth.DepthAnythingV2(threads=threads).estimate(file.read_bytes())
         res: dict[str, Any] = {"model": depth.MODEL_ID, "width": rel.shape[1], "height": rel.shape[0],
                                "rel_min": float(rel.min()), "rel_max": float(rel.max())}

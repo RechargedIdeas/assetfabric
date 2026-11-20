@@ -102,8 +102,13 @@
     <string name="cam_record">Record 8 s clip (video capture)</string>
     <string name="cam_recording">Recording…</string>
     <string name="cam_clip_queued">Clip stored and queued — the paired desktop extracts keyframes.</string>
+    <string name="arcore_capture">ARCore depth capture (12 views)</string>
+    <string name="arcore_running">ARCore capturing — move slowly around the object…</string>
+    <string name="arcore_unavailable">ARCore unavailable on this phone: %1$s</string>
+    <string name="arcore_done">ARCore: %1$d views, %2$.0f° spread, %3$.2f m baseline, depth %4$s; %5$d frames sent to the desktop.</string>
+    <string name="arcore_depth_yes">supported</string>
+    <string name="arcore_depth_no">not supported (poses only)</string>
+    <string name="arcore_notice">ARCore capture uses Google Play Services for AR (ARCore), provided by Google LLC and governed by the Google Terms of Service (policies.google.com/terms) and Google Privacy Policy (google.com/policies/privacy).</string>
     <!-- C9–C12 labelled-stub reasons (shown if a stub feature is ever surfaced; see content/companions/c9_c12.yaml) -->
-    <string name="stub_depth_arcore">ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).</string>
-    <string name="stub_lens_arcore_session">ARCore-assisted capture is not implemented (Android-only SDK, not bundled in FabricCore).</string>
     <string name="stub_recon_splatforge">SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.</string>
 </resources>

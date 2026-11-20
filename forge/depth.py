@@ -288,15 +288,19 @@ def depth_metrics(pred: np.ndarray, gt: np.ndarray) -> dict[str, float]:
 
 
 class ARCoreDepth:
-    """STUB: ARCore Depth API (Android only) — rung of `depth.estimate` on the phone."""
+    """ARCore Depth API frames (C11 `depth.arcore`). The phone side (PocketLoom `ArCoreCapture`, ARCore SDK) is compiled
+    into the APK but never run on a device (`real_unverified_on_device`); this desktop side decodes the DEPTH16 payload,
+    derives metric anchors and — given the camera image — aligns DepthAnything V2 to them (`forge.arcore`)."""
 
-    def estimate(self, image: bytes) -> np.ndarray:
-        refuse("depth.arcore", "stub.depth.arcore", MILESTONE)
+    def __init__(self, estimator: RelativeDepthEstimator | None = None) -> None:
+        self.estimator = estimator
+
+    def ingest(self, payload: dict[str, Any]) -> dict[str, Any]:
+        from forge import arcore
+        return arcore.ingest(payload, self.estimator)
 
 
-STUB_PROBES = {
-    "depth.arcore": lambda: ARCoreDepth().estimate(b""),
-}
+STUB_PROBES: dict[str, Any] = {}
 
 
 def probe() -> dict[str, Any]:

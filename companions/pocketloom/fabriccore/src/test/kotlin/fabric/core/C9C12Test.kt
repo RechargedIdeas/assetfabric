@@ -1,5 +1,7 @@
 package fabric.core
 
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.Base64
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -82,7 +84,7 @@ class C9C12Test {
         assertEquals("hero_prop", CaptureModes.require("orbit").routeHint)
         assertEquals("backdrop", CaptureModes.require("sweep").routeHint)
         assertEquals("backdrop", CaptureModes.require("video").routeHint)                // video mode is real since 0.7.5
-        assertEquals("stub.lens.arcore_session", assertFailsWith<StubException> { CaptureModes.require("depth_assist") }.reasonKey)
+        assertEquals(12, CaptureModes.require("depth_assist").minViews)                  // ARCore-assisted mode is real since 0.7.6
         assertFailsWith<IllegalArgumentException> { CaptureModes.require("nope") }
         val m = Quality.assessGray(IntArray(64 * 48) { 128 }, 64, 48)                  // flat grey: blurry, but not clipped / dark
         assertEquals(listOf("blurry", "low_resolution"), Quality.reasons(m, 64, 48, CaptureModes.require("orbit")))
@@ -96,7 +98,7 @@ class C9C12Test {
 
     @Test fun everyStubRefuses() {
         val r = allStubs()
-        assertTrue(r.size >= 3)
+        assertTrue(r.size >= 1)                                  // only recon.splatforge left since 0.7.6
         for ((id, v) in r) {
             val m = v.asMap()
             assertEquals(true, m["refused"], id)
@@ -207,5 +209,42 @@ class C9C12Test {
         assertEquals(listOf("lens.video"), core.queue.pending().map { it.op })
         assertFailsWith<IllegalArgumentException> { core.captureVideo(ByteArray(16), "camera") }
         dir.deleteRecursively()
+    }
+}
+
+class ArCoreTest {
+    private fun vec(): Map<String, Any?> = Json.obj(java.io.File(System.getProperty("fabric.fixtures"), "arcore_vectors.json").readText())
+
+    @Test fun anchorsAndStatsMatchPython() {
+        val (d, c) = ArDepth.synthetic(160, 120)
+        val got = ArDepth.anchors(160, 120, d, c, 640, 480)
+        val want = vec()["anchors_160x120_640x480"].asList().map { it.asMap() }
+        assertEquals(want.size, got.size)
+        want.zip(got).forEach { (w, g) ->
+            assertEquals(w["x"].asLong().toInt(), g.x); assertEquals(w["y"].asLong().toInt(), g.y); assertEquals(w["depth_m"].asDouble(), g.depthM, 0.0)
+        }
+        val s = ArDepth.stats(d); val ws = vec()["stats_160x120"].asMap()
+        assertEquals(ws["valid_fraction"].asDouble(), s.validFraction, 1e-9)
+        assertEquals(ws["median_m"].asDouble(), s.medianM!!, 0.0); assertEquals(ws["max_m"].asDouble(), s.maxM!!, 0.0)
+    }
+
+    @Test fun payloadRoundTripsDepth16() {
+        val (d, c) = ArDepth.synthetic(8, 6)
+        val f = ArDepthFrame(8, 6, d, c, doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0), 500.0, 500.0, 320.0, 240.0, 640, 480, 7L)
+        val p = ArDepth.payload(f)
+        val bb = ByteBuffer.wrap(Base64.getDecoder().decode(p["depth_u16_b64"] as String)).order(ByteOrder.LITTLE_ENDIAN)
+        assertEquals(d.toList(), List(48) { bb.short.toInt() and 0xFFFF })
+        assertEquals(48, Base64.getDecoder().decode(p["conf_u8_b64"] as String).size)
+    }
+
+    @Test fun orbitCoverageMatchesPython() {
+        val poses = vec()["orbit_poses"].asList().map { p -> p.asList().map { it.asDouble() }.toDoubleArray() }
+        val cov = ArPoses.coverage(poses); val w = vec()["orbit_coverage"].asMap()
+        assertEquals(w["path_m"].asDouble(), cov.pathM, 1e-6); assertEquals(w["max_baseline_m"].asDouble(), cov.maxBaselineM, 1e-6)
+        assertEquals(w["angular_spread_deg"].asDouble(), cov.angularSpreadDeg, 1e-4); assertEquals(w["max_step_deg"].asDouble(), cov.maxStepDeg, 1e-4)
+        val s = ArCoreSession()
+        poses.forEach { s.add(ArDepthFrame(1, 1, null, null, it, 1.0, 1.0, 0.0, 0.0, 1, 1, 0L)) }
+        assertTrue(s.sufficient())
+        assertFailsWith<IllegalArgumentException> { ArPoses.coverage(listOf(doubleArrayOf(0.0, 0.0, 0.0, 0.0, 0.0, Double.NaN, 1.0))) }
     }
 }

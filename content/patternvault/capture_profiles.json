@@ -17,6 +17,6 @@
     "orbit":  {"status": "real", "route_hint": "hero_prop", "min_views": 24, "min_long_edge_px": 1280, "describe": "walk around one object (photogrammetry / MeshWeaver input)"},
     "sweep":  {"status": "real", "route_hint": "backdrop", "min_views": 40, "min_long_edge_px": 1280, "describe": "slow room/scene sweep (3DGS backdrop input)"},
     "video":  {"status": "real", "route_hint": "backdrop", "min_views": 12, "min_long_edge_px": 1280, "extract_fps": 2.0, "describe": "continuous video clip; desktop samples frames (ffmpeg) and keeps the sharpest novel frame per second"},
-    "depth_assist": {"status": "stub", "reason_key": "stub.lens.arcore_session", "describe": "ARCore depth/pose-assisted capture"}
+    "depth_assist": {"status": "real", "route_hint": "hero_prop", "min_views": 12, "min_long_edge_px": 640, "min_angular_spread_deg": 30.0, "describe": "ARCore pose(+depth)-assisted capture: each view carries an ARCore pose (and DEPTH16 where supported); the desktop measures pose coverage (phone recorder is real_unverified_on_device)"}
   }
 }

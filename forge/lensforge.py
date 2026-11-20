@@ -10,7 +10,7 @@ REAL (CPU, deterministic; pure-integer pixel math so FabricCore (Kotlin) reprodu
 
 REAL since 0.7.5: video capture ingest (system ffmpeg frame sampling, best-of-window keyframes, set assessment); the phone
 recorder (Camera2 + MediaRecorder) is in the APK as `real_unverified_on_device`. Focus control: see FocusController.
-STUB (refuses with `StubError`): ARCore session (Android-only SDK).
+REAL since 0.7.6: ARCore pose coverage (desktop); the phone ARCore session is `real_unverified_on_device`.
 
 NOT measured: view overlap / pose coverage (needs feature matching = COLMAP, C12) — reported as `overlap: "not_measured"`,
 never guessed. Decoding: PNG with the built-in decoder; JPEG/WebP via Pillow (extra `lens`, part of `dev`) — without Pillow a
@@ -306,10 +306,13 @@ def read_exif(data: bytes) -> CaptureTelemetry:
 # ------------------------------------------------------------------------------------------------ stubs
 
 class ARCoreSession:
-    """STUB: ARCore depth/pose-assisted capture — Android-only SDK, not in FabricCore."""
+    """ARCore pose-assisted capture (C10). Phone: PocketLoom `ArCoreCapture` (ARCore SDK, compiled, never run on a device —
+    `real_unverified_on_device`). Desktop: pose coverage of a capture set (path, baseline, angular spread) — the measured
+    parallax proxy for sets that carry ARCore poses (`forge.arcore.coverage`)."""
 
-    def start(self) -> None:
-        refuse("lens.arcore_session", "stub.lens.arcore_session", MILESTONE)
+    def coverage(self, poses: list[list[float]]) -> dict[str, Any]:
+        from forge import arcore
+        return arcore.coverage(poses)
 
 
 VIDEO_MAX_BYTES = 64 * 1024 * 1024
@@ -425,9 +428,7 @@ class FocusController:
         return AndroidController(self.state_dir, self.device).focus("auto", None, x, y)
 
 
-STUB_PROBES = {
-    "lens.arcore_session": lambda: ARCoreSession().start(),
-}
+STUB_PROBES: dict[str, Any] = {}      # C10 has no stubs left (0.7.6)
 
 
 # ------------------------------------------------------------------------------------------------ GroundWeave probe

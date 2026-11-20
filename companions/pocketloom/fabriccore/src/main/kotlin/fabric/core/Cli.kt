@@ -104,9 +104,7 @@ private fun usage(): Nothing {
 /** C9–C12: invoke every Kotlin stub; each must throw [StubException] (reported here), never return. */
 fun allStubs(): Map<String, Any?> {
     val probes: Map<String, () -> Unit> = mapOf(
-        "lens.arcore_session" to { ArCoreSession().start() },
         "recon.splatforge" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
-        "lens.mode.depth_assist" to { CaptureModes.require("depth_assist") },
     )
     return probes.mapValues { (id, f) ->
         try { f(); mapOf("refused" to false, "feature" to id) } catch (e: StubException) { e.toMap() + ("refused" to true) }

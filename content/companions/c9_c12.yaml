@@ -51,8 +51,9 @@ features:
      spec: "§4 'capture telemetry'; §9 'telemetry streaming'", note: "typed + range-checked contract; EXIF read via Pillow"}
   - {id: lens.offload_quality, milestone: C10, status: real, entry: "forge.lensforge:assess_or_reason",
      spec: "§8 'LensForge capture → RealityLoom/SplatForge on desktop/cluster'", note: "LoomLink recon.capture offload is assessed on the desktop; verdict stored in provenance"}
-  - {id: lens.arcore_session, milestone: C10, status: stub, entry: "forge.lensforge:ARCoreSession.start", kotlin: ArCoreSession,
-     reason_key: stub.lens.arcore_session, spec: "§9 'ARCore + DepthAnything V2'"}
+  - {id: lens.arcore_session, milestone: C10, status: real_unverified_on_device, entry: "forge.lensforge:ARCoreSession.coverage", kotlin: ArCoreSession,
+     android_impl: ArCoreCapture, spec: "§9 'ARCore + DepthAnything V2'",
+     note: "desktop pose coverage real (analytic orbit); phone ARCore SDK session (pose + intrinsics + DEPTH16 + camera image) compiled into the APK, never run on a device"}
   - {id: lens.video_capture, milestone: C10, status: real_unverified_on_device, entry: "forge.lensforge:VideoCapture.ingest",
      kotlin: VideoClips, android_impl: Camera2Video, spec: "§9 'Capture modes' (video)",
      note: "desktop ingest real (ffmpeg sampling + keyframes + assessment, LoomLink op lens.video); phone recorder Camera2+MediaRecorder never run on a device"}
@@ -67,8 +68,9 @@ features:
      spec: "§5.2 DepthAnything V2 output → metric", note: "scale/shift least squares on inverse depth from ≥2 metric anchors; scales any relative map, does not produce one"}
   - {id: depth.dense_estimate, milestone: C11, status: real, entry: "forge.depth:DepthAnythingV2.estimate", kotlin: DepthEstimator, ladder_op: depth.estimate,
      spec: "§5.2 'DepthAnything V2'", note: "DepthAnything V2 Small (Apache-2.0) ONNX on onnxruntime CPU, weights fetched with SHA-256; phone requests it via LoomLink offload op depth.estimate"}
-  - {id: depth.arcore, milestone: C11, status: stub, entry: "forge.depth:ARCoreDepth.estimate", kotlin: ArCoreSession,
-     reason_key: stub.depth.arcore, ladder_op: depth.estimate, spec: "§5.2 '(+ ARCore where available)'"}
+  - {id: depth.arcore, milestone: C11, status: real_unverified_on_device, entry: "forge.depth:ARCoreDepth.ingest", kotlin: ArDepth,
+     android_impl: ArCoreCapture, ladder_op: depth.estimate, spec: "§5.2 '(+ ARCore where available)'",
+     note: "desktop DEPTH16 decode + confident metric anchors + DepthAnything aligned to them (LoomLink op depth.arcore); phone Depth API capture never run on a device"}
   # ----------------------------------------------------------------------------------------------------- C12
   - {id: recon.route, milestone: C12, status: real, entry: "forge.realityloom:route", kotlin: ReconRoute, ladder_op: recon.plan,
      spec: "§7 'RealityLoom routes backdrop→splat, hero_prop→photogrammetry or MeshWeaver'"}

@@ -1,8 +1,8 @@
 package fabric.core
 
 /** C9–C12 stubs: an interface that exists for a stable contract but has NO implementation behind it. Calling one throws this —
- *  it never returns made-up output. `reasonKey` is the locale/string key (`stub.depth.arcore` ⇄ Android string
- *  `stub_depth_arcore`; the Python twin is `forge.stubs.StubError`, register: content/companions/c9_c12.yaml). */
+ *  it never returns made-up output. `reasonKey` is the locale/string key (`stub.recon.splatforge` ⇄ Android string
+ *  `stub_recon_splatforge`; the Python twin is `forge.stubs.StubError`, register: content/companions/c9_c12.yaml). */
 class StubException(val feature: String, val milestone: String, val reasonKey: String) :
     UnsupportedOperationException("[STUB $feature $milestone] $reasonKey") {
     fun toMap(): Map<String, Any?> = mapOf("stub" to true, "feature" to feature, "milestone" to milestone,

@@ -36,8 +36,8 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    # 0.7.4 (stub batch 1, C9): 20 real · 5 real_unverified_on_device (Android-only, compiled, never on a phone) · 8 stubs
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 6, 6)
+    # 0.7.6 (stub batch 2b, ARCore): 21 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 4 stubs (C12)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 8, 4)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -59,9 +59,9 @@ def test_register_check_catches_a_stub_that_returns(root: Path, monkeypatch: pyt
 
 def test_register_check_catches_unregistered_locale_key(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     reg = copy.deepcopy(registry.load(root))
-    next(f for f in reg["features"] if f["id"] == "depth.arcore")["reason_key"] = "stub.depth.nope"
+    next(f for f in reg["features"] if f["id"] == "recon.splatforge")["reason_key"] = "stub.recon.nope"
     monkeypatch.setattr(registry, "load", lambda r=None: reg)
-    assert any("depth.arcore: reason_key" in p for p in registry.check(root, "C11")["problems"])
+    assert any("recon.splatforge: reason_key" in p for p in registry.check(root, "C12")["problems"])
 
 
 def test_shared_vectors_are_current(root: Path) -> None:
@@ -217,10 +217,7 @@ def test_capture_set_rules_and_stub_modes(root: Path) -> None:
     assert lensforge.assess_set(imgs[:2], "burst", root)["reasons"] == ["too_few_usable_views"]
     dup = lensforge.assess_set([imgs[0], imgs[0], imgs[1], imgs[2]], "burst", root)
     assert dup["duplicates"] == [{"index": 1, "duplicate_of": 0}] and dup["usable_views"] == 3
-    for mode in ("depth_assist",):
-        with pytest.raises(StubError) as e:
-            lensforge.assess_set(imgs, mode, root)
-        assert is_stub_message(str(e.value))
+    assert lensforge.assess_set(imgs, "depth_assist", root)["reasons"] == ["too_few_usable_views"]   # real mode since 0.7.6
     with pytest.raises(ValueError):
         lensforge.assess_set(imgs, "nope", root)
 
@@ -290,10 +287,25 @@ def test_inverse_depth_alignment_recovers_metric_depth() -> None:
         depth.align_inverse_depth(-rel, anchors)                                      # inverted polarity is refused, not flipped
 
 
-def test_arcore_depth_is_a_refusing_stub() -> None:
-    with pytest.raises(StubError) as e:
-        depth.ARCoreDepth().estimate(b"")
-    assert is_stub_message(str(e.value))
+def test_arcore_depth_ingest_synthetic_frame(root: Path) -> None:
+    from forge import arcore
+    fr = arcore.synthetic_frame(160, 120)
+    v = depth.ARCoreDepth().ingest(arcore.payload(fr["depth_mm"], fr["confidence"], [0, 0, 0, 0, 0, 0, 1], {"image_w": 640, "image_h": 480}))
+    vec = json.loads((root / "tests" / "fixtures" / "arcore_vectors.json").read_text())
+    assert v["anchors"] == vec["anchors_160x120_640x480"] and v["dense"] == {"skipped": "no_image"}
+    assert all(a["depth_m"] > 0 for a in v["anchors"]) and 0 < v["valid_fraction"] < 1
+
+
+def test_arcore_pose_coverage_orbit() -> None:
+    import math
+
+    from forge import arcore
+    from forge.accept_c9_c12 import _orbit_poses
+    c = arcore.coverage(_orbit_poses())
+    assert abs(c["angular_spread_deg"] - 180) < 1e-3 and abs(c["max_step_deg"] - 15) < 1e-3 and abs(c["max_baseline_m"] - 1.2) < 1e-6
+    assert arcore.coverage([[0, 0, 0, 0, 0, 0, 1]])["path_m"] == 0.0
+    with pytest.raises(ValueError):
+        arcore.coverage([[0, 0, 0, 0, 0, math.nan, 1]])
 
 
 def test_dense_depth_without_weights_names_the_fetch_command(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -401,3 +413,22 @@ def test_acceptance_registered(root: Path) -> None:
     assert CX_ORDER == ["C9", "C10", "C11", "C12"]
     for m in CX_ORDER:
         assert m in INCREMENTS and INCREMENTS[m].runner is not None
+
+
+def test_loomlink_offload_depth_arcore(tmp_path: Path) -> None:
+    from forge import arcore
+    from forge.accept_companions import Desktop
+    from forge.loomlink import LinkClient
+
+    fr = arcore.synthetic_frame(32, 24)
+    d = Desktop(tmp_path / "d").start()
+    try:
+        c = LinkClient(d.srv.url, "p")
+        c.pair(d.srv.code, ["offload"])
+        r = c.offload({"id": "a", "op": "depth.arcore",
+                       "payload": arcore.payload(fr["depth_mm"], fr["confidence"], [0.1, 0, 0, 0, 0, 0, 1], {"image_w": 320, "image_h": 240})})
+        assert r["ok"] and r["value"]["width"] == 32 and r["value"]["anchors"] and r["value"]["dense"] == {"skipped": "no_image"}
+        bad = c.offload({"id": "b", "op": "depth.arcore", "payload": {"width": 4, "height": 4, "depth_u16_b64": "AAAA"}})
+        assert not bad["ok"] and "mismatch" in bad["error"]
+    finally:
+        d.halt()

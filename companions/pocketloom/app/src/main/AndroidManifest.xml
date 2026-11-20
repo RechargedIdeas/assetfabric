@@ -41,6 +41,9 @@
             </intent-filter>
         </activity>
 
+        <!-- ARCore is optional: the app installs and runs on phones without Google Play Services for AR (C10/C11). -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
         <!-- Write target for the system camera app (EXTRA_OUTPUT); app-private, single file. -->
         <provider
             android:name=".CaptureProvider"

@@ -27,4 +27,7 @@ android {
 
 dependencies {
     implementation(project(":fabriccore"))
+    // C10/C11 ARCore (optional at runtime: "AR Optional" app). ARCore SDK — Google APIs ToS + ARCore Additional Terms
+    // (commercial use allowed; in-app notice string `arcore_notice` required). THIRD_PARTY_NOTICES.md, INFERENCES C-68.
+    implementation("com.google.ar:core:1.47.0")
 }

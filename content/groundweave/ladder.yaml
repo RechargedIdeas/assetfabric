@@ -131,7 +131,8 @@ ops:
       Dense relative depth (C11): DepthAnything V2 Small (Apache-2.0) ONNX on the onnxruntime CPU EP, single intra-op thread in
       the probe so the float32 map is bit-identical pinned/unpinned. Weights are fetched with SHA-256 (`forge models fetch`);
       without them `verify` reports `model_absent` (fails only with FORGE_REQUIRE_MODELS=1). The ROCm EP rung stays planned — no
-      GPU on the build box. ARCore depth (phone) is a separate register row, still a stub.
+      GPU on the build box. ARCore depth (phone, `depth.arcore`) supplies metric anchors for this map; its phone half is
+      `real_unverified_on_device`.
     ladder:
       - {id: depthanything-v2-onnx, device: rocm, impl: planned}
       - {id: depthanything-v2-onnx-cpu, device: cpu, impl: real}

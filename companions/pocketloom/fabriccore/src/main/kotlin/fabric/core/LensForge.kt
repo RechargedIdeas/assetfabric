@@ -6,7 +6,8 @@ package fabric.core
  *  [Quality] (integer pixel math, bit-for-bit the Python `forge.lensforge.gray_metrics`; proven by shared vectors),
  *  [CaptureTelemetry] (typed contract). Decoding a JPEG to gray is the Android layer's job (BitmapFactory) — FabricCore stays
  *  Android-free, so [Quality] takes an integer gray array.
- *  STUB: [ArCoreSession] (ARCore is an Android-only SDK, not bundled). View overlap is NOT measured anywhere. */
+ *  [ArCoreSession] / [ArDepth] (ArCore.kt): platform-free half of ARCore capture; the SDK side is the app's `ArCoreCapture`.
+ *  View overlap from images is NOT measured; with ARCore poses, [ArPoses.coverage] measures baseline/angular spread. */
 object CaptureModes {
     const val MILESTONE = "C10"
 
@@ -94,7 +95,3 @@ data class CaptureTelemetry(val device: String = "", val focalLengthMm: Double? 
     }
 }
 
-/** STUB: ARCore depth/pose-assisted capture (also the on-phone rung of metric depth). */
-class ArCoreSession {
-    fun start(): Nothing = refuse("lens.arcore_session", CaptureModes.MILESTONE, "stub.lens.arcore_session")
-}

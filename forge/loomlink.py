@@ -335,6 +335,13 @@ class LinkServer:
                 res = {"ok": True, "value": depth.offload_estimate(job.get("payload") or {}, self._depth_estimator())}
             except Exception as ex:  # noqa: BLE001 — reported to the phone (e.g. model not fetched)
                 res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
+        elif op == "depth.arcore":              # C11: phone ARCore DEPTH16 frame → metric anchors (+ dense DepthAnything aligned)
+            try:
+                from forge import depth, models
+                est = self._depth_estimator() if models.status(depth.MODEL_ID, verify=False)["ready"] else None
+                res = {"ok": True, "value": depth.ARCoreDepth(est).ingest(job.get("payload") or {})}
+            except Exception as ex:  # noqa: BLE001 — reported to the phone
+                res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
         elif op in OPS:
             res = self._offload_cluster(job) if self.cluster is not None else None
             if res is None:

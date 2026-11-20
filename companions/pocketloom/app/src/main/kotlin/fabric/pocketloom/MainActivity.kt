@@ -36,6 +36,7 @@ import fabric.core.PocketLoomCore
 import fabric.core.asList
 import fabric.core.asMap
 import fabric.core.FocusRequest
+import fabric.core.ArCoreSession
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
@@ -51,7 +52,7 @@ class MainActivity : Activity() {
     private var pendingUri: PairingUri? = null
     private var selectedId: String? = null
 
-    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2; const val REQ_MIRROR = 3; const val REQ_CAMERA_PERM = 4; const val CLIP_SECONDS = 8 }
+    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2; const val REQ_MIRROR = 3; const val REQ_CAMERA_PERM = 4; const val CLIP_SECONDS = 8; const val AR_VIEWS = 12; const val AR_INTERVAL_MS = 500L }
     private var mirrorMode = "stills"
     private var focus: Camera2Focus? = null
 
@@ -219,6 +220,34 @@ class MainActivity : Activity() {
                 }
             }
         })
+        content.addView(button(R.string.arcore_capture) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAMERA_PERM); return@button
+            }
+            focus?.close(); focus = null                              // ARCore needs the camera to itself
+            val ar = ArCoreCapture(this)
+            val inst = ar.ensureInstalled(true)
+            if (inst != "installed") { out.text = getString(R.string.arcore_unavailable, inst); ar.close(); return@button }
+            out.setText(R.string.arcore_running)
+            ar.capture(AR_VIEWS, AR_INTERVAL_MS) { res ->
+                ar.close()
+                when (res) {
+                    is ArCoreCapture.Result.Unavailable -> ui { out.text = getString(R.string.arcore_unavailable, res.reason) }
+                    is ArCoreCapture.Result.Frames -> bg {
+                        val sess = ArCoreSession()
+                        res.frames.forEach(sess::add)
+                        val cov = if (sess.size > 0) sess.coverage() else null
+                        var sent = 0
+                        if (core.link.has("offload")) res.frames.filter { it.depthMm != null }.forEachIndexed { i, f ->
+                            sess.upload(core.link, f, "arcore-${core.nodeId}-${f.timestampNs}-$i"); sent++
+                        }
+                        ui { out.text = getString(R.string.arcore_done, sess.size, cov?.angularSpreadDeg ?: 0.0, cov?.maxBaselineM ?: 0.0,
+                            getString(if (res.depthSupported) R.string.arcore_depth_yes else R.string.arcore_depth_no), sent) }
+                    }
+                }
+            }
+        })
+        content.addView(text(getString(R.string.arcore_notice)))
         content.addView(out)
         bg {
             val n = core.store.list().count { it["kind"] == "capture" }
