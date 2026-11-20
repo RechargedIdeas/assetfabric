@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from forge.generators.callouts import load_personas, safety_check, sample, train_bigram
 from forge.generators.policy import FEATURES, K, forward, teacher_utility, train
@@ -77,3 +78,45 @@ def test_persona_lm_probes_match_sampler(root: Path) -> None:
     lm = json.loads((root / AI / "persona_lm.json").read_text())
     for pid, m in lm["models"].items():
         assert lm["probes"][pid] == [sample(m["bigram"], s) for s in range(1, 6)]
+
+
+# --- Q3: swap advisor <50 ms gate (GAME_SPEC §4.1) on 2 pinned cores -------------------------------------------
+
+def _sb(**kw):
+    base = {"pinned_cores": 2, "states": 17, "wall_ms_p95": 37.0, "wall_ms_max": 48.0, "parity": True,
+            "fidelity": {"of": 17, "top1_in_ref_top2": 17, "top1_agree": 17, "exact_order": 10}}
+    base.update(kw)
+    return base
+
+
+def test_swapbench_gate_passes_on_good_run() -> None:
+    from forge.milestones import _swapbench_check
+
+    errs: list[str] = []
+    _swapbench_check(_sb(), errs)
+    assert errs == []
+
+
+@pytest.mark.parametrize("bad", [
+    {"wall_ms_p95": 51.0},                       # over the §4.1 target
+    {"wall_ms_max": 151.0},                      # multi-frame hitch ceiling
+    {"pinned_cores": None},                      # not measured on the weakest-node budget
+    {"states": 3},                               # too few sampled freeze states
+    {"parity": False},                           # threaded != serial ranking
+    {"fidelity": {"of": 17, "top1_in_ref_top2": 16, "top1_agree": 17}},   # LOD pick outside full-fidelity top 2
+    {"fidelity": {"of": 10, "top1_in_ref_top2": 10, "top1_agree": 7}},    # top-1 agreement < 80 %
+])
+def test_swapbench_gate_rejects(bad: dict) -> None:
+    from forge.milestones import _swapbench_check
+
+    errs: list[str] = []
+    _swapbench_check(_sb(**bad), errs)
+    assert errs
+
+
+def test_swapbench_missing_is_an_error() -> None:
+    from forge.milestones import _swapbench_check
+
+    errs: list[str] = []
+    _swapbench_check({}, errs)
+    assert errs == ["swapbench did not run"]
