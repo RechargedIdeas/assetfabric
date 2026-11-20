@@ -91,7 +91,7 @@ F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, Shuttl
 
 - **Weakest acceptance node:** 2 CPU cores, no GPU. Every acceptance test must pass there.
 - Generator runtime budgets (SPEC §5.1): authoring 50–500 ms; runtime <100 ms where claimed.
-- Optimal swap forward-sim <50 ms; mobile upscale <5 ms (target).
+- Optimal swap forward-sim <50 ms: `tools/swapbench.gd` (17 sampled freeze states × 5 reps) pinned to 2 physical cores. Hard-gated (p95 ≤ 50 ms) in `forge accept F3` on the reference node (recorded p95 37.8 ms); FAST/CI mode records the p95 but gates only the 150 ms ceiling, threaded == serial parity and LOD fidelity, because GitHub's 2-core runners measure p95 ≈ 63–66 ms (quality gap P3 partial). Mobile upscale <5 ms (target, unmeasured).
 - Web PWA <45 MB compressed (G-WEB-01, gated by PWAPipeline at F7: sum of gzip-9 sizes).
 
 ## 6. Game acceptance (later milestones)

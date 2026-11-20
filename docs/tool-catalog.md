@@ -58,6 +58,7 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge gen <id> [--seed N]` | One brief; exit 1 on gate failure |
 | `forge palette [name] [--variant]` | Lists/echoes PatternVault swatches |
 | `forge accept <F>` | Headless Godot increment passes; result recorded |
+| `godot --headless --path games/game-zero -- --scene=swapbench [--reps=N]` | Swap-advisor benchmark + LOD fidelity (Q3); `forge accept F3` runs it pinned to 2 physical cores and gates p95 < 50 ms on the reference node |
 | `forge accept C1-C6` / `C<n>` | PocketLoom Gradle build + APK verify + Kotlin↔Python interop pass; `results/C<n>.json` recorded |
 | `forge accept C9-C12` / `C<n>` | MirrorWeave / LensForge / depth / SplatForge-path contracts verified, every stub refuses with a `[STUB …]` label, real CPU paths exact on 2 cores; `results/C<n>.json` |
 | `forge mirror info/push/latest/stream/control` | all real (0.7.4): stills/telemetry, `stream --source desktop|desktop-video` (X11 capture, CPU VP8/VP9), `control --action query|input` (Studio input); the phone halves are `real_unverified_on_device` |

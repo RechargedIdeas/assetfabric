@@ -18,9 +18,10 @@
 | Game increment | `launch-candidates` — unsigned Linux + Windows builds, debug Android APK, Web PWA (9.3 MB gzip, offline) of the vertical slice; saves round-trip desktop → Android → Web → desktop |
 | Companion track | **PocketLoom C1–C6** ✅ accepted (`forge accept C1-C6`) — standalone offline Android companion, debug APK ≈ 0.89 MB: on-device generation, library, capture, LoomLink pairing (code / QR URI / Tailscale), offload + sync. Not yet run on a phone (no device/KVM) |
 | Fleet track | **LoomCluster C7 + GroundWeave C8** ✅ accepted (`forge accept C7-C8`) — equal nodes that advertise/negotiate, steal work, retry and recover from crashes (proven on **loopback processes**, not a LAN); results are byte-identical on 1, 2 or 3 nodes; every generator has a declared GPU→CPU ladder, and its CPU path is proven on 2 pinned cores with GPUs hidden. PocketLoom offloads run on the fleet via LoomLink. No real GPU backend exists yet — every GPU rung is a labelled `planned` stub |
-| Companion interfaces | **C9 MirrorWeave · C10 LensForge · C11 depth · C12 SplatForge path** ✅ accepted as *typed interfaces + labelled stubs* (`forge accept C9-C12`) — 16 real CPU paths (stills/telemetry stream over LoomLink, integer-exact capture quality, pinhole depth + scale alignment, RealityLoom routing/bundle/plan, `.ply` validator), 14 stubs that refuse, 3 deferred. *Since the stub-replacement sprint (0.7.4–0.7.6): C9 live desktop video, C10 video + ARCore pose coverage, C11 dense depth (DepthAnything V2 Small, CPU) + ARCore depth ingest are real; phone halves are compiled as `real_unverified_on_device`. 0.7.7: C12 CPU photogrammetry (OpenCV SfM), MeshWeaver, GDGS Godot import and a tiny-scene CPU SplatForge trainer are real; only full-scale SplatForge GPU training is stubbed; nothing ran on a phone or GPU; 0.7.8: VoiceBridge (Vosk) and the Qwen2.5-0.5B persona micro-LM (CPU, desktop drafting) are real* |
-| Version | `0.7.3+f7` (PocketLoom `0.1.0-c6`) |
-| Next | F8 retro/console-style is optional per the spec — **confirm scope with the Producer first**; F9 is post/LiveOps readiness only. Non-spec follow-ups: first real GPU rung, on-device PocketLoom run, LAN cluster + node auth (see [TODO.md](TODO.md)) |
+| Companion interfaces | **C9 MirrorWeave · C10 LensForge · C11 depth · C12 SplatForge path** ✅ accepted (`forge accept C9-C12`). After the stub-replacement sprint (0.7.4–0.7.8) the register (`content/companions/c9_c12.yaml`) is **25 real CPU paths · 8 `real_unverified_on_device` (Kotlin compiled into the APK, never run on a phone) · 1 stub (full-scale SplatForge GPU training — no GPU here) · 3 deferred**. Nothing has run on a phone or a GPU |
+| Version | `0.7.11+f7` (PocketLoom `0.1.0-c6`) |
+| Quality-gap phase | Q1 CI shards (`0.7.9`) ✅ · Q2 G-A11Y-01 full (`0.7.10`) ✅ · Q3 swap advisor (`0.7.11`) ◐ **partial** — p95 37.8–39.4 ms on 2 pinned cores of the reference box (gated), ≈ 63–66 ms on GitHub's 2-core runners (reported only). Q4 slice-length work is an **unmerged WIP branch** (`feat/q4-slice`). See [TODO.md](TODO.md) |
+| Next | **Work paused 2026-11-20 by the Producer** after Q3. Resume point: quality gaps (a) slice length → (b) D-005 economy/loot/quest tables → (c) per-pair balance + Optuna evidence → (d) LoomCluster node auth + blobs → (e) Web single-thread fallback (D-001) → (f) doc nits; then F8 (confirmed by the Producer) and F9 (LiveOps readiness only). Exact steps: [HANDOVER.md §Resume point](HANDOVER.md#resume-point-paused-2026-11-20) |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -44,8 +45,8 @@ forge accept F6       # headless Godot acceptance (needs Godot 4.3); FORGE_ACCEP
 forge build --target all   # F7 platform builds → dist/ (needs `forge templates fetch`, JDK 17, Android SDK; see docs/packaging.md)
 forge accept C1-C6    # PocketLoom: Gradle build + debug APK verify + Kotlin↔Python LoomLink interop (JDK 17, Android SDK)
 forge accept C7-C8    # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (≈ 80 s; Godot for the runtime probes)
-forge accept C9-C12   # MirrorWeave / LensForge / depth / SplatForge-path contracts + labelled stubs (JDK 17, Android SDK; ≈ 1 min warm)
-forge mirror|lens|depth|recon --help   # C9–C12 hooks; stubs exit 3 with a [STUB …] label
+forge accept C9-C12   # MirrorWeave / LensForge / depth / SplatForge-path: real CPU paths + the one remaining labelled stub (JDK 17, Android SDK; ≈ 1 min warm)
+forge mirror|lens|depth|recon --help   # C9–C12 tools; the remaining stub (full-scale splat training) exits 3 with a [STUB …] label
 forge cluster demo    # 3 local nodes, work stealing + SIGKILL failover   ·   forge groundweave show|check|verify
 forge link serve --bind <LAN/Tailscale IP> [--cluster <node URL>]   # pair a PocketLoom phone (code + loomlink:// QR); offloads run on the fleet
 forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
@@ -66,7 +67,7 @@ Play Game Zero: `godot --path games/game-zero -- --scene=slice` (the vertical sl
 | `docs/schemas/` | JSON Schemas (manifest, telemetry) |
 | `docs/acceptance-tests/` | Milestone acceptance checklists |
 | `games/game-zero/` | Game Zero Godot 4 project ([README](games/game-zero/README.md)) |
-| `studio/` | Desktop Studio (PySide6) — stub |
+| `studio/` | Desktop Studio (PySide6) — minimal real tabs: Status, Mirror, Console (read-only `/` commands), Swatches, Voice, Persona |
 | `companions/pocketloom/` | PocketLoom Android companion + FabricCore (Kotlin) — C1–C6 ([README](companions/pocketloom/README.md)) |
 | `forge/loomcluster.py`, `forge/groundweave.py`, `content/groundweave/ladder.yaml` | LoomCluster (C7) equal-node scheduler + GroundWeave (C8) fallback ladder; `cluster/loomcluster/` holds its README |
 | `forge/mirrorweave.py`, `lensforge.py`, `depth.py`, `realityloom.py`, `stubs.py`, `registry.py`, `content/companions/c9_c12.yaml` | C9–C12 interfaces, real CPU paths and the real/stub/deferred register (`companions/pocketloom/fabriccore` has the Kotlin side) |
