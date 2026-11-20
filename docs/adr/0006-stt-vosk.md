@@ -17,6 +17,7 @@ Voice commands must work offline on mid-range Android within a shared CPU budget
 ## Consequences
 
 - One shared Vosk instance; intents are a constrained grammar.
+- Implemented 0.7.8 (`forge/voice.py`): vosk-model-small-en-us-0.15 (Apache-2.0), grammar = the closed intent phrase set, word-confidence gate. Synthetic-speech finding: "hold" ↔ "go" confusion (INFERENCES C-79) — a voice-grammar decision is pending.
 
 ## Alternatives considered
 

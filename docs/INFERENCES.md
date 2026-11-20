@@ -439,3 +439,33 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     capture → SfM → 3DGS → `.ply` → MeshWeaver/GDGS chain on CPU; it is not production quality and real-photo captures are
     untested. It is a separate op (`recon.splat_cpu`), not a rung of `recon.splat`, so routing/placement of full-scale jobs is
     unchanged.
+
+### Stub replacement batch 4 (0.7.8+f7) — VoiceBridge, persona micro-LM, Studio
+
+78. **C-78 VoiceBridge scope.** Desktop/Studio/CLI path only: Vosk small en-us constrained to the closed grammar (phrases =
+    every `VERBS` word, focus verbs × enemy kinds with/without "the", swap verbs × fighters with/without "to"), 300 ms silence
+    padding, word-confidence gate 0.7. The running Godot game has no microphone capture or Vosk binding (that needs a
+    GDExtension build — `planned`, like C-63); a spoken command becomes the same text a typed command is, so wiring it into the
+    game is a transport question, not a grammar one. whisper.cpp (the spec's optional accurate fallback) is not built. Measured
+    on synthetic speech (espeak-ng voices en-us / en-gb / en-us+m3 / en-us+f2) only — real microphones, noise and accents are
+    untested. espeak-ng is a GPL system tool used only to render test fixtures; it is not a dependency and never shipped.
+79. **C-79 "hold" ↔ "go" confusion (design finding).** On every synthetic voice "hold" is decoded as "go" (or "sola"), and
+    the two map to *opposite* intents (defensive vs aggressive). The confidence gate turns 4 of 6 into a re-ask; 2/40 remain
+    confident wrong actions (wrong-action rate 0.05, gated ≤ 0.08). Recommendation for the Producer: in the *voice* grammar drop
+    one-syllable "go" (keep "charge"/"push") or require "hold position"; not changed here because the grammar is shared with
+    typed commands and is a design decision.
+80. **C-80 Micro-LM = Qwen2.5-0.5B backbone, persona cards instead of LoRA.** The spec's backbone runs for real (int8 ONNX,
+    onnxruntime CPU, own decode loop). Per-character LoRA needs fine-tuning (PyTorch + GPU realistically) → `qwen-lora-rocm`
+    `planned`; persona conditioning is prompt-based (system card + the persona's own lines as few-shot turns). It is a
+    build-time authoring tool with a human review gate (`reviewed: false` by default), because 0.5B output is uneven (seen:
+    off-persona or chatty lines; the meta filter rejects echoes like "Sure, here's a different line"). The game keeps the cache
+    + bigram at runtime: no LM in the combat loop (G-AI-03) and no ONNX runtime in Godot (C-63). Determinism: identical tokens
+    for a fixed seed + thread count (probe uses 1 intra-op thread; pinned vs unpinned digests match).
+81. **C-81 Studio console stays read-only.** Remote phone input (MirrorWeave `drive_studio`) types into the same Console, so
+    slash commands are a closed allow-list of read-only queries; no shell, no file writes, no `forge` mutations, no network.
+    Character creator and MCP/ACP host remain unbuilt (listed in TODO, not mocked).
+82. **C-82 PocketLoom ONNX rung still a stub.** C-64 still holds: no small generative sprite/tile model has been trained, and
+    the persona micro-LM (512 MB) is not a LocalForge generator. The rung stays a labelled stub until `g1-sprite-onnx-tiny` exists.
+83. **C-83 Versions.** Patch bump `0.7.7+f7` → `0.7.8+f7`; no Kotlin/APK change (`0.4.0-c11`). New Python deps `vosk`,
+    `tokenizers` (both Apache-2.0); model weights only via `forge models fetch` (not in CI).
+

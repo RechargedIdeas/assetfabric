@@ -4,6 +4,43 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.8+f7] — 2026-11-20 — Stub replacement batch 4: VoiceBridge (Vosk), persona micro-LM (Qwen2.5-0.5B), Studio surfaces
+
+### Added
+- **VoiceBridge** (`forge/voice.py`, ADR-0006): offline Vosk STT (`vosk` 0.3.45, Apache-2.0) with **vosk-model-small-en-us-0.15**
+  (Apache-2.0, 41 MB zip, pinned URL + SHA-256, unpacked into gitignored `store/models/`). The recogniser is constrained to the
+  closed intent grammar (70 phrases built from `intent_grammar.gd` `VERBS` + the roster; out-of-lexicon `emberling` is spoken
+  as `em berling` and mapped back); a word-confidence gate (< 0.7 → `unknown`, reason `low_confidence`) prefers a re-ask to
+  a wrong action. `parse` mirrors `IntentGrammar.parse` and reads `VERBS` from the GDScript file, so typed and spoken commands
+  share one grammar. CLI `forge voice grammar|transcribe|intent|eval`. GroundWeave op `stt.voice` (`vosk-small-grammar-cpu`,
+  `requires_model`). Synthetic speech (espeak-ng, 10 commands × 2 voices, committed fixtures `tests/fixtures/voice/`):
+  **accuracy 0.90, wrong-action rate 0.05** (the only confident error: “hold” heard as “go” — C-79); 4 voices × 2 speeds
+  fresh renders: 0.89 / 0.05. Unconstrained decoding of the same audio: 0.18 — the grammar is what makes it usable.
+- **Persona micro-LM** (`forge/microlm.py`): the spec's shared backbone **Qwen2.5-0.5B-Instruct** (Apache-2.0), int8 ONNX
+  (onnx-community, pinned revision, SHA-256, 512 MB) on the onnxruntime CPU EP with an own KV-cache decoding loop (greedy or
+  seeded top-k) and `tokenizers` (Apache-2.0). Persona cards (traits + the persona's own lines as few-shot turns); every draft
+  passes the callout content-safety gateway plus a meta-chatter filter. `forge persona author --persona P --event E [-n] [--write]`
+  appends accepted drafts to `content/personas/lm_drafts.yaml` as `reviewed: false`; only `reviewed: true` lines are merged into
+  the callout cache. The game never loads the LM (G-AI-03); in-engine runtime stays the cache + bigram. ≈ 6 tok/s on 1 thread,
+  1–3 s per line on 2. GroundWeave op `lm.persona` (`qwen2.5-0.5b-int8-onnx-cpu`; `qwen-lora-rocm` planned — C-80).
+- **Studio** (`studio/assetfabric_studio/app.py`): new tabs **Swatches** (SwatchStudio — every PatternVault palette and
+  colour-blind variant as swatches), **Voice** (WAV → transcript → intent) and **Persona** (micro-LM drafts for review; Studio
+  writes nothing); the Console runs `/help /status /models /palettes /intent <text>` from a closed read-only allow-list
+  (remote phone input lands in the same box — C-81). Offscreen-tested.
+- `forge models` registry: `unpack: zip` entries (verified archive → idempotent safe extraction).
+- Tests `tests/test_b4_voice_lm.py` (model-backed ones skip without the weights; CI does not fetch them).
+
+### Changed
+- Extras: new `voice` (vosk) and `lm` (onnxruntime, tokenizers); both added to `dev`.
+- `callouts` generator merges human-reviewed micro-LM drafts (none today → cache bytes unchanged).
+- Version `0.7.7+f7` → `0.7.8+f7` (PocketLoom app unchanged, `0.4.0-c11`). INFERENCES C-78…C-83.
+
+### Not changed (stays stub/planned, with reasons)
+- PocketLoom LocalForge `onnx-small` rung stays a labelled stub (C-64 reaffirmed in C-82): no small generative sprite/cave
+  model exists to run on the phone; bundling onnxruntime-android with nothing to run would be a fake rung.
+- Per-character LoRA adapters (`qwen-lora-rocm`), whisper.cpp fallback, in-game microphone capture / Vosk GDExtension,
+  Studio character creator and MCP/ACP host: not built (C-80, C-78, C-81).
+
 ## [0.7.7+f7] — 2026-11-20 — Stub replacement batch 3: C12 CPU photogrammetry, SplatForge CPU rung, MeshWeaver, GDGS Godot import
 
 ### Added

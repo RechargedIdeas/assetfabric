@@ -27,4 +27,9 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | MediaRecorder (Android platform) | PocketLoom `Camera2Video` (C10) | Android SDK licence (platform) |
 | ARCore SDK `com.google.ar:core` 1.47.0 (Google Maven) | PocketLoom `ArCoreCapture` (C10/C11) — optional at runtime | **Google APIs Terms of Service + ARCore Additional Terms** (proprietary; commercial use allowed; app must disclose ARCore + Google ToS/Privacy Policy — in-app `arcore_notice`; INFERENCES C-68) |
 | `androidx.annotation` 1.3.0 (transitive via ARCore) | annotations only, inside the APK | Apache-2.0 |
+| vosk (optional extra `voice`, in `dev`) | VoiceBridge offline STT (desktop tooling; not in game builds or the APK) | Apache-2.0 |
+| **Model** vosk-model-small-en-us-0.15 (alphacephei.com, pinned file name + SHA-256) | VoiceBridge acoustic/lexicon model; fetched by `forge models fetch`, never committed or shipped. AGPL (daanzu) / LGPL (zamia) Vosk models are **never** used | Apache-2.0 |
+| tokenizers (optional extra `lm`, in `dev`) | Qwen tokenizer for the persona micro-LM (desktop tooling) | Apache-2.0 |
+| **Model weights** Qwen2.5-0.5B-Instruct int8 ONNX (`onnx-community/Qwen2.5-0.5B-Instruct`, pinned revision + SHA-256) | persona micro-LM line drafting (desktop/build-time only; never in the game). Qwen2.5-3B/-72B (non-Apache licences) are never used | Apache-2.0 |
+| espeak-ng (**system tool**, test-time only) | renders the synthetic-speech fixtures `tests/fixtures/voice/*.wav` and `forge voice eval --synth`; not a dependency, never linked or shipped | GPL-3.0-or-later (tool); fixture audio is generated data |
 | opencv-python-headless (optional extra `recon`, in `dev`) | C12 CPU photogrammetry (SIFT SfM) — desktop tooling; not in game builds or the APK. The wheel also bundles FFmpeg (LGPL-2.1, separate shared library, unused) | Apache-2.0 (OpenCV ≥ 4.5) · MIT (packaging) · bundled FFmpeg LGPL-2.1 |

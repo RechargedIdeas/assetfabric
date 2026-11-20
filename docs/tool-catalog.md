@@ -11,11 +11,11 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **G1-Tile** | — | NCA tilemaps / caves + solvability | F1 | **CA real** (`kind: tilemap`, solvability + floor-ratio gates); NCA later |
 | **G1-Audio** | — | Chiptune stems | F2 | **procedural real** (`kind: audio`, 4 macro-state stems + SFX, WAV) |
 | **Codegen** | — | Stats/abilities/chars → GDScript/`.tres` | F2 | **real** (`kind: codegen`, game_data.json + ability `.tres`, derived sprite briefs) |
-| **SwatchStudio** | Swatch | Live material tuning + CLI echo | F1 | **CLI** (`forge palette`, `forge gen --seed`); GUI with Studio |
+| **SwatchStudio** | Swatch | Live material tuning + CLI echo | F1 | **CLI** (`forge palette`, `forge gen --seed`) + Studio Swatches tab (0.7.8, read-only palette/colour-blind view) |
 | **ShuttleLine** | Shuttle | Multi-engine export | Godot@F1; multi@F7 | **real (F7)**: `shuttleline.contract/1` (`forge shuttle contract [--check]`), verified against every shipped PCK/APK (`dist/<target>/shuttle.json`); adapters `godot` + `generic-folder` (`forge shuttle export`) real, Unity/Unreal not built |
 | **BoltPack** | Bolt | Signed SBOM packages | F7 | **real, unsigned (F7)**: CycloneDX 1.5 SBOM from the engine's own copyright info + platform extras + game content, license allow-list audit (copyleft fails), `LICENSES/`, `dist/bolt/*.fabricbolt`; release signing TODO |
 | **PatternVault** | Vault | Versioned palettes/patterns | F1 | **real** (`content/patternvault/`, colour-blind variants) |
-| **WhisperWeft** | Weft | Voice-driven Studio commands | F7+ | deferred |
+| **WhisperWeft** | Weft | Voice-driven Studio commands | F7+ | VoiceBridge real (0.7.8: Vosk → closed grammar → intent; Studio Voice tab); voice → Studio command routing not built |
 | **RealityLoom** | Loom | Reconstruction orchestrator | C12 | route/bundle/plan/placement real; CPU photogrammetry (OpenCV SfM) real (0.7.7); GPU splat stage stub |
 | **SplatForge** | — | 3DGS training | C12 / F3–F4 backdrop | tiny-scene CPU trainer **real** (0.7.7, `recon.splat_cpu`, own NumPy isotropic 3DGS, ≤ 2k splats); full-scale **stub** (`recon.splat` gpu_required → loomcluster) |
 | **MeshWeaver** | — | Splat→mesh | Phase 2 | **real** CPU rung (0.7.7: density → surface nets → OBJ); SuGaR rung planned (GPU) |
@@ -64,6 +64,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge lens modes/assess/exif/session/focus/video` | all real on the desktop (0.7.5–0.7.6): `video` keyframe ingest (system ffmpeg), `session --kind arcore` pose coverage, `focus` queues a request for a paired phone (phone Camera2 side `real_unverified_on_device`) |
 | `forge depth distance/estimate` | real: `distance` (pinhole), `estimate` (DepthAnything V2 Small on onnxruntime CPU — needs `forge models fetch`; `--backend arcore` DEPTH16 ingest) |
 | `forge recon route/tools/bundle/plan/submit/check-splat/train/photogrammetry/mesh/godot-import` | all real except `train --stage splat` (full-scale GPU, exit 3) and `submit` (placement check, then SplatForge stub; nothing queued); `train --stage splat-cpu BUNDLE` is real (tiny scenes) |
+| `forge voice grammar/transcribe/intent/eval` | real (0.7.8): Vosk small en-us constrained to the intent grammar; needs `forge models fetch vosk-small-en-us-0.15` |
+| `forge persona author` | real (0.7.8): Qwen2.5-0.5B int8 ONNX drafts persona lines (safety + meta filter); `--write` queues them `reviewed: false` |
 | `forge link serve` | Prints one-time code + `loomlink://` URI (QR if `qrcode` installed); serves pairing/offload/sync |
 | `forge report` | Regenerates STATUS.md |
 | `forge sandbox doctor` / `run <brief>` | Lists real tiers; runs one brief sandboxed |

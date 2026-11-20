@@ -48,6 +48,9 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/generators/audio.py` | G1-Audio chiptune stems + SFX (WAV) | F2 |
 | `forge/generators/policy.py` | P-TargetSelect: NumPy behaviour cloning → JSON MLP + parity probe | F3 |
 | `forge/generators/callouts.py`, `content/personas/` | Safety-gated callout cache; persona bigram LM stand-in + mirrored sampler | F3 |
+| `forge/voice.py`, `forge/cli_voice.py` | VoiceBridge: Vosk STT constrained to the intent grammar (`VERBS` read from `intent_grammar.gd`), confidence gate, `forge voice` | F3 / 0.7.8 |
+| `forge/microlm.py` | Persona micro-LM: Qwen2.5-0.5B int8 ONNX (onnxruntime CPU), persona cards, review-gated drafts (`forge persona author`) merged into the callout cache | F3 / 0.7.8 |
+| `forge/splattrain.py` | SplatForge CPU rung: tiny-scene isotropic 3DGS trainer (NumPy, analytic gradients) | C12 / 0.7.7 |
 | `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
 | `forge/report.py` | STATUS.md generator | F1 |
 | `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
@@ -81,7 +84,7 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
 | `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
 | `forge/mirrorweave.py`, `forge/lensforge.py`, `forge/depth.py`, `forge/realityloom.py`, `forge/stubs.py`, `forge/registry.py`, `content/companions/c9_c12.yaml`, `content/patternvault/capture_profiles.json` | C9–C12: MirrorWeave frame hub + LoomLink routes, LensForge quality/modes/telemetry, pinhole depth + alignment, RealityLoom route/bundle/plan + `.ply` validator; the register marks each capability real / stub / deferred and is cross-checked against code, locales, Kotlin and the ladder (Kotlin: `fabric/core/{Stubs,MirrorWeave,LensForge,Depth,Recon}.kt`) | real CPU paths + labelled stubs (see §C9–C12) |
-| `studio/` | Studio GUI | stub |
+| `studio/` | Studio GUI (PySide6): Status, Mirror, Console (read-only `/` commands), Swatches, Voice, Persona | real, minimal (0.7.4–0.7.8) |
 | `forge/loomcluster.py`, `cluster/loomcluster/` | LoomCluster (C7) equal-node scheduler | real, loopback-proven (see §LoomCluster / GroundWeave) |
 | `forge/groundweave.py`, `content/groundweave/ladder.yaml` | GroundWeave (C8) GPU→CPU ladder | real; all GPU rungs `planned` |
 
@@ -138,7 +141,7 @@ The sim is separated from rendering so it can run headless (acceptance, balance,
 | Inference | ONNX Runtime (NNAPI / WASM SIMD128 / CPU / DirectML / Vulkan); AMD: DirectML or ROCm, not CUDA-first |
 | RL training | PyTorch + Ray RLlib / CleanRL ↔ headless Godot gRPC |
 | Micro LM | Shared backbone (Qwen2.5-0.5B or TinyLlama) + per-character LoRA |
-| STT | Vosk primary; whisper.cpp optional |
+| STT | Vosk primary (real on desktop since 0.7.8, grammar-constrained); whisper.cpp optional (not built) |
 | P2P | Godot WebRTCMultiplayerPeer + STUN; **TURN mandatory** |
 | Telemetry | Structured events → SQLite/DuckDB + WS to Studio |
 | Data stores | SQLite; content-addressed blobs; MLflow; DuckDB analytics |
