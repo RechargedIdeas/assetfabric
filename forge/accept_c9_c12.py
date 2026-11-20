@@ -12,8 +12,11 @@ paths that are cheap and spec-grounded, and stubs that **refuse** instead of fak
 * Kotlin (FabricCore) reproduces the shared vectors and refuses in its stubs (full mode: JDK 17 + Android SDK, same as C1–C6);
   fast mode runs the Python half only and says so.
 
-It does NOT prove: live screen/video streaming, input injection, ARCore, dense depth, any reconstruction, anything on a phone
-or a GPU. Those are stubs by design (SPEC §13 lists C9–C12 as milestones; their full feature set is future work).
+Since 0.7.4 (stub batch 1) C9 also proves real desktop paths on real data: X11 capture (Xvfb), CPU VP8/VP9 encode → signed
+WebSocket → decode with a PSNR floor, decoder resync after packet loss, phone H.264 packets decoded on the desktop, the
+desktop → phone input outbox with per-event MACs verified by Kotlin, and phone → Studio input turned into Qt events.
+Rows marked `real_unverified_on_device` have a compiled Android implementation (APK built + lint in full mode) that has
+never run on a phone. It does NOT prove anything on a phone or a GPU.
 """
 
 from __future__ import annotations
@@ -69,6 +72,7 @@ def _png(kind: str, w: int = 640, h: int = 480, seed: int = 1) -> bytes:
 def _stubs_refuse(ms: str, root: Path) -> dict[str, Any]:
     r = registry.check(root, ms)
     return {"ok": r["ok"], "problems": r["problems"], "stubs": r["stubs"], "real": r["real"],
+            "real_unverified_on_device": r["real_unverified_on_device"],
             "refusals": {k: v["message"][:110] for k, v in r["stub_refusals"].items()}}
 
 
@@ -117,7 +121,8 @@ def _frames_contract() -> dict[str, Any]:
     rejects("telemetry_must_be_json", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "telemetry", "png", 0, 0, png))
     rejects("oversize", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "screen", "png", 0, 0, png + b"\0" * mirrorweave.MAX_FRAME_BYTES))
     rejects("empty", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "screen", "png", 0, 0, b""))
-    rejects("video_is_stub", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "camera_video", "h264", 0, 0, png), StubError)
+    rejects("video_kind_needs_video_bytes", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "camera_video", "h264", 0, 0, png))
+    rejects("av1_unsupported", lambda: mirrorweave.FrameEnvelope("s", 0, 0, "screen", "av1", 0, 0, png))
     with tempfile.TemporaryDirectory(prefix="mw-hub-") as td:
         hub = mirrorweave.FrameHub(Path(td), ring=3)
         for seq in (0, 1, 4):                                     # 2 and 3 never arrive → 2 dropped
@@ -159,16 +164,20 @@ def _mirror_linkloop(root: Path, tmp: Path) -> dict[str, Any]:
         qs = c.mirror_control(mirrorweave.ControlMessage("desktop", "query", "mirror.stats"))
         bad_q = _http_err(lambda: c.mirror_control(mirrorweave.ControlMessage("desktop", "query", "rm -rf /")))
         android = _http_err(lambda: c.mirror_control(mirrorweave.ControlMessage("android", "input", "tap")))
-        studio = _http_err(lambda: c.mirror_control(mirrorweave.ControlMessage("desktop", "input", "key")))
         focus = _http_err(lambda: c.mirror_control(mirrorweave.ControlMessage("desktop", "focus", "x")))
+        studio_ok = c.mirror_control(mirrorweave.ControlMessage("desktop", "input", "key", {"key": "a"}))
+        studio_bad = _http_err(lambda: c.mirror_control(mirrorweave.ControlMessage("desktop", "input", "key", {"key": "F13"})))
+        mirrorweave.AndroidController(d.srv.state_dir, "phone-a").send(mirrorweave.ControlMessage("android", "input", "tap", {"x": 0.5, "y": 0.5}))
+        polled = c.mirror_input_poll()
         out["frames"] = {"pushed": [p["seq"] for p in pushed], "latest_identical": got == png2, "telemetry_ok": t["accepted"],
                          "stale_status": stale[0], "streams": sorted(latest["stats"])}
         out["control"] = {"status_query_ok": q["ok"] and q["value"]["version"] is not None, "groundweave_ok": qg["ok"],
                           "stats_ok": qs["ok"] and "screen" in qs["value"],
                           "not_allowlisted": {"status": bad_q[0], "error": bad_q[1].get("error", "")[:80]}}
-        out["stubs_501"] = {k: {"status": v[0], "stub": v[1].get("stub"), "label": is_stub_message(v[1].get("error", "")),
-                                "key": v[1].get("key")} for k, v in (("android_input", android), ("studio_input", studio),
-                                                                      ("camera_focus", focus))}
+        out["remote_refused"] = {"android_input_from_network": android[0], "focus_from_network": focus[0]}
+        out["studio_input"] = {"accepted_seq": studio_ok.get("seq"), "spooled": len(d.srv.studio.read()),
+                               "not_allowlisted": studio_bad[0]}
+        out["input_poll"] = {"events": [e["event"] for e in polled], "signed": all(len(e["sig"]) == 64 for e in polled)}
         # capability model: a device without `mirror`/`drive_studio` is refused; unsigned requests too
         weak = LinkClient(url, "phone-b")
         weak.pair(d.srv.code, ["offload"])
@@ -180,7 +189,9 @@ def _mirror_linkloop(root: Path, tmp: Path) -> dict[str, Any]:
         out["ok"] = bool(
             out["public_info"]["ok"] and [p["seq"] for p in pushed] == [0, 1] and got == png2 and stale[0] == 400
             and out["control"]["status_query_ok"] and out["control"]["groundweave_ok"] and out["control"]["stats_ok"]
-            and bad_q[0] == 403 and all(v["status"] == 501 and v["stub"] and v["label"] for v in out["stubs_501"].values())
+            and bad_q[0] == 403 and android[0] == 403 and focus[0] == 403
+            and studio_ok.get("ok") and len(d.srv.studio.read()) == 1 and studio_bad[0] == 403
+            and [e["event"] for e in polled] == [{"type": "tap", "x": 0.5, "y": 0.5}]
             and no_mirror[0] == 403 and no_drive[0] == 403 and unsigned[0] == 403)
     finally:
         d.halt()
@@ -198,21 +209,76 @@ def _kotlin_mirror(root: Path, tmp: Path, b: dict[str, Any]) -> dict[str, Any]:
         rc0, push = jar(root, "mirror-push", "--file", str(f), "--stream", "kscreen", "--seq", "0", home=home)
         rc1, stale = jar(root, "mirror-push", "--file", str(f), "--stream", "kscreen", "--seq", "0", home=home)
         rc2, q = jar(root, "mirror-query", "--name", "forge.status", home=home)
-        rc3, inp = jar(root, "mirror-query", "--action", "input", "--name", "tap", home=home)
+        rc3, inp = jar(root, "studio-key", "--key", "q", home=home)
         env = d.srv.mirror.latest("kscreen")
         rc4, stubs = jar(root, "stubs")
+        vp8 = root / "tests" / "fixtures" / "video" / "tiny_vp8.ivf"
+        rc5, vpush = jar(root, "mirror-video-push", "--file", str(vp8), "--codec", "vp8", "--stream", "kvideo", home=home)
+        h264 = root / "tests" / "fixtures" / "video" / "tiny_h264.h264"
+        rc6, hpush = jar(root, "mirror-video-push", "--file", str(h264), "--codec", "h264", "--stream", "kh264", home=home)
+        ctl = mirrorweave.AndroidController(d.srv.state_dir, _kotlin_client_id(home))
+        ctl.send(mirrorweave.ControlMessage("android", "input", "swipe", {"x": 0.0, "y": 1.0, "x2": 1.0, "y2": 0.0, "duration_ms": 250}))
+        ctl.send(mirrorweave.ControlMessage("android", "input", "key", {"key": "back"}))
+        ctl.focus("manual", 0.25)
+        rc7, poll = jar(root, "mirror-input-poll", home=home)
+        vt = d.srv.mirror.video("kvideo")
+        ht = d.srv.mirror.video("kh264")
+        try:
+            from forge import mirrorvideo as mv
+            dec_v = len(mv.decode_packets("vp8", mv.parse_ivf((d.srv.state_dir / "mirror" / "kvideo" / "session.ivf").read_bytes())[1]))
+            dec_h = len(mv.decode_packets("h264", [(d.srv.state_dir / "mirror" / "kh264" / "session.h264").read_bytes()]))
+        except Exception as e:  # noqa: BLE001
+            dec_v = dec_h = f"{type(e).__name__}: {e}"
+        studio_rows = d.srv.studio.read()
     finally:
         d.halt()
+    performed = poll.get("performed", []) if rc7 == 0 else []
+    want_perf = [{"gesture": [{"points": [[0.0, 2399.0], [1079.0, 0.0]], "duration_ms": 250}]}, {"global": "back"},
+                 {"focus": "manual", "diopters": 4.0}]
     refused = all(v.get("refused") and str(v.get("message", "")).startswith("[STUB ") for v in stubs.values()) if rc4 == 0 else False
     suites = _suites_ok(b, "C9C12Test")
     res = {"pair_caps": pres.get("caps"), "push": push, "desktop_has_identical_bytes": env is not None and env.data == png,
            "stale_push": {"exit": rc1, "status": stale.get("status")}, "query_ok": rc2 == 0 and q.get("ok") is True,
-           "studio_input_stub": {"exit": rc3, "status": inp.get("status"), "label": str(inp.get("error", ""))[:40]},
+           "studio_key": {"exit": rc3, "seq": inp.get("seq"), "spooled": [r["event"] for r in studio_rows]},
+           "video_push": {"vp8": {"exit": rc5, "pushed": vpush.get("pushed"), "track": vt.stats() if vt else None, "decoded": dec_v},
+                          "h264": {"exit": rc6, "pushed": hpush.get("pushed"), "track": ht.stats() if ht else None, "decoded": dec_h}},
+           "input_poll": {"exit": rc7, "performed": performed, "expected": want_perf},
            "kotlin_stubs": {"count": len(stubs), "all_refuse": refused}, "suites": suites}
     res["ok"] = bool(pc == 0 and rc0 == 0 and push.get("accepted") and res["desktop_has_identical_bytes"] and rc1 == 3
-                     and stale.get("status") == 400 and res["query_ok"] and rc3 == 3 and inp.get("status") == 501
-                     and "[STUB" in str(inp.get("error", "")) and refused and suites["ok"])
+                     and stale.get("status") == 400 and res["query_ok"] and rc3 == 0
+                     and [r["event"] for r in studio_rows] == [{"type": "key", "key": "q", "shift": False}]
+                     and rc5 == 0 and vpush.get("pushed") == 8 and dec_v == 8 and rc6 == 0 and hpush.get("pushed") == 8 and dec_h == 8
+                     and rc7 == 0 and performed == want_perf and refused and suites["ok"])
     return res
+
+
+def _kotlin_client_id(home: Path) -> str:
+    """FabricCore's node id (= its LoomLink client id), persisted by PocketLoomCore in `<home>/node.json`."""
+    return json.loads((home / "node.json").read_text(encoding="utf-8"))["node_id"]
+
+
+def _apk_has_android_impls(root: Path, b: dict[str, Any]) -> dict[str, Any]:
+    """The `real_unverified_on_device` rows' platform classes are in the built APK's manifest/dex, lint has 0 errors.
+    This proves the code compiles and is packaged — not that it works on a phone."""
+    from forge.packaging import build_tool, find_android_sdk
+
+    apk = root / b["apk"]["path"] if b.get("apk") else None
+    sdk = find_android_sdk(root)
+    aapt = build_tool(sdk, "aapt") if sdk else None
+    if not (apk and apk.exists() and aapt):
+        return {"ok": False, "error": "APK or aapt missing"}
+    xml = subprocess.run([str(aapt), "dump", "xmltree", str(apk), "AndroidManifest.xml"], capture_output=True, text=True).stdout
+    impls = sorted({f["android_impl"] for f in registry.features(None, root) if f.get("status") == "real_unverified_on_device"})
+    import zipfile
+    with zipfile.ZipFile(apk) as z:
+        dex = b"".join(z.read(n) for n in z.namelist() if n.endswith(".dex"))
+    found = {c: (f"Lfabric/pocketloom/{c};".encode() in dex) for c in impls}
+    services = {c: (c in xml) for c in ("ScreenMirrorService", "MirrorAccessibilityService")}
+    perms = {p: (p in xml) for p in ("FOREGROUND_SERVICE_MEDIA_PROJECTION", "BIND_ACCESSIBILITY_SERVICE", "android.permission.CAMERA")}
+    lint_errors = (b.get("lint") or {}).get("errors")
+    return {"ok": all(found.values()) and all(services.values()) and all(perms.values()) and lint_errors == 0,
+            "classes_in_dex": found, "manifest_services": services, "manifest_permissions": perms, "lint_errors": lint_errors,
+            "apk_bytes": b["apk"]["bytes"], "verified_on_device": False}
 
 
 def _cli_stubs(root: Path, cmds: list[list[str]]) -> dict[str, Any]:
@@ -235,8 +301,11 @@ def c9_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["register"] = _stubs_refuse("C9", root)
         r["contract"] = _frames_contract()
         r["loomlink"] = _mirror_linkloop(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["mirror", "stream", "--source", "screen"], ["mirror", "stream", "--source", "camera-video"],
-                                           ["mirror", "control", "--target", "android"]])
+        r["video"] = _mirror_video(tmp)
+        r["ws_transport"] = _mirror_ws(tmp)
+        r["desktop_capture"] = _mirror_desktop_capture()
+        r["studio"] = _mirror_studio(root, tmp)
+        r["cli"] = _mirror_cli(root, tmp)
         r["groundweave"] = _ladder(root, ["mirror.encode"], [])
         r["cpu_2core"] = _verify(root, "mirror.encode")
         if full:
@@ -245,9 +314,190 @@ def c9_run(root: Path) -> tuple[int, dict[str, Any]]:
                           **({"log_tail": b.get("log_tail", "")[-1500:]} if not b["ok"] else {})}
             if b["ok"]:
                 r["kotlin_interop"] = _kotlin_mirror(root, tmp, b)
+                r["apk"] = _apk_has_android_impls(root, b)
         return 0, r
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _rgb_frames(n: int = 20, w: int = 160, h: int = 120) -> list[Any]:
+    y, x = np.mgrid[0:h, 0:w]
+    out = []
+    for i in range(n):
+        f = np.stack([(x * 1.5 + i * 3) % 256, (y * 2) % 256, ((x + y) // 2 + i * 5) % 256], -1).astype(np.uint8)
+        f[30:60, 20 + i * 3:50 + i * 3] = [255, 40, 40]
+        out.append(f)
+    return out
+
+
+PSNR_FLOOR_DB = 28.0     # [INFERENCE C-55] desktop CPU video gate on the synthetic clip at 1.5 Mbit/s
+
+
+def _mirror_video(tmp: Path) -> dict[str, Any]:
+    from forge import mirrorvideo as mv
+
+    av = mv.available()
+    if not av["vp8"]:
+        return {"ok": False, "error": "system ffmpeg with libvpx is required for C9 video", "available": av}
+    fr = _rgb_frames()
+    rows: dict[str, Any] = {}
+    ok = True
+    for codec in ("vp8", "vp9"):
+        if not av[codec]:
+            rows[codec] = {"ok": False, "error": "encoder missing"}
+            ok = False
+            continue
+        enc = mv.CpuVideoEncoder(160, 120, codec, gop=10)
+        pk = enc.encode(fr)
+        dec = mv.decode_packets(codec, pk, 160, 120)
+        p = min(mv.psnr(a, b) for a, b in zip(fr, dec)) if len(dec) == len(fr) else 0.0
+        keys = [i for i, x in enumerate(pk) if mv.is_keyframe(codec, x)]
+        good = len(pk) == len(fr) and keys == [0, 10] and p >= PSNR_FLOOR_DB
+        rows[codec] = {"ok": good, "packets": len(pk), "bytes": sum(map(len, pk)), "keyframes_at": keys, "min_psnr_db": round(p, 2)}
+        ok = ok and good
+    # loss + resync on a FrameHub
+    pk = mv.CpuVideoEncoder(160, 120, "vp8", gop=10).encode(fr)
+    hub = mirrorweave.FrameHub(tmp / "vhub")
+    for i, x in enumerate(pk):
+        if i not in (3, 4):
+            hub.accept(mirrorweave.FrameEnvelope("v", i, i, "screen_video", "vp8", 160, 120, x, mv.is_keyframe("vp8", x)))
+    st = hub.video("v").stats()
+    import io
+
+    from PIL import Image
+    last = np.asarray(Image.open(io.BytesIO(mirrorweave.decode_latest(tmp / "vhub", "v"))).convert("RGB"))
+    resync = {"skipped": st["skipped"], "keyframes": st["keyframes"], "latest_psnr_db": round(mv.psnr(last, fr[-1]), 2)}
+    resync["ok"] = st["skipped"] == 5 and st["keyframes"] == 2 and resync["latest_psnr_db"] >= PSNR_FLOOR_DB
+    return {"ok": ok and resync["ok"], "codecs": rows, "loss_resync": resync, "psnr_floor_db": PSNR_FLOOR_DB}
+
+
+def _mirror_ws(tmp: Path) -> dict[str, Any]:
+    try:
+        from forge.mirrorws import MirrorWsClient, MirrorWsServer, pack
+    except ImportError as e:
+        return {"ok": False, "error": f"websockets missing ({e}); install the `mirror` extra"}
+    from forge import mirrorvideo as mv
+
+    d = Desktop(tmp / "deskws", allow=("mirror", "offload")).start()
+    ws = MirrorWsServer(d.srv).start()
+    out: dict[str, Any] = {}
+    try:
+        c = LinkClient(d.srv.url, "phone-ws")
+        c.pair(d.srv.code, ["mirror"])
+        fr = _rgb_frames(15)
+        t0 = __import__("time").perf_counter()
+        with MirrorWsClient(ws.url, c) as cl:
+            acks = [cl.send(e) for e in mirrorweave.VideoStreamSource("wsv", "vp8", 160, 120, rgb_frames=fr).frames()]
+            pk0 = mv.CpuVideoEncoder(160, 120, "vp8").encode(fr[:1])[0]
+            env = mirrorweave.FrameEnvelope("wsv", 100, 1, "screen_video", "vp8", 160, 120, pk0, True)
+            bad = bytearray(pack(c, env))
+            bad[-1] ^= 0xFF
+            tampered = cl.send_raw(bytes(bad))
+            good = pack(c, env)
+            first, replay = cl.send_raw(good), cl.send_raw(good)
+        wall = __import__("time").perf_counter() - t0
+        weak = LinkClient(d.srv.url, "weak-ws")
+        weak.pair(d.srv.code, ["offload"])
+        try:
+            with MirrorWsClient(ws.url, weak):
+                no_cap = "accepted"
+        except PermissionError:
+            no_cap = "refused"
+        dec = mv.decode_packets("vp8", mv.parse_ivf((d.srv.state_dir / "mirror" / "wsv" / "session.ivf").read_bytes())[1])
+        p = min(mv.psnr(a, b) for a, b in zip(fr, dec)) if len(dec) >= len(fr) else 0.0
+        out = {"frames_acked": sum(1 for a in acks if a.get("type") == "ack"), "tampered": tampered.get("status"),
+               "replay": replay.get("status"), "first_ok": first.get("type"), "no_mirror_cap": no_cap,
+               "decoded_min_psnr_db": round(p, 2), "wall_s_15_frames": round(wall, 3)}
+        out["ok"] = (out["frames_acked"] == 15 and tampered.get("status") == 403 and replay.get("status") == 403
+                     and first.get("type") == "ack" and no_cap == "refused" and p >= PSNR_FLOOR_DB)
+    finally:
+        ws.stop()
+        d.halt()
+    return out
+
+
+def _mirror_desktop_capture() -> dict[str, Any]:
+    import os
+    import time
+
+    from forge import mirrorvideo as mv
+
+    if not shutil.which("Xvfb"):
+        return {"ok": False, "error": "Xvfb is required to prove desktop capture headless (apt install xvfb)"}
+    disp = f":{80 + os.getpid() % 15}"
+    x = subprocess.Popen(["Xvfb", disp, "-screen", "0", "320x240x24", "-nolisten", "tcp"], stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL)
+    try:
+        time.sleep(1.0)
+        st = list(mirrorweave.DesktopScreenSource("desk", disp, fps=10, n=3).frames())
+        vid = list(mirrorweave.VideoStreamSource("deskv", "vp8", 320, 240, fps=10, display=disp, n=5).frames())
+        dec = mv.decode_packets("vp8", [e.data for e in vid], 320, 240)
+        out = {"stills": len(st), "still_size": [st[0].width, st[0].height] if st else None, "video_packets": len(vid),
+               "first_is_keyframe": bool(vid and vid[0].keyframe), "decoded": len(dec)}
+        out["ok"] = len(st) == 3 and out["still_size"] == [320, 240] and len(vid) == 5 and out["first_is_keyframe"] and len(dec) == 5
+        return out
+    finally:
+        x.kill()
+        x.wait()
+
+
+_STUDIO_PROBE = r'''
+import os, sys, json
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+sys.path.insert(0, "studio")
+from pathlib import Path
+from PySide6.QtWidgets import QApplication
+from assetfabric_studio.app import StudioWindow, StudioInputBridge
+from forge.mirrorweave import StudioInputSpool
+app = QApplication([])
+td = Path(sys.argv[1])
+w = StudioWindow(td); w.show(); w.tabs.setCurrentIndex(2); app.processEvents()
+sp = StudioInputSpool(td / "mirror" / "studio_input.jsonl")
+b = StudioInputBridge(w, sp)
+cw = w.centralWidget(); gp = w.console.mapTo(cw, w.console.rect().center())
+sp.push({"type": "pointer", "action": "click", "x": gp.x() / (cw.width() - 1), "y": gp.y() / (cw.height() - 1)})
+for k in "hi": sp.push({"type": "key", "key": k})
+sp.push({"type": "key", "key": "a", "shift": True})
+n = b.poll(); typed = w.console.text()
+sp.push({"type": "key", "key": "enter"}); b.poll()
+print(json.dumps({"n": n, "typed": typed, "log": w.log.toPlainText(), "healthy": w.refresh_status()["healthy"]}))
+'''
+
+
+def _mirror_studio(root: Path, tmp: Path) -> dict[str, Any]:
+    try:
+        import PySide6  # noqa: F401
+    except ImportError:
+        return {"ok": False, "error": "PySide6 missing — install the `studio` extra to prove Studio input"}
+    p = subprocess.run([sys.executable, "-c", _STUDIO_PROBE, str(tmp / "studio")], cwd=root, capture_output=True, text=True,
+                       timeout=120)
+    try:
+        out = json.loads(p.stdout.strip().splitlines()[-1])
+    except (ValueError, IndexError):
+        return {"ok": False, "exit": p.returncode, "stderr": p.stderr[-600:]}
+    out["ok"] = out.get("n") == 4 and out.get("typed") == "hiA" and out.get("log") == "hiA"
+    return out
+
+
+def _mirror_cli(root: Path, tmp: Path) -> dict[str, Any]:
+    def cli(*argv: str) -> tuple[int, dict[str, Any]]:
+        p = subprocess.run([sys.executable, "-m", "forge.cli", *argv], cwd=root, capture_output=True, text=True, timeout=60)
+        try:
+            return p.returncode, json.loads(p.stdout)
+        except ValueError:
+            return p.returncode, {"raw": p.stdout[-200:], "err": p.stderr[-300:]}
+    sd = tmp / "cli-state"
+    a = cli("mirror", "input", "--state-dir", str(sd), "--device", "phone-a", "swipe", "--x", "0.1", "--y", "0.9", "--x2", "0.1", "--y2", "0.1")
+    b = cli("mirror", "input", "--state-dir", str(sd), "--device", "phone-a", "focus", "--mode", "manual", "--distance-m", "0.5")
+    bad = cli("mirror", "input", "--state-dir", str(sd), "--device", "phone-a", "key", "--key", "power")
+    info = cli("mirror", "info")
+    rows = mirrorweave.InputOutbox(sd / "mirror" / "outbox").read("phone-a")
+    out = {"queued": [r["event"]["type"] for r in rows], "bad_key_exit": bad[0],
+           "info_unverified": [f["id"] for f in info[1].get("features", []) if f.get("status") == "real_unverified_on_device"],
+           "info_stubs": [f["id"] for f in info[1].get("features", []) if f.get("status") == "stub"]}
+    out["ok"] = a[0] == 0 and b[0] == 0 and bad[0] == 1 and out["queued"] == ["swipe", "focus"] and not out["info_stubs"] \
+        and len(out["info_unverified"]) == 4
+    return out
 
 
 # ====================================================================================== C10
@@ -363,8 +613,7 @@ def c10_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["sets"] = _lens_sets(root)
         r["telemetry"] = _lens_telemetry()
         r["offload"] = _lens_offload(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["lens", "session", "--kind", "arcore"], ["lens", "session", "--kind", "video"],
-                                           ["lens", "session", "--kind", "focus"]])
+        r["cli_stubs"] = _cli_stubs(root, [["lens", "session", "--kind", "arcore"], ["lens", "session", "--kind", "video"]])
         r["groundweave"] = _ladder(root, ["lens.assess"], [])
         r["cpu_2core"] = _verify(root, "lens.assess")
         if full:
@@ -580,12 +829,12 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 # ----------------------------------------------------------------------------------- hooks
 
 KEYS = {
-    "C9": ["register", "contract", "loomlink", "cli_stubs", "groundweave", "cpu_2core"],
+    "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "cli_stubs", "groundweave", "cpu_2core"],
     "C11": ["register", "distance", "align", "dense_refuses", "cli_stubs", "groundweave", "cpu_2core"],
     "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
 }
-FULL_KEYS = {"C9": ["kotlin_interop"], "C10": ["kotlin_parity"], "C11": ["kotlin_parity"], "C12": ["kotlin_parity"]}
+FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity"], "C11": ["kotlin_parity"], "C12": ["kotlin_parity"]}
 
 
 def check(ms: str):  # noqa: ANN201

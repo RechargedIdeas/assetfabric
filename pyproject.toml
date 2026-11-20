@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "assetfabric-forge"
-version = "0.7.3+f7"
+version = "0.7.4+f7"
 description = "AssetFabric Content Forge — CLI, schemas, store, orchestrator"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,17 +22,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pillow>=10"]   # pillow: C10 LensForge JPEG/WebP decode + EXIF (also the `lens` extra)
+dev = ["pytest>=8", "pillow>=10", "websockets>=13"]   # pillow: C10 LensForge decode + EXIF; websockets: C9 transport tests
+mirror = ["websockets>=13", "pillow>=10"]   # C9 MirrorWeave WebSocket transport + video decode-to-PNG (system ffmpeg is a tool, not a dep)
 lens = ["pillow>=10"]             # LensForge (C10): decode JPEG/WebP, read EXIF; PNG works without it
-studio = ["PySide6>=6.6"]
+studio = ["PySide6-Essentials>=6.6"]   # Studio window (LGPL-3.0, dynamically imported wheel — THIRD_PARTY_NOTICES)
 tune = ["optuna>=3.6"]
 package = ["playwright>=1.45"]   # F7 PWAPipeline smoke (drives the system Chrome; no browser download)
 
 [project.scripts]
 forge = "forge.cli:main"
+assetfabric-studio = "assetfabric_studio.__main__:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["forge"]
+packages = ["forge", "studio/assetfabric_studio"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

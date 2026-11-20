@@ -66,11 +66,13 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       - uses: astral-sh/setup-uv@v3
+      - name: System tools for C9 (ffmpeg/libvpx video + X11 capture under Xvfb)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg xvfb > /dev/null
       - name: Install forge
         run: |
           uv venv .venv
           source .venv/bin/activate
-          uv pip install -e ".[dev]"
+          uv pip install -e ".[dev,studio]"
       - name: Android SDK packages
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0" > /dev/null
@@ -78,5 +80,5 @@ jobs:
         run: source .venv/bin/activate && forge accept C1-C6 --no-write
       - name: forge accept C7-C8 (LoomCluster loopback fleet + GroundWeave, full mode; incl. the Kotlin LoomLink hop)
         run: source .venv/bin/activate && forge accept C7-C8 --no-write
-      - name: "forge accept C9-C12 (MirrorWeave / LensForge / depth / SplatForge path: contracts + labelled stubs; Gradle is warm from C1-C6)"
+      - name: "forge accept C9-C12 (MirrorWeave real desktop paths + compiled Android impls / LensForge / depth / SplatForge path; Gradle warm)"
         run: source .venv/bin/activate && forge accept C9-C12 --no-write

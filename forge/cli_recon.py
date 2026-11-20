@@ -229,17 +229,31 @@ def lens_exif(file: Path) -> None:
 
 
 @lens_grp.command("session")
-@click.option("--kind", type=click.Choice(["arcore", "video", "focus"]), required=True)
+@click.option("--kind", type=click.Choice(["arcore", "video"]), required=True)
 def lens_session(kind: str) -> None:
-    """ARCore / video capture / focus control — STUB (refuses, exit 3)."""
+    """ARCore / video capture — STUB (refuses, exit 3)."""
     from forge import lensforge
 
     def run() -> Any:
         if kind == "arcore":
             return lensforge.ARCoreSession().start()
-        if kind == "video":
-            return lensforge.VideoCapture().start()
-        return lensforge.FocusController().set_focus(1.0)
+        return lensforge.VideoCapture().start()
+    _guard(run)
+
+
+@lens_grp.command("focus")
+@click.option("--state-dir", type=click.Path(path_type=Path), required=True, help="State dir of the running `forge link serve`.")
+@click.option("--device", required=True, help="Paired phone's client id.")
+@click.option("--distance-m", type=float, default=None, help="Manual focus distance; omit for auto-focus.")
+@click.option("--x", type=float, default=None)
+@click.option("--y", type=float, default=None)
+def lens_focus(state_dir: Path, device: str, distance_m: float | None, x: float | None, y: float | None) -> None:
+    """Queue a camera focus request for a paired phone (Camera2 on the phone; not verified on a device)."""
+    from forge import lensforge
+
+    def run() -> Any:
+        fc = lensforge.FocusController(state_dir, device)
+        return fc.set_focus(distance_m) if distance_m is not None else fc.auto(x, y)
     _guard(run)
 
 

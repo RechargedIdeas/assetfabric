@@ -10,8 +10,8 @@ android {
         applicationId = "com.rechargedideas.pocketloom"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0-c6"
+        versionCode = 2
+        versionName = "0.2.0-c9"
     }
     buildTypes {
         // Debug builds only for now (auto debug keystore). Release signing is a TODO — docs/packaging.md.

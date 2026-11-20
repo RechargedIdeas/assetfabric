@@ -283,7 +283,7 @@ def decode_packets(codec: str, packets: list[bytes], width: int = 0, height: int
 
 def psnr(a: np.ndarray, b: np.ndarray) -> float:
     mse = float(np.mean((a.astype(np.float64) - b.astype(np.float64)) ** 2))
-    return 99.0 if mse == 0 else 10 * np.log10(255.0 ** 2 / mse)
+    return 99.0 if mse == 0 else float(10 * np.log10(255.0 ** 2 / mse))
 
 
 # ------------------------------------------------------------------------------------------ desktop capture

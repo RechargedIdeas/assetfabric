@@ -195,10 +195,11 @@ from forge import accept_c9_c12 as _a9  # noqa: E402
 
 CX_ORDER = ["C9", "C10", "C11", "C12"]
 _CX_DESC = {
-    "C9": "MirrorWeave: typed frame/control contract, signed LoomLink stills+telemetry stream and allow-listed read-only control; "
-          "screen capture, video, input injection are labelled stubs",
+    "C9": "MirrorWeave: stills/telemetry + CPU VP8/VP9 video over signed LoomLink HTTP and WebSocket, X11 desktop capture, "
+          "desktop->phone input/focus outbox (per-event MAC), phone->Studio input as Qt events; Android MediaProjection/H.264/"
+          "Accessibility/Camera2 compiled into the APK but real_unverified_on_device",
     "C10": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, "
-           "desktop assessment of offloaded captures; ARCore/video/focus are labelled stubs",
+           "desktop assessment of offloaded captures, focus requests (Camera2, real_unverified_on_device); ARCore/video are labelled stubs",
     "C11": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth); dense DepthAnything V2 / "
            "ARCore depth are labelled stubs",
     "C12": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply "
