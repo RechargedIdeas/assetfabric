@@ -457,3 +457,38 @@ def recon_train(stage: str) -> None:
             return realityloom.MeshWeaver().convert(Path("x.ply"))
         return realityloom.GdgsImport().into_godot(Path("x.ply"), Path("."))
     _guard(run)
+
+
+# --------------------------------------------------------------------------------------------------- girt (ONNX tooling)
+
+@click.group("girt")
+def girt_grp() -> None:
+    """GIRT policy tooling: export the F3 target policy to ONNX and prove onnxruntime-CPU parity (desktop only; the game keeps the GDScript MLP)."""
+
+
+@girt_grp.command("onnx-export")
+@click.option("--out", type=click.Path(dir_okay=False, path_type=Path), required=True, help="Where to write the .onnx graph.")
+def girt_onnx_export(out: Path) -> None:
+    from forge import girt_onnx
+    from forge.paths import find_repo_root
+
+    def run() -> Any:
+        model = girt_onnx.to_onnx(girt_onnx.load_policy(find_repo_root()))
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(model)
+        return {"out": str(out), "bytes": len(model)}
+    _guard(run)
+
+
+@girt_grp.command("onnx-parity")
+@click.option("--sets", "n", default=2000, type=int, help="Random candidate sets (×K candidates) to compare.")
+def girt_onnx_parity(n: int) -> None:
+    from forge import girt_onnx
+    from forge.paths import find_repo_root
+
+    def run() -> Any:
+        r = girt_onnx.parity(find_repo_root(), n=n)
+        if not r["ok"]:
+            raise SystemExit(json.dumps(r))
+        return r
+    _guard(run)

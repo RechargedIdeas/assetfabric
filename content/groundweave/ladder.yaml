@@ -77,7 +77,9 @@ ops:
     probe_brief: "runtime:girt"
     note: >-
       Probe = the F3 party-AI headless run (Godot, no GPU) pinned to 2 cores; the policy p95 must stay inside the
-      in-engine per-tick GIRT budget (500 us) with zero fallbacks. The ONNX/GPU rung is planned, not built.
+      in-engine per-tick GIRT budget (500 us) with zero fallbacks. The in-engine ONNX/GPU rung is planned, not built
+      (needs an onnxruntime GDExtension build + GPU). Desktop tooling `forge girt onnx-export|onnx-parity` (0.7.5) exports the
+      same policy to ONNX and proves onnxruntime-CPU parity with the GDScript maths; the game does not load it (INFERENCES C-63).
     ladder:
       - {id: onnxruntime-gdextension, device: vulkan, impl: planned}
       - {id: mlp-gdscript, device: cpu, impl: real}
