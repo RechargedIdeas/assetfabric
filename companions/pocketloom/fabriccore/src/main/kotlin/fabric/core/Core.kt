@@ -36,6 +36,9 @@ class PocketLoomCore(val home: File, nodeId: String? = null, modelBudgetBytes: L
     fun capture(data: ByteArray, source: String, meta: Map<String, Any?> = emptyMap()) =
         Captures.ingest(store, queue, data, source, meta, telemetry)
 
+    fun captureVideo(data: ByteArray, source: String, meta: Map<String, Any?> = emptyMap()) =
+        VideoClips.ingest(store, queue, data, source, meta, telemetry)
+
     fun pair(uriOrUrl: String, code: String? = null, caps: List<String> = listOf("offload", "sync")): LinkSession {
         val s = if (uriOrUrl.startsWith("loomlink:")) link.pair(PairingUri.parse(uriOrUrl), caps)
                 else link.pair(uriOrUrl, code ?: throw IllegalArgumentException("pairing code required"), caps)

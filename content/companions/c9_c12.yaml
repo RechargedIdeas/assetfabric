@@ -53,8 +53,9 @@ features:
      spec: "§8 'LensForge capture → RealityLoom/SplatForge on desktop/cluster'", note: "LoomLink recon.capture offload is assessed on the desktop; verdict stored in provenance"}
   - {id: lens.arcore_session, milestone: C10, status: stub, entry: "forge.lensforge:ARCoreSession.start", kotlin: ArCoreSession,
      reason_key: stub.lens.arcore_session, spec: "§9 'ARCore + DepthAnything V2'"}
-  - {id: lens.video_capture, milestone: C10, status: stub, entry: "forge.lensforge:VideoCapture.start",
-     reason_key: stub.lens.video_capture, spec: "§9 'Capture modes' (video)"}
+  - {id: lens.video_capture, milestone: C10, status: real_unverified_on_device, entry: "forge.lensforge:VideoCapture.ingest",
+     kotlin: VideoClips, android_impl: Camera2Video, spec: "§9 'Capture modes' (video)",
+     note: "desktop ingest real (ffmpeg sampling + keyframes + assessment, LoomLink op lens.video); phone recorder Camera2+MediaRecorder never run on a device"}
   - {id: lens.focus_control, milestone: C10, status: real_unverified_on_device, entry: "forge.lensforge:FocusController.set_focus",
      kotlin: FocusController, android_impl: Camera2Focus, spec: "§9 'camera … focus'", note: "same Camera2 controller as mirror.camera_focus; live camera tap-to-focus in the Capture tab"}
   # ----------------------------------------------------------------------------------------------------- C11

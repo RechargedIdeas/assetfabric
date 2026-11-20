@@ -19,6 +19,7 @@ import kotlin.system.exitProcess
  *    mirror-video-push --file F.ivf|F.h264 --codec vp8|vp9|h264 --stream S       (C9: push a recorded packet stream)
  *    mirror-input-poll [--after N]      (C9: fetch + verify desktop-queued events; executes into a recording sink, prints it)
  *    studio-key --key K [--shift true]  (C9: phone → Studio key event)
+ *    capture-video --file CLIP          (C10: store an mp4/webm clip, queue lens.video for the desktop)
  *    depth-estimate --file IMG [--anchors x:y:m,…] [--max-side N]  (C11: dense depth on the paired desktop)
  *    stubs                                                     (C9–C12: every Kotlin stub must refuse — prints each refusal)
  */
@@ -42,6 +43,8 @@ fun main(args: Array<String>) {
                     val seed = (opts["seed"] ?: "1").toLong(); val n = (opts["count"] ?: "1").toInt()
                     (0 until n).map { core.generate(opts["kind"] ?: "cave", seed + it, opts["palette"]) }
                 }
+                "capture-video" -> core.captureVideo(File(opts["file"]!!).readBytes(), opts["source"] ?: "import",
+                    mapOf("captured_at" to System.currentTimeMillis(), "device" to "jvm-cli"))
                 "capture" -> core.capture(File(opts["file"]!!).readBytes(), opts["source"] ?: "import",
                     mapOf("captured_at" to System.currentTimeMillis(), "device" to "jvm-cli"))
                 "offload" -> core.dispatcher.submit(JobSpec("off_" + LoomCrypto.nonce().substring(0, 10), opts["op"] ?: "hashchain",
@@ -103,7 +106,6 @@ fun allStubs(): Map<String, Any?> {
     val probes: Map<String, () -> Unit> = mapOf(
         "lens.arcore_session" to { ArCoreSession().start() },
         "recon.splatforge" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
-        "lens.mode.video" to { CaptureModes.require("video") },
         "lens.mode.depth_assist" to { CaptureModes.require("depth_assist") },
     )
     return probes.mapValues { (id, f) ->

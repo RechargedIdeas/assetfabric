@@ -311,6 +311,24 @@ class LinkServer:
                                 "note": "stored for RealityLoom — reconstruction (C12 SplatForge) is a labelled stub"},
                                media=payload.get("media", "image/jpeg"))
             res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub", "quality": quality}}
+        elif op == "lens.video":                # C10: phone video clip → keyframes + assessment (system ffmpeg)
+            payload = job.get("payload") or {}
+            data = base64.b64decode(payload["data_b64"])
+            from forge import lensforge
+            try:
+                ing = lensforge.ingest_video(data)
+                keys = ing.pop("_keyframe_png")
+                summary = {k: ing[k] for k in ("media", "sampled_frames", "extract_fps", "keyframes")}
+                summary["verdict"] = ing["assessment"]["verdict"]
+                summary["usable_views"] = ing["assessment"]["usable_views"]
+            except (ValueError, RuntimeError) as ex:     # DecodeError / FfmpegMissing → reported, clip still stored
+                keys, summary = [], {"verdict": "unassessed", "reason": f"{type(ex).__name__}: {ex}"}
+            vid = payload.get("id") or job["id"]
+            e = self.store.put(vid, "capture", data, {"from": cid, "video": summary}, media=payload.get("media", "video/mp4"))
+            frames = [self.store.put(f"{vid}_k{i:03d}", "capture", b, {"from": cid, "keyframe_of": e["sha256"],
+                                                                       "t_s": summary["keyframes"][i]["t_s"]}, media="image/png")["sha256"]
+                      for i, b in enumerate(keys)]
+            res = {"ok": True, "value": {"stored": e["sha256"], "keyframes_stored": frames, **summary}}
         elif op == "depth.estimate":            # C11: dense DepthAnything V2 on this desktop (+ metric alignment if anchors)
             try:
                 from forge import depth

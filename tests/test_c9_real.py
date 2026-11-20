@@ -184,3 +184,18 @@ print(json.dumps({"n": n, "typed": typed, "log": w.log.toPlainText(), "healthy":
     assert p.returncode == 0, p.stderr[-800:]
     out = json.loads(p.stdout.strip().splitlines()[-1])
     assert out == {"n": 4, "typed": "hiA", "log": "hiA", "healthy": out["healthy"]}
+
+
+# ----------------------------------------------------------------------------- C10 video capture ingest (0.7.5)
+
+@needs_vpx
+def test_video_ingest_keeps_sharp_novel_frames(tmp_path: Path) -> None:
+    from forge import lensforge
+    from forge.accept_c9_c12 import make_test_clip
+    clip = make_test_clip(tmp_path / "c.mp4").read_bytes()
+    out = lensforge.VideoCapture().ingest(clip)
+    ts = [k["t_s"] for k in out["keyframes"]]
+    assert out["sampled_frames"] == 12 and ts == [0.0, 4.0, 5.0]      # static stretch → 1, blurred → 0, sharp pan → 1/s
+    assert out["assessment"]["reasons"] == ["too_few_usable_views"]    # 640x360 < video profile's 1280 px: warned, not hidden
+    with pytest.raises(ValueError):
+        lensforge.VideoCapture().ingest(clip[:1500])

@@ -8,7 +8,9 @@ REAL (CPU, deterministic; pure-integer pixel math so FabricCore (Kotlin) reprodu
   * `CaptureTelemetry` — the typed telemetry contract (device, optics, exposure) incl. EXIF read (Pillow),
   * wired into LoomLink: a `recon.capture` offload is assessed on the desktop and the verdict is stored in provenance.
 
-STUB (refuses with `StubError`): ARCore session (Android-only SDK), continuous video capture, camera focus control.
+REAL since 0.7.5: video capture ingest (system ffmpeg frame sampling, best-of-window keyframes, set assessment); the phone
+recorder (Camera2 + MediaRecorder) is in the APK as `real_unverified_on_device`. Focus control: see FocusController.
+STUB (refuses with `StubError`): ARCore session (Android-only SDK).
 
 NOT measured: view overlap / pose coverage (needs feature matching = COLMAP, C12) — reported as `overlap: "not_measured"`,
 never guessed. Decoding: PNG with the built-in decoder; JPEG/WebP via Pillow (extra `lens`, part of `dev`) — without Pillow a
@@ -310,11 +312,100 @@ class ARCoreSession:
         refuse("lens.arcore_session", "stub.lens.arcore_session", MILESTONE)
 
 
-class VideoCapture:
-    """STUB: continuous video capture + keyframe extraction."""
+VIDEO_MAX_BYTES = 64 * 1024 * 1024
 
-    def start(self) -> None:
-        refuse("lens.video_capture", "stub.lens.video_capture", MILESTONE)
+
+def video_media(data: bytes) -> str | None:
+    """MP4/MOV (ISO-BMFF `ftyp` box) or WebM/Matroska (EBML magic); None otherwise."""
+    if len(data) >= 12 and data[4:8] == b"ftyp":
+        return "video/mp4"
+    if data[:4] == b"\x1a\x45\xdf\xa3":
+        return "video/webm"
+    return None
+
+
+def extract_frames(data: bytes, fps: float = 2.0, max_frames: int = 240, long_edge: int | None = None,
+                   timeout: float = 300.0) -> list[bytes]:
+    """Decode a clip with the system ffmpeg (separate process) and sample `fps` frames/s as PNG bytes."""
+    import subprocess
+    import tempfile
+
+    from forge.mirrorvideo import ffmpeg_bin, split_pngs
+    if video_media(data) is None:
+        raise DecodeError("not a video (mp4/mov/webm expected)")
+    if len(data) > VIDEO_MAX_BYTES:
+        raise DecodeError("video larger than 64 MiB")
+    if not (0.1 <= fps <= 30):
+        raise ValueError("fps must be within 0.1..30")
+    vf = f"fps={fps}"
+    if long_edge:
+        vf += f",scale='if(gt(iw,ih),{long_edge},-2)':'if(gt(iw,ih),-2,{long_edge})'"
+    with tempfile.NamedTemporaryFile(suffix=".bin") as f:
+        f.write(data)
+        f.flush()
+        p = subprocess.run([ffmpeg_bin(), "-hide_banner", "-loglevel", "error", "-i", f.name, "-an", "-vf", vf,
+                            "-frames:v", str(max_frames), "-f", "image2pipe", "-c:v", "png", "-"],
+                           capture_output=True, timeout=timeout)
+    if p.returncode != 0:
+        raise DecodeError(f"ffmpeg could not decode the clip: {p.stderr.decode(errors='replace')[-200:]}")
+    import io
+    return list(split_pngs(io.BytesIO(p.stdout)))
+
+
+def _thumb(gray: np.ndarray, n: int = 32) -> np.ndarray:
+    h, w = gray.shape
+    ys = (np.arange(n) * h // n)
+    xs = (np.arange(n) * w // n)
+    return gray[np.ix_(ys, xs)].astype(np.int32)
+
+
+def select_keyframes(frames: list[bytes], fps: float, window_s: float = 1.0, novelty: float = 4.0,
+                     min_sharpness: float = 0.0) -> list[dict[str, Any]]:
+    """Keyframes from sampled frames: the sharpest frame of each `window_s` window (best-of-window), skipped when it is
+    still below `min_sharpness` (motion blur / defocus) or when its 32×32 thumbnail differs from the previous pick by
+    < `novelty` mean grey levels (camera not moving)."""
+    stats = []
+    for i, b in enumerate(frames):
+        g, w, h, _ = decode_gray(b)
+        stats.append({"index": i, "t_s": round(i / fps, 3), "sharpness": gray_metrics(g)["sharpness"], "thumb": _thumb(g),
+                      "width": w, "height": h})
+    per = max(1, int(round(window_s * fps)))
+    picks: list[dict[str, Any]] = []
+    for s in range(0, len(stats), per):
+        best = max(stats[s:s + per], key=lambda x: (x["sharpness"], -x["index"]))
+        if best["sharpness"] < min_sharpness:
+            continue
+        if picks and float(np.mean(np.abs(best["thumb"] - picks[-1]["thumb"]))) < novelty:
+            continue
+        picks.append(best)
+    return [{k: v for k, v in p.items() if k != "thumb"} for p in picks]
+
+
+def ingest_video(data: bytes, fps: float | None = None, root: Path | None = None) -> dict[str, Any]:
+    """Desktop side of LensForge video capture: sample frames, pick keyframes, assess them as a `video` capture set.
+    Returns the assessment (no frame bytes) plus `keyframes` [{index, t_s, sharpness}] and the keyframe PNGs separately."""
+    prof = load_profiles(root)
+    mp = _mode(prof, "video")
+    fps = float(fps or mp.get("extract_fps", 2.0))
+    frames = extract_frames(data, fps=fps)
+    keys = select_keyframes(frames, fps, min_sharpness=float(prof["thresholds"]["min_sharpness"]))
+    key_png = [frames[k["index"]] for k in keys]
+    st = assess_set(key_png, "video", root)
+    st["per_view"] = [{k: v for k, v in p.items() if k in ("index", "verdict", "reasons", "sharpness", "width", "height")}
+                      for p in st["per_view"]]
+    return {"media": video_media(data), "bytes": len(data), "sampled_frames": len(frames), "extract_fps": fps,
+            "keyframes": keys, "assessment": st, "_keyframe_png": key_png}
+
+
+class VideoCapture:
+    """LensForge video capture. Desktop side (real): `ingest` decodes the clip with the system ffmpeg, samples frames, picks
+    keyframes and assesses them. Phone side: `fabric.pocketloom.Camera2Video` (Camera2 + MediaRecorder, hardware H.264) —
+    compiled into the APK, **not verified on a phone** (`real_unverified_on_device`)."""
+
+    def ingest(self, data: bytes, fps: float | None = None) -> dict[str, Any]:
+        out = ingest_video(data, fps)
+        out.pop("_keyframe_png")
+        return out
 
 
 class FocusController:
@@ -336,7 +427,6 @@ class FocusController:
 
 STUB_PROBES = {
     "lens.arcore_session": lambda: ARCoreSession().start(),
-    "lens.video_capture": lambda: VideoCapture().start(),
 }
 
 

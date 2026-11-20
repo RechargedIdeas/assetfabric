@@ -16,7 +16,7 @@
     "burst":  {"status": "real", "route_hint": "any", "min_views": 3, "min_long_edge_px": 640, "describe": "short burst of stills; best-of selection by sharpness"},
     "orbit":  {"status": "real", "route_hint": "hero_prop", "min_views": 24, "min_long_edge_px": 1280, "describe": "walk around one object (photogrammetry / MeshWeaver input)"},
     "sweep":  {"status": "real", "route_hint": "backdrop", "min_views": 40, "min_long_edge_px": 1280, "describe": "slow room/scene sweep (3DGS backdrop input)"},
-    "video":  {"status": "stub", "reason_key": "stub.lens.video_capture", "describe": "continuous video capture (frame extraction)"},
+    "video":  {"status": "real", "route_hint": "backdrop", "min_views": 12, "min_long_edge_px": 1280, "extract_fps": 2.0, "describe": "continuous video clip; desktop samples frames (ffmpeg) and keeps the sharpest novel frame per second"},
     "depth_assist": {"status": "stub", "reason_key": "stub.lens.arcore_session", "describe": "ARCore depth/pose-assisted capture"}
   }
 }

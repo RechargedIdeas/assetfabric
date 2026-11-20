@@ -229,15 +229,30 @@ def lens_exif(file: Path) -> None:
 
 
 @lens_grp.command("session")
-@click.option("--kind", type=click.Choice(["arcore", "video"]), required=True)
+@click.option("--kind", type=click.Choice(["arcore"]), required=True)
 def lens_session(kind: str) -> None:
-    """ARCore / video capture — STUB (refuses, exit 3)."""
+    """ARCore-assisted capture session — STUB (refuses, exit 3). Video capture is `forge lens video`."""
+    from forge import lensforge
+    _guard(lambda: lensforge.ARCoreSession().start())
+
+
+@lens_grp.command("video")
+@click.argument("file", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--fps", type=float, default=None, help="sampling rate (default: the video profile's extract_fps)")
+@click.option("--keyframes-dir", type=click.Path(file_okay=False, path_type=Path), default=None, help="write keyframe PNGs here")
+def lens_video(file: Path, fps: float | None, keyframes_dir: Path | None) -> None:
+    """Video capture ingest: sample frames (system ffmpeg), keep the sharpest novel frame per second, assess the set."""
     from forge import lensforge
 
     def run() -> Any:
-        if kind == "arcore":
-            return lensforge.ARCoreSession().start()
-        return lensforge.VideoCapture().start()
+        out = lensforge.ingest_video(file.read_bytes(), fps)
+        pngs = out.pop("_keyframe_png")
+        if keyframes_dir:
+            keyframes_dir.mkdir(parents=True, exist_ok=True)
+            for k, b in zip(out["keyframes"], pngs):
+                (keyframes_dir / f"key_{k['index']:04d}.png").write_bytes(b)
+            out["keyframes_dir"] = str(keyframes_dir)
+        return out
     _guard(run)
 
 

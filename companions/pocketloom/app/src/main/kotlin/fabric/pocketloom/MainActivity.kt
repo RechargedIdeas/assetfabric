@@ -51,7 +51,7 @@ class MainActivity : Activity() {
     private var pendingUri: PairingUri? = null
     private var selectedId: String? = null
 
-    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2; const val REQ_MIRROR = 3; const val REQ_CAMERA_PERM = 4 }
+    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2; const val REQ_MIRROR = 3; const val REQ_CAMERA_PERM = 4; const val CLIP_SECONDS = 8 }
     private var mirrorMode = "stills"
     private var focus: Camera2Focus? = null
 
@@ -202,6 +202,22 @@ class MainActivity : Activity() {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAMERA_PERM)
             else liveCamera(out)
+        })
+        content.addView(button(R.string.cam_record) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAMERA_PERM); return@button
+            }
+            focus?.close(); focus = null                              // one camera client at a time
+            out.setText(R.string.cam_recording)
+            Camera2Video(this).record(CLIP_SECONDS) { f ->
+                if (f == null) ui { out.setText(R.string.cam_failed) }
+                else bg {
+                    val r = runCatching { core.captureVideo(f.readBytes(), "camera",
+                        mapOf("captured_at" to System.currentTimeMillis(), "device" to Build.MODEL, "seconds" to CLIP_SECONDS)) }
+                    f.delete()
+                    ui { out.text = if (r.isSuccess) getString(R.string.cam_clip_queued) else getString(R.string.cam_failed) }
+                }
+            }
         })
         content.addView(out)
         bg {

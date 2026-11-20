@@ -99,6 +99,9 @@
     <string name="cam_ready">Camera ready — tap the preview to focus.</string>
     <string name="cam_focus_ok">Focus requested.</string>
     <string name="cam_failed">Camera unavailable.</string>
+    <string name="cam_record">Record 8 s clip (video capture)</string>
+    <string name="cam_recording">Recording…</string>
+    <string name="cam_clip_queued">Clip stored and queued — the paired desktop extracts keyframes.</string>
     <!-- C9–C12 labelled-stub reasons (shown if a stub feature is ever surfaced; see content/companions/c9_c12.yaml) -->
     <string name="stub_depth_arcore">ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).</string>
     <string name="stub_lens_arcore_session">ARCore-assisted capture is not implemented (Android-only SDK, not bundled in FabricCore).</string>

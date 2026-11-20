@@ -37,7 +37,7 @@ def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
     # 0.7.4 (stub batch 1, C9): 20 real · 5 real_unverified_on_device (Android-only, compiled, never on a phone) · 8 stubs
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 5, 7)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 6, 6)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -217,7 +217,7 @@ def test_capture_set_rules_and_stub_modes(root: Path) -> None:
     assert lensforge.assess_set(imgs[:2], "burst", root)["reasons"] == ["too_few_usable_views"]
     dup = lensforge.assess_set([imgs[0], imgs[0], imgs[1], imgs[2]], "burst", root)
     assert dup["duplicates"] == [{"index": 1, "duplicate_of": 0}] and dup["usable_views"] == 3
-    for mode in ("video", "depth_assist"):
+    for mode in ("depth_assist",):
         with pytest.raises(StubError) as e:
             lensforge.assess_set(imgs, mode, root)
         assert is_stub_message(str(e.value))

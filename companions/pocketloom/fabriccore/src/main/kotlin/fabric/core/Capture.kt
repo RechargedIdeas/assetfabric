@@ -57,3 +57,34 @@ object Captures {
         return mapOf("entry" to entry, "job" to job.id)
     }
 }
+
+/** LensForge video capture (C10): a clip recorded on the phone (Camera2 + MediaRecorder in the app — `Camera2Video`) is
+ *  stored content-addressed and a `lens.video` job is queued; the paired desktop samples frames with ffmpeg, picks
+ *  keyframes and assesses them (`forge.lensforge.ingest_video`). */
+object VideoClips {
+    const val OP = "lens.video"
+    const val MAX_BYTES = 64 * 1024 * 1024
+
+    fun mediaOf(b: ByteArray): String? = when {
+        b.size >= 12 && String(b, 4, 4, Charsets.US_ASCII) == "ftyp" -> "video/mp4"
+        b.size >= 4 && b[0] == 0x1A.toByte() && b[1] == 0x45.toByte() && b[2] == 0xDF.toByte() && b[3] == 0xA3.toByte() -> "video/webm"
+        else -> null
+    }
+
+    fun ingest(store: AssetStore, queue: OffloadQueue, data: ByteArray, source: String,
+               meta: Map<String, Any?> = emptyMap(), telemetry: Telemetry? = null): Map<String, Any?> {
+        CaptureModes.require("video")
+        val media = mediaOf(data) ?: throw IllegalArgumentException("not a video (mp4/webm expected)")
+        require(data.size <= MAX_BYTES) { "clip larger than 64 MiB" }
+        val sha = sha256Hex(data)
+        val id = "vid_" + sha.substring(0, 12)
+        val prov = linkedMapOf<String, Any?>("source" to source, "bytes" to data.size.toLong(), "media" to media, "mode" to "video")
+        prov.putAll(meta)
+        val entry = store.put(id, "capture", data, prov, media)
+        val job = JobSpec("lensvid_" + sha.substring(0, 12), OP,
+            mapOf("asset_id" to id, "blob_sha" to sha, "media" to media), mapOf("device" to "desktop"))
+        queue.enqueue(job)
+        telemetry?.record("capture.video", mapOf("id" to id, "bytes" to data.size, "media" to media))
+        return mapOf("entry" to entry, "job" to job.id)
+    }
+}

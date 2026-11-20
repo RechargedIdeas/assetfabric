@@ -4,7 +4,6 @@
   "forge.status.unhealthy": "UNHEALTHY",
   "mirror.control.not_allowlisted": "Query {name!r} is not on the MirrorWeave allow-list; the drive_studio capability only runs read-only queries.",
   "stub.lens.arcore_session": "ARCore-assisted capture is not implemented (Android-only SDK, not bundled in FabricCore).",
-  "stub.lens.video_capture": "Continuous video capture and keyframe extraction are not implemented; use still, burst, orbit or sweep modes.",
   "lens.not_an_image": "Not an image (png/jpeg/webp expected).",
   "lens.pillow_missing": "Decoding JPEG/WebP needs Pillow (install forge with the 'lens' extra); the image was not assessed.",
   "stub.depth.arcore": "ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).",

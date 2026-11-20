@@ -539,7 +539,7 @@ def _lens_sets(root: Path) -> dict[str, Any]:
     dup = lensforge.assess_set([imgs[0], imgs[0], imgs[1], imgs[2]], "burst", root)
     mixed = lensforge.assess_set([*imgs, _png("blurry"), b"junk"], "burst", root)
     stub_modes = {}
-    for m in ("video", "depth_assist"):
+    for m in ("depth_assist",):
         try:
             lensforge.assess_set(imgs, m, root)
             stub_modes[m] = "returned"
@@ -604,6 +604,78 @@ def _lens_offload(root: Path, tmp: Path) -> dict[str, Any]:
             "reconstruction": r["value"]["reconstruction"], "junk_capture": junk["value"]["quality"]["verdict"]}
 
 
+def make_test_clip(path: Path, seconds: int = 6, size: str = "640x360") -> Path:
+    """Test clip with the host ffmpeg (native mpeg4 encoder, LGPL — no x264): 2 s static, 2 s blurred pan, 2 s sharp pan."""
+    from forge.mirrorvideo import ffmpeg_bin
+    w, h = size.split("x")
+    third = seconds // 3
+    n = third * 30
+    flt = (f"[0:v]trim=end_frame=1,loop=loop={n - 1}:size=1:start=0,setpts=N/30/TB[a];"
+           f"[0:v]trim=start_frame={n}:end_frame={2 * n},boxblur=12:2,setpts=N/30/TB[b];"
+           f"[0:v]trim=start_frame={2 * n}:end_frame={3 * n},setpts=N/30/TB[c];[a][b][c]concat=n=3:v=1:a=0,fps=30[v]")
+    subprocess.run([ffmpeg_bin(), "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+                    f"testsrc2=size={w}x{h}:rate=30:duration={seconds}", "-filter_complex", flt, "-map", "[v]",
+                    "-r", "30", "-c:v", "mpeg4", "-q:v", "3", "-pix_fmt", "yuv420p", str(path)], check=True, timeout=120)
+    return path
+
+
+def _lens_video(root: Path, tmp: Path) -> dict[str, Any]:
+    """Video capture ingest: frames sampled by ffmpeg, keyframes = sharpest novel frame per second, assessed as a `video`
+    set; static and blurred stretches yield no keyframes. Plus the LoomLink `lens.video` offload and the CLI."""
+    clip = make_test_clip(tmp / "clip.mp4").read_bytes()
+    ing = lensforge.VideoCapture().ingest(clip)
+    ts = [k["t_s"] for k in ing["keyframes"]]
+    static = [t for t in ts if t < 2.0]
+    blurred = [k for k in ing["keyframes"] if 2.0 <= k["t_s"] < 4.0]
+    sharp = [t for t in ts if t >= 4.0]
+    rejects = {}
+    for name, data in (("not_video", b"\x89PNG\r\n\x1a\n" + b"0" * 32), ("truncated_mp4", clip[:2000])):
+        try:
+            lensforge.VideoCapture().ingest(data)
+            rejects[name] = False
+        except ValueError:
+            rejects[name] = True
+    d = Desktop(tmp / "desk10v", allow=("offload",)).start()
+    try:
+        c = LinkClient(d.srv.url, "phone-v")
+        c.pair(d.srv.code, ["offload"])
+        r = c.offload({"id": "v1", "op": "lens.video", "payload": {"id": "vid_t1", "data_b64": base64.b64encode(clip).decode(),
+                                                                    "media": "video/mp4"}})
+        stored = {k: d.srv.store.entries[k]["media"] for k in d.srv.store.entries if k.startswith("vid_t1")}
+    finally:
+        d.halt()
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "lens", "video", str(tmp / "clip.mp4")], cwd=root,
+                       capture_output=True, text=True, timeout=120)
+    cli = json.loads(p.stdout) if p.returncode == 0 else {}
+    v = r.get("value") or {}
+    ok = (ing["sampled_frames"] == 12 and len(static) <= 1 and not blurred and len(sharp) == 2
+          and all(rejects.values()) and r.get("ok") and len(v.get("keyframes_stored", [])) == len(ing["keyframes"])
+          and stored.get("vid_t1") == "video/mp4" and sum(1 for m in stored.values() if m == "image/png") == len(ing["keyframes"])
+          and cli.get("keyframes") == ing["keyframes"])
+    return {"ok": bool(ok), "sampled_frames": ing["sampled_frames"], "keyframes_t_s": ts, "static_picks": static,
+            "blurred_picks": len(blurred), "sharp_picks": sharp, "assessment": {k: ing["assessment"][k] for k in ("verdict", "reasons", "usable_views", "min_views")},
+            "rejects": rejects, "offload_keyframes_stored": len(v.get("keyframes_stored", [])), "store_media": sorted(set(stored.values())),
+            "cli_exit": p.returncode, "cli_matches": cli.get("keyframes") == ing["keyframes"], "video_entry": stored.get("vid_t1"), "offload_ok": r.get("ok"), "pngs": sum(1 for m in stored.values() if m == "image/png")}
+
+
+def _kotlin_video(root: Path, tmp: Path) -> dict[str, Any]:
+    """FabricCore stores a clip, queues `lens.video`, drains it to a real desktop which extracts keyframes."""
+    clip = make_test_clip(tmp / "kclip.mp4")
+    d = Desktop(tmp / "desk10k", allow=("offload",)).start()
+    home = tmp / "phone10"
+    try:
+        pc, _ = jar(root, "pair", "--url", d.srv.url, "--code", d.srv.code, "--caps", "offload", home=home)
+        rc1, cap = jar(root, "capture-video", "--file", str(clip), "--source", "camera", home=home)
+        rc2, dr = jar(root, "drain", home=home)
+        keys = [k for k, e in d.srv.store.entries.items() if e.get("media") == "image/png" and k.startswith("vid_")]
+        vid = [k for k, e in d.srv.store.entries.items() if e.get("media") == "video/mp4"]
+    finally:
+        d.halt()
+    ok = pc == 0 and rc1 == 0 and rc2 == 0 and dr.get("sent") == 1 and len(vid) == 1 and len(keys) >= 2
+    return {"ok": bool(ok), "queued_job": cap.get("job"), "sent": dr.get("sent"), "desktop_video_entries": len(vid),
+            "desktop_keyframes": len(keys)}
+
+
 def _kotlin_suite(b: dict[str, Any]) -> dict[str, Any]:
     s = _suites_ok(b, "C9C12Test")
     return {"ok": s["ok"], **s}
@@ -619,7 +691,8 @@ def c10_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["sets"] = _lens_sets(root)
         r["telemetry"] = _lens_telemetry()
         r["offload"] = _lens_offload(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["lens", "session", "--kind", "arcore"], ["lens", "session", "--kind", "video"]])
+        r["video"] = _lens_video(root, tmp)
+        r["cli_stubs"] = _cli_stubs(root, [["lens", "session", "--kind", "arcore"]])
         r["groundweave"] = _ladder(root, ["lens.assess"], [])
         r["cpu_2core"] = _verify(root, "lens.assess")
         if full:
@@ -628,6 +701,8 @@ def c10_run(root: Path) -> tuple[int, dict[str, Any]]:
                           **({"log_tail": b.get("log_tail", "")[-1500:]} if not b["ok"] else {})}
             if b["ok"]:
                 r["kotlin_parity"] = _kotlin_suite(b)
+                r["kotlin_video"] = _kotlin_video(root, tmp)
+                r["apk"] = _apk_has_android_impls(root, b)
         return 0, r
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
@@ -951,11 +1026,11 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 
 KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
-    "C10": ["register", "quality", "sets", "telemetry", "offload", "cli_stubs", "groundweave", "cpu_2core"],
+    "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "cli_stubs", "groundweave", "cpu_2core"],
     "C11": ["register", "distance", "align", "dense", "offload", "cli", "groundweave", "cpu_2core"],
     "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
 }
-FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
+FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 
 
 def check(ms: str):  # noqa: ANN201

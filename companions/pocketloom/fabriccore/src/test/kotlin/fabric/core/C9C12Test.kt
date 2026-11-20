@@ -81,7 +81,7 @@ class C9C12Test {
         assertEquals(24, CaptureModes.require("orbit").minViews)
         assertEquals("hero_prop", CaptureModes.require("orbit").routeHint)
         assertEquals("backdrop", CaptureModes.require("sweep").routeHint)
-        assertEquals("stub.lens.video_capture", assertFailsWith<StubException> { CaptureModes.require("video") }.reasonKey)
+        assertEquals("backdrop", CaptureModes.require("video").routeHint)                // video mode is real since 0.7.5
         assertEquals("stub.lens.arcore_session", assertFailsWith<StubException> { CaptureModes.require("depth_assist") }.reasonKey)
         assertFailsWith<IllegalArgumentException> { CaptureModes.require("nope") }
         val m = Quality.assessGray(IntArray(64 * 48) { 128 }, 64, 48)                  // flat grey: blurry, but not clipped / dark
@@ -96,7 +96,7 @@ class C9C12Test {
 
     @Test fun everyStubRefuses() {
         val r = allStubs()
-        assertTrue(r.size >= 4)
+        assertTrue(r.size >= 3)
         for ((id, v) in r) {
             val m = v.asMap()
             assertEquals(true, m["refused"], id)
@@ -193,5 +193,19 @@ class C9C12Test {
                 "rel_u16_b64" to java.util.Base64.getEncoder().encodeToString(bb.array())))
         }
         assertFailsWith<LinkException> { DepthEstimator(LoomLinkClient("unpaired")).request(ByteArray(4)) }
+    }
+
+    @Test fun videoClipsAreSniffedAndQueued() {
+        val mp4 = ByteArray(32).also { "....ftypisom".toByteArray().copyInto(it) }
+        assertEquals("video/mp4", VideoClips.mediaOf(mp4))
+        assertEquals("video/webm", VideoClips.mediaOf(byteArrayOf(0x1A, 0x45, 0xDF.toByte(), 0xA3.toByte(), 0)))
+        assertEquals(null, VideoClips.mediaOf(ByteArray(16)))
+        val dir = kotlin.io.path.createTempDirectory("vid").toFile()
+        val core = PocketLoomCore(dir, "pl-test")
+        val r = core.captureVideo(mp4, "camera")
+        assertEquals("lensvid_" + sha256Hex(mp4).substring(0, 12), r["job"])
+        assertEquals(listOf("lens.video"), core.queue.pending().map { it.op })
+        assertFailsWith<IllegalArgumentException> { core.captureVideo(ByteArray(16), "camera") }
+        dir.deleteRecursively()
     }
 }
