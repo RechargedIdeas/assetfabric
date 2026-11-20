@@ -8,14 +8,15 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.plan": 0.014
+      "recon.mesh": 0.601,
+      "recon.plan": 0.016,
+      "recon.sfm": 1.406,
+      "recon.splat_cpu": 3.456,
+      "shuttle.gdgs": 0.023
     },
-    "planned_ops": [
-      "recon.mesh",
-      "shuttle.gdgs"
-    ],
-    "real": 5,
-    "stubs": 4
+    "planned_ops": [],
+    "real": 9,
+    "stubs": 1
   },
   "result": {
     "build": {
@@ -25,21 +26,6 @@
     },
     "cli_stubs": {
       "commands": {
-        "recon train --stage godot-import": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "recon train --stage mesh": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "recon train --stage photogrammetry": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
         "recon train --stage splat": {
           "exit": 3,
           "label": true,
@@ -69,13 +55,11 @@
       "objects_stored": 4,
       "ok": true,
       "plan_cpu_only": {
-        "blocked_by": [
-          "recon.photogrammetry"
-        ],
+        "blocked_by": [],
         "degraded_from": "splat",
         "effective_route": "photogrammetry",
         "eta": "hours on CPU only (spec \u00a77 'CPU room capture can be hours'; unmeasured here)",
-        "runnable_today": false
+        "runnable_today": true
       },
       "plan_ok": true,
       "plan_too_few_views": [
@@ -83,8 +67,6 @@
       ],
       "plan_with_rocm": {
         "blocked_by": [
-          "recon.gdgs_import",
-          "recon.photogrammetry",
           "recon.splatforge"
         ],
         "effective_route": "splat",
@@ -101,6 +83,28 @@
       "ok": true,
       "results": [
         {
+          "backend": "splatforge-numpy-cpu",
+          "budget_s": 60,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "recon.splat_cpu",
+          "status": "ok",
+          "wall_s": 3.456
+        },
+        {
+          "backend": "opencv-sift-sfm-cpu",
+          "budget_s": 60,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "recon.sfm",
+          "status": "ok",
+          "wall_s": 1.406
+        },
+        {
           "backend": "realityloom-plan-cpu",
           "budget_s": 20,
           "cores": 2,
@@ -109,39 +113,58 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.014
+          "wall_s": 0.016
         },
         {
-          "backend": null,
-          "budget_s": null,
-          "cores": null,
-          "device": null,
-          "identical_to_unpinned": null,
-          "identical_with_simulated_gpu": null,
+          "backend": "meshweaver-density-surfacenets-cpu",
+          "budget_s": 60,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
           "op": "recon.mesh",
-          "status": "planned",
-          "wall_s": null
+          "status": "ok",
+          "wall_s": 0.601
         },
         {
-          "backend": null,
-          "budget_s": null,
-          "cores": null,
-          "device": null,
-          "identical_to_unpinned": null,
-          "identical_with_simulated_gpu": null,
+          "backend": "gdgs-multimesh-billboard-cpu",
+          "budget_s": 30,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
           "op": "shuttle.gdgs",
-          "status": "planned",
-          "wall_s": null
+          "status": "ok",
+          "wall_s": 0.023
         }
       ]
+    },
+    "gdgs": {
+      "display": "X11",
+      "godot_count": 2000,
+      "imported": 2000,
+      "ok": true,
+      "probes_match": true,
+      "render": {
+        "h": 240,
+        "lit": 5637,
+        "mean_rgb": [
+          0.4712310352498,
+          0.472104129246496,
+          0.551029288559407
+        ],
+        "w": 320
+      },
+      "xvfb": true
     },
     "groundweave": {
       "ok": true,
       "ops": {
         "recon.mesh": {
+          "backend": "meshweaver-density-surfacenets-cpu",
+          "device": "cpu",
           "ok": true,
-          "route": "loomcluster",
-          "status": "planned"
+          "with_all_gpus_present": "meshweaver-density-surfacenets-cpu"
         },
         "recon.plan": {
           "backend": "realityloom-plan-cpu",
@@ -149,10 +172,23 @@
           "ok": true,
           "with_all_gpus_present": "realityloom-plan-cpu"
         },
-        "shuttle.gdgs": {
+        "recon.sfm": {
+          "backend": "opencv-sift-sfm-cpu",
+          "device": "cpu",
           "ok": true,
-          "route": "local",
-          "status": "planned"
+          "with_all_gpus_present": "opencv-sift-sfm-cpu"
+        },
+        "recon.splat_cpu": {
+          "backend": "splatforge-numpy-cpu",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "splatforge-numpy-cpu"
+        },
+        "shuttle.gdgs": {
+          "backend": "gdgs-multimesh-billboard-cpu",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "gdgs-multimesh-billboard-cpu"
         }
       },
       "problems": [],
@@ -173,7 +209,33 @@
         }
       }
     },
+    "meshweaver": {
+      "cli_same_bytes": true,
+      "color_mae": 0.00687,
+      "manifold_edge_fraction": 0.99556,
+      "max_radius_err": 0.04405,
+      "median_radius": 0.50071,
+      "ok": true,
+      "triangles": 14180,
+      "vertices": 6983,
+      "voxel": 0.03
+    },
     "mode": "full",
+    "photogrammetry": {
+      "center_err_rel_max": 0.01075,
+      "floors": {
+        "center_err_rel_max": 0.05,
+        "reproj_rmse_px_max": 2.0,
+        "rot_err_deg_max": 2.0
+      },
+      "input": "rendered textured box + ground, exact cameras (not real photos)",
+      "ok": true,
+      "points": 919,
+      "registered": 12,
+      "reproj_rmse_px_max": 1.2572,
+      "rot_err_deg_max": 0.38461,
+      "views": 12
+    },
     "register": {
       "ok": true,
       "problems": [],
@@ -182,21 +244,44 @@
         "recon.bundle",
         "recon.plan",
         "recon.placement",
-        "recon.splat_ply_check"
-      ],
-      "real_unverified_on_device": [],
-      "refusals": {
-        "recon.gdgs_import": "[STUB recon.gdgs_import C12] The ShuttleLine Godot 3DGS (GDGS) adapter is not implemented; a validated splat .",
-        "recon.meshweaver": "[STUB recon.meshweaver C12] MeshWeaver (splat-to-mesh) is not implemented; it is Phase 2 reconstruction in the",
-        "recon.photogrammetry": "[STUB recon.photogrammetry C12] CPU photogrammetry (COLMAP/Meshroom) is not implemented: the tool is not bundl",
-        "recon.splatforge": "[STUB recon.splatforge C12] SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSp"
-      },
-      "stubs": [
-        "recon.splatforge",
+        "recon.splat_ply_check",
+        "recon.splatforge_cpu",
         "recon.photogrammetry",
         "recon.meshweaver",
         "recon.gdgs_import"
+      ],
+      "real_unverified_on_device": [],
+      "refusals": {
+        "recon.splatforge": "[STUB recon.splatforge C12] Full-scale SplatForge training (anisotropic 3D Gaussian Splatting at capture resol"
+      },
+      "stubs": [
+        "recon.splatforge"
       ]
+    },
+    "splat_cpu": {
+      "floors": {
+        "psnr_gain_min": 10.0,
+        "psnr_holdout_min": 20.0
+      },
+      "input": "rendered textured box + ground (not real photos); poses from CPU SfM, not ground truth",
+      "iters": 400,
+      "loss_first10": 0.087228,
+      "loss_last10": 0.003648,
+      "ok": true,
+      "oversize_refused": true,
+      "ply_valid": true,
+      "psnr_gain_db": 13.088,
+      "psnr_holdout": 23.318,
+      "psnr_holdout_init": 10.23,
+      "psnr_train_mean": 24.306,
+      "resolution": [
+        64,
+        48
+      ],
+      "seconds": 59.898,
+      "splats": 600,
+      "views_registered": 8,
+      "views_train": 7
     },
     "splat_ply": {
       "note": "validator only; the fixture is a header + zeros, not reconstruction output",
