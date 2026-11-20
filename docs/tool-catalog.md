@@ -16,10 +16,10 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **BoltPack** | Bolt | Signed SBOM packages | F7 | **real, unsigned (F7)**: CycloneDX 1.5 SBOM from the engine's own copyright info + platform extras + game content, license allow-list audit (copyleft fails), `LICENSES/`, `dist/bolt/*.fabricbolt`; release signing TODO |
 | **PatternVault** | Vault | Versioned palettes/patterns | F1 | **real** (`content/patternvault/`, colour-blind variants) |
 | **WhisperWeft** | Weft | Voice-driven Studio commands | F7+ | deferred |
-| **RealityLoom** | Loom | Reconstruction orchestrator | C12 | interface + plan real; stages are stubs |
-| **SplatForge** | — | 3DGS training | C12 / F3–F4 backdrop | **stub** (refuses; `recon.splat` gpu_required → loomcluster) |
-| **MeshWeaver** | — | Splat→mesh | Phase 2 | **stub** (`recon.mesh` planned) |
-| **LensForge** | Lens | Camera intelligence | C10–C11 | quality/modes/telemetry real (CPU); ARCore/video/focus + dense depth stubs |
+| **RealityLoom** | Loom | Reconstruction orchestrator | C12 | route/bundle/plan/placement real; CPU photogrammetry (OpenCV SfM) real (0.7.7); GPU splat stage stub |
+| **SplatForge** | — | 3DGS training | C12 / F3–F4 backdrop | tiny-scene CPU trainer **real** (0.7.7, `recon.splat_cpu`, own NumPy isotropic 3DGS, ≤ 2k splats); full-scale **stub** (`recon.splat` gpu_required → loomcluster) |
+| **MeshWeaver** | — | Splat→mesh | Phase 2 | **real** CPU rung (0.7.7: density → surface nets → OBJ); SuGaR rung planned (GPU) |
+| **LensForge** | Lens | Camera intelligence | C10–C11 | quality/modes/telemetry, video keyframe ingest, ARCore pose coverage/DEPTH16 ingest, dense depth (DepthAnything V2 Small, CPU) real; phone Camera2 video/focus + ARCore capture `real_unverified_on_device` |
 | **LoomCluster** | Loom | Equal-node clustering | C7 | **real (C7), loopback-proven**: `forge/loomcluster.py`, `forge cluster …`; negotiation, stealing, leases, retry, journal recovery, device placement, LoomLink bridge. No LAN run, no auth |
 | **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | **real (C8)**: `content/groundweave/ladder.yaml`, `forge/groundweave.py`, `forge groundweave …`; CPU rungs real, every GPU rung `planned` (no GPU backend built); enforced by the pipeline. PocketLoom applies the rule locally (C2) |
 | **MirrorWeave** | Mirror | Cross-device control/stream | C9 | stills, CPU VP8/VP9 video, X11 capture, signed WS, Studio input real; Android capture/H.264/input/focus `real_unverified_on_device` |
@@ -60,10 +60,10 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge accept <F>` | Headless Godot increment passes; result recorded |
 | `forge accept C1-C6` / `C<n>` | PocketLoom Gradle build + APK verify + Kotlin↔Python interop pass; `results/C<n>.json` recorded |
 | `forge accept C9-C12` / `C<n>` | MirrorWeave / LensForge / depth / SplatForge-path contracts verified, every stub refuses with a `[STUB …]` label, real CPU paths exact on 2 cores; `results/C<n>.json` |
-| `forge mirror info/push/latest/stream/control` | stills/telemetry real; `stream --source screen` / `camera-video`, `control --target android` exit 3 (stub) |
-| `forge lens modes/assess/exif/session` | modes/quality/EXIF real; `session --kind arcore` / `focus` / `video` exit 3 |
-| `forge depth distance/estimate` | `distance` real (pinhole); `estimate` exit 3 (stub) |
-| `forge recon route/tools/bundle/plan/submit/check-splat/train` | all real except `train` (exit 3) and `submit` (placement check, then SplatForge stub; nothing queued) |
+| `forge mirror info/push/latest/stream/control` | all real (0.7.4): stills/telemetry, `stream --source desktop|desktop-video` (X11 capture, CPU VP8/VP9), `control --action query|input` (Studio input); the phone halves are `real_unverified_on_device` |
+| `forge lens modes/assess/exif/session/focus/video` | all real on the desktop (0.7.5–0.7.6): `video` keyframe ingest (system ffmpeg), `session --kind arcore` pose coverage, `focus` queues a request for a paired phone (phone Camera2 side `real_unverified_on_device`) |
+| `forge depth distance/estimate` | real: `distance` (pinhole), `estimate` (DepthAnything V2 Small on onnxruntime CPU — needs `forge models fetch`; `--backend arcore` DEPTH16 ingest) |
+| `forge recon route/tools/bundle/plan/submit/check-splat/train/photogrammetry/mesh/godot-import` | all real except `train --stage splat` (full-scale GPU, exit 3) and `submit` (placement check, then SplatForge stub; nothing queued); `train --stage splat-cpu BUNDLE` is real (tiny scenes) |
 | `forge link serve` | Prints one-time code + `loomlink://` URI (QR if `qrcode` installed); serves pairing/offload/sync |
 | `forge report` | Regenerates STATUS.md |
 | `forge sandbox doctor` / `run <brief>` | Lists real tiers; runs one brief sandboxed |

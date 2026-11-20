@@ -384,7 +384,8 @@ def models_audit() -> None:
 
 @click.group("recon")
 def recon_grp() -> None:
-    """RealityLoom / SplatForge path (C12): routing, bundle, plan, placement, .ply check are real; training/meshing are stubs."""
+    """RealityLoom / SplatForge path (C12): routing, bundle, plan, placement, .ply check, CPU photogrammetry, tiny-scene CPU
+    splat training, meshing and Godot import are real; full-scale (GPU) splat training and cluster submit are stubs."""
 
 
 @recon_grp.command("route")
