@@ -122,7 +122,7 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 90. **F7-8 Android without a device**: no emulator is possible on the build host (no usable `/dev/kvm`). The APK is verified statically (aapt, apksigner, apkanalyzer) and its **packed content** (`assets/` = exported project) is run by the exported desktop runtime — full slice + save hop. Reports label this "Android content on the desktop runtime"; an on-device run (D-002) is TODO.
 91. **F7-9 G-SAVE-01 reading**: "Desktop ↔ Android ↔ Web save round-trip" = a save written on one platform loads, rewrites and continues on the others with no data loss. Proven as a ring: desktop export quits mid-slice (checkpoint 4) → Android content imports + rewrites → Web imports + rewrites into IndexedDB and reloads it **offline** → desktop export resumes and ends byte-identical (canonical JSON) to an uninterrupted run; checksum identical at every hop. Transfer between devices is manual (`--import-b64`); cloud saves are out of scope (GAME_SPEC §5).
 92. **F7-10 "Networking stack dormant" (G-NET-01)**: Game Zero v1 has no networking code; dormant = the multiplayer API stays on Godot's `OfflineMultiplayerPeer`, no socket/HTTP/WebRTC class is referenced by any game script (static scan), the desktop slice completes inside `bwrap --unshare-net`, the APK requests no `INTERNET` permission, and the Web build boots from the SW cache with the network off. G-NET-02 (P2P + TURN) is later.
-93. **F7-11 G-A11Y-01 scope at F7**: the input-remap half is data-level — `profile.settings.input_remap` ({action: [key names]}) is applied at boot/load and travels with the save on every runtime; colour-blind palette variants exist in PatternVault (F1). An in-game rebinding UI and a runtime palette toggle are **not built**, so G-A11Y-01 is reported *partial*.
+93. **F7-11 G-A11Y-01 scope at F7** (superseded in 0.7.10 by C-86/C-87: Settings screen + live palette built, G-A11Y-01 full): the input-remap half is data-level — `profile.settings.input_remap` ({action: [key names]}) is applied at boot/load and travels with the save on every runtime; colour-blind palette variants exist in PatternVault (F1). An in-game rebinding UI and a runtime palette toggle are **not built**, so G-A11Y-01 is reported *partial*.
 94. **F7-12 Live channel in exported builds**: exported builds (including the debug APK and Web) never open the F4 live channel implicitly — only the editor/dev runtime (`OS.has_feature("editor")`) or an explicit `--live-dir`. Keeps shipped builds off the file channel.
 95. **F7-13 Default scene**: the boot router's default changed from `sandbox` to `slice`, so a shipped build opens the game; all acceptance runs pass `--scene` explicitly except the F7 desktop launch, which deliberately relies on the default.
 96. **F7-14 BoltPack policy**: SBOM components for the engine come from the binary's own `Engine.get_copyright_info()` (superset across modules, cached in `.fabric/cache`), not from a hand list. License allow-list = permissive ids + `LicenseRef-Proprietary`; any GPL/LGPL/AGPL/SSPL/EUPL atom fails; MPL-2.0 (Mozilla CA bundle inside the engine) is allowed and reported as weak copyleft. Python build tools are not in the game SBOM. Bolts are **unsigned** until a release key exists.
@@ -479,3 +479,17 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     were the "30 min" outliers).
 85. **C-85 Producer confirmed F8/F9.** t59u ("… then do F8 and F9") is the Producer confirmation HANDOVER asked for before F8;
     F8 starts only after this quality-gap list is done or the rest is hardware/user-gated.
+
+### Quality gaps Q2 (0.7.10+f7) — G-A11Y-01 full
+
+86. **C-86 Colour-blind variants and their bar.** GAME_SPEC §6.2 says only "colorblind palette variants + full input remap".
+    We keep PatternVault's two variants (deuteranopia, protanopia — the common red–green deficiencies), extend them to the UI
+    and to the warden accent that shares the hostile red, and define the bar ourselves: Machado et al. (2009) severity-1.0
+    simulation on linear sRGB, CIE76 ΔE*ab ≥ 25 for 5 signal pairs, never worse than Default. Tritanopia is simulated in
+    `forge/a11y.py` but has no variant (rare; not requested). The remap is screen-space and exact-colour: it works because
+    the art is palette-constrained; tinted pixels (hit flash) and anti-aliased text pass through unchanged.
+87. **C-87 "Full input remap" reading.** Every input the game reads is a rebindable action, on keyboard **and** gamepad
+    (Godot standard layout indices; pad labels assume an Xbox-style face layout). Typed commands (`/`) have no gamepad
+    default (text entry needs a keyboard). Menus use Godot's `ui_*` actions plus explicit pad A/B/d-pad/stick events.
+    Rebinding swaps conflicts inside a context instead of refusing. The render check runs on Mesa llvmpipe under Xvfb, not a
+    GPU; a real gamepad and a phone have not been used (hardware-gated).

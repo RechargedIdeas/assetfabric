@@ -44,8 +44,7 @@ jobs:
           mkdir -p godot-bin && cd godot-bin
           curl -sSLo g.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
           unzip -q g.zip && mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot && rm g.zip
-      - name: System tools (ffmpeg/libvpx + Xvfb + Qt runtime libs; cached)
-        if: matrix.group != 'game'
+      - name: System tools (ffmpeg/libvpx + Xvfb + Qt runtime libs; cached — game shard needs Xvfb for the G-A11Y-01 render check)
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
