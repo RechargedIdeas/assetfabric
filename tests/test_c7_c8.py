@@ -50,6 +50,8 @@ def test_selection_never_picks_a_planned_backend(root: Path) -> None:
             sel = gw.select(op_id, devs, root)
             if sel.get("backend"):
                 assert sel["device"] == "cpu", (op_id, sel)       # every GPU rung is `planned` today
+            elif op.get("planned"):                  # C9–C12: specified-but-unbuilt ops select nothing and say so
+                assert sel["status"] == "planned" and sel["route"] in ("loomcluster", "local")
             else:
                 assert op.get("gpu_required") and sel["route"] == "loomcluster"
 

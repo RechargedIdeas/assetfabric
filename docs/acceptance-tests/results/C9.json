@@ -1,0 +1,225 @@
+{
+  "description": "MirrorWeave: typed frame/control contract, signed LoomLink stills+telemetry stream and allow-listed read-only control; screen capture, video, input injection are labelled stubs",
+  "errors": [],
+  "increment": "mirrorweave",
+  "milestone": "C9",
+  "passed": true,
+  "perf": {
+    "fabriccore_junit_tests": 35,
+    "mode": "full",
+    "op_wall_s_2core": {
+      "mirror.encode": 0.001
+    },
+    "planned_ops": [],
+    "real": 3,
+    "stubs": 5
+  },
+  "result": {
+    "build": {
+      "junit_failures": 0,
+      "junit_tests": 35,
+      "ok": true
+    },
+    "cli_stubs": {
+      "commands": {
+        "mirror control --target android": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "mirror stream --source camera-video": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "mirror stream --source screen": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        }
+      },
+      "ok": true
+    },
+    "contract": {
+      "hub": {
+        "ok": true,
+        "stats": {
+          "buffered": 3,
+          "bytes": 8600,
+          "dropped": 2,
+          "first_ts_ms": 1000,
+          "fps": 8.182,
+          "frames": 10,
+          "last_seq": 11,
+          "last_ts_ms": 2100
+        }
+      },
+      "ok": true,
+      "rejections": {
+        "bad_stream_id": true,
+        "codec_payload_mismatch": true,
+        "empty": true,
+        "oversize": true,
+        "replayed_older_seq": true,
+        "stale_seq": true,
+        "telemetry_must_be_json": true,
+        "video_is_stub": true
+      },
+      "roundtrip_equal": true,
+      "stills_source_seqs": [
+        7,
+        8,
+        9
+      ]
+    },
+    "cpu_2core": {
+      "cores": 2,
+      "ok": true,
+      "results": [
+        {
+          "backend": "mirror-stills",
+          "budget_s": 10,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "mirror.encode",
+          "status": "ok",
+          "wall_s": 0.001
+        }
+      ]
+    },
+    "groundweave": {
+      "ok": true,
+      "ops": {
+        "mirror.encode": {
+          "backend": "mirror-stills",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "mirror-stills"
+        }
+      },
+      "problems": [],
+      "static_ok": true
+    },
+    "kotlin_interop": {
+      "desktop_has_identical_bytes": true,
+      "kotlin_stubs": {
+        "all_refuse": true,
+        "count": 9
+      },
+      "ok": true,
+      "pair_caps": [
+        "drive_studio",
+        "mirror",
+        "offload",
+        "sync"
+      ],
+      "push": {
+        "accepted": true,
+        "dropped_total": 0,
+        "node": "desktop",
+        "seq": 0
+      },
+      "query_ok": true,
+      "stale_push": {
+        "exit": 3,
+        "status": 400
+      },
+      "studio_input_stub": {
+        "exit": 3,
+        "label": "[STUB mirror.studio_input C9] Remote inp",
+        "status": 501
+      },
+      "suites": {
+        "ok": true,
+        "suites": {
+          "C9C12Test": {
+            "failures": 0,
+            "skipped": 0,
+            "tests": 9
+          }
+        }
+      }
+    },
+    "loomlink": {
+      "capabilities": {
+        "no_drive_cap": 403,
+        "no_mirror_cap": 403,
+        "unsigned": 403
+      },
+      "control": {
+        "groundweave_ok": true,
+        "not_allowlisted": {
+          "error": "Query 'rm -rf /' is not on the MirrorWeave allow-list; the drive_studio capabili",
+          "status": 403
+        },
+        "stats_ok": true,
+        "status_query_ok": true
+      },
+      "frames": {
+        "latest_identical": true,
+        "pushed": [
+          0,
+          1
+        ],
+        "stale_status": 400,
+        "streams": [
+          "screen",
+          "telemetry"
+        ],
+        "telemetry_ok": true
+      },
+      "ok": true,
+      "public_info": {
+        "features": 8,
+        "ok": true,
+        "stubs": 5
+      },
+      "stubs_501": {
+        "android_input": {
+          "key": "stub.mirror.android_input",
+          "label": true,
+          "status": 501,
+          "stub": true
+        },
+        "camera_focus": {
+          "key": "stub.mirror.camera_focus",
+          "label": true,
+          "status": 501,
+          "stub": true
+        },
+        "studio_input": {
+          "key": "stub.mirror.studio_input",
+          "label": true,
+          "status": 501,
+          "stub": true
+        }
+      }
+    },
+    "mode": "full",
+    "register": {
+      "ok": true,
+      "problems": [],
+      "real": [
+        "mirror.frame_stream",
+        "mirror.still_source",
+        "mirror.query_control"
+      ],
+      "refusals": {
+        "mirror.android_input": "[STUB mirror.android_input C9] Desktop-to-Android remote control (tap/swipe/key injection) is not implemented;",
+        "mirror.camera_focus": "[STUB mirror.camera_focus C9] Remote or local camera focus control is not implemented (needs CameraX/Camera2 o",
+        "mirror.screen_capture": "[STUB mirror.screen_capture C9] Live Android screen capture (MediaProjection foreground service + user consent",
+        "mirror.studio_input": "[STUB mirror.studio_input C9] Remote input into the Studio GUI is not implemented; the Studio is a stub. Only ",
+        "mirror.video_stream": "[STUB mirror.video_stream C9] Video streaming (h264) is not implemented; MirrorWeave carries still frames (png"
+      },
+      "stubs": [
+        "mirror.screen_capture",
+        "mirror.video_stream",
+        "mirror.android_input",
+        "mirror.studio_input",
+        "mirror.camera_focus"
+      ]
+    }
+  }
+}

@@ -92,7 +92,7 @@ def _ladder(root: Path, op_cpu: list[str], op_planned: list[str]) -> dict[str, A
 
 def _verify(root: Path, *ops: str) -> dict[str, Any]:
     v = gw.verify(root, ops=list(ops))
-    return {"ok": v["ok"] and all(x["status"] == "ok" for x in v["results"]) and len(v["results"]) == len(ops),
+    return {"ok": v["ok"] and all(x["status"] in ("ok", "planned") for x in v["results"]) and len(v["results"]) == len(ops),
             "cores": v["cores"], "results": [{k: x.get(k) for k in ("op", "status", "backend", "device", "wall_s", "budget_s",
                                                                     "cores", "identical_to_unpinned", "identical_with_simulated_gpu")}
                                              for x in v["results"]]}

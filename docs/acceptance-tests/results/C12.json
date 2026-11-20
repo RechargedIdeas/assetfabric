@@ -1,0 +1,230 @@
+{
+  "description": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply validator; SplatForge/photogrammetry/MeshWeaver/GDGS import are labelled stubs",
+  "errors": [
+    "cpu_2core: {\"ok\": false, \"cores\": 2, \"results\": [{\"op\": \"recon.plan\", \"status\": \"ok\", \"backend\": \"realityloom-plan-cpu\", \"device\": \"cpu\", \"wall_s\": 0.003, \"budget_s\": 20, \"cores\": 2, \"identical_to_unpinned\": true, \"identical_with_simulated_gpu\": true}, {\"op\": \"recon.mesh\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}, {\"op\": \"shuttle.gdgs\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}]}"
+  ],
+  "increment": "splatforge-path",
+  "milestone": "C12",
+  "passed": false,
+  "perf": {
+    "fabriccore_junit_tests": 35,
+    "mode": "full",
+    "op_wall_s_2core": {
+      "recon.plan": 0.003
+    },
+    "planned_ops": [
+      "recon.mesh",
+      "shuttle.gdgs"
+    ],
+    "real": 5,
+    "stubs": 4
+  },
+  "result": {
+    "build": {
+      "junit_failures": 0,
+      "junit_tests": 35,
+      "ok": true
+    },
+    "cli_stubs": {
+      "commands": {
+        "recon train --stage godot-import": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "recon train --stage mesh": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "recon train --stage photogrammetry": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "recon train --stage splat": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        }
+      },
+      "ok": true
+    },
+    "cluster": {
+      "cpu_only_fleet": {
+        "capable": [],
+        "submit": "refused:no_gpu_node"
+      },
+      "fleet_with_rocm_node": {
+        "capable": [
+          "g"
+        ],
+        "photogrammetry_submit": "refused:stub",
+        "splat_submit": "refused:stub"
+      },
+      "jobs_queued_anywhere": 0,
+      "note": "placement check is real (C7 adverts); the trainer behind it is the C12 stub, so nothing is queued",
+      "ok": true
+    },
+    "core": {
+      "bundle_deterministic": true,
+      "objects_stored": 4,
+      "ok": true,
+      "plan_cpu_only": {
+        "blocked_by": [
+          "recon.photogrammetry"
+        ],
+        "degraded_from": "splat",
+        "effective_route": "photogrammetry",
+        "eta": "hours on CPU only (spec \u00a77 'CPU room capture can be hours'; unmeasured here)",
+        "runnable_today": false
+      },
+      "plan_ok": true,
+      "plan_too_few_views": [
+        "Capture set has 1 usable views; mode burst needs at least 3."
+      ],
+      "plan_with_rocm": {
+        "blocked_by": [
+          "recon.gdgs_import",
+          "recon.photogrammetry",
+          "recon.splatforge"
+        ],
+        "effective_route": "splat",
+        "eta": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)"
+      },
+      "routes": {
+        "backdrop": "splat",
+        "hero_prop": "photogrammetry"
+      },
+      "set_hash_order_independent": true
+    },
+    "cpu_2core": {
+      "cores": 2,
+      "ok": false,
+      "results": [
+        {
+          "backend": "realityloom-plan-cpu",
+          "budget_s": 20,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "recon.plan",
+          "status": "ok",
+          "wall_s": 0.003
+        },
+        {
+          "backend": null,
+          "budget_s": null,
+          "cores": null,
+          "device": null,
+          "identical_to_unpinned": null,
+          "identical_with_simulated_gpu": null,
+          "op": "recon.mesh",
+          "status": "planned",
+          "wall_s": null
+        },
+        {
+          "backend": null,
+          "budget_s": null,
+          "cores": null,
+          "device": null,
+          "identical_to_unpinned": null,
+          "identical_with_simulated_gpu": null,
+          "op": "shuttle.gdgs",
+          "status": "planned",
+          "wall_s": null
+        }
+      ]
+    },
+    "groundweave": {
+      "ok": true,
+      "ops": {
+        "recon.mesh": {
+          "ok": true,
+          "route": "loomcluster",
+          "status": "planned"
+        },
+        "recon.plan": {
+          "backend": "realityloom-plan-cpu",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "realityloom-plan-cpu"
+        },
+        "shuttle.gdgs": {
+          "ok": true,
+          "route": "local",
+          "status": "planned"
+        }
+      },
+      "problems": [],
+      "recon_splat": {
+        "gpu_required": true,
+        "route": "loomcluster",
+        "rungs_real": []
+      },
+      "static_ok": true
+    },
+    "kotlin_parity": {
+      "ok": true,
+      "suites": {
+        "C9C12Test": {
+          "failures": 0,
+          "skipped": 0,
+          "tests": 9
+        }
+      }
+    },
+    "mode": "full",
+    "register": {
+      "ok": true,
+      "problems": [],
+      "real": [
+        "recon.route",
+        "recon.bundle",
+        "recon.plan",
+        "recon.placement",
+        "recon.splat_ply_check"
+      ],
+      "refusals": {
+        "recon.gdgs_import": "[STUB recon.gdgs_import C12] The ShuttleLine Godot 3DGS (GDGS) adapter is not implemented; a validated splat .",
+        "recon.meshweaver": "[STUB recon.meshweaver C12] MeshWeaver (splat-to-mesh) is not implemented; it is Phase 2 reconstruction in the",
+        "recon.photogrammetry": "[STUB recon.photogrammetry C12] CPU photogrammetry (COLMAP/Meshroom) is not implemented: the tool is not bundl",
+        "recon.splatforge": "[STUB recon.splatforge C12] SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSp"
+      },
+      "stubs": [
+        "recon.splatforge",
+        "recon.photogrammetry",
+        "recon.meshweaver",
+        "recon.gdgs_import"
+      ]
+    },
+    "splat_ply": {
+      "note": "validator only; the fixture is a header + zeros, not reconstruction output",
+      "ok": true,
+      "rejects": {
+        "ascii_format": true,
+        "double_prop": true,
+        "missing_scale": true,
+        "no_vertices": true,
+        "not_ply": true,
+        "odd_sh": true,
+        "truncated_body": true
+      },
+      "valid": [
+        {
+          "bytes": 3262,
+          "properties": 62,
+          "sh_degree": 3,
+          "vertices": 7
+        },
+        {
+          "bytes": 615,
+          "properties": 17,
+          "sh_degree": 0,
+          "vertices": 3
+        }
+      ]
+    }
+  }
+}

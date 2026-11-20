@@ -1,0 +1,216 @@
+{
+  "description": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, desktop assessment of offloaded captures; ARCore/video/focus are labelled stubs",
+  "errors": [],
+  "increment": "lensforge",
+  "milestone": "C10",
+  "passed": true,
+  "perf": {
+    "fabriccore_junit_tests": 35,
+    "mode": "full",
+    "op_wall_s_2core": {
+      "lens.assess": 0.0
+    },
+    "planned_ops": [],
+    "real": 5,
+    "stubs": 3
+  },
+  "result": {
+    "build": {
+      "junit_failures": 0,
+      "junit_tests": 35,
+      "ok": true
+    },
+    "cli_stubs": {
+      "commands": {
+        "lens session --kind arcore": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "lens session --kind focus": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "lens session --kind video": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        }
+      },
+      "ok": true
+    },
+    "cpu_2core": {
+      "cores": 2,
+      "ok": true,
+      "results": [
+        {
+          "backend": "lensforge-quality-cpu",
+          "budget_s": 10,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "lens.assess",
+          "status": "ok",
+          "wall_s": 0.0
+        }
+      ]
+    },
+    "groundweave": {
+      "ok": true,
+      "ops": {
+        "lens.assess": {
+          "backend": "lensforge-quality-cpu",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "lensforge-quality-cpu"
+        }
+      },
+      "problems": [],
+      "static_ok": true
+    },
+    "kotlin_parity": {
+      "ok": true,
+      "suites": {
+        "C9C12Test": {
+          "failures": 0,
+          "skipped": 0,
+          "tests": 9
+        }
+      }
+    },
+    "mode": "full",
+    "offload": {
+      "junk_capture": "unassessed",
+      "ok": true,
+      "quality": {
+        "reasons": [
+          "clipped"
+        ],
+        "sharpness": 863.791,
+        "verdict": "warn"
+      },
+      "reconstruction": "stub",
+      "stored_in_provenance": true
+    },
+    "quality": {
+      "cases": {
+        "blurry": {
+          "mean_luma": 119.502,
+          "reasons": [
+            "blurry"
+          ],
+          "sharpness": 0.5,
+          "verdict": "warn"
+        },
+        "bright": {
+          "mean_luma": 239.5,
+          "reasons": [
+            "too_bright",
+            "clipped"
+          ],
+          "sharpness": 289.366,
+          "verdict": "warn"
+        },
+        "dark": {
+          "mean_luma": 15.5,
+          "reasons": [
+            "too_dark",
+            "clipped"
+          ],
+          "sharpness": 289.366,
+          "verdict": "warn"
+        },
+        "sharp": {
+          "mean_luma": 127.503,
+          "reasons": [],
+          "sharpness": 18623.467,
+          "verdict": "pass"
+        },
+        "tiny_for_orbit": {
+          "reasons": [
+            "low_resolution"
+          ],
+          "verdict": "warn"
+        }
+      },
+      "deterministic": true,
+      "jpeg_fixture": {
+        "ok": true,
+        "reasons": [
+          "clipped"
+        ],
+        "verdict": "warn"
+      },
+      "junk_input": {
+        "advisory": true,
+        "reason": "Not an image (png/jpeg/webp expected).",
+        "verdict": "unassessed"
+      },
+      "ok": true
+    },
+    "register": {
+      "ok": true,
+      "problems": [],
+      "real": [
+        "lens.profiles",
+        "lens.assess",
+        "lens.assess_set",
+        "lens.telemetry",
+        "lens.offload_quality"
+      ],
+      "refusals": {
+        "lens.arcore_session": "[STUB lens.arcore_session C10] ARCore-assisted capture is not implemented (Android-only SDK, not bundled in Fa",
+        "lens.focus_control": "[STUB lens.focus_control C10] Remote or local camera focus control is not implemented (needs CameraX/Camera2 o",
+        "lens.video_capture": "[STUB lens.video_capture C10] Continuous video capture and keyframe extraction are not implemented; use still,"
+      },
+      "stubs": [
+        "lens.arcore_session",
+        "lens.video_capture",
+        "lens.focus_control"
+      ]
+    },
+    "sets": {
+      "burst_ok": "pass",
+      "duplicates": [
+        {
+          "duplicate_of": 0,
+          "index": 1
+        }
+      ],
+      "mixed_usable": 3,
+      "ok": true,
+      "overlap": "not_measured",
+      "stub_modes": {
+        "depth_assist": "refused",
+        "video": "refused"
+      },
+      "too_few": [
+        "too_few_usable_views"
+      ]
+    },
+    "telemetry": {
+      "exif": {
+        "ok": true,
+        "read": {
+          "device": "Acme Cam 1",
+          "exposure_s": 0.01,
+          "focal_length_35mm": 24.0,
+          "focal_length_mm": 6.9,
+          "iso": 200.0,
+          "orientation": 6,
+          "source": "exif"
+        }
+      },
+      "ok": true,
+      "rejects": {
+        "bool_not_number": true,
+        "iso_zero": true,
+        "orientation": true,
+        "unknown_field": true
+      },
+      "roundtrip_equal": true
+    }
+  }
+}

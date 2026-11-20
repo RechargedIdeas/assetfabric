@@ -1,0 +1,158 @@
+{
+  "description": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth); dense DepthAnything V2 / ARCore depth are labelled stubs",
+  "errors": [
+    "cpu_2core: {\"ok\": false, \"cores\": 2, \"results\": [{\"op\": \"depth.distance\", \"status\": \"ok\", \"backend\": \"pinhole-align-cpu\", \"device\": \"cpu\", \"wall_s\": 0.001, \"budget_s\": 10, \"cores\": 2, \"identical_to_unpinned\": true, \"identical_with_simulated_gpu\": true}, {\"op\": \"depth.estimate\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}]}"
+  ],
+  "increment": "metric-depth",
+  "milestone": "C11",
+  "passed": false,
+  "perf": {
+    "fabriccore_junit_tests": 35,
+    "mode": "full",
+    "op_wall_s_2core": {
+      "depth.distance": 0.001
+    },
+    "planned_ops": [
+      "depth.estimate"
+    ],
+    "real": 3,
+    "stubs": 2
+  },
+  "result": {
+    "align": {
+      "anchor_rmse_m": 2.0025091597477093e-15,
+      "max_abs_error_m": 3.552713678800501e-15,
+      "note": "scales a relative map from \u22652 metric anchors; producing the relative map is the DepthAnything V2 stub",
+      "ok": true,
+      "rejects": {
+        "negative_depth": true,
+        "one_anchor": true,
+        "out_of_bounds": true,
+        "same_rel_value": true,
+        "wrong_polarity": true
+      }
+    },
+    "build": {
+      "junit_failures": 0,
+      "junit_tests": 35,
+      "ok": true
+    },
+    "cli_stubs": {
+      "commands": {
+        "depth estimate tests/fixtures/capture_640x480.jpg": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        },
+        "depth estimate tests/fixtures/capture_640x480.jpg --backend arcore": {
+          "exit": 3,
+          "label": true,
+          "stub": true
+        }
+      },
+      "ok": true
+    },
+    "cpu_2core": {
+      "cores": 2,
+      "ok": false,
+      "results": [
+        {
+          "backend": "pinhole-align-cpu",
+          "budget_s": 10,
+          "cores": 2,
+          "device": "cpu",
+          "identical_to_unpinned": true,
+          "identical_with_simulated_gpu": true,
+          "op": "depth.distance",
+          "status": "ok",
+          "wall_s": 0.001
+        },
+        {
+          "backend": null,
+          "budget_s": null,
+          "cores": null,
+          "device": null,
+          "identical_to_unpinned": null,
+          "identical_with_simulated_gpu": null,
+          "op": "depth.estimate",
+          "status": "planned",
+          "wall_s": null
+        }
+      ]
+    },
+    "dense_refuses": {
+      "message": "[STUB depth.dense_estimate C11] Dense monocular depth (DepthAnything V2) is not implemented: no model weights or ONNX ru",
+      "ok": true
+    },
+    "distance": {
+      "distance": {
+        "assumptions": [
+          "object faces the camera",
+          "known real size",
+          "no lens distortion"
+        ],
+        "distance_m": 7.1875,
+        "hi_m": 7.247899,
+        "lo_m": 7.128099,
+        "method": "pinhole",
+        "size_px_err": 1.0
+      },
+      "farther_is_double": true,
+      "focal_px": 2875.0000000000005,
+      "fov_ok": true,
+      "ok": true,
+      "priority_ok": true,
+      "refuses": {
+        "no_intrinsics": true,
+        "zero_px": true,
+        "zero_size": true
+      }
+    },
+    "groundweave": {
+      "ok": true,
+      "ops": {
+        "depth.distance": {
+          "backend": "pinhole-align-cpu",
+          "device": "cpu",
+          "ok": true,
+          "with_all_gpus_present": "pinhole-align-cpu"
+        },
+        "depth.estimate": {
+          "ok": true,
+          "route": "loomcluster",
+          "status": "planned"
+        }
+      },
+      "problems": [],
+      "static_ok": true
+    },
+    "kotlin_parity": {
+      "ok": true,
+      "suites": {
+        "C9C12Test": {
+          "failures": 0,
+          "skipped": 0,
+          "tests": 9
+        }
+      }
+    },
+    "mode": "full",
+    "register": {
+      "ok": true,
+      "problems": [],
+      "real": [
+        "depth.focal_px",
+        "depth.distance",
+        "depth.align"
+      ],
+      "refusals": {
+        "depth.arcore": "[STUB depth.arcore C11] ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).",
+        "depth.dense_estimate": "[STUB depth.dense_estimate C11] Dense monocular depth (DepthAnything V2) is not implemented: no model weights "
+      },
+      "stubs": [
+        "depth.dense_estimate",
+        "depth.arcore"
+      ]
+    }
+  }
+}
