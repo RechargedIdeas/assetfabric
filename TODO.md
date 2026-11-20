@@ -2,13 +2,15 @@
 
 Last updated: 2026-11-12 America/New_York
 
-## Current sprint — companion track (next: C9–C12 interfaces + stubs)
+## Current sprint — companion track (C9–C12 landed as interfaces + stubs; next needs Producer input)
 
 - [x] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync) — accepted 2026-11-12 (`forge accept C1-C6`)
 - [x] LoomCluster C7 + GroundWeave C8 (drafts from `wip/f5-companions` reviewed, hardened, verified) — accepted 2026-11-19 (`forge accept C7-C8`, 0.7.2+f7)
 - [ ] C7 follow-ups: LAN/Tailscale run across two real machines; cluster auth (reuse LoomLink HMAC) before binding off loopback; PocketLoom (Kotlin) as a cluster *peer* node; blob transfer for large artifacts; origin election/hand-off when the origin never returns
 - [ ] C8 follow-ups: first real GPU rung (ROCm/DirectML/Vulkan ONNX for G1-Sprite/Tile) wired through `groundweave.execute`; re-time the full 2400-fight balance on a 2-core node
-- [ ] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs
+- [x] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs — accepted 2026-11-19 (`forge accept C9-C12`, 0.7.3+f7)
+- [ ] C9–C12 follow-ups (each replaces a labelled stub; see `content/companions/c9_c12.yaml`): MediaProjection screen capture + H.264/WebRTC (C9); overlap/parallax measurement and validating the capture thresholds against a real reconstruction (C10, C-38/C-40); DepthAnything V2 CPU/ROCm estimator — verify its licence first, ARCore depth (C11, C-42); SplatForge/OpenSplat on a ROCm LoomCluster node, CPU photogrammetry (COLMAP), MeshWeaver, GDGS Godot import, `.splat` validation (C12)
+- [ ] **F8 (retro/console-style) is optional — confirm scope with the Producer before starting.** F9 is post / LiveOps readiness only
 - [ ] **Human GUI playtest of the vertical slice** (F6 carry-over): measure real length vs 15–20 min; HUD/quest/overlay readability; controls (E interact, H salve, Tab freeze, `/` command); music mix and fades; art legibility of plots/bench/nodes. Checklist: docs/acceptance-tests/F6.md §Human playtest
 - [ ] Slice length: if humans also finish well under 15 min, add content (more field/tunnel areas, a second crop cycle, side quests) rather than slowing the bot
 

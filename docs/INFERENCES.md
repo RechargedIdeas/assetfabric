@@ -257,8 +257,8 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 32. **C-32 What "accepted" means for C9–C12.** A milestone is accepted when its typed contract exists, every capability
     is registered in `content/companions/c9_c12.yaml` as `real`, `stub` or `deferred`, each stub *refuses* with a
     `[STUB <id> <Cn>]` message (never returns fake output), and the real CPU paths are tested. It does **not** mean the
-    feature works: there is no live stream, no ARCore, no dense depth, no reconstruction. `forge registry` (and
-    `forge accept C9-C12`) cross-checks the register against code, locale keys, Android strings, Kotlin symbols and the
+    feature works: there is no live stream, no ARCore, no dense depth, no reconstruction. `forge.registry.check` (run by
+    `forge accept C9-C12` and the tests) cross-checks the register against code, locale keys, Android strings, Kotlin symbols and the
     GroundWeave ladder so a stub cannot be silently promoted or a real entry silently removed.
 33. **C-33 MirrorWeave wire.** Frames are signed LoomLink HTTP POSTs (`/mirror/frame`, `/mirror/latest`, …), one still or
     telemetry JSON per request, ≤ 8 MiB, strictly increasing `seq`, newest 8 kept per stream (`RING`), stream ids
