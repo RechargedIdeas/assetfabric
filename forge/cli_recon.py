@@ -459,16 +459,25 @@ def recon_check_splat(file: Path) -> None:
 
 
 @recon_grp.command("train")
-@click.option("--stage", type=click.Choice(["splat", "photogrammetry"]), default="splat")
+@click.option("--stage", type=click.Choice(["splat"]), default="splat")
 def recon_train(stage: str) -> None:
-    """Train a splat / run photogrammetry — STUB (refuses, exit 3). Nothing here fabricates a reconstruction.
-    Meshing and Godot import are real: `forge recon mesh`, `forge recon godot-import`."""
+    """Train a 3DGS splat — STUB (refuses, exit 3; needs a GPU trainer). Nothing here fabricates a reconstruction.
+    Photogrammetry, meshing and Godot import are real: `forge recon photogrammetry|mesh|godot-import`."""
+    from forge import realityloom
+    _guard(lambda: realityloom.SplatForge().train({}))
+
+
+@recon_grp.command("photogrammetry")
+@click.argument("bundle", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--focal-px", type=float, default=None, help="Focal length in pixels (EXIF-derived); default 1.2 × long edge.")
+def recon_photogrammetry(bundle: Path, focal_px: float | None) -> None:
+    """CPU photogrammetry (OpenCV SfM) on a capture bundle (`forge recon bundle`) → <bundle>/sfm/sparse.ply + cameras.json."""
     from forge import realityloom
 
     def run() -> Any:
-        if stage == "splat":
-            return realityloom.SplatForge().train({})
-        return realityloom.Photogrammetry().run({})
+        pg = realityloom.Photogrammetry(focal_px)
+        pg.run(bundle)
+        return {k: v for k, v in pg.last.items() if k != "cameras"}
     _guard(run)
 
 

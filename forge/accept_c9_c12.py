@@ -22,6 +22,7 @@ never run on a phone. It does NOT prove anything on a phone or a GPU.
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import shutil
 import subprocess
@@ -1012,10 +1013,11 @@ def _recon_core(root: Path, tmp: Path) -> dict[str, Any]:
     prop = realityloom.plan(realityloom.bundle_manifest(imgs, "hero_prop", "burst", root), ["cpu", "rocm"], tools={})
     few = realityloom.plan(realityloom.bundle_manifest(imgs[:1], "backdrop", "burst", root), ["cpu"], tools={})
     train = next(s for s in gpu["stages"] if s["id"] == "train_splat")
-    plan_ok = (cpu["degraded_from"] == "splat" and cpu["effective_route"] == "photogrammetry" and cpu["runnable_today"] is False
-               and cpu["blocked_by"] == ["recon.photogrammetry"] and cpu["eta_measured"] is False
+    # 0.7.7: the CPU photogrammetry route is runnable end to end; the GPU splat route is blocked only by SplatForge training
+    plan_ok = (cpu["degraded_from"] == "splat" and cpu["effective_route"] == "photogrammetry" and cpu["runnable_today"] is True
+               and cpu["blocked_by"] == [] and cpu["eta_measured"] is False
                and gpu["effective_route"] == "splat" and train["requires"] == {"device": "rocm"} and train["status"] == "stub"
-               and set(gpu["blocked_by"]) == {"recon.photogrammetry", "recon.splatforge", "recon.gdgs_import"}
+               and gpu["runnable_today"] is False and set(gpu["blocked_by"]) == {"recon.splatforge"}
                and prop["effective_route"] == "photogrammetry" and prop["degraded_from"] is None
                and few["problems"] and few["eta"] == "no runnable route on the available devices"
                and all(s["status"] == "stub" for p in (cpu, gpu) for s in p["stages"] if "blocked_by" in s)
@@ -1088,6 +1090,38 @@ def _recon_cluster(root: Path, tmp: Path) -> dict[str, Any]:
             "jobs_queued_anywhere": queued, "note": "placement check is real (C7 adverts); the trainer behind it is the C12 stub, so nothing is queued"}
 
 
+PHOTO_FLOORS = {"rot_err_deg_max": 2.0, "center_err_rel_max": 0.05, "reproj_rmse_px_max": 2.0}   # INFERENCES C-74
+
+
+def _photogrammetry(root: Path, tmp: Path) -> dict[str, Any]:
+    """Rendered textured scene, 12 views on a 120° arc with exact cameras → bundle → CLI photogrammetry → poses compared
+    with ground truth after a similarity gauge fix."""
+    from forge import photogrammetry as pg
+    sc = pg.render_views(12, arc_deg=120)
+    imgs = [pg.png_bytes(im) for im in sc["images"]]
+    b = tmp / "bundle"
+    realityloom.write_bundle(b, imgs, "hero_prop", "burst", root)
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "photogrammetry", str(b), "--focal-px", str(sc["K"][0, 0])],
+                       cwd=root, capture_output=True, text=True, timeout=300)
+    if p.returncode != 0:
+        return {"ok": False, "exit": p.returncode, "stderr": p.stderr[-800:], "stdout": p.stdout[-400:]}
+    cams = json.loads((b / "sfm" / "cameras.json").read_text())
+    order = {hashlib.sha256(x).hexdigest(): i for i, x in enumerate(imgs)}
+    rec = {"registered": [], "poses": [None] * len(imgs), "points": [0] * cams["points"]}
+    for c in cams["cameras"]:
+        if c["registered"]:
+            v = order[c["sha256"]]
+            rec["registered"].append(v)
+            rec["poses"][v] = (np.array(c["R"]), np.array(c["t"]))
+    ev = pg.evaluate(rec, sc["poses"])
+    rmse = max(c["reproj_rmse_px"] for c in cams["cameras"] if c["registered"])
+    ok = (ev["registered"] == 12 and ev["rot_err_deg_max"] < PHOTO_FLOORS["rot_err_deg_max"]
+          and ev["center_err_rel_max"] < PHOTO_FLOORS["center_err_rel_max"] and rmse < PHOTO_FLOORS["reproj_rmse_px_max"]
+          and cams["points"] > 300 and (b / "sfm" / "sparse.ply").exists())
+    return {"ok": ok, **{k: (round(v, 5) if isinstance(v, float) else v) for k, v in ev.items()}, "reproj_rmse_px_max": round(rmse, 4),
+            "floors": PHOTO_FLOORS, "input": "rendered textured box + ground, exact cameras (not real photos)"}
+
+
 def _meshweaver(root: Path, tmp: Path) -> dict[str, Any]:
     """Synthetic splats on a sphere (r = 0.5, σ = 0.03): the mesh must sit on the shell, colours must follow the splats,
     and the CLI must write the same OBJ bytes as the API (deterministic)."""
@@ -1148,17 +1182,18 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["core"] = _recon_core(root, tmp)
         r["splat_ply"] = _recon_ply()
         r["cluster"] = _recon_cluster(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", s] for s in ("splat", "photogrammetry")])
+        r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", "splat"]])
+        r["photogrammetry"] = _photogrammetry(root, tmp)
         r["meshweaver"] = _meshweaver(root, tmp)
         r["gdgs"] = _gdgs(root, tmp)
         ladder = gw.load_ladder(root)["ops"]
-        r["groundweave"] = _ladder(root, ["recon.plan", "recon.mesh", "shuttle.gdgs"], [])
+        r["groundweave"] = _ladder(root, ["recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm"], [])
         sp = gw.select("recon.splat", ["cpu"], root)
         r["groundweave"]["recon_splat"] = {"gpu_required": ladder["recon.splat"].get("gpu_required"), "route": sp.get("route"),
                                            "rungs_real": [x["id"] for x in ladder["recon.splat"]["ladder"] if x["impl"] == "real"]}
         r["groundweave"]["ok"] = bool(r["groundweave"]["ok"] and ladder["recon.splat"].get("gpu_required") and sp.get("route") == "loomcluster"
                                       and not r["groundweave"]["recon_splat"]["rungs_real"])
-        r["cpu_2core"] = _verify(root, "recon.plan", "recon.mesh", "shuttle.gdgs")
+        r["cpu_2core"] = _verify(root, "recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm")
         if full:
             b = gradle_build(root)
             r["build"] = {"ok": b["ok"], "junit_tests": b["junit"]["tests"], "junit_failures": b["junit"]["failures"],
@@ -1176,7 +1211,7 @@ KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "arcore", "groundweave", "cpu_2core"],
     "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
-    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
+    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "photogrammetry", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 

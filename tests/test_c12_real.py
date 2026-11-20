@@ -59,3 +59,16 @@ def test_gdgs_import_loads_and_renders_in_godot(tmp_path: Path, root: Path) -> N
     for gp, ep in zip(g["probes"], gi.last["probe"]):
         assert np.allclose(gp["pos"], ep["pos"], atol=1e-4) and np.allclose(gp["rgba"], ep["rgba"], atol=4e-3)
     assert g["render"]["lit"] > 500 and g["render"]["mean_rgb"][2] > g["render"]["mean_rgb"][0]
+
+
+def test_photogrammetry_recovers_rendered_cameras(tmp_path: Path, root: Path) -> None:
+    from forge import photogrammetry as pg
+    sc = pg.render_views(8, arc_deg=90)
+    b = tmp_path / "b"
+    realityloom.write_bundle(b, [pg.png_bytes(i) for i in sc["images"]], "hero_prop", "burst", root)
+    ph = realityloom.Photogrammetry(float(sc["K"][0, 0]))
+    ply = ph.run(b)
+    assert ply.exists() and ph.last["registered"] == 8 and ph.last["points"] > 300
+    rec = pg.reconstruct(sc["images"], focal_px=float(sc["K"][0, 0]))
+    ev = pg.evaluate(rec, sc["poses"])
+    assert ev["rot_err_deg_max"] < 2.0 and ev["center_err_rel_max"] < 0.05

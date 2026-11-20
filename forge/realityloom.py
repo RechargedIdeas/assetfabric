@@ -16,8 +16,10 @@ REAL (CPU, deterministic, no external tools):
   * (0.7.7) `MeshWeaver.convert` — splat density → surface nets → OBJ; `GdgsImport.into_godot` — splat → Godot MultiMesh
     billboard scene, verified in Godot (`forge.splats`).
 
-STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): `SplatForge.train`, `Photogrammetry.run`,
-and `submit` (after the real placement check).
+  * (0.7.7) `Photogrammetry.run` — incremental SIFT SfM on OpenCV (CPU) → sparse cloud + cameras (`forge.photogrammetry`).
+
+STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): `SplatForge.train` and `submit` (after the real
+placement check).
 Whether any of this beats the CPU-only photogrammetry route on the fleet is unmeasured: no trainer has ever run here.
 """
 
@@ -90,17 +92,17 @@ def write_bundle(out: Path, images: list[bytes], target: str, mode: str, root: P
 STAGES = {
     "splat": [
         ("bundle", "recon.plan", "cpu", "real"),
-        ("sfm_colmap", "recon.splat", "cpu", "stub"),
+        ("sfm", "recon.sfm", "cpu", "real"),
         ("train_splat", "recon.splat", "rocm", "stub"),
         ("validate_ply", "recon.plan", "cpu", "real"),
         ("import_godot", "shuttle.gdgs", "cpu", "real"),
     ],
     "photogrammetry": [
         ("bundle", "recon.plan", "cpu", "real"),
-        ("photogrammetry_run", "recon.splat", "cpu", "stub"),
+        ("photogrammetry_sfm", "recon.sfm", "cpu", "real"),
     ],
 }
-BLOCKERS = {"sfm_colmap": "recon.photogrammetry", "train_splat": "recon.splatforge", "photogrammetry_run": "recon.photogrammetry"}
+BLOCKERS = {"train_splat": "recon.splatforge"}
 
 
 def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | None] | None = None) -> dict[str, Any]:
@@ -124,7 +126,7 @@ def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | No
         problems = []
     return {"route": r, "effective_route": eff, "degraded_from": r if degraded else None, "devices": list(devices),
             "stages": stages, "problems": problems, "eta": eta, "eta_measured": False,
-            "runnable_today": False, "blocked_by": sorted({s["blocked_by"] for s in stages if "blocked_by" in s}),
+            "runnable_today": not problems and all(s["status"] == "real" for s in stages), "blocked_by": sorted({s["blocked_by"] for s in stages if "blocked_by" in s}),
             "tools_on_host": tools}
 
 
@@ -212,10 +214,19 @@ class SplatForge:
 
 
 class Photogrammetry:
-    """STUB (C12): CPU COLMAP/Meshroom photogrammetry (the ladder's degraded rung)."""
+    """CPU photogrammetry (C12, the ladder's degraded route): incremental SIFT SfM on OpenCV over a capture bundle →
+    `sfm/sparse.ply` + `sfm/cameras.json` (`forge.photogrammetry`). Dense MVS / texturing are not built (C-74)."""
 
-    def run(self, bundle: dict[str, Any]) -> Path:
-        refuse("recon.photogrammetry", "stub.recon.photogrammetry", MILESTONE)
+    def __init__(self, focal_px: float | None = None) -> None:
+        self.focal_px = focal_px
+        self.last: dict[str, Any] = {}
+
+    def run(self, bundle: Path) -> Path:
+        from forge import photogrammetry
+        r = photogrammetry.run_bundle(Path(bundle), self.focal_px)
+        r.pop("rec")
+        self.last = r
+        return Path(r["sparse_ply"])
 
 
 class MeshWeaver:
@@ -252,7 +263,6 @@ class GdgsImport:
 
 STUB_PROBES = {
     "recon.splatforge": lambda: SplatForge().train({}),
-    "recon.photogrammetry": lambda: Photogrammetry().run({}),
 }
 
 

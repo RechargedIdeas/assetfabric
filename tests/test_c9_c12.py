@@ -36,8 +36,8 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    # 0.7.7 (stub batch 3): 23 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 2 stubs (C12 splat training, photogrammetry)
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (23, 8, 2)
+    # 0.7.7 (stub batch 3): 24 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 1 stub (SplatForge training, GPU)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (24, 8, 1)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -339,7 +339,7 @@ def test_routing_bundle_and_plan(tmp_path: Path, root: Path) -> None:
     assert realityloom.bundle_manifest(imgs[::-1], "backdrop", "burst", root)["capture_set_sha256"] == m["capture_set_sha256"]
     assert len([p for p in (tmp_path / "b" / "objects").rglob("*") if p.is_file()]) == 4
     cpu = realityloom.plan(m, ["cpu"], tools={})
-    assert (cpu["effective_route"], cpu["degraded_from"], cpu["runnable_today"], cpu["eta_measured"]) == ("photogrammetry", "splat", False, False)
+    assert (cpu["effective_route"], cpu["degraded_from"], cpu["runnable_today"], cpu["eta_measured"]) == ("photogrammetry", "splat", True, False)   # CPU route real since 0.7.7
     gpu = realityloom.plan(m, ["cpu", "rocm"], tools={})
     assert gpu["effective_route"] == "splat" and {"recon.splatforge"} <= set(gpu["blocked_by"])
     assert next(s for s in gpu["stages"] if s["id"] == "train_splat")["requires"] == {"device": "rocm"}
@@ -357,7 +357,7 @@ def test_splat_ply_validator() -> None:
 
 
 def test_recon_stubs_refuse_and_cli_exit_3() -> None:
-    for stage in ("splat", "photogrammetry"):                  # mesh + godot-import are real since 0.7.7
+    for stage in ("splat",):                                    # photogrammetry/mesh/godot-import are real since 0.7.7
         r = CliRunner().invoke(main, ["recon", "train", "--stage", stage])
         assert r.exit_code == 3 and is_stub_message(json.loads(r.output)["message"])
 

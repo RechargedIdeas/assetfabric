@@ -94,10 +94,20 @@ ops:
   recon.splat:
     gpu_required: true
     route: loomcluster
-    note: 3DGS training (SplatForge, C12) has no practical CPU path; COLMAP-CPU + photogrammetry is the honest degraded route (C10–C12 stub)
+    note: >-
+      3DGS training (SplatForge, C12) has no practical CPU path; the honest degraded route is CPU photogrammetry, which is
+      real since 0.7.7 as its own op `recon.sfm` (OpenCV SfM). A COLMAP-binary CPU rung stays planned (not bundled).
     ladder:
       - {id: opensplat-rocm, device: rocm, impl: planned}
       - {id: colmap-cpu-photogrammetry, device: cpu, impl: planned}
+  recon.sfm:
+    budget_s_2core: 60
+    probe_brief: "runtime:sfm"
+    note: >-
+      CPU photogrammetry (C12, 0.7.7): SIFT + ratio matching + F-RANSAC, USAC essential init pair, SQPnP-RANSAC
+      registration, multi-view DLT + PnP-LM alternation (no full bundle adjustment), single-threaded → byte-identical.
+    ladder:
+      - {id: opencv-sift-sfm-cpu, device: cpu, impl: real}
   # ---- C9–C12 (companion track): CPU-real rungs where cheap + spec-grounded; everything else planned + labelled stub ----
   mirror.encode:
     budget_s_2core: 10

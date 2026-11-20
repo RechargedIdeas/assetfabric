@@ -282,6 +282,19 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         return {"brief": "depth-dense-probe", "ok": m["abs_rel"] < 0.15, "abs_rel": round(m["abs_rel"], 4),
                 "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
                 "digest": hashlib.sha256(np.ascontiguousarray(rel, dtype=np.float32).tobytes()).hexdigest()}
+    if name == "sfm":                       # C12 CPU photogrammetry on the rendered 8-view scene (deterministic)
+        import numpy as np
+
+        from forge import photogrammetry as pg
+        sel = select("recon.sfm", root=root)
+        sc = pg.render_views(8, arc_deg=90)
+        rec = pg.reconstruct(sc["images"], focal_px=float(sc["K"][0, 0]))
+        ev = pg.evaluate(rec, sc["poses"])
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "sfm-probe", "ok": ev["registered"] == 8 and ev["rot_err_deg_max"] < 2.0, "rot_err_deg_max": round(ev["rot_err_deg_max"], 4),
+                "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
+                "digest": hashlib.sha256(np.round(rec["points"], 6).tobytes()).hexdigest()}
     if name in ("recon-mesh", "gdgs"):     # C12 CPU rungs on a synthetic sphere-splat set (deterministic bytes)
         from forge import splats
         sel = select("recon.mesh" if name == "recon-mesh" else "shuttle.gdgs", root=root)
