@@ -122,7 +122,9 @@ print(json.dumps(out))
     out = json.loads(p.stdout.strip().splitlines()[-1])
     assert out["tabs"] == ["Status", "Mirror", "Console", "Swatches", "Voice", "Persona"]
     assert out["hero_cells"] == 6 and "#3fa7a0" in out["cell"]
-    assert out["variants"] == ["deuteranopia · enemy_ember", "protanopia · enemy_ember"]
+    cv = json.loads((root / "content" / "patternvault" / "palettes.json").read_text(encoding="utf-8"))["colorblind_variants"]
+    assert out["variants"] == sorted(f"{mode} · {pal}" for mode, pals in cv.items() for pal in pals)
+    assert "protanopia · enemy_ember" in out["variants"]
     assert out["intent"] == {"intent": "focus", "target_kind": "cave_mite", "text": "focus the cave mite"}
     assert out["deny"].startswith("Unknown or not allowed: /rm") and "hero_teal" in out["palettes"]
     assert set(out["models"]) >= {"vosk-small-en-us-0.15", "qwen2.5-0.5b-instruct-onnx"} and out["log"] == "/status"

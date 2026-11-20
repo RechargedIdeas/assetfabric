@@ -5,14 +5,14 @@
   "milestone": "C7",
   "passed": true,
   "perf": {
-    "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+    "batch_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
     "batch_wall_s": {
       "n1_2core_nogpu": 3.29,
-      "n2": 2.55,
-      "n3": 2.27
+      "n2": 2.82,
+      "n3": 2.23
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.27,
+    "max_gen_job_s_2core": 1.313,
     "mode": "full"
   },
   "result": {
@@ -30,15 +30,15 @@
       "digests_equal": true,
       "jobs": 36,
       "ok": true,
-      "reference_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+      "reference_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
       "runs": {
         "n1_2core_nogpu": {
-          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "batch_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
           "complete": true,
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.27,
+          "max_gen_job_s": 1.313,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
@@ -49,13 +49,13 @@
           "wrong": []
         },
         "n2": {
-          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "batch_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
           "complete": true,
           "executed_by_node": {
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.403,
+          "max_gen_job_s": 1.444,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
@@ -63,18 +63,18 @@
             "a": 0,
             "b": 7
           },
-          "wall_s": 2.55,
+          "wall_s": 2.82,
           "wrong": []
         },
         "n3": {
-          "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
+          "batch_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
           "complete": true,
           "executed_by_node": {
             "a": 26,
             "b": 4,
             "c": 6
           },
-          "max_gen_job_s": 1.345,
+          "max_gen_job_s": 1.309,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
@@ -83,7 +83,7 @@
             "b": 4,
             "c": 6
           },
-          "wall_s": 2.27,
+          "wall_s": 2.23,
           "wrong": []
         }
       },
@@ -92,19 +92,19 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.63,
+        "elapsed_s": 7.2,
         "executed_by_node": {
           "a": 27,
-          "b": 19,
-          "c": 2
+          "b": 17,
+          "c": 4
         },
         "killed": {
           "c_held": 4,
-          "results_at_kill": 13
+          "results_at_kill": 14
         },
         "lease_s": 6.0,
         "ok": true,
-        "requeued_at_origin": 6,
+        "requeued_at_origin": 4,
         "wrong": []
       },
       "ok": true,
@@ -116,7 +116,7 @@
         },
         "ok": true,
         "parked_results_redelivered_by_peer": 5,
-        "recovered_from_journal": 16,
+        "recovered_from_journal": 11,
         "wrong": []
       },
       "retry": {

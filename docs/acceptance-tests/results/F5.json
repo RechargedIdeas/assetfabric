@@ -5,11 +5,11 @@
   "milestone": "F5",
   "passed": true,
   "perf": {
-    "balance_wall_s": 84.25,
+    "balance_wall_s": 84.02,
     "balance_workers": 8,
-    "boss_sim_ms": 178.68,
+    "boss_sim_ms": 184.15,
     "boss_ticks": 880,
-    "ms_per_encounter_per_worker": 280.8
+    "ms_per_encounter_per_worker": 280.1
   },
   "result": {
     "abilities_loaded": 17,
@@ -111,7 +111,7 @@
         "rule": 1052
       },
       "dialogue": [],
-      "field_warm_ms": 114.56,
+      "field_warm_ms": 109.85,
       "girt": {
         "callouts_served": 11,
         "lm_calls": 0,
@@ -387,7 +387,7 @@
           0.9
         ]
       },
-      "wall_s": 84.25,
+      "wall_s": 84.02,
       "workers": 8
     },
     "boss": {
@@ -558,7 +558,7 @@
     "outcome": "victory",
     "save": {
       "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
-      "path": "/tmp/fabric-f5-jx5x0oqy/saves/slot0.json",
+      "path": "/tmp/fabric-f5-fv_2djhl/saves/slot0.json",
       "state": {
         "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
         "format": "gamezero-save",
@@ -712,7 +712,7 @@
         "loaded_equal_first": true
       }
     },
-    "sim_ms": 178.68,
+    "sim_ms": 184.15,
     "softlock_probe": {
       "encounters": 24,
       "outcomes": {

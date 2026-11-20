@@ -8,7 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "mirror.encode": 0.081
+      "mirror.encode": 0.072
     },
     "planned_ops": [],
     "real": 7,
@@ -16,7 +16,7 @@
   },
   "result": {
     "apk": {
-      "apk_bytes": 1943150,
+      "apk_bytes": 1944299,
       "classes_in_dex": {
         "ArCoreCapture": true,
         "Camera2Focus": true,
@@ -103,7 +103,7 @@
           "identical_with_simulated_gpu": true,
           "op": "mirror.encode",
           "status": "ok",
-          "wall_s": 0.081
+          "wall_s": 0.072
         }
       ]
     },
@@ -383,7 +383,7 @@
       "ok": true,
       "replay": 403,
       "tampered": 403,
-      "wall_s_15_frames": 0.143
+      "wall_s_15_frames": 0.129
     }
   }
 }

@@ -5,16 +5,16 @@
   "milestone": "F7",
   "passed": true,
   "perf": {
-    "apk_bytes": 25593334,
+    "apk_bytes": 25618645,
     "artifacts": {
       "android": {
         "artifact": {
           "path": "dist/android/GameZero-debug.apk",
-          "sha256": "670987d3d58bd08f2230ec0896cf0ead83e470767ff2c762b2d90f619779cf83",
-          "size": 25593334
+          "sha256": "f17ff0f634da45246ddb39e1cdd4390b5c7817f39f50ad400ac92e0a389b360d",
+          "size": 25618645
         },
-        "export_wall_s": 9.8,
-        "total_size": 25822110
+        "export_wall_s": 11.6,
+        "total_size": 25847423
       },
       "desktop-linux": {
         "artifact": {
@@ -22,8 +22,8 @@
           "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
           "size": 66074584
         },
-        "export_wall_s": 5.2,
-        "total_size": 67665828
+        "export_wall_s": 5.1,
+        "total_size": 67691909
       },
       "desktop-windows": {
         "artifact": {
@@ -31,23 +31,23 @@
           "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
           "size": 84214784
         },
-        "export_wall_s": 4.3,
-        "total_size": 85991934
+        "export_wall_s": 4.6,
+        "total_size": 86018047
       },
       "web": {
         "artifact": {
           "path": "dist/web/index.html",
-          "sha256": "6c52eccfcdf635ebdd7ad5bf58aa0d765a23d401bb4f7990aa603ab89c30bf13",
+          "sha256": "b1205f4cb108f3683b6251c9364ac6da233fa070c338a2df9a1622bbce42ff9d",
           "size": 5158
         },
-        "export_wall_s": 4.8,
-        "total_size": 35853367
+        "export_wall_s": 4.4,
+        "total_size": 35879496
       }
     },
     "desktop_slice_game_minutes": 2.92,
     "mode": "full",
-    "web_budget_headroom_bytes": 35709785,
-    "web_gzip9_bytes": 9290215
+    "web_budget_headroom_bytes": 35687852,
+    "web_gzip9_bytes": 9312148
   },
   "result": {
     "a11y": {
@@ -56,21 +56,359 @@
         "desktop": true,
         "remap": {
           "attack": [
-            "F"
+            "F",
+            "pad:2"
           ],
           "interact": [
             "G"
+          ],
+          "use_salve": [
+            "pad:3"
           ]
         },
         "web": true
       },
+      "palette_distance_gate": true,
       "palette_variants_in_patternvault": [
         "deuteranopia",
         "protanopia"
       ],
-      "rebinding_ui": false,
-      "runtime_palette_toggle": false,
-      "status": "partial \u2014 data-level remap travels with the save on every target; no in-game palette toggle / rebinding UI yet"
+      "rebinding_ui": true,
+      "render_check": true,
+      "render_skipped": null,
+      "runtime_palette_toggle": true,
+      "status": "full"
+    },
+    "a11y_screen": {
+      "configure": {
+        "_exit": 0,
+        "_script_errors": 0,
+        "errors": [],
+        "steps": [
+          {
+            "ok": true,
+            "step": "select_screen"
+          },
+          {
+            "ok": true,
+            "step": "settings_opens_from_select"
+          },
+          {
+            "ok": true,
+            "step": "menu_focus_on_palette"
+          },
+          {
+            "ok": true,
+            "palette": "deuteranopia",
+            "step": "palette_switched_live"
+          },
+          {
+            "focus": "Interact / talk:  E  \u00b7  Pad A",
+            "ok": true,
+            "step": "keyboard_navigation"
+          },
+          {
+            "ok": true,
+            "step": "capture_mode"
+          },
+          {
+            "interact": [
+              "F",
+              "pad:0"
+            ],
+            "ok": true,
+            "step": "rebind_keyboard"
+          },
+          {
+            "ok": true,
+            "step": "gamepad_navigation"
+          },
+          {
+            "ok": true,
+            "step": "capture_mode_pad"
+          },
+          {
+            "log": [
+              {
+                "palette": "deuteranopia"
+              },
+              {
+                "rebind": {
+                  "action": "interact",
+                  "previous": "E",
+                  "swapped_with": "",
+                  "token": "F"
+                }
+              },
+              {
+                "rebind": {
+                  "action": "use_salve",
+                  "previous": "pad:1",
+                  "swapped_with": "skill",
+                  "token": "pad:3"
+                }
+              }
+            ],
+            "ok": true,
+            "skill": [
+              "K",
+              "pad:1"
+            ],
+            "step": "rebind_gamepad_with_conflict_swap",
+            "use_salve": [
+              "H",
+              "pad:3"
+            ]
+          },
+          {
+            "ok": true,
+            "step": "settings_closes"
+          },
+          {
+            "ok": true,
+            "step": "old_key_unbound"
+          },
+          {
+            "ok": true,
+            "step": "new_key_bound"
+          },
+          {
+            "ok": true,
+            "step": "rebound_key_drives_game"
+          },
+          {
+            "ok": true,
+            "settings": {
+              "input_remap": {
+                "interact": [
+                  "F",
+                  "pad:0"
+                ],
+                "skill": [
+                  "K",
+                  "pad:1"
+                ],
+                "use_salve": [
+                  "H",
+                  "pad:3"
+                ]
+              },
+              "palette_variant": "deuteranopia"
+            },
+            "step": "settings_in_save"
+          },
+          {
+            "ok": true,
+            "step": "hint_follows_binding"
+          }
+        ]
+      },
+      "palettes": {
+        "collateral": [],
+        "min_delta_e": 25.0,
+        "ok": true,
+        "pairs": 10,
+        "table_unique": true,
+        "variants": {
+          "deuteranopia": [
+            {
+              "default_seen": 35.5,
+              "ok": true,
+              "pair": [
+                "ui_retro:3",
+                "ui_retro:4"
+              ],
+              "variant_normal_vision": 133.4,
+              "variant_seen": 137.2,
+              "what": "crop growing vs ready"
+            },
+            {
+              "default_seen": 14.1,
+              "ok": true,
+              "pair": [
+                "ui_retro:2",
+                "ui_retro:3"
+              ],
+              "variant_normal_vision": 110.1,
+              "variant_seen": 110.4,
+              "what": "red vs green UI"
+            },
+            {
+              "default_seen": 47.1,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "hero_teal:2"
+              ],
+              "variant_normal_vision": 87.1,
+              "variant_seen": 53.8,
+              "what": "hostile vs hero base"
+            },
+            {
+              "default_seen": 19.2,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "cave_moss:3"
+              ],
+              "variant_normal_vision": 102.6,
+              "variant_seen": 78.1,
+              "what": "hostile on moss floor"
+            },
+            {
+              "default_seen": 31.8,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "cave_moss:2"
+              ],
+              "variant_normal_vision": 91.8,
+              "variant_seen": 70.8,
+              "what": "hostile on dark moss"
+            }
+          ],
+          "protanopia": [
+            {
+              "default_seen": 24.6,
+              "ok": true,
+              "pair": [
+                "ui_retro:3",
+                "ui_retro:4"
+              ],
+              "variant_normal_vision": 133.4,
+              "variant_seen": 132.4,
+              "what": "crop growing vs ready"
+            },
+            {
+              "default_seen": 37.1,
+              "ok": true,
+              "pair": [
+                "ui_retro:2",
+                "ui_retro:3"
+              ],
+              "variant_normal_vision": 110.1,
+              "variant_seen": 85.2,
+              "what": "red vs green UI"
+            },
+            {
+              "default_seen": 34.7,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "hero_teal:2"
+              ],
+              "variant_normal_vision": 60.3,
+              "variant_seen": 46.6,
+              "what": "hostile vs hero base"
+            },
+            {
+              "default_seen": 12.5,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "cave_moss:3"
+              ],
+              "variant_normal_vision": 79.4,
+              "variant_seen": 71.4,
+              "what": "hostile on moss floor"
+            },
+            {
+              "default_seen": 7.5,
+              "ok": true,
+              "pair": [
+                "enemy_ember:2",
+                "cave_moss:2"
+              ],
+              "variant_normal_vision": 70.3,
+              "variant_seen": 64.3,
+              "what": "hostile on dark moss"
+            }
+          ]
+        }
+      },
+      "render": {
+        "_exit": 0,
+        "check": {
+          "default_sources": {
+            "#40c060": 25600,
+            "#6b1d2a": 1368,
+            "#c2413a": 2952,
+            "#f08a4b": 1296,
+            "#ffd6a5": 720
+          },
+          "deuteranopia": {
+            "checked_sources": 5,
+            "ok": true,
+            "sources_left": {
+              "#40c060": 0,
+              "#6b1d2a": 0,
+              "#c2413a": 0,
+              "#f08a4b": 0,
+              "#ffd6a5": 0
+            },
+            "targets_seen": {
+              "#3080f0": 25600,
+              "#3b2a6b": 1944,
+              "#6a5acd": 2952,
+              "#f0a04b": 1296,
+              "#ffe0a5": 720
+            }
+          },
+          "ok": true,
+          "protanopia": {
+            "checked_sources": 5,
+            "ok": true,
+            "sources_left": {
+              "#40c060": 0,
+              "#6b1d2a": 0,
+              "#c2413a": 0,
+              "#f08a4b": 0,
+              "#ffd6a5": 0
+            },
+            "targets_seen": {
+              "#2a3b6b": 1368,
+              "#3080f0": 25600,
+              "#4a7acd": 2952,
+              "#f0c04b": 1296,
+              "#ffe8a5": 720
+            }
+          }
+        },
+        "display": "X11",
+        "errors": []
+      },
+      "verify": {
+        "_exit": 0,
+        "_script_errors": 0,
+        "errors": [],
+        "settings": {
+          "input_remap": {
+            "interact": [
+              "F",
+              "pad:0"
+            ],
+            "skill": [
+              "K",
+              "pad:1"
+            ],
+            "use_salve": [
+              "H",
+              "pad:3"
+            ]
+          },
+          "palette_variant": "deuteranopia"
+        },
+        "steps": [
+          {
+            "ok": true,
+            "step": "palette_restored"
+          },
+          {
+            "ok": true,
+            "step": "bindings_restored"
+          }
+        ]
+      }
     },
     "android_content": {
       "completed": true,
@@ -115,13 +453,13 @@
         "android": {
           "artifact": {
             "path": "dist/android/GameZero-debug.apk",
-            "sha256": "670987d3d58bd08f2230ec0896cf0ead83e470767ff2c762b2d90f619779cf83",
-            "size": 25593334
+            "sha256": "f17ff0f634da45246ddb39e1cdd4390b5c7817f39f50ad400ac92e0a389b360d",
+            "size": 25618645
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-android.fabricbolt",
-            "bolt_sha256": "736bfe98eeef97fffee7a9b9e53425ad5af8c14c4fbcf52d651a0b8336ad36cf",
-            "bolt_size": 25301467,
+            "bolt_sha256": "8a0855c5d7379537024117a120256490d54da2f6a44fa54671455e6f04692491",
+            "bolt_size": 25324293,
             "components": 85,
             "copyleft": {},
             "licenses": {
@@ -151,11 +489,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T12:36:46-0500",
+          "built_at": "2026-11-20T13:31:17-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 9.8,
+          "export_wall_s": 11.6,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-android",
           "mode": "debug",
@@ -171,17 +509,17 @@
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 166,
+            "shipped_files": 175,
             "target": "android"
           },
-          "source_digest": "c35f8dce6f63159098368aef88ab34ca3baafec35559808e9d703e95187db6e1",
+          "source_digest": "723c6a4ed5f35b890536c0de503a1da0ba778ebd6146587a50482b9bcd6a04d0",
           "target": "android",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 25822110,
+          "total_size": 25847423,
           "verify": {
-            "apk_size": 25593334,
-            "apkanalyzer_download_size": 25059328,
+            "apk_size": 25618645,
+            "apkanalyzer_download_size": 25081939,
             "internet_permission": false,
             "launchable": true,
             "min_sdk": 21,
@@ -216,8 +554,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-linux.fabricbolt",
-            "bolt_sha256": "a73c1f897e0516daba240bb0b3ca65d5f24654f8e9d571f07c98fd64734ab911",
-            "bolt_size": 25458049,
+            "bolt_sha256": "031334b4108a64cdadd9c70bf6212068686cd3127a4dd0e1693db484a01998bd",
+            "bolt_size": 25480207,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -246,11 +584,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T12:36:25-0500",
+          "built_at": "2026-11-20T13:30:54-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 5.2,
+          "export_wall_s": 5.1,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -266,14 +604,14 @@
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 165,
+            "shipped_files": 174,
             "target": "desktop-linux"
           },
-          "source_digest": "c35f8dce6f63159098368aef88ab34ca3baafec35559808e9d703e95187db6e1",
+          "source_digest": "723c6a4ed5f35b890536c0de503a1da0ba778ebd6146587a50482b9bcd6a04d0",
           "target": "desktop-linux",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 67665828,
+          "total_size": 67691909,
           "verify": {
             "boots": true,
             "how": "exported binary run headless (--net-report)",
@@ -296,8 +634,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-windows.fabricbolt",
-            "bolt_sha256": "b4699ac1ccf4813d0f4783871552e255004ac8c49b51a5caf0119e4141aba7fc",
-            "bolt_size": 31585207,
+            "bolt_sha256": "42a7af445435a8a34c6d1f977ef8c0adc8d40cfc24fcac1ef3b2af83eef6da7d",
+            "bolt_size": 31607234,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -326,11 +664,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T12:36:33-0500",
+          "built_at": "2026-11-20T13:31:02-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.3,
+          "export_wall_s": 4.6,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -346,14 +684,14 @@
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 165,
+            "shipped_files": 174,
             "target": "desktop-windows"
           },
-          "source_digest": "c35f8dce6f63159098368aef88ab34ca3baafec35559808e9d703e95187db6e1",
+          "source_digest": "723c6a4ed5f35b890536c0de503a1da0ba778ebd6146587a50482b9bcd6a04d0",
           "target": "desktop-windows",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 85991934,
+          "total_size": 86018047,
           "verify": {
             "console_wrapper": {
               "machine": "0x8664",
@@ -386,13 +724,13 @@
         "web": {
           "artifact": {
             "path": "dist/web/index.html",
-            "sha256": "6c52eccfcdf635ebdd7ad5bf58aa0d765a23d401bb4f7990aa603ab89c30bf13",
+            "sha256": "b1205f4cb108f3683b6251c9364ac6da233fa070c338a2df9a1622bbce42ff9d",
             "size": 5158
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-web.fabricbolt",
-            "bolt_sha256": "b922c13454a9a3304ee2ef19aa147b65a0b3083e45179c461461768df27be8ac",
-            "bolt_size": 9375693,
+            "bolt_sha256": "de2eecc354fb31a454e263323d8dc7100413e86429c37bc5c6d4f2d87254555f",
+            "bolt_size": 9397711,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -422,11 +760,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T12:37:09-0500",
+          "built_at": "2026-11-20T13:31:40-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.8,
+          "export_wall_s": 4.4,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-web",
           "mode": "release",
@@ -482,8 +820,8 @@
                   "gzip9": 581
                 },
                 "index.pck": {
-                  "bytes": 1568720,
-                  "gzip9": 1246704
+                  "bytes": 1594848,
+                  "gzip9": 1268636
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -491,7 +829,7 @@
                 },
                 "index.service.worker.js": {
                   "bytes": 5799,
-                  "gzip9": 2103
+                  "gzip9": 2104
                 },
                 "index.wasm": {
                   "bytes": 33829596,
@@ -502,10 +840,10 @@
                   "gzip9": 217
                 }
               },
-              "headroom_bytes": 35709785,
+              "headroom_bytes": 35687852,
               "ok": true,
-              "total_bytes": 35830853,
-              "total_gzip9": 9290215
+              "total_bytes": 35856981,
+              "total_gzip9": 9312148
             },
             "hook": true,
             "ok": true,
@@ -563,7 +901,7 @@
                   "sw_controller": false,
                   "sw_registered": true
                 },
-                "wall_s": 2.8
+                "wall_s": 2.9
               },
               "headerless_host": {
                 "first": {
@@ -618,7 +956,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:39611/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:42173/index.js:9:234048"
                 ],
                 "offline": true,
                 "page": {
@@ -658,7 +996,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:39611/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:42173/index.js:9:234048"
                 ],
                 "offline": false,
                 "page": {
@@ -688,7 +1026,7 @@
                   "version": "0.7.0+f7"
                 },
                 "script_errors": 0,
-                "wall_s": 2.3
+                "wall_s": 2.6
               },
               "response_headers": {
                 "index.html": {
@@ -715,14 +1053,14 @@
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 165,
+            "shipped_files": 174,
             "target": "web"
           },
-          "source_digest": "c35f8dce6f63159098368aef88ab34ca3baafec35559808e9d703e95187db6e1",
+          "source_digest": "723c6a4ed5f35b890536c0de503a1da0ba778ebd6146587a50482b9bcd6a04d0",
           "target": "web",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 35853367,
+          "total_size": 35879496,
           "version": "0.7.0+f7"
         }
       },
@@ -731,16 +1069,13 @@
         "android_sdk": "/workspace/android-sdk",
         "bwrap": "/usr/bin/bwrap",
         "chrome": "/usr/bin/google-chrome",
-        "godot": "/workspace/af-b4/godot-bin/godot",
+        "godot": "/workspace/assetfabric/godot-bin/godot",
         "godot_version": "4.3.stable.official.77dcf97d8",
         "jdk": "/workspace/jdk/jdk-17.0.21+9",
         "templates": {
-          "dir": "/workspace/af-b4/.fabric/godot-home/data/godot/export_templates/4.3.stable",
-          "fetched": true,
+          "dir": "/workspace/assetfabric/.fabric/godot-home/data/godot/export_templates/4.3.stable",
           "missing": [],
           "ok": true,
-          "tpz": "/workspace/godot-templates/templates.tpz",
-          "tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
           "version": "4.3.stable"
         },
         "wine": null
@@ -761,7 +1096,7 @@
       },
       "network_namespace": "bwrap --unshare-net",
       "script_errors": 0,
-      "wall_ms": 3413.3
+      "wall_ms": 3465.1
     },
     "editor_roundtrip": {
       "checksum_equal": true,
@@ -781,10 +1116,14 @@
       "desktop": true,
       "remap": {
         "attack": [
-          "F"
+          "F",
+          "pad:2"
         ],
         "interact": [
           "G"
+        ],
+        "use_salve": [
+          "pad:3"
         ]
       },
       "web": true

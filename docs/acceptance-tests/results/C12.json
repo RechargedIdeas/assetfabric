@@ -1,5 +1,5 @@
 {
-  "description": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply validator; SplatForge/photogrammetry/MeshWeaver/GDGS import are labelled stubs",
+  "description": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply validator, CPU photogrammetry (OpenCV SfM), MeshWeaver OBJ, GDGS Godot import, tiny-scene CPU splat trainer; full-scale SplatForge training is the one labelled stub (GPU)",
   "errors": [],
   "increment": "splatforge-path",
   "milestone": "C12",
@@ -8,11 +8,11 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.mesh": 0.601,
-      "recon.plan": 0.016,
-      "recon.sfm": 1.406,
-      "recon.splat_cpu": 3.456,
-      "shuttle.gdgs": 0.023
+      "recon.mesh": 0.578,
+      "recon.plan": 0.013,
+      "recon.sfm": 1.219,
+      "recon.splat_cpu": 3.008,
+      "shuttle.gdgs": 0.025
     },
     "planned_ops": [],
     "real": 9,
@@ -91,7 +91,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.splat_cpu",
           "status": "ok",
-          "wall_s": 3.456
+          "wall_s": 3.008
         },
         {
           "backend": "opencv-sift-sfm-cpu",
@@ -102,7 +102,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.sfm",
           "status": "ok",
-          "wall_s": 1.406
+          "wall_s": 1.219
         },
         {
           "backend": "realityloom-plan-cpu",
@@ -113,7 +113,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.016
+          "wall_s": 0.013
         },
         {
           "backend": "meshweaver-density-surfacenets-cpu",
@@ -124,7 +124,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.mesh",
           "status": "ok",
-          "wall_s": 0.601
+          "wall_s": 0.578
         },
         {
           "backend": "gdgs-multimesh-billboard-cpu",
@@ -135,7 +135,7 @@
           "identical_with_simulated_gpu": true,
           "op": "shuttle.gdgs",
           "status": "ok",
-          "wall_s": 0.023
+          "wall_s": 0.025
         }
       ]
     },
@@ -278,7 +278,7 @@
         64,
         48
       ],
-      "seconds": 59.898,
+      "seconds": 54.968,
       "splats": 600,
       "views_registered": 8,
       "views_train": 7
