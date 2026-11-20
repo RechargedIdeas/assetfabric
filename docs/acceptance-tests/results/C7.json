@@ -7,12 +7,12 @@
   "perf": {
     "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
     "batch_wall_s": {
-      "n1_2core_nogpu": 3.21,
-      "n2": 2.68,
-      "n3": 2.17
+      "n1_2core_nogpu": 4.02,
+      "n2": 2.88,
+      "n3": 2.37
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.166,
+    "max_gen_job_s_2core": 1.61,
     "mode": "full"
   },
   "result": {
@@ -38,14 +38,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.166,
+          "max_gen_job_s": 1.61,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 3.21,
+          "wall_s": 4.02,
           "wrong": []
         },
         "n2": {
@@ -55,15 +55,15 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.241,
+          "max_gen_job_s": 1.543,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
           "stolen_in": {
-            "a": 0,
-            "b": 7
+            "a": 1,
+            "b": 8
           },
-          "wall_s": 2.68,
+          "wall_s": 2.88,
           "wrong": []
         },
         "n3": {
@@ -74,7 +74,7 @@
             "b": 4,
             "c": 6
           },
-          "max_gen_job_s": 1.627,
+          "max_gen_job_s": 1.931,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
@@ -83,7 +83,7 @@
             "b": 4,
             "c": 6
           },
-          "wall_s": 2.17,
+          "wall_s": 2.37,
           "wrong": []
         }
       },
@@ -92,31 +92,31 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.52,
+        "elapsed_s": 7.77,
         "executed_by_node": {
-          "a": 28,
-          "b": 16,
-          "c": 4
+          "a": 25,
+          "b": 21,
+          "c": 2
         },
         "killed": {
-          "c_held": 3,
-          "results_at_kill": 17
+          "c_held": 5,
+          "results_at_kill": 14
         },
         "lease_s": 6.0,
         "ok": true,
-        "requeued_at_origin": 4,
+        "requeued_at_origin": 6,
         "wrong": []
       },
       "ok": true,
       "origin_restart": {
         "completed": 24,
         "executed_by_node": {
-          "a": 8,
-          "b": 16
+          "a": 10,
+          "b": 14
         },
         "ok": true,
-        "parked_results_redelivered_by_peer": 8,
-        "recovered_from_journal": 14,
+        "parked_results_redelivered_by_peer": 6,
+        "recovered_from_journal": 16,
         "wrong": []
       },
       "retry": {

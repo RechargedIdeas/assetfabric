@@ -155,7 +155,8 @@ those lines were made concrete.
    Tabs: Generate · Library · Capture · Link · Telemetry ("telemetry UI, generate screen, local asset store" in §8).
    All text in string/plural resources (English only for now; locale files later).
 6. **C-6 Capture = stills via the system camera app or import**, not an in-app camera (Camera2/CameraX) — no CAMERA
-   permission, no AndroidX. The camera writes through a private non-exported `ContentProvider`. Captures are stored with
+   permission, no AndroidX. *(0.7.4: CAMERA was added for the in-app Camera2 focus preview — C9/C10, C-56/C-57 — capture
+   itself still uses the system camera intent.)* The camera writes through a private non-exported `ContentProvider`. Captures are stored with
    telemetry (source, time, device, size, dimensions) and a `recon.capture` job is queued; the desktop only *stores* the
    capture (reconstruction is C10–C12). Video/burst/ARCore depth are C10–C11.
 7. **C-7 Transport security.** LoomLink speaks HTTP to the address the user pairs with (LAN IP or Tailscale 100.x).

@@ -1,33 +1,28 @@
 {
-  "description": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, desktop assessment of offloaded captures; ARCore/video/focus are labelled stubs",
+  "description": "LensForge capture: modes + PatternVault capture profiles, integer-exact quality (shared with Kotlin), telemetry contract, desktop assessment of offloaded captures, focus requests (Camera2, real_unverified_on_device); ARCore/video are labelled stubs",
   "errors": [],
   "increment": "lensforge",
   "milestone": "C10",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 35,
+    "fabriccore_junit_tests": 41,
     "mode": "full",
     "op_wall_s_2core": {
-      "lens.assess": 0.0
+      "lens.assess": 0.009
     },
     "planned_ops": [],
     "real": 5,
-    "stubs": 3
+    "stubs": 2
   },
   "result": {
     "build": {
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true
     },
     "cli_stubs": {
       "commands": {
         "lens session --kind arcore": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "lens session --kind focus": {
           "exit": 3,
           "label": true,
           "stub": true
@@ -53,7 +48,7 @@
           "identical_with_simulated_gpu": true,
           "op": "lens.assess",
           "status": "ok",
-          "wall_s": 0.0
+          "wall_s": 0.009
         }
       ]
     },
@@ -76,7 +71,7 @@
         "C9C12Test": {
           "failures": 0,
           "skipped": 0,
-          "tests": 9
+          "tests": 15
         }
       }
     },
@@ -160,15 +155,16 @@
         "lens.telemetry",
         "lens.offload_quality"
       ],
+      "real_unverified_on_device": [
+        "lens.focus_control"
+      ],
       "refusals": {
         "lens.arcore_session": "[STUB lens.arcore_session C10] ARCore-assisted capture is not implemented (Android-only SDK, not bundled in Fa",
-        "lens.focus_control": "[STUB lens.focus_control C10] Remote or local camera focus control is not implemented (needs CameraX/Camera2 o",
         "lens.video_capture": "[STUB lens.video_capture C10] Continuous video capture and keyframe extraction are not implemented; use still,"
       },
       "stubs": [
         "lens.arcore_session",
-        "lens.video_capture",
-        "lens.focus_control"
+        "lens.video_capture"
       ]
     },
     "sets": {

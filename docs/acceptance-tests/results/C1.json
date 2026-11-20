@@ -5,26 +5,26 @@
   "milestone": "C1",
   "passed": true,
   "perf": {
-    "apk_bytes": 935253,
-    "apk_sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794",
+    "apk_bytes": 975223,
+    "apk_sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 935253,
-        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
-        "sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794"
+        "bytes": 975223,
+        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
+        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df"
       },
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true,
       "seconds": 8.0
     },
     "c1": {
       "apk": {
         "apksigner_verified": true,
-        "bytes": 935253,
+        "bytes": 975223,
         "debuggable": true,
         "dex_has_app": true,
         "dex_has_fabriccore": true,
@@ -32,16 +32,20 @@
         "min_sdk": 26,
         "native_libs": [],
         "package": "com.rechargedideas.pocketloom",
-        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
+        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
         "permissions": [
-          "android.permission.INTERNET"
+          "android.permission.CAMERA",
+          "android.permission.FOREGROUND_SERVICE",
+          "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION",
+          "android.permission.INTERNET",
+          "android.permission.POST_NOTIFICATIONS"
         ],
-        "sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794",
+        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
         "signature_schemes": [
           "v2"
         ],
         "target_sdk": 35,
-        "version_name": "0.1.0-c6"
+        "version_name": "0.2.0-c9"
       },
       "core_suites": {
         "ok": true,
@@ -85,7 +89,7 @@
           "hero_violet",
           "ui_retro"
         ],
-        "version": "0.1.0-c6"
+        "version": "0.2.0-c9"
       },
       "jar_top_level": [
         "META-INF",

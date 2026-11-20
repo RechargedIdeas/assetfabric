@@ -5,10 +5,10 @@
   "milestone": "C11",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 35,
+    "fabriccore_junit_tests": 41,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.001
+      "depth.distance": 0.009
     },
     "planned_ops": [
       "depth.estimate"
@@ -32,7 +32,7 @@
     },
     "build": {
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true
     },
     "cli_stubs": {
@@ -63,7 +63,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.distance",
           "status": "ok",
-          "wall_s": 0.001
+          "wall_s": 0.009
         },
         {
           "backend": null,
@@ -130,7 +130,7 @@
         "C9C12Test": {
           "failures": 0,
           "skipped": 0,
-          "tests": 9
+          "tests": 15
         }
       }
     },
@@ -143,6 +143,7 @@
         "depth.distance",
         "depth.align"
       ],
+      "real_unverified_on_device": [],
       "refusals": {
         "depth.arcore": "[STUB depth.arcore C11] ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).",
         "depth.dense_estimate": "[STUB depth.dense_estimate C11] Dense monocular depth (DepthAnything V2) is not implemented: no model weights "

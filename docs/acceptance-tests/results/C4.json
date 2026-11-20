@@ -5,32 +5,32 @@
   "milestone": "C4",
   "passed": true,
   "perf": {
-    "apk_bytes": 935253,
-    "apk_sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794",
+    "apk_bytes": 975223,
+    "apk_sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 935253,
-        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
-        "sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794"
+        "bytes": 975223,
+        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
+        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df"
       },
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true,
       "seconds": 8.0
     },
     "c4": {
       "blob_identical": true,
-      "camera_permission": false,
+      "camera_permission": true,
       "entry": {
         "id": "cap_c9733dc805b3",
         "kind": "capture",
         "media": "image/jpeg",
         "provenance": {
           "bytes": 15406,
-          "captured_at": 1795152954493,
+          "captured_at": 1795189484315,
           "device": "jvm-cli",
           "height": 480,
           "media": "image/jpeg",
@@ -40,18 +40,25 @@
         },
         "sha256": "c9733dc805b374c44e91ced4652ceae8578cb2b8a3fd1cbdd51eb55ea75e746e",
         "size": 15406,
-        "updated_by": "pl-bb60640b",
+        "updated_by": "pl-0d48a82f",
         "vv": {
-          "pl-bb60640b": 1
+          "pl-0d48a82f": 1
         }
       },
       "image_capture_query": true,
       "non_image_rejected": true,
       "ok": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "queued": [
         "recon.capture"
       ],
-      "reconstruction": "queued for desktop; RealityLoom/SplatForge reconstruction is C10\u2013C12 (not built)"
+      "reconstruction": "queued for desktop; RealityLoom/SplatForge reconstruction is C10\u2013C12 (see C12 register)"
     },
     "mode": "full",
     "toolchain": {

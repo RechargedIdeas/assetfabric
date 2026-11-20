@@ -5,19 +5,19 @@
   "milestone": "C3",
   "passed": true,
   "perf": {
-    "apk_bytes": 935253,
-    "apk_sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794",
+    "apk_bytes": 975223,
+    "apk_sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 935253,
-        "path": "dist/pocketloom/pocketloom-0.1.0-c6-debug.apk",
-        "sha256": "7a62cf65d9d82d5380e0ceae41a640bf6709d3b14de103f93a52795443f2f794"
+        "bytes": 975223,
+        "path": "dist/pocketloom/pocketloom-0.2.0-c9-debug.apk",
+        "sha256": "63d7d6d5b0e01b705c7246338feddd19af419806ba7386ec5f40fa9b96c480df"
       },
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true,
       "seconds": 8.0
     },
@@ -27,7 +27,8 @@
         "errors": 0,
         "i18n_issues": 0,
         "issues": {
-          "Warning:UnusedResources": 8
+          "Warning:ClickableViewAccessibility": 1,
+          "Warning:UnusedResources": 4
         },
         "ok": true
       },
@@ -46,21 +47,18 @@
       },
       "ok": true,
       "strings": {
-        "defined": 69,
+        "defined": 83,
         "hardcoded_ui_literals": [],
         "missing": [],
         "ok": true,
         "unused": [
+          "a11y_description",
           "stub_depth_arcore",
           "stub_depth_model_missing",
           "stub_lens_arcore_session",
-          "stub_mirror_android_input",
-          "stub_mirror_camera_focus",
-          "stub_mirror_screen_capture",
-          "stub_mirror_video_codec",
           "stub_recon_splatforge"
         ],
-        "used": 61
+        "used": 78
       },
       "telemetry_status": {
         "models": {
@@ -81,8 +79,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 22.7,
-              "mean_ms": 13.0,
+              "max_ms": 22.5,
+              "mean_ms": 12.9,
               "n": 2
             }
           }
@@ -98,21 +96,18 @@
       "ok": true
     },
     "strings": {
-      "defined": 69,
+      "defined": 83,
       "hardcoded_ui_literals": [],
       "missing": [],
       "ok": true,
       "unused": [
+        "a11y_description",
         "stub_depth_arcore",
         "stub_depth_model_missing",
         "stub_lens_arcore_session",
-        "stub_mirror_android_input",
-        "stub_mirror_camera_focus",
-        "stub_mirror_screen_capture",
-        "stub_mirror_video_codec",
         "stub_recon_splatforge"
       ],
-      "used": 61
+      "used": 78
     },
     "toolchain": {
       "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",

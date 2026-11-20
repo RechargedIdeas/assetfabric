@@ -1,44 +1,59 @@
 {
-  "description": "MirrorWeave: typed frame/control contract, signed LoomLink stills+telemetry stream and allow-listed read-only control; screen capture, video, input injection are labelled stubs",
+  "description": "MirrorWeave: stills/telemetry + CPU VP8/VP9 video over signed LoomLink HTTP and WebSocket, X11 desktop capture, desktop->phone input/focus outbox (per-event MAC), phone->Studio input as Qt events; Android MediaProjection/H.264/Accessibility/Camera2 compiled into the APK but real_unverified_on_device",
   "errors": [],
   "increment": "mirrorweave",
   "milestone": "C9",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 35,
+    "fabriccore_junit_tests": 41,
     "mode": "full",
     "op_wall_s_2core": {
-      "mirror.encode": 0.001
+      "mirror.encode": 0.076
     },
     "planned_ops": [],
-    "real": 3,
-    "stubs": 5
+    "real": 7,
+    "stubs": 0
   },
   "result": {
+    "apk": {
+      "apk_bytes": 975223,
+      "classes_in_dex": {
+        "Camera2Focus": true,
+        "MirrorAccessibilityService": true,
+        "ScreenMirrorService": true
+      },
+      "lint_errors": 0,
+      "manifest_permissions": {
+        "BIND_ACCESSIBILITY_SERVICE": true,
+        "FOREGROUND_SERVICE_MEDIA_PROJECTION": true,
+        "android.permission.CAMERA": true
+      },
+      "manifest_services": {
+        "MirrorAccessibilityService": true,
+        "ScreenMirrorService": true
+      },
+      "ok": true,
+      "verified_on_device": false
+    },
     "build": {
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true
     },
-    "cli_stubs": {
-      "commands": {
-        "mirror control --target android": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "mirror stream --source camera-video": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        },
-        "mirror stream --source screen": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        }
-      },
-      "ok": true
+    "cli": {
+      "bad_key_exit": 1,
+      "info_stubs": [],
+      "info_unverified": [
+        "mirror.screen_capture",
+        "mirror.android_video",
+        "mirror.android_input",
+        "mirror.camera_focus"
+      ],
+      "ok": true,
+      "queued": [
+        "swipe",
+        "focus"
+      ]
     },
     "contract": {
       "hub": {
@@ -56,6 +71,7 @@
       },
       "ok": true,
       "rejections": {
+        "av1_unsupported": true,
         "bad_stream_id": true,
         "codec_payload_mismatch": true,
         "empty": true,
@@ -63,7 +79,7 @@
         "replayed_older_seq": true,
         "stale_seq": true,
         "telemetry_must_be_json": true,
-        "video_is_stub": true
+        "video_kind_needs_video_bytes": true
       },
       "roundtrip_equal": true,
       "stills_source_seqs": [
@@ -77,7 +93,7 @@
       "ok": true,
       "results": [
         {
-          "backend": "mirror-stills",
+          "backend": "mirror-vpx-cpu",
           "budget_s": 10,
           "cores": 2,
           "device": "cpu",
@@ -85,18 +101,29 @@
           "identical_with_simulated_gpu": true,
           "op": "mirror.encode",
           "status": "ok",
-          "wall_s": 0.001
+          "wall_s": 0.076
         }
       ]
+    },
+    "desktop_capture": {
+      "decoded": 5,
+      "first_is_keyframe": true,
+      "ok": true,
+      "still_size": [
+        320,
+        240
+      ],
+      "stills": 3,
+      "video_packets": 5
     },
     "groundweave": {
       "ok": true,
       "ops": {
         "mirror.encode": {
-          "backend": "mirror-stills",
+          "backend": "mirror-vpx-cpu",
           "device": "cpu",
           "ok": true,
-          "with_all_gpus_present": "mirror-stills"
+          "with_all_gpus_present": "mirror-vpx-cpu"
         }
       },
       "problems": [],
@@ -104,9 +131,64 @@
     },
     "kotlin_interop": {
       "desktop_has_identical_bytes": true,
+      "input_poll": {
+        "exit": 0,
+        "expected": [
+          {
+            "gesture": [
+              {
+                "duration_ms": 250,
+                "points": [
+                  [
+                    0.0,
+                    2399.0
+                  ],
+                  [
+                    1079.0,
+                    0.0
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "global": "back"
+          },
+          {
+            "diopters": 4.0,
+            "focus": "manual"
+          }
+        ],
+        "performed": [
+          {
+            "gesture": [
+              {
+                "duration_ms": 250,
+                "points": [
+                  [
+                    0.0,
+                    2399.0
+                  ],
+                  [
+                    1079.0,
+                    0.0
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "global": "back"
+          },
+          {
+            "diopters": 4.0,
+            "focus": "manual"
+          }
+        ]
+      },
       "kotlin_stubs": {
         "all_refuse": true,
-        "count": 9
+        "count": 5
       },
       "ok": true,
       "pair_caps": [
@@ -126,10 +208,16 @@
         "exit": 3,
         "status": 400
       },
-      "studio_input_stub": {
-        "exit": 3,
-        "label": "[STUB mirror.studio_input C9] Remote inp",
-        "status": 501
+      "studio_key": {
+        "exit": 0,
+        "seq": 0,
+        "spooled": [
+          {
+            "key": "q",
+            "shift": false,
+            "type": "key"
+          }
+        ]
       },
       "suites": {
         "ok": true,
@@ -137,7 +225,35 @@
           "C9C12Test": {
             "failures": 0,
             "skipped": 0,
-            "tests": 9
+            "tests": 15
+          }
+        }
+      },
+      "video_push": {
+        "h264": {
+          "decoded": 8,
+          "exit": 0,
+          "pushed": 8,
+          "track": {
+            "awaiting_keyframe": false,
+            "codec": "h264",
+            "gop_len": 4,
+            "keyframes": 2,
+            "packets": 8,
+            "skipped": 0
+          }
+        },
+        "vp8": {
+          "decoded": 8,
+          "exit": 0,
+          "pushed": 8,
+          "track": {
+            "awaiting_keyframe": false,
+            "codec": "vp8",
+            "gop_len": 4,
+            "keyframes": 2,
+            "packets": 8,
+            "skipped": 0
           }
         }
       }
@@ -170,31 +286,30 @@
         ],
         "telemetry_ok": true
       },
+      "input_poll": {
+        "events": [
+          {
+            "type": "tap",
+            "x": 0.5,
+            "y": 0.5
+          }
+        ],
+        "signed": true
+      },
       "ok": true,
       "public_info": {
-        "features": 8,
+        "features": 11,
         "ok": true,
-        "stubs": 5
+        "stubs": 0
       },
-      "stubs_501": {
-        "android_input": {
-          "key": "stub.mirror.android_input",
-          "label": true,
-          "status": 501,
-          "stub": true
-        },
-        "camera_focus": {
-          "key": "stub.mirror.camera_focus",
-          "label": true,
-          "status": 501,
-          "stub": true
-        },
-        "studio_input": {
-          "key": "stub.mirror.studio_input",
-          "label": true,
-          "status": 501,
-          "stub": true
-        }
+      "remote_refused": {
+        "android_input_from_network": 403,
+        "focus_from_network": 403
+      },
+      "studio_input": {
+        "accepted_seq": 0,
+        "not_allowlisted": 403,
+        "spooled": 1
       }
     },
     "mode": "full",
@@ -204,22 +319,69 @@
       "real": [
         "mirror.frame_stream",
         "mirror.still_source",
-        "mirror.query_control"
-      ],
-      "refusals": {
-        "mirror.android_input": "[STUB mirror.android_input C9] Desktop-to-Android remote control (tap/swipe/key injection) is not implemented;",
-        "mirror.camera_focus": "[STUB mirror.camera_focus C9] Remote or local camera focus control is not implemented (needs CameraX/Camera2 o",
-        "mirror.screen_capture": "[STUB mirror.screen_capture C9] Live Android screen capture (MediaProjection foreground service + user consent",
-        "mirror.studio_input": "[STUB mirror.studio_input C9] Remote input into the Studio GUI is not implemented; the Studio is a stub. Only ",
-        "mirror.video_stream": "[STUB mirror.video_stream C9] Video streaming (h264) is not implemented; MirrorWeave carries still frames (png"
-      },
-      "stubs": [
-        "mirror.screen_capture",
+        "mirror.query_control",
+        "mirror.desktop_capture",
         "mirror.video_stream",
+        "mirror.ws_transport",
+        "mirror.studio_input"
+      ],
+      "real_unverified_on_device": [
+        "mirror.screen_capture",
+        "mirror.android_video",
         "mirror.android_input",
-        "mirror.studio_input",
         "mirror.camera_focus"
-      ]
+      ],
+      "refusals": {},
+      "stubs": []
+    },
+    "studio": {
+      "healthy": true,
+      "log": "hiA",
+      "n": 4,
+      "ok": true,
+      "typed": "hiA"
+    },
+    "video": {
+      "codecs": {
+        "vp8": {
+          "bytes": 18703,
+          "keyframes_at": [
+            0,
+            10
+          ],
+          "min_psnr_db": 30.13,
+          "ok": true,
+          "packets": 20
+        },
+        "vp9": {
+          "bytes": 11106,
+          "keyframes_at": [
+            0,
+            10
+          ],
+          "min_psnr_db": 30.04,
+          "ok": true,
+          "packets": 20
+        }
+      },
+      "loss_resync": {
+        "keyframes": 2,
+        "latest_psnr_db": 30.47,
+        "ok": true,
+        "skipped": 5
+      },
+      "ok": true,
+      "psnr_floor_db": 28.0
+    },
+    "ws_transport": {
+      "decoded_min_psnr_db": 30.13,
+      "first_ok": "ack",
+      "frames_acked": 15,
+      "no_mirror_cap": "refused",
+      "ok": true,
+      "replay": 403,
+      "tampered": 403,
+      "wall_s_15_frames": 0.145
     }
   }
 }

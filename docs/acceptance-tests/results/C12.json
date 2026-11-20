@@ -5,10 +5,10 @@
   "milestone": "C12",
   "passed": true,
   "perf": {
-    "fabriccore_junit_tests": 35,
+    "fabriccore_junit_tests": 41,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.plan": 0.003
+      "recon.plan": 0.011
     },
     "planned_ops": [
       "recon.mesh",
@@ -20,7 +20,7 @@
   "result": {
     "build": {
       "junit_failures": 0,
-      "junit_tests": 35,
+      "junit_tests": 41,
       "ok": true
     },
     "cli_stubs": {
@@ -109,7 +109,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.003
+          "wall_s": 0.011
         },
         {
           "backend": null,
@@ -169,7 +169,7 @@
         "C9C12Test": {
           "failures": 0,
           "skipped": 0,
-          "tests": 9
+          "tests": 15
         }
       }
     },
@@ -184,6 +184,7 @@
         "recon.placement",
         "recon.splat_ply_check"
       ],
+      "real_unverified_on_device": [],
       "refusals": {
         "recon.gdgs_import": "[STUB recon.gdgs_import C12] The ShuttleLine Godot 3DGS (GDGS) adapter is not implemented; a validated splat .",
         "recon.meshweaver": "[STUB recon.meshweaver C12] MeshWeaver (splat-to-mesh) is not implemented; it is Phase 2 reconstruction in the",

@@ -469,14 +469,23 @@ def c4_full(root: Path, b: dict[str, Any], tmp: Path) -> dict[str, Any]:
            "blob_identical": stored.exists() and stored.read_bytes() == img.read_bytes(),
            "non_image_rejected": bcode != 0 and "not an image" in json.dumps(br),
            "image_capture_query": "android.media.action.IMAGE_CAPTURE" in tree,
+           # since 0.7.4 the app also has an in-app Camera2 preview for focus control (C9/C10), which needs CAMERA;
+           # C4's capture path itself is still the system camera intent and does not use it
            "camera_permission": "android.permission.CAMERA" in apk["permissions"],
-           "reconstruction": "queued for desktop; RealityLoom/SplatForge reconstruction is C10–C12 (not built)"}
+           "permissions": apk["permissions"],
+           "reconstruction": "queued for desktop; RealityLoom/SplatForge reconstruction is C10–C12 (see C12 register)"}
     prov = e.get("provenance", {})
     res["ok"] = (code == 0 and e.get("kind") == "capture" and e.get("media") == "image/jpeg" and prov.get("width") == 640
                  and prov.get("height") == 480 and res["queued"] == ["recon.capture"] and res["blob_identical"]
-                 and res["non_image_rejected"] and res["image_capture_query"] and not res["camera_permission"]
+                 and res["non_image_rejected"] and res["image_capture_query"]
+                 and set(res["permissions"]) <= _ALLOWED_PERMISSIONS
                  and _suites_ok(b, "CaptureTest")["ok"])
     return res
+
+
+_ALLOWED_PERMISSIONS = {   # C1–C6: INTERNET; 0.7.4 (C9/C10, real_unverified_on_device): mirror service + Camera2 focus
+    "android.permission.INTERNET", "android.permission.CAMERA", "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION", "android.permission.POST_NOTIFICATIONS"}
 
 
 def c5_full(root: Path, b: dict[str, Any], tmp: Path) -> dict[str, Any]:
