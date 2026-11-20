@@ -1,0 +1,146 @@
+{
+ "generator": "espeak-ng 1.52 (system tool, test fixtures only; synthetic speech)",
+ "rate": 16000,
+ "items": [
+  {
+   "file": "00_en-us.wav",
+   "said": "focus the emberling",
+   "intent": "focus",
+   "slot": "emberling",
+   "voice": "en-us"
+  },
+  {
+   "file": "00_en-gb.wav",
+   "said": "focus the emberling",
+   "intent": "focus",
+   "slot": "emberling",
+   "voice": "en-gb"
+  },
+  {
+   "file": "01_en-us.wav",
+   "said": "attack cave mite",
+   "intent": "focus",
+   "slot": "cave_mite",
+   "voice": "en-us"
+  },
+  {
+   "file": "01_en-gb.wav",
+   "said": "attack cave mite",
+   "intent": "focus",
+   "slot": "cave_mite",
+   "voice": "en-gb"
+  },
+  {
+   "file": "02_en-us.wav",
+   "said": "regroup",
+   "intent": "regroup",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "02_en-gb.wav",
+   "said": "regroup",
+   "intent": "regroup",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "03_en-us.wav",
+   "said": "fall back",
+   "intent": "regroup",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "03_en-gb.wav",
+   "said": "fall back",
+   "intent": "regroup",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "04_en-us.wav",
+   "said": "defend",
+   "intent": "defensive",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "04_en-gb.wav",
+   "said": "defend",
+   "intent": "defensive",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "05_en-us.wav",
+   "said": "hold",
+   "intent": "defensive",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "05_en-gb.wav",
+   "said": "hold",
+   "intent": "defensive",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "06_en-us.wav",
+   "said": "charge",
+   "intent": "aggressive",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "06_en-gb.wav",
+   "said": "charge",
+   "intent": "aggressive",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "07_en-us.wav",
+   "said": "push",
+   "intent": "aggressive",
+   "slot": null,
+   "voice": "en-us"
+  },
+  {
+   "file": "07_en-gb.wav",
+   "said": "push",
+   "intent": "aggressive",
+   "slot": null,
+   "voice": "en-gb"
+  },
+  {
+   "file": "08_en-us.wav",
+   "said": "swap to kael",
+   "intent": "swap",
+   "slot": "kael",
+   "voice": "en-us"
+  },
+  {
+   "file": "08_en-gb.wav",
+   "said": "swap to kael",
+   "intent": "swap",
+   "slot": "kael",
+   "voice": "en-gb"
+  },
+  {
+   "file": "09_en-us.wav",
+   "said": "switch nyra",
+   "intent": "swap",
+   "slot": "nyra",
+   "voice": "en-us"
+  },
+  {
+   "file": "09_en-gb.wav",
+   "said": "switch nyra",
+   "intent": "swap",
+   "slot": "nyra",
+   "voice": "en-gb"
+  }
+ ]
+}

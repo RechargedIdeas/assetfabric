@@ -76,7 +76,40 @@ def fetch(model_id: str, root: Path | None = None, timeout: float = 600.0) -> di
             tmp.unlink(missing_ok=True)
             raise ValueError(f"{model_id}/{f['path']}: SHA-256 mismatch (got {h.hexdigest()}, want {f['sha256']})")
         tmp.replace(dst)
+    for f in spec["files"]:
+        if f.get("unpack"):
+            unpacked(model_id, f["path"], root)
     return status(model_id, root, verify=False)
+
+
+def unpacked(model_id: str, file: str | None = None, root: Path | None = None) -> Path:
+    """Directory an `unpack: zip` registry file extracts to (`store/models/<id>/<unpack>/`). The archive is SHA-256-verified
+    first; extraction is idempotent (a `.ok` marker carries the archive hash) and refuses absolute or `..` member paths."""
+    import shutil
+    import zipfile
+    spec = registry(root)[model_id]
+    f = next(x for x in spec["files"] if (file is None and x.get("unpack")) or x["path"] == file)
+    arc = models_dir(root) / model_id / f["path"]
+    out = models_dir(root) / model_id / f["unpack"]
+    mark = out.with_name(out.name + ".ok")
+    if mark.exists() and mark.read_text().strip() == f["sha256"] and out.is_dir():
+        return out
+    if not arc.exists() or sha256_file(arc) != f["sha256"]:
+        raise FileNotFoundError(f"model {model_id!r} not fetched or checksum mismatch — run `forge models fetch {model_id}`")
+    tmp = out.with_name(out.name + ".tmp")
+    shutil.rmtree(tmp, ignore_errors=True)
+    with zipfile.ZipFile(arc) as z:
+        for m in z.namelist():
+            if m.startswith("/") or ".." in Path(m).parts:
+                raise ValueError(f"{model_id}: unsafe archive member {m!r}")
+        z.extractall(tmp)
+    strip = f.get("strip")                     # top-level folder inside the archive
+    src = tmp / strip if strip else tmp
+    shutil.rmtree(out, ignore_errors=True)
+    src.replace(out)
+    shutil.rmtree(tmp, ignore_errors=True)
+    mark.write_text(f["sha256"] + "\n")
+    return out
 
 
 NON_COMMERCIAL = ("CC-BY-NC", "NC-", "non-commercial", "research-only", "OpenRAIL")

@@ -703,6 +703,11 @@ from forge.cli_recon import depth_grp, girt_grp, lens_grp, mirror_grp, models_gr
 for _g in (mirror_grp, lens_grp, depth_grp, recon_grp, models_grp, girt_grp):
     main.add_command(_g)
 
+from forge.cli_voice import persona_grp, voice_grp  # noqa: E402  (VoiceBridge + persona micro-LM, stub batch 4)
+
+main.add_command(voice_grp)
+main.add_command(persona_grp)
+
 
 if __name__ == "__main__":
     main()

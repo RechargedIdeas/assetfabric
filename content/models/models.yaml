@@ -14,3 +14,29 @@ models:
         sha256: afb6a5c28f3b6bf1618c6e43f02073ef9dfdc70e937502d51603e57b0a1df10c
         bytes: 99060839
     preprocess: {size: 518, multiple_of: 14, mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225], resample: bicubic}
+  vosk-small-en-us-0.15:
+    licence: Apache-2.0
+    licence_source: "https://alphacephei.com/vosk/models (table: vosk-model-small-en-us-0.15 — Apache 2.0); runtime `vosk` wheel Apache-2.0 (alphacep/vosk-api)"
+    forbidden_siblings: "vosk-model-en-us-daanzu-* are AGPL and vosk-model-small-en-us-zamia-* LGPL-3.0 — never use"
+    use: "VoiceBridge offline STT (F3 voice intents, ADR-0006): Kaldi small model, grammar-constrained to the closed intent vocabulary"
+    files:
+      - path: vosk-model-small-en-us-0.15.zip
+        url: "https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip"
+        sha256: 30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498
+        bytes: 41205931
+        unpack: model
+        strip: vosk-model-small-en-us-0.15
+  qwen2.5-0.5b-instruct-onnx:
+    licence: Apache-2.0
+    licence_source: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct (model card: apache-2.0); ONNX export https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct (base_model Qwen2.5-0.5B-Instruct)"
+    forbidden_siblings: "Qwen2.5-3B / -72B use the Qwen Research / Qwen licences — not Apache-2.0, never use"
+    use: "Persona micro-LM (SPEC 'shared backbone Qwen2.5-0.5B'): desktop/build-time persona line authoring on the onnxruntime CPU EP; never in the combat tick"
+    files:
+      - path: model_int8.onnx
+        url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/22942cb7d7ba4cc81bb4673549ca4d4614469b5e/onnx/model_int8.onnx"
+        sha256: 41834041ab1b29eff9fc592f1a29a1844133aea35832ea9fa91682be13016100
+        bytes: 512096557
+      - path: tokenizer.json
+        url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/22942cb7d7ba4cc81bb4673549ca4d4614469b5e/tokenizer.json"
+        sha256: a8506e7111b80c6d8635951a02eab0f4e1a8e4e5772da83846579e97b16f61bf
+        bytes: 7031673
