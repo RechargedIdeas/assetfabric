@@ -52,7 +52,7 @@ def android_key(key: str) -> str:
     return key.replace(".", "_")
 
 
-def check(root: Path | None = None) -> dict[str, Any]:
+def check(root: Path | None = None, ms: str | None = None) -> dict[str, Any]:
     """Static + dynamic consistency of the register with code, ladder, locales, Android strings and Kotlin."""
     from forge import groundweave
 
@@ -67,6 +67,8 @@ def check(root: Path | None = None) -> dict[str, Any]:
     stub_results: dict[str, Any] = {}
     real_ids, stub_ids = [], []
     for f in reg["features"]:
+        if ms and f["milestone"] != ms:
+            continue
         fid = f["id"]
         if fid in seen:
             problems.append(f"{fid}: duplicate id")
