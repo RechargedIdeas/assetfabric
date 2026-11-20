@@ -40,7 +40,7 @@ jobs:
   pocketloom:
     # Companion track C1–C6: FabricCore JVM tests, debug APK (aapt/apksigner), lint, Kotlin↔Python LoomLink interop;
     # then C7/C8: LoomCluster loopback fleet + GroundWeave 2-core CPU-fallback proofs (runs here, in parallel with `test`,
-    # so the critical path is unchanged; pytest only carries tests/test_c7_c8.py ≈ 7 s).
+    # so the critical path is unchanged; pytest only carries tests/test_c7_c8.py ≈ 7 s), then C9–C12 (+ tests/test_c9_c12.py ≈ 4 s in pytest).
     runs-on: ubuntu-latest
     env:
       GODOT_VERSION: "4.3"
@@ -78,3 +78,5 @@ jobs:
         run: source .venv/bin/activate && forge accept C1-C6 --no-write
       - name: forge accept C7-C8 (LoomCluster loopback fleet + GroundWeave, full mode; incl. the Kotlin LoomLink hop)
         run: source .venv/bin/activate && forge accept C7-C8 --no-write
+      - name: forge accept C9-C12 (MirrorWeave / LensForge / depth / SplatForge path: contracts + labelled stubs; Gradle is warm from C1-C6)
+        run: source .venv/bin/activate && forge accept C9-C12 --no-write

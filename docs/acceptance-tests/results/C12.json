@@ -1,11 +1,9 @@
 {
   "description": "SplatForge path: RealityLoom routing, deterministic capture bundle, honest plan/ETA, cluster GPU-placement check, 3DGS .ply validator; SplatForge/photogrammetry/MeshWeaver/GDGS import are labelled stubs",
-  "errors": [
-    "cpu_2core: {\"ok\": false, \"cores\": 2, \"results\": [{\"op\": \"recon.plan\", \"status\": \"ok\", \"backend\": \"realityloom-plan-cpu\", \"device\": \"cpu\", \"wall_s\": 0.003, \"budget_s\": 20, \"cores\": 2, \"identical_to_unpinned\": true, \"identical_with_simulated_gpu\": true}, {\"op\": \"recon.mesh\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}, {\"op\": \"shuttle.gdgs\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}]}"
-  ],
+  "errors": [],
   "increment": "splatforge-path",
   "milestone": "C12",
-  "passed": false,
+  "passed": true,
   "perf": {
     "fabriccore_junit_tests": 35,
     "mode": "full",
@@ -100,7 +98,7 @@
     },
     "cpu_2core": {
       "cores": 2,
-      "ok": false,
+      "ok": true,
       "results": [
         {
           "backend": "realityloom-plan-cpu",

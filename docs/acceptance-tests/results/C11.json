@@ -1,11 +1,9 @@
 {
   "description": "Metric depth: pinhole monocular distance + inverse-depth scale alignment (analytic ground truth); dense DepthAnything V2 / ARCore depth are labelled stubs",
-  "errors": [
-    "cpu_2core: {\"ok\": false, \"cores\": 2, \"results\": [{\"op\": \"depth.distance\", \"status\": \"ok\", \"backend\": \"pinhole-align-cpu\", \"device\": \"cpu\", \"wall_s\": 0.001, \"budget_s\": 10, \"cores\": 2, \"identical_to_unpinned\": true, \"identical_with_simulated_gpu\": true}, {\"op\": \"depth.estimate\", \"status\": \"planned\", \"backend\": null, \"device\": null, \"wall_s\": null, \"budget_s\": null, \"cores\": null, \"identical_to_unpinned\": null, \"identical_with_simulated_gpu\": null}]}"
-  ],
+  "errors": [],
   "increment": "metric-depth",
   "milestone": "C11",
-  "passed": false,
+  "passed": true,
   "perf": {
     "fabriccore_junit_tests": 35,
     "mode": "full",
@@ -54,7 +52,7 @@
     },
     "cpu_2core": {
       "cores": 2,
-      "ok": false,
+      "ok": true,
       "results": [
         {
           "backend": "pinhole-align-cpu",
