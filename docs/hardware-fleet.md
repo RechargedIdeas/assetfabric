@@ -26,3 +26,10 @@ Authoritative inventory from design chat / ASSETFABRIC_SPEC §10. Mirrored in `f
 
 **2 CPU cores, no GPU** (chat used Ryzen 5 1600 with GPUs disabled as contract hardware).  
 Every GPU capability needs a **GroundWeave** CPU software path, or must declare GPU-required and be routed by LoomCluster.
+
+## How the fleet is used (C7 / C8)
+
+- `forge.yaml` `cluster.nodes` mirrors this table (cores, RAM, GPUs, user **allocation cap** → worker slots = `max(1, cores × cap%)`); `cluster.protocol` holds the wire settings. kindle-1/2 are listed with cap 0 (dashboards only; specs unknown — INFERENCES C-30).
+- LoomCluster treats every node as equal. GPUs on one node are advertised as device **names** (`rocm`, `vulkan`, `directml`, `cpu`) — they do not pool (Vega 64 + 56 = two devices, not 16 GB).
+- GroundWeave's ladder (`content/groundweave/ladder.yaml`) orders backends per op in the preference this page prescribes (ROCm on the 7900, DirectML on Windows/Vega, Vulkan universal, CPU last). **Only the CPU rungs exist today**; the GPU rungs are labelled `planned`.
+- Acceptance runs the weakest-node contract by pinning to 2 CPUs with GPUs hidden (`forge groundweave verify`, `forge accept C7`).

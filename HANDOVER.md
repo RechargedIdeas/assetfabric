@@ -1,12 +1,13 @@
 # HANDOVER.md — Current State Snapshot
 
-**Last updated:** 2026-11-12 America/New_York
+**Last updated:** 2026-11-19 America/New_York
 **Repository:** https://github.com/RechargedIdeas/assetfabric (**private**, branch `main`)
 **License:** proprietary, All Rights Reserved (ADR-0001)
 **Current Fabric milestone:** **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** (accepted, `0.7.0+f7`)
 **Current game increment:** `launch-candidates`
 **Companion track:** **PocketLoom C1–C6 accepted** (`forge accept C1-C6`, debug APK `0.1.0-c6`, package `0.7.1+f7`) — standalone offline Android companion + LoomLink pairing/offload/sync; not yet run on a device
-**Next:** **LoomCluster C7 + GroundWeave C8** — verify + land the drafts still on `wip/f5-companions` (`forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, `content/groundweave/ladder.yaml`, `cluster:` block in `forge.yaml`) with acceptance on a 2-core / no-GPU node; then C9–C12 interfaces + labelled stubs. F8 (retro/console-style) is optional — confirm scope with the Producer before building
+**Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
+**Next:** **C9–C12 interfaces + clearly labelled stubs** (MirrorWeave, LensForge capture, metric depth, SplatForge path — SPEC §8/§13; do not claim features). F8 (retro/console-style) is optional — confirm scope with the Producer before building. Follow-ups already identified: LAN/Tailscale run + node auth, Kotlin cluster peer, first real GPU rung (see TODO.md)
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
 Milestone dashboard: [STATUS.md](STATUS.md).
@@ -25,8 +26,8 @@ Milestone dashboard: [STATUS.md](STATUS.md).
 | SwatchStudio | CLI only (`forge palette`, `forge gen --seed`) |
 | Godot binding | `fabric_assets.json` registry + `Fabric` autoload (runtime load, no editor import) |
 | Game Zero | sandbox (F1), first combat (F2), **party AI (F3)**: compiled BTs + GIRT policy targeting, time-freeze swap with threaded forward-sim ranking, typed intents via CascadeHub, callouts, post-combat dialogue; keyboard play + headless autoplay + demo mode; deterministic sim; **live tune (F4)**: `--scene=live`, live channel, snapshots/WAL replay, statecharts, guardian-supervised `--serve`; **first boss (F5)**: `--scene=boss`, tier-3 Cave Warden (3 HP phases, 2 summoned emberlings, enrage) in a carved G1-Tile boss arena, autoplay rally, save on victory; **vertical slice (F6)**: `--scene=slice` — character + pet select, farm plots (plant/grow/harvest), gather nodes, workbench crafting (salve, tonic, gear), tiered loot, quest log (main + side quest), field ⇄ tunnels ⇄ deep cave → Warden's lair → open-world exit, adaptive music (biome × state stems), checkpoints + save/quit/resume, XP/levels, boss unlock; headless QA autopilot (`--autoplay`) |
-| Acceptance | `forge accept C1-C6` (PocketLoom, recorded `results/C*.json`); `forge accept F0..F7` recorded in `docs/acceptance-tests/results/` (F3–F6 add `perf` blocks); `FORGE_ACCEPT_FAST=1` runs the 2-selection F6 subset (pytest/CI) |
-| CI | GitHub Actions (push to `main` / `feat/**`, PRs): job `test` = pytest + determinism gate + Godot 4.3 headless increments; job `pocketloom` = `forge accept C1-C6` full (JDK 17 + Gradle cache + runner Android SDK) |
+| Acceptance | `forge accept C1-C6` (PocketLoom) and `forge accept C7-C8` (recorded `results/C*.json`); `forge accept F0..F7` recorded in `docs/acceptance-tests/results/` (F3–F6 add `perf` blocks); `FORGE_ACCEPT_FAST=1` runs the 2-selection F6 subset (pytest/CI) |
+| CI | GitHub Actions (push to `main` / `feat/**`, PRs): job `test` = pytest + determinism gate + Godot 4.3 headless increments; job `pocketloom` (parallel) = `forge accept C1-C6` full (JDK 17 + Gradle cache + runner Android SDK) then `forge accept C7-C8` (Godot cached) |
 | GIRT / CascadeHub | real, CPU/GDScript backends (`autoload/girt.gd`, `autoload/cascade_hub.gd`); ONNX Runtime GDExtension not built |
 | Substrate (F4) | **real**: sandbox tiers bwrap + process (Firecracker/gVisor detected, no launcher — `/dev/kvm` not accessible), live channel (atomic hot reload, 2PC, probe, rollback), Tier-2 snapshots + WAL, parallel statecharts + soft-lock analysis, Guardian (crash/hang restart + resume + quarantine). See `docs/SUBSTRATE.md` |
 | Balance (F5) | **real**: `forge balance run` (12 character-select matchups × 200 seeds = 2400 headless boss fights, sharded over CPU cores, CRN, Wilson CIs) — G-BAL-01 pass, gated per choice **and per leader × pet cell** since F6 (pet↔character affinity, INFERENCE F6-1/F6-2); `forge balance tune` (Optuna TPE, CPU, optional extra `tune`) |
@@ -34,7 +35,9 @@ Milestone dashboard: [STATUS.md](STATUS.md).
 | Save (F5/F6) | **real**: Player State v4 (profile / roster / world incl. farm, checkpoint, quest counters, buffs, gear), migrations v1→v2→v3→v4, canonical JSON + sha256, atomic write + `.bak` recovery; GDScript ↔ Python parity. Cross-device round-trip **G-SAVE-01 proven at F7** (desktop → Android content → Web/IndexedDB → desktop, checksum identical every hop); transfer is manual (`--import-b64`), no cloud sync |
 | Packaging (F7) | **real, unsigned/debug**: `forge build --target desktop-linux|desktop-windows|android|web|all` → `dist/` (gitignored). Hermetic Godot home + sha256-pinned 4.3 templates; staged keep-import ships Fabric output byte-for-byte; per-target verify; PWAPipeline (G-WEB-01 9.3 MB gzip / 45 MB, offline SW, COOP/COEP); ShuttleLine contract checked against every PCK/APK; BoltPack SBOM + license audit + `.fabricbolt`. Sizes + SHA-256: docs/acceptance-tests/F7.md. Local-only (CI runs the static F7 subset). See docs/packaging.md |
 | PocketLoom (C1–C6) | **real, debug APK** (`companions/pocketloom/`, ≈ 0.97 MB): FabricCore (pure Kotlin/JVM: JobExecutor + Dispatcher, content-addressed AssetStore with version vectors, durable OffloadQueue, Telemetry, ModelCache LRU, LocalForge CPU caves/sprites with gates + retry — ONNX rung is a labelled stub), Android UI (Generate · Library · Capture · Link · Telemetry; string resources only; lint 0 errors), capture via camera intent / import → queued `recon.capture`, LoomLink pairing (one-time code, `loomlink://` QR URI, Tailscale address; HMAC proofs, caps ∩, signed requests, 300 s code TTL) with `forge link serve` on the desktop, offload drain + version-vector sync (conflicts keep both). Proven by JUnit + aapt/apksigner/lint + the same FabricCore code (jar) against the Python server. **Never run on a phone** (no device / KVM). See docs/acceptance-tests/C1-C6.md |
-| Studio GUI, LoomCluster, GroundWeave | not started on `main` (placeholders). Unverified LoomCluster / GroundWeave drafts live on branch `wip/f5-companions` |
+| LoomCluster (C7) | **real, loopback-proven** (`forge/loomcluster.py`, `forge cluster node|submit|status|gen|demo`): equal nodes, adverts + gossip, allocation-capped slots, work stealing, origin leases (owner moves with a steal), retry (3), journal recovery + result redelivery, device placement, `forge link serve --cluster` bridge for PocketLoom offloads. **Unauthenticated HTTP on loopback; never run across machines** |
+| GroundWeave (C8) | **real ladder, CPU paths only** (`content/groundweave/ladder.yaml`, `forge/groundweave.py`, `forge groundweave check|show|verify`): every generator kind declared and enforced by `run_brief`; CPU rungs proven on 2 pinned cores, GPU hidden, byte-identical to unpinned / simulated-GPU runs; every GPU rung is `planned` (no ONNX/ROCm/DirectML/Vulkan backend built); `recon.splat` is `gpu_required` + routed |
+| Studio GUI | not started on `main` (placeholder) |
 
 ## Verify
 
@@ -47,7 +50,9 @@ forge accept F6           # needs Godot 4.3 (GODOT_BIN / PATH / godot-bin/); ≈
 forge accept F5           # ≈ 2 min on 8 vCPU (2400-fight balance matrix)
 forge templates fetch && forge accept F7   # platform builds + G-WEB-01/G-SAVE-01/G-NET-01 (≈ 1.7–2.5 min; JDK 17, Android SDK, Chrome)
 forge accept C1-C6        # PocketLoom: gradle tests + debug APK + lint + Kotlin↔Python LoomLink interop (JDK 17 + Android SDK; ≈ 75 s warm)
-forge link serve --bind <LAN/Tailscale IP>   # pair a phone running PocketLoom
+forge accept C7-C8        # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (≈ 80 s; Godot + optional JDK/SDK for the Kotlin hop)
+forge cluster demo        # 3 local nodes: stealing + SIGKILL failover
+forge link serve --bind <LAN/Tailscale IP> [--cluster <node URL>]   # pair a phone running PocketLoom
 forge balance run         # G-BAL-01 matrix only
 godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed)
 ```
@@ -70,9 +75,11 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 - F5 acceptance runs 2400 fights; on a 2-core node expect ≈ 7–9 min.
 - **PocketLoom**: debug-signed only; never installed on a phone (camera/picker intents, QR → intent hand-off, on-device timings unverified). ONNX rung is a stub (no runtime bundled). LoomLink has no TLS/PAKE: HMAC gives integrity + replay protection, not confidentiality (use Tailscale); the hello proof allows offline guessing of the 8-char code within its 300 s TTL; desktop `last_ts` not persisted across restarts; deletions not synced (no tombstones); session key not Keystore-wrapped. INFERENCES C-1…C-15.
 
+- **LoomCluster / GroundWeave (C7/C8)**: proven on loopback processes only. Node↔node HTTP has no auth/encryption (don't bind off loopback); PocketLoom is a LoomLink client, not a cluster peer; no real GPU rung exists (all `planned`), runtime demotion proven on a synthetic ladder; reduced balance matrix (not the full 2400 fights) is what was re-timed on 2 cores; origin loss without restart loses results; large artifacts ride in result JSON (INFERENCES C-16…C-31).
+
 ## Next steps (ordered)
 
-1. **LoomCluster C7 + GroundWeave C8** (next run): branch from `main`, review + verify the drafts on `wip/f5-companions` (`forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, `content/groundweave/ladder.yaml`, `cluster:` in `forge.yaml`); LoomLink's offload ops (`forge/loomlink.py` `OPS`) are the hook for routing phone jobs into the cluster. Acceptance on a 2-core / no-GPU node. Then C9–C12 interfaces + clearly labelled stubs.
+1. **C9–C12 interfaces + labelled stubs** (next run): MirrorWeave (screen stream / remote control — capabilities `mirror`, `drive_studio` already reserved in LoomLink), LensForge capture modes, metric depth, cluster reconstruction (SplatForge path via the `recon.splat` GroundWeave route). Interfaces + stubs that say what is *not* implemented; no fake shipped claims. Then the C7/C8 follow-ups in TODO.md (two-machine run + node auth, Kotlin peer, first real GPU rung).
 2. **PocketLoom on hardware**: `adb install` the debug APK on the Redmi Note 12 Pro 5G (D-002); generate, capture (camera + import), pair via QR with `forge link serve`, drain + sync; record timings.
 3. Human GUI playtest of the vertical slice (length vs 15–20 min, HUD/quest readability, controls, music mix) — checklist in docs/acceptance-tests/F6.md; play the F7 builds on real Windows, the Redmi Note 12 Pro 5G (D-002) and a public HTTPS host.
 4. Signing + store listings (docs/packaging.md §Signing & stores) — needs Producer keys/certs.

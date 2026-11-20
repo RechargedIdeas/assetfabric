@@ -60,8 +60,8 @@ C1–C6 acceptance: `forge accept C1-C6` → `docs/acceptance-tests/results/C*.j
 | C4 | Local capture | ✅ accepted — camera intent / import → store + queued recon offload |
 | C5 | Pairing (QR/codes/Tailscale) | ✅ accepted — LoomLink HMAC pairing, `forge link serve` |
 | C6 | Offload + sync | ✅ accepted — OffloadQueue drain, version-vector sync (keep both) |
-| C7 | LoomCluster | **next** — unverified draft on `wip/f5-companions`; fleet in `forge.yaml` |
-| C8 | GroundWeave | **next** — unverified draft on `wip/f5-companions`; principle documented |
+| C7 | LoomCluster | ✅ accepted 2026-11-19 — equal nodes (HTTP/JSON, loopback-proven), negotiation, work stealing, leases/retry, journal recovery, device placement, LoomLink bridge; `forge accept C7` |
+| C8 | GroundWeave | ✅ accepted 2026-11-19 — ladder for every generator + runtime/GIRT/balance probes; CPU path byte-identical on 2 pinned cores, GPUs hidden; pipeline refuses undeclared generators; `forge accept C8` |
 | C9 | MirrorWeave | deferred |
 | C10–C12 | LensForge / depth / SplatForge path | deferred |
 

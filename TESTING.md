@@ -11,7 +11,8 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 | Integration | generators → gates → store → registry; determinism; codegen; audio; AI models; sandbox tiers, live channel, statecharts, guardian | `tests/test_f1_pipeline.py`, `tests/test_f2_codegen_audio.py`, `tests/test_f3_ai.py`, `tests/test_f4_substrate.py`, `tests/test_f5_balance_save.py`, `tests/test_f6_world.py` | F1–F6 ✅ |
 | Headless game | Godot `--headless` autoplay per increment (incl. GDScript↔Python model parity); F4 also drives a live process under the guardian; F5 runs the 2400-fight Monte Carlo matrix + save round-trip; F6 plays the whole vertical slice with the QA autopilot, quits + resumes in a new process, and runs the selection matrix (2 in pytest/CI via `FORGE_ACCEPT_FAST=1`, 12 in `forge accept F6`) | `tests/test_game_increments.py`, `forge accept` | F0–F6 ✅ |
 | Acceptance | milestone gates | `docs/acceptance-tests/F*.md`, `forge accept F0..F6` | F0–F6 ✅ |
-| Perf / fidelity | GroundWeave 2-core budgets, retro authenticity (V1) | later | F1+ |
+| Fleet / fallback | LoomCluster (loopback processes: determinism over 1/2/3 nodes, stealing, SIGKILL failover, retry, origin restart, device placement, LoomLink bridge) and GroundWeave (ladder rules, runtime demotion, pipeline enforcement, 2-core GPU-hidden byte-identical verify) | `tests/test_c7_c8.py` (fast, ≈ 7 s), `forge accept C7-C8` (full, ≈ 80 s) | C7/C8 ✅ |
+| Perf / fidelity | Retro authenticity (V1); GroundWeave 2-core budgets are now gated by `forge groundweave verify` | later | F1+ |
 | Balance / soft-lock | Monte Carlo G-BAL-01 (sharded headless workers), soft-lock static + runtime detector | `forge balance run`, `forge softlock`, `forge accept F5` | F5 ✅ |
 | Hybrid QA | Scripted QA autopilot plays the slice headless (F6 ✅); human GUI playtest checklist in F6.md (pending) | `world/autopilot.gd`, `docs/acceptance-tests/F6.md` | F6 ◐ |
 
@@ -21,6 +22,9 @@ Every Fabric milestone is proven by an **executable acceptance test** and a play
 source .venv/bin/activate
 pytest -q                         # unit + component (≈ 14 min with Godot)
 forge accept F7                   # F7 full: exports + platform proofs (local; see docs/packaging.md)
+forge accept C7-C8                # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (Godot for the GIRT/balance probes; JDK+SDK adds the Kotlin LoomLink hop)
+forge groundweave verify          # every op's CPU path: 2 cores pinned, GPUs hidden, budget + byte-identity vs unpinned / simulated-GPU runs
+forge cluster demo                # 3 local nodes, work stealing + SIGKILL failover
 forge accept C1-C6                # PocketLoom: gradle tests + debug APK + lint + Kotlin↔Python LoomLink interop (JDK 17 + Android SDK)
 (cd companions/pocketloom && ./gradlew :fabriccore:test)   # FabricCore JVM unit tests only
 forge validate manifest           # forge.yaml against schema
@@ -58,6 +62,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F4 | [F4.md](docs/acceptance-tests/F4.md) | live-tune (custom runner: backlog run + guardian-supervised serve run) |
 | F5 | [F5.md](docs/acceptance-tests/F5.md) | first-boss (custom runner: boss clear ×2 + save round-trip + 2400-fight balance matrix + soft-lock probe; ≈ 2 min on 8 vCPU, ≈ 7–9 min on 2 cores) |
 | F6 | [F6.md](docs/acceptance-tests/F6.md) | vertical-slice (custom runner: slice playthrough + quit/resume parity + selection matrix + parity + world gates; ≈ 30 s on 8 vCPU full, ≈ 15 s fast) |
+| C7–C8 | [C7-C8.md](docs/acceptance-tests/C7-C8.md) | loomcluster / groundweave (companion track: loopback fleet of OS processes + CPU-fallback proofs; ≈ 50 s + ≈ 25 s; fast mode = smaller batches, no Kotlin hop) |
 | C1–C6 | [C1-C6.md](docs/acceptance-tests/C1-C6.md) | pocketloom (companion track, not an F-gate: Gradle build once → JUnit + aapt/apksigner/lint + `fabriccore-all.jar` driven against the Python LoomLink server; ≈ 75 s with warm Gradle caches; fast mode = Python half + static scans) |
 | F7 | [F7.md](docs/acceptance-tests/F7.md) | launch-candidates (custom runner: `forge build --target all` + desktop slice in a network-less namespace + Android content slice + G-SAVE-01 ring desktop → Android → Web → desktop + PWA smoke + remap; ≈ 2.5 min full, ≈ 3 s fast) |
 

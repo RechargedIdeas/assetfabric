@@ -80,7 +80,9 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
 | `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
-| `studio/`, `cluster/loomcluster/` | Studio / cluster tracks | stub (LoomCluster/GroundWeave drafts on `wip/f5-companions`) |
+| `studio/` | Studio GUI | stub |
+| `forge/loomcluster.py`, `cluster/loomcluster/` | LoomCluster (C7) equal-node scheduler | real, loopback-proven (see §LoomCluster / GroundWeave) |
+| `forge/groundweave.py`, `content/groundweave/ladder.yaml` | GroundWeave (C8) GPU→CPU ladder | real; all GPU rungs `planned` |
 
 ### Content flow (F1)
 
@@ -155,4 +157,19 @@ REST · CLI (`forge`) · MCP · ACP · WebSocket · gRPC · in-Studio terminal.
 - No unsandboxed untrusted authoring code.  
 - No client-authoritative MP state.  
 - No hard-coded strings/paths.  
-- GroundWeave CPU fallbacks / 2-core acceptance.  
+- ~~GroundWeave CPU fallbacks / 2-core acceptance~~ — done in C8 (CPU paths proven; no GPU backends exist yet).  
+
+## LoomCluster / GroundWeave (C7 / C8)
+
+```
+ any node ──POST /submit──▶ Node (queue · slots=max(1,cores×cap%) · journal.jsonl)
+   ▲  gossip /hello (adverts: cores, devices, slots, load) ◀──▶ peers          (equal nodes; coordinator = lowest id, reporting only)
+   │  idle slot ──POST /steal──▶ busiest peer's queue TAIL (only jobs the thief can run; owner moves with the job)
+   └─ POST /result ──▶ origin (parked + redelivered if the origin is down); origin lease re-queues work whose owner vanished
+ job op ─▶ GroundWeave ladder (content/groundweave/ladder.yaml): rocm → directml → vulkan → cpu   (cpu rung is real and last)
+```
+
+- **Execution semantics:** at-least-once; ops are deterministic functions of their payload, so duplicates and placement do not change results (the first result wins). Failing jobs retry (`cluster.protocol.max_attempts`). `gen` runs in a child process whose device set is the node's advert.
+- **Placement:** `requires.device` is matched against adverts; unmatched → HTTP 400. GPU-required GroundWeave ops (`recon.splat`) are routed this way.
+- **PocketLoom:** `forge link serve --cluster URL` plugs a `ClusterBridge` into LoomLink's `/offload`; the phone is a client of the fleet (a Kotlin peer node is future work).
+- **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback — see SECURITY.md for what that does not cover.

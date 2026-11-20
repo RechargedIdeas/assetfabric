@@ -17,8 +17,9 @@
 | Fabric milestone | **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** ✅ accepted (`forge accept F7`) |
 | Game increment | `launch-candidates` — unsigned Linux + Windows builds, debug Android APK, Web PWA (9.3 MB gzip, offline) of the vertical slice; saves round-trip desktop → Android → Web → desktop |
 | Companion track | **PocketLoom C1–C6** ✅ accepted (`forge accept C1-C6`) — standalone offline Android companion, debug APK ≈ 0.97 MB: on-device generation, library, capture, LoomLink pairing (code / QR URI / Tailscale), offload + sync. Not yet run on a phone (no device/KVM) |
-| Version | `0.7.1+f7` (PocketLoom `0.1.0-c6`) |
-| Next | LoomCluster C7 + GroundWeave C8 (drafts on `wip/f5-companions`); C9–C12 interfaces + labelled stubs; F8 retro is optional — confirm scope first |
+| Fleet track | **LoomCluster C7 + GroundWeave C8** ✅ accepted (`forge accept C7-C8`) — equal nodes that advertise/negotiate, steal work, retry and recover from crashes (proven on **loopback processes**, not a LAN); results are byte-identical on 1, 2 or 3 nodes; every generator has a declared GPU→CPU ladder, and its CPU path is proven on 2 pinned cores with GPUs hidden. PocketLoom offloads run on the fleet via LoomLink. No real GPU backend exists yet — every GPU rung is a labelled `planned` stub |
+| Version | `0.7.2+f7` (PocketLoom `0.1.0-c6`) |
+| Next | C9–C12 interfaces + labelled stubs (MirrorWeave, LensForge, depth, SplatForge); F8 retro is optional — confirm scope first |
 
 Live dashboard: [STATUS.md](STATUS.md) · details: [HANDOVER.md](HANDOVER.md).
 
@@ -41,7 +42,9 @@ forge build           # regenerate content from content/briefs/ (deterministic)
 forge accept F6       # headless Godot acceptance (needs Godot 4.3); FORGE_ACCEPT_FAST=1 for the CI subset
 forge build --target all   # F7 platform builds → dist/ (needs `forge templates fetch`, JDK 17, Android SDK; see docs/packaging.md)
 forge accept C1-C6    # PocketLoom: Gradle build + debug APK verify + Kotlin↔Python LoomLink interop (JDK 17, Android SDK)
-forge link serve --bind <LAN/Tailscale IP>   # pair a PocketLoom phone (code + loomlink:// QR)
+forge accept C7-C8    # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (≈ 80 s; Godot for the runtime probes)
+forge cluster demo    # 3 local nodes, work stealing + SIGKILL failover   ·   forge groundweave show|check|verify
+forge link serve --bind <LAN/Tailscale IP> [--cluster <node URL>]   # pair a PocketLoom phone (code + loomlink:// QR); offloads run on the fleet
 forge balance run     # Monte Carlo G-BAL-01 matrix (12 matchups × 200 seeds)
 forge live serve --headless &   # Game Zero under the guardian; then: forge live set sim.leash=72
 ```
@@ -62,7 +65,7 @@ Play Game Zero: `godot --path games/game-zero -- --scene=slice` (the vertical sl
 | `games/game-zero/` | Game Zero Godot 4 project ([README](games/game-zero/README.md)) |
 | `studio/` | Desktop Studio (PySide6) — stub |
 | `companions/pocketloom/` | PocketLoom Android companion + FabricCore (Kotlin) — C1–C6 ([README](companions/pocketloom/README.md)) |
-| `cluster/loomcluster/` | Compute clustering — placeholder |
+| `forge/loomcluster.py`, `forge/groundweave.py`, `content/groundweave/ladder.yaml` | LoomCluster (C7) equal-node scheduler + GroundWeave (C8) fallback ladder; `cluster/loomcluster/` holds its README |
 | `store/` | Content-addressed asset store (blobs gitignored) |
 | `locales/` | Locale string tables (no hard-coded strings) |
 | `content/tune/` | Live-tune limits (F4); also bound balance/tuning knobs (F5) |

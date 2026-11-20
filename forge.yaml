@@ -108,7 +108,7 @@ cluster:
     - id: nokia
       tier: T5
       role: QR / client / review
-      cpu_cores: 2
+      cpu_cores: 8        # [INFERENCE C-30] Snapdragon 660 octa-core; the 2-core contract is a *test* pin, not this device
       ram_gb: 4
       gpus: []
       os: android

@@ -4,6 +4,22 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.2+f7] — 2026-11-19 — Companion track C7 (LoomCluster) + C8 (GroundWeave)
+
+### Added
+- **LoomCluster (C7)** `forge/loomcluster.py`, `forge cluster node|submit|status|gen|demo`: equal nodes (one program, no master) that **advertise** cores/devices/allocation-capped slots and gossip a mesh; any node accepts jobs; **work stealing** from the busiest peer's queue tail; **leases** at the job's origin (owner moves with a steal) so a crashed node's work re-runs elsewhere; failing jobs **retry** (`max_attempts`, default 3) then report; an append-only **journal** lets a restarted node recover held jobs and results, and peers park + **redeliver** results for an origin that is down; **device negotiation** places `requires.device` jobs on a node advertising it and refuses when none does; the elected coordinator (lowest live id) is reporting-only. `gen` jobs run in child processes (true parallelism; the child sees only the devices the node advertises). `forge cluster gen --out` lands artifact bytes identical to a local build.
+- **PocketLoom ↔ cluster**: `forge link serve --cluster <node URL>` — a paired phone's `hashchain`/`gen` offloads are round-robined over the fleet (`via: "loomcluster"`), falling back to the desktop if the fleet is unreachable.
+- **GroundWeave (C8)** `forge/groundweave.py`, `content/groundweave/ladder.yaml`, `forge groundweave check|show|verify`: per-op GPU→CPU ladder (rocm / directml / vulkan → cpu); rules enforced by `check` (real CPU rung last or `gpu_required` + `route: loomcluster`; every generator kind declared); `select` never picks a `planned` rung; `execute` demotes a failing GPU rung at runtime; **`forge build`/`run_brief` refuses a generator with no ladder entry**; `verify` runs every op's CPU path pinned to 2 cores with GPUs hidden against its budget and demands output **byte-identical** to the unpinned run and to a run with every GPU simulated present; Godot-headless probes for GIRT (F3 run, policy p95 ≤ in-engine budget) and a reduced balance matrix. `forge status` reports the ladder.
+- `forge accept C7`, `C8`, `C7-C8` with `docs/acceptance-tests/results/C7.json|C8.json`; `docs/acceptance-tests/C7-C8.md`; `tests/test_c7_c8.py` (14 tests, ≈ 7 s); CI: `forge accept C7-C8` runs in the existing parallel `pocketloom` job (Godot cached) — the `test` job (critical path) only gains the 7 s of unit tests.
+- `forge.yaml` `cluster.protocol` (+ schema) and the full fleet (main, secondary, redmi, lemur, nokia, kindle-1/2).
+
+### Changed
+- Taken from `wip/f5-companions` and fixed: the draft's steal path told the origin about the new owner only *after* the thief ran, so a node killed right after a steal stranded the job — ownership now moves with the job; ops moved out of threads into child processes; results from an unreachable origin were dropped — now parked + redelivered; `loomlink.py` (already on main) is the single source of the `hashchain`/`gen` ops. `gen` ops now go through GroundWeave and can return artifact bytes (`return_data`).
+- Package `0.7.2+f7` (Fabric milestone stays F7).
+
+### Not done / honest limits
+- Proven on **loopback processes only** — never across two machines; nodes speak unauthenticated HTTP/JSON and bind loopback by default (INFERENCES C-17). PocketLoom is a LoomLink **client** of the fleet, not (yet) a Kotlin cluster peer. No real GPU exists in the test environment: every GPU rung is `planned` (documented intent, never selected), so "fallback" is today the only path; runtime demotion is proven with a synthetic ladder.
+
 ## [0.7.1+f7] — 2026-11-12 — Companion track C1–C6: PocketLoom (standalone offline Android companion) + LoomLink
 
 ### Added
@@ -45,7 +61,7 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 ### Known
 - Not run on a phone/emulator (no device, no KVM). ONNX rung is a stub. LoomLink: no TLS/PAKE (integrity + replay
   protection only; Tailscale for encryption), no sync of deletions, session key not Keystore-wrapped.
-- LoomCluster (C7) and GroundWeave (C8) drafts stay on `wip/f5-companions` for the next run.
+- LoomCluster (C7) and GroundWeave (C8) drafts stay on `wip/f5-companions` for the next run (landed in 0.7.2+f7).
 
 ## [0.7.0+f7] — 2026-11-12 — F7 Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack
 

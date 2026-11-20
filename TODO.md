@@ -2,11 +2,12 @@
 
 Last updated: 2026-11-12 America/New_York
 
-## Current sprint — companion track (next: C7/C8)
+## Current sprint — companion track (next: C9–C12 interfaces + stubs)
 
 - [x] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync) — accepted 2026-11-12 (`forge accept C1-C6`)
-- [ ] Review + verify the rest of `wip/f5-companions` (do not merge blind): `forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`, `content/groundweave/ladder.yaml`, cluster settings in `forge.yaml`
-- [ ] LoomCluster C7 (node registry + scheduler) and GroundWeave C8 (CPU fallback ladder) with acceptance on a 2-core / no-GPU node
+- [x] LoomCluster C7 + GroundWeave C8 (drafts from `wip/f5-companions` reviewed, hardened, verified) — accepted 2026-11-19 (`forge accept C7-C8`, 0.7.2+f7)
+- [ ] C7 follow-ups: LAN/Tailscale run across two real machines; cluster auth (reuse LoomLink HMAC) before binding off loopback; PocketLoom (Kotlin) as a cluster *peer* node; blob transfer for large artifacts; origin election/hand-off when the origin never returns
+- [ ] C8 follow-ups: first real GPU rung (ROCm/DirectML/Vulkan ONNX for G1-Sprite/Tile) wired through `groundweave.execute`; re-time the full 2400-fight balance on a 2-core node
 - [ ] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs
 - [ ] **Human GUI playtest of the vertical slice** (F6 carry-over): measure real length vs 15–20 min; HUD/quest/overlay readability; controls (E interact, H salve, Tab freeze, `/` command); music mix and fades; art legibility of plots/bench/nodes. Checklist: docs/acceptance-tests/F6.md §Human playtest
 - [ ] Slice length: if humans also finish well under 15 min, add content (more field/tunnel areas, a second crop cycle, side quests) rather than slowing the bot
@@ -68,7 +69,7 @@ Last updated: 2026-11-12 America/New_York
 ## Companion / cluster (parallel)
 
 - [x] C1–C6 PocketLoom (accepted 2026-11-12) — see docs/acceptance-tests/C1-C6.md
-- [ ] C7 LoomCluster node registry + scheduler; C8 GroundWeave fallback ladder (unverified draft on `wip/f5-companions`)
+- [x] C7 LoomCluster scheduler + C8 GroundWeave fallback ladder (0.7.2+f7)
 
 ## Blockers
 

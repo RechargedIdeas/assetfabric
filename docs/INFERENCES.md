@@ -192,3 +192,58 @@ those lines were made concrete.
     **Left on the branch for the C7/C8 run:** `forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`,
     `content/groundweave/ladder.yaml`, the `cluster:` block in `forge.yaml`. The branch's F5 game/balance files were
     superseded by `main` long ago and were not touched.
+
+## C7 / C8 — LoomCluster + GroundWeave (0.7.2+f7)
+
+16. **C-16 [INFERENCE] Scope of the proof.** SPEC §9 describes a LAN/Tailscale fleet; the build host has one machine and
+    CI one runner. C7 is therefore accepted on **loopback nodes (separate OS processes)**: protocol, scheduling,
+    determinism and failure handling are real; transport across machines is not exercised.
+17. **C-17 [INFERENCE] Node protocol.** HTTP/JSON (`/advert /hello /submit /steal /result /owner /status /results`),
+    stdlib only, bound to `cluster.protocol.bind` (loopback). **No authentication/encryption** — the intended fix is to
+    reuse LoomLink's per-device HMAC + capability model and run over Tailscale. Until then it must not be exposed.
+18. **C-18 [INFERENCE] "Coordinator can be elected".** Every node schedules for itself; the "coordinator" (lowest live
+    node id) is derived from adverts and used for reporting only — nothing depends on it, so there is no master.
+19. **C-19 [INFERENCE] Execution semantics.** At-least-once with deterministic ops; first result wins. The origin keeps a
+    lease per job (`lease_s` 6 s); ownership **moves with the job at steal time** (the draft told the origin only after
+    the thief ran, which stranded work if the thief died in between — fixed and covered by the SIGKILL check).
+20. **C-20 [INFERENCE] Retry.** A failing job is re-queued at the tail (stealable) up to `max_attempts` (3) executions, then
+    reported failed with the last error. Value chosen to survive two transient faults; configurable in `forge.yaml`.
+21. **C-21 [INFERENCE] Checkpointing = journal, not op snapshots.** Each node appends every queue/steal/result event to
+    `journal.jsonl`; a restart re-queues held jobs and restores results (torn tail lines ignored). Ops are small and are
+    re-run from scratch; no mid-op state is saved. Results for an unreachable origin are parked and redelivered.
+22. **C-22 [INFERENCE] Allocation cap → slots.** `slots = max(1, cores × allocation_cap_pct / 100)`. Only CPU slots are
+    enforced; RAM and GPU share caps from the spec are advertised/recorded but not enforced.
+23. **C-23 [INFERENCE] Devices are names.** Adverts carry device names (`cpu`, `rocm`, `vulkan`, `directml`); a node with two
+    GPUs that do not pool (Vega 64 + 56) advertises the backend once. Placement is "least-loaded capable node"; the
+    acceptance run uses *simulated* adverts because there is no GPU to detect. Detection (`rocminfo`, `vulkaninfo`,
+    Windows ⇒ `directml`) is best-effort and unverified on real GPU hardware.
+24. **C-24 [INFERENCE] PocketLoom ↔ fleet.** Interop is via LoomLink: `LinkServer.cluster` (a `ClusterBridge`) turns each
+    paired phone's `hashchain`/`gen` offload into a fleet job, round-robined over the entry node's mesh, blocking until the
+    result returns (the phone's existing request/response shape); fleet unreachable ⇒ run on the desktop. A Kotlin
+    *peer* node (phone advertising its own capacity and stealing work) is **not built**.
+25. **C-25 [INFERENCE] GroundWeave ladder is data.** `content/groundweave/ladder.yaml` lists backends best-first per op;
+    `impl: planned` rungs are documented intent and are never selected. Today every GPU rung is `planned`, so selection
+    always lands on a CPU rung; `groundweave.execute` (runtime demotion on exception) exists for the first real GPU
+    backend and is proven only on a synthetic ladder.
+26. **C-26 [INFERENCE] Budgets and "GPU hidden".** `budget_s_2core` values (20–180 s) are regression gates set far above
+    measured times, not performance targets. "2 cores" = `sched_setaffinity` to the first 2 CPUs + BLAS thread caps;
+    "GPU hidden" = `HIP/ROCR/CUDA_VISIBLE_DEVICES=-1` + `FORGE_GW_DEVICES=cpu` — on this GPU-less host that is true by
+    construction, so the output is additionally required to be **byte-identical when every GPU is simulated present**.
+27. **C-27 [INFERENCE] Probes for non-generator ops.** `runtime.girt` = the F3 headless run under the same pin (checks
+    policy p95 ≤ the in-engine 500 µs budget, 0 fallbacks, no ONNX/GPU backend in the registry); `qa.balance` = a reduced
+    12 × 2 matrix. The full 2400-fight G-BAL-01 run was not re-timed on 2 cores. `recon.splat` is `gpu_required`
+    (3DGS has no honest CPU path) and is only *routed* (placement proven with a stand-in op); SplatForge is C12.
+28. **C-28 [INFERENCE] Artifact transfer.** `gen` returns digests; with `return_data` it also returns base64 bytes so
+    `forge cluster gen --out` can land them. Fine for current assets; large blobs need the LoomLink store/blob path.
+29. **C-29 [INFERENCE] CI placement / version.** `forge accept C7-C8` runs in the parallel `pocketloom` job (needs Godot for
+    the probes and the JDK/SDK for the Kotlin hop); pytest carries only `tests/test_c7_c8.py`. Version `0.7.2+f7` (patch:
+    new commands/modules; milestone unchanged).
+30. **C-30 [INFERENCE] Fleet manifest.** `forge.yaml` now lists all fleet nodes. Core counts: 5900X 12, Ryzen 5 1600 6,
+    Dimensity 1080 8, i7-10510U 4, Nokia 7.2 **8** (the draft said 2 — corrected; the 2-core contract is a test pin, not that
+    phone), Kindle Fire tablets listed with specs unknown and `allocation_cap_pct: 0` (dashboards only).
+31. **C-31 Taken from `wip/f5-companions`:** `forge/loomcluster.py`, `forge/groundweave.py`, `forge/cli_cluster.py`,
+    `content/groundweave/ladder.yaml`, the `cluster:` block of `forge.yaml` — reviewed, then changed as listed in
+    CHANGELOG 0.7.2+f7 (steal ownership race, child-process ops, retry, redelivery, fleet harness, bridge, probes, `gen.world`,
+    GroundWeave enforcement in the pipeline). Its `loomlink.py` was already superseded by `main`'s. `wip/f5-companions` is
+    now fully consumed (its F5 game/balance files were superseded long ago) and can be deleted by the Producer.
+
