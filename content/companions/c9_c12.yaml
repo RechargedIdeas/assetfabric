@@ -1,0 +1,82 @@
+# Companion-track register C9–C12 (MirrorWeave, LensForge capture, metric depth, SplatForge path).
+# One row per capability the SPEC names for these milestones. `status: real` = implemented on a CPU path, tested, and
+# accepted by `forge accept C9..C12`; `status: stub` = typed interface only, refuses with StubError carrying `reason_key`
+# (locales/en.json) — it never returns made-up output. Nothing here is a shipped GPU/video/ARCore/reconstruction feature.
+# `forge accept` cross-checks this file against the code (entries import, stubs refuse, Kotlin symbols exist, ladder ops
+# exist, locale + Android string keys exist).
+schema_version: "1.0"
+milestones:
+  C9:  {title: MirrorWeave, spec: "§9 MirrorWeave; §4 table (C9); §8 'phone can drive desktop Studio; desktop can drive phone'"}
+  C10: {title: LensForge capture, spec: "§9 LensForge 'capture modes … offload path for reconstruction'; §4 table (C10–C11); §8"}
+  C11: {title: Metric depth, spec: "§5.2 'Depth: DepthAnything V2 (+ ARCore where available)'; §9 'monocular distance estimates'"}
+  C12: {title: Cluster reconstruction (SplatForge path), spec: "§7; §4 table (RealityLoom, SplatForge C12, MeshWeaver); §9; ML_AI_FEATURES reconstruction map"}
+features:
+  # ----------------------------------------------------------------------------------------------------- C9
+  - {id: mirror.frame_stream, milestone: C9, status: real, entry: "forge.mirrorweave:FrameHub.accept", kotlin: MirrorClient, ladder_op: mirror.encode,
+     spec: "§9 'Android screen stream → desktop … camera stills/telemetry streaming'", note: "signed LoomLink POST /mirror/frame; stills + telemetry, strictly increasing seq, ring buffer, persisted latest"}
+  - {id: mirror.still_source, milestone: C9, status: real, entry: "forge.mirrorweave:StillsSource.frames", kotlin: StillsSource, ladder_op: mirror.encode,
+     spec: "§9 camera stills streaming", note: "streams a sequence of still images as frames; CPU rung of mirror.encode"}
+  - {id: mirror.query_control, milestone: C9, status: real, entry: "forge.mirrorweave:handle_control", kotlin: MirrorClient,
+     spec: "§8/§9 'Android remote control of desktop'", note: "drive_studio capability; allow-listed READ-ONLY queries only (forge.status, groundweave.show, mirror.stats)"}
+  - {id: mirror.screen_capture, milestone: C9, status: stub, entry: "forge.mirrorweave:ScreenCaptureSource.frames", kotlin: ScreenCaptureSource,
+     reason_key: stub.mirror.screen_capture, spec: "§9 'Android screen stream'"}
+  - {id: mirror.video_stream, milestone: C9, status: stub, entry: "forge.mirrorweave:VideoStreamSource.frames", kotlin: VideoStreamSource,
+     reason_key: stub.mirror.video_codec, ladder_op: mirror.encode, spec: "§9 'camera video … streaming'"}
+  - {id: mirror.android_input, milestone: C9, status: stub, entry: "forge.mirrorweave:AndroidController.send", kotlin: AndroidInputInjector,
+     reason_key: stub.mirror.android_input, spec: "§9 'Desktop remote control of Android'"}
+  - {id: mirror.studio_input, milestone: C9, status: stub, entry: "forge.mirrorweave:handle_control",
+     reason_key: stub.mirror.studio_input, spec: "§8 'phone can drive desktop Studio' (input events; Studio GUI is a stub)"}
+  - {id: mirror.camera_focus, milestone: C9, status: stub, entry: "forge.mirrorweave:handle_control", kotlin: FocusController,
+     reason_key: stub.mirror.camera_focus, spec: "§9 'camera … focus … streaming'"}
+  # ----------------------------------------------------------------------------------------------------- C10
+  - {id: lens.profiles, milestone: C10, status: real, entry: "forge.lensforge:load_profiles", kotlin: CaptureModes,
+     spec: "§9 'Capture modes'; §7 'PatternVault capture profiles'", note: "content/patternvault/capture_profiles.json (advisory thresholds, INFERENCE C-38)"}
+  - {id: lens.assess, milestone: C10, status: real, entry: "forge.lensforge:assess", kotlin: Quality, ladder_op: lens.assess,
+     spec: "§4 LensForge 'camera intelligence … capture telemetry'", note: "sharpness / exposure / resolution; integer math shared bit-for-bit with Kotlin"}
+  - {id: lens.assess_set, milestone: C10, status: real, entry: "forge.lensforge:assess_set", ladder_op: lens.assess,
+     spec: "§9 'offload path for reconstruction'", note: "view count, duplicates, best-of-burst; overlap is NOT measured (reported not_measured)"}
+  - {id: lens.telemetry, milestone: C10, status: real, entry: "forge.lensforge:CaptureTelemetry", kotlin: CaptureTelemetry,
+     spec: "§4 'capture telemetry'; §9 'telemetry streaming'", note: "typed + range-checked contract; EXIF read via Pillow"}
+  - {id: lens.offload_quality, milestone: C10, status: real, entry: "forge.lensforge:assess_or_reason",
+     spec: "§8 'LensForge capture → RealityLoom/SplatForge on desktop/cluster'", note: "LoomLink recon.capture offload is assessed on the desktop; verdict stored in provenance"}
+  - {id: lens.arcore_session, milestone: C10, status: stub, entry: "forge.lensforge:ARCoreSession.start", kotlin: ArCoreSession,
+     reason_key: stub.lens.arcore_session, spec: "§9 'ARCore + DepthAnything V2'"}
+  - {id: lens.video_capture, milestone: C10, status: stub, entry: "forge.lensforge:VideoCapture.start",
+     reason_key: stub.lens.video_capture, spec: "§9 'Capture modes' (video)"}
+  - {id: lens.focus_control, milestone: C10, status: stub, entry: "forge.lensforge:FocusController.set_focus",
+     reason_key: stub.mirror.camera_focus, spec: "§9 'camera … focus'"}
+  # ----------------------------------------------------------------------------------------------------- C11
+  - {id: depth.focal_px, milestone: C11, status: real, entry: "forge.depth:focal_px", kotlin: Depth, ladder_op: depth.distance,
+     spec: "§9 'monocular distance estimates'", note: "pixel focal length from EXIF-style optics"}
+  - {id: depth.distance, milestone: C11, status: real, entry: "forge.depth:distance_to_object", kotlin: Depth, ladder_op: depth.distance,
+     spec: "§9 'monocular distance estimates'", note: "pinhole z=f·S/s from an object of known size, with ±px band"}
+  - {id: depth.align, milestone: C11, status: real, entry: "forge.depth:align_inverse_depth", ladder_op: depth.distance,
+     spec: "§5.2 DepthAnything V2 output → metric", note: "scale/shift least squares on inverse depth from ≥2 metric anchors; scales any relative map, does not produce one"}
+  - {id: depth.dense_estimate, milestone: C11, status: stub, entry: "forge.depth:DepthAnythingV2.estimate", kotlin: DepthEstimator, ladder_op: depth.estimate,
+     reason_key: stub.depth.model_missing, spec: "§5.2 'DepthAnything V2'"}
+  - {id: depth.arcore, milestone: C11, status: stub, entry: "forge.depth:ARCoreDepth.estimate", kotlin: ArCoreSession,
+     reason_key: stub.depth.arcore, ladder_op: depth.estimate, spec: "§5.2 '(+ ARCore where available)'"}
+  # ----------------------------------------------------------------------------------------------------- C12
+  - {id: recon.route, milestone: C12, status: real, entry: "forge.realityloom:route", kotlin: ReconRoute, ladder_op: recon.plan,
+     spec: "§7 'RealityLoom routes backdrop→splat, hero_prop→photogrammetry or MeshWeaver'"}
+  - {id: recon.bundle, milestone: C12, status: real, entry: "forge.realityloom:write_bundle", ladder_op: recon.plan,
+     spec: "§8 'LensForge capture → RealityLoom/SplatForge'", note: "deterministic content-addressed capture bundle (input contract of every backend)"}
+  - {id: recon.plan, milestone: C12, status: real, entry: "forge.realityloom:plan", ladder_op: recon.plan,
+     spec: "§7 'Always show honest ETAs'", note: "stages, required devices, blockers, ETA class (unmeasured, labelled so)"}
+  - {id: recon.placement, milestone: C12, status: real, entry: "forge.realityloom:check_placement", ladder_op: recon.splat,
+     spec: "§9 'declare GPU-required and LoomCluster must route'", note: "asks a real LoomCluster which nodes advertise rocm"}
+  - {id: recon.splat_ply_check, milestone: C12, status: real, entry: "forge.realityloom:check_splat_ply", ladder_op: recon.plan,
+     spec: "§7 '.ply/.splat → Godot GDGS'", note: "validates the INRIA-layout 3DGS .ply a trainer must emit"}
+  - {id: recon.splatforge, milestone: C12, status: stub, entry: "forge.realityloom:SplatForge.train", kotlin: SplatForgeClient, ladder_op: recon.splat,
+     reason_key: stub.recon.splatforge, spec: "§4 'SplatForge — 3DGS training from capture (C12)'"}
+  - {id: recon.photogrammetry, milestone: C12, status: stub, entry: "forge.realityloom:Photogrammetry.run", ladder_op: recon.splat,
+     reason_key: stub.recon.photogrammetry, spec: "§7 'Photogrammetry (COLMAP/Meshroom)'; AMD honesty 'CPU COLMAP'"}
+  - {id: recon.meshweaver, milestone: C12, status: stub, entry: "forge.realityloom:MeshWeaver.convert", ladder_op: recon.mesh,
+     reason_key: stub.recon.meshweaver, spec: "§4 'MeshWeaver — splat→mesh (Phase 2)'"}
+  - {id: recon.gdgs_import, milestone: C12, status: stub, entry: "forge.realityloom:GdgsImport.into_godot", ladder_op: shuttle.gdgs,
+     reason_key: stub.recon.gdgs_import, spec: "§7 'ShuttleLine Godot 3DGS adapter (GDGS plugin)'"}
+# Named in the SPEC for C9–C12 but not even given an interface here (documented, out of scope for this milestone):
+deferred:
+  - {id: recon.nerf_neural_sdf, spec: "§7 'NeRF — reference/research; Neural SDF — future'"}
+  - {id: recon.large_scene_lod, spec: "§7 phase 3 'LOD/streaming (LODGE/MobileSplat), GDGS relighting'"}
+  - {id: recon.rc_models, spec: "§5.1 'R1 Reality Capture' capture-quality / splat-param models (needs real runs to train on)"}
