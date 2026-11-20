@@ -12,10 +12,12 @@ REAL (CPU, deterministic, no external tools):
   * `plan` — stages, the GroundWeave op + required device of each, which stages are stubs (`blocked_by`), honest ETA class,
   * `cluster_devices` / `check_placement` — asks a LoomCluster whether any node advertises the device a stage needs
     (the spec's gpu_required + route: loomcluster rule, backed by C7's real placement),
-  * `check_splat_ply` — validator for the 3DGS `.ply` a trainer must emit (INRIA layout) — the post-condition of SplatForge.
+  * `check_splat_ply` — validator for the 3DGS `.ply` a trainer must emit (INRIA layout) — the post-condition of SplatForge,
+  * (0.7.7) `MeshWeaver.convert` — splat density → surface nets → OBJ; `GdgsImport.into_godot` — splat → Godot MultiMesh
+    billboard scene, verified in Godot (`forge.splats`).
 
 STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): `SplatForge.train`, `Photogrammetry.run`,
-`MeshWeaver.convert`, `GdgsImport.into_godot`, and `submit` (after the real placement check).
+and `submit` (after the real placement check).
 Whether any of this beats the CPU-only photogrammetry route on the fleet is unmeasured: no trainer has ever run here.
 """
 
@@ -91,15 +93,14 @@ STAGES = {
         ("sfm_colmap", "recon.splat", "cpu", "stub"),
         ("train_splat", "recon.splat", "rocm", "stub"),
         ("validate_ply", "recon.plan", "cpu", "real"),
-        ("import_godot", "shuttle.gdgs", "cpu", "stub"),
+        ("import_godot", "shuttle.gdgs", "cpu", "real"),
     ],
     "photogrammetry": [
         ("bundle", "recon.plan", "cpu", "real"),
         ("photogrammetry_run", "recon.splat", "cpu", "stub"),
     ],
 }
-BLOCKERS = {"sfm_colmap": "recon.photogrammetry", "train_splat": "recon.splatforge", "import_godot": "recon.gdgs_import",
-            "photogrammetry_run": "recon.photogrammetry"}
+BLOCKERS = {"sfm_colmap": "recon.photogrammetry", "train_splat": "recon.splatforge", "photogrammetry_run": "recon.photogrammetry"}
 
 
 def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | None] | None = None) -> dict[str, Any]:
@@ -218,24 +219,40 @@ class Photogrammetry:
 
 
 class MeshWeaver:
-    """STUB (spec: Phase 2 reconstruction): splat → mesh (SuGaR / GOF class)."""
+    """Splat → mesh on CPU (`forge.splats`): opacity-weighted Gaussian density on a voxel grid → naive surface nets →
+    vertex-coloured OBJ. The learned SuGaR/GOF-class rung stays `planned` (ROCm)."""
 
-    def convert(self, ply: Path) -> Path:
-        refuse("recon.meshweaver", "stub.recon.meshweaver", MILESTONE)
+    def __init__(self, voxel: float | None = None, iso_frac: float = 0.35) -> None:
+        self.voxel, self.iso_frac = voxel, iso_frac
+        self.last: dict[str, Any] = {}
+
+    def convert(self, ply: Path, out: Path | None = None) -> Path:
+        from forge import splats
+        mesh = splats.mesh_from_splats(Path(ply).read_bytes(), self.voxel, self.iso_frac)
+        out = Path(out) if out else Path(ply).with_suffix(".obj")
+        out.write_bytes(splats.write_obj(mesh))
+        self.last = {"vertices": len(mesh["vertices"]), "triangles": len(mesh["triangles"]), "voxel": mesh["voxel"], "grid": mesh["grid"]}
+        return out
 
 
 class GdgsImport:
-    """STUB: ShuttleLine Godot 3DGS (GDGS) adapter — import a validated splat into a Godot project."""
+    """ShuttleLine Godot 3DGS adapter (CPU): validated splat `.ply` → `<project>/splats/<name>.tscn` (MultiMesh billboard
+    splats, Compatibility renderer). Exact anisotropic/sorted 3DGS rasterisation stays `planned` (`gdgs-raster-import@vulkan`)."""
 
-    def into_godot(self, ply: Path, project: Path) -> Path:
-        refuse("recon.gdgs_import", "stub.recon.gdgs_import", MILESTONE)
+    def __init__(self, max_splats: int | None = None) -> None:
+        self.max_splats = max_splats
+        self.last: dict[str, Any] = {}
+
+    def into_godot(self, ply: Path, project: Path, name: str | None = None) -> Path:
+        from forge import splats
+        kw = {"max_splats": self.max_splats} if self.max_splats else {}
+        self.last = splats.import_into_godot(Path(ply).read_bytes(), Path(project), name or Path(ply).stem, **kw)
+        return Path(self.last["scene"])
 
 
 STUB_PROBES = {
     "recon.splatforge": lambda: SplatForge().train({}),
     "recon.photogrammetry": lambda: Photogrammetry().run({}),
-    "recon.meshweaver": lambda: MeshWeaver().convert(Path("x.ply")),
-    "recon.gdgs_import": lambda: GdgsImport().into_godot(Path("x.ply"), Path(".")),
 }
 
 

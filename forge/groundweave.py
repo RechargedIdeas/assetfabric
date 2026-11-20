@@ -282,6 +282,18 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         return {"brief": "depth-dense-probe", "ok": m["abs_rel"] < 0.15, "abs_rel": round(m["abs_rel"], 4),
                 "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
                 "digest": hashlib.sha256(np.ascontiguousarray(rel, dtype=np.float32).tobytes()).hexdigest()}
+    if name in ("recon-mesh", "gdgs"):     # C12 CPU rungs on a synthetic sphere-splat set (deterministic bytes)
+        from forge import splats
+        sel = select("recon.mesh" if name == "recon-mesh" else "shuttle.gdgs", root=root)
+        ply = splats.sphere_splats(1500, seed=2)
+        if name == "recon-mesh":
+            out = splats.write_obj(splats.mesh_from_splats(ply))
+        else:
+            out = splats.write_godot_scene(ply, "probe")[0].encode()
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": f"{name}-probe", "ok": len(out) > 0, "bytes": len(out), "wall_s": round(wall, 3), "cores": aff,
+                "device": sel["device"], "backend": sel["backend"], "digest": hashlib.sha256(out).hexdigest()}
     raise GroundWeaveError(f"unknown runtime probe {name!r}")
 
 

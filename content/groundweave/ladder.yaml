@@ -143,14 +143,21 @@ ops:
     ladder:
       - {id: realityloom-plan-cpu, device: cpu, impl: real}
   recon.mesh:
-    planned: true
-    route: loomcluster
-    note: MeshWeaver splat→mesh (spec "Phase 2 reconstruction") — not built; MeshWeaver.convert refuses.
+    budget_s_2core: 60
+    probe_brief: "runtime:recon-mesh"
+    note: >-
+      MeshWeaver splat→mesh (spec "Phase 2 reconstruction"). CPU rung (0.7.7): opacity-weighted Gaussian density on a voxel
+      grid → naive surface nets (own NumPy) → vertex-coloured OBJ. The learned SuGaR/GOF-class rung needs a GPU → planned.
     ladder:
       - {id: meshweaver-sugar, device: rocm, impl: planned}
+      - {id: meshweaver-density-surfacenets-cpu, device: cpu, impl: real}
   shuttle.gdgs:
-    planned: true
-    route: local
-    note: ShuttleLine Godot 3DGS (GDGS) import adapter — not built; GdgsImport.into_godot refuses.
+    budget_s_2core: 30
+    probe_brief: "runtime:gdgs"
+    note: >-
+      ShuttleLine Godot 3DGS import. CPU rung (0.7.7): splat .ply → Godot MultiMesh billboard scene (isotropic, unsorted
+      alpha, Compatibility renderer); acceptance loads + renders it in Godot under Xvfb. Exact anisotropic sorted 3DGS
+      rasterisation (GDGS plugin / compute) stays planned.
     ladder:
       - {id: gdgs-raster-import, device: vulkan, impl: planned}
+      - {id: gdgs-multimesh-billboard-cpu, device: cpu, impl: real}

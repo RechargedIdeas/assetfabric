@@ -86,10 +86,10 @@ features:
      reason_key: stub.recon.splatforge, spec: "§4 'SplatForge — 3DGS training from capture (C12)'"}
   - {id: recon.photogrammetry, milestone: C12, status: stub, entry: "forge.realityloom:Photogrammetry.run", ladder_op: recon.splat,
      reason_key: stub.recon.photogrammetry, spec: "§7 'Photogrammetry (COLMAP/Meshroom)'; AMD honesty 'CPU COLMAP'"}
-  - {id: recon.meshweaver, milestone: C12, status: stub, entry: "forge.realityloom:MeshWeaver.convert", ladder_op: recon.mesh,
-     reason_key: stub.recon.meshweaver, spec: "§4 'MeshWeaver — splat→mesh (Phase 2)'"}
-  - {id: recon.gdgs_import, milestone: C12, status: stub, entry: "forge.realityloom:GdgsImport.into_godot", ladder_op: shuttle.gdgs,
-     reason_key: stub.recon.gdgs_import, spec: "§7 'ShuttleLine Godot 3DGS adapter (GDGS plugin)'"}
+  - {id: recon.meshweaver, milestone: C12, status: real, entry: "forge.realityloom:MeshWeaver.convert", ladder_op: recon.mesh,
+     spec: "§4 'MeshWeaver — splat→mesh (Phase 2)'", note: "CPU density field → naive surface nets → vertex-coloured OBJ (synthetic sphere splats: radius error ≤ 2 voxels); SuGaR-class learned surface stays planned"}
+  - {id: recon.gdgs_import, milestone: C12, status: real, entry: "forge.realityloom:GdgsImport.into_godot", ladder_op: shuttle.gdgs,
+     spec: "§7 'ShuttleLine Godot 3DGS adapter (GDGS plugin)'", note: "splat .ply → Godot MultiMesh billboard scene (Compatibility renderer), loaded + rendered in Godot under Xvfb; exact 3DGS raster stays planned"}
 # Named in the SPEC for C9–C12 but not even given an interface here (documented, out of scope for this milestone):
 deferred:
   - {id: recon.nerf_neural_sdf, spec: "§7 'NeRF — reference/research; Neural SDF — future'"}

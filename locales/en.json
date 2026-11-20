@@ -10,8 +10,6 @@
   "depth.non_monotone": "The fitted scale is not positive: the relative depth map disagrees with the anchors (wrong map polarity or bad anchors).",
   "stub.recon.splatforge": "SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.",
   "stub.recon.photogrammetry": "CPU photogrammetry (COLMAP/Meshroom) is not implemented: the tool is not bundled or driven by forge.",
-  "stub.recon.meshweaver": "MeshWeaver (splat-to-mesh) is not implemented; it is Phase 2 reconstruction in the spec.",
-  "stub.recon.gdgs_import": "The ShuttleLine Godot 3DGS (GDGS) adapter is not implemented; a validated splat .ply is not yet imported into a Godot project.",
   "recon.no_gpu_node": "No cluster node advertises {device}; the splat job cannot be placed (gpu_required, route loomcluster).",
   "recon.too_few_views": "Capture set has {have} usable views; mode {mode} needs at least {need}.",
   "recon.eta.gpu": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)",

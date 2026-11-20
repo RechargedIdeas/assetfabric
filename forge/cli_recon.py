@@ -459,19 +459,49 @@ def recon_check_splat(file: Path) -> None:
 
 
 @recon_grp.command("train")
-@click.option("--stage", type=click.Choice(["splat", "photogrammetry", "mesh", "godot-import"]), default="splat")
+@click.option("--stage", type=click.Choice(["splat", "photogrammetry"]), default="splat")
 def recon_train(stage: str) -> None:
-    """Train / reconstruct / mesh / import — STUB (refuses, exit 3). Nothing here fabricates a reconstruction."""
+    """Train a splat / run photogrammetry — STUB (refuses, exit 3). Nothing here fabricates a reconstruction.
+    Meshing and Godot import are real: `forge recon mesh`, `forge recon godot-import`."""
     from forge import realityloom
 
     def run() -> Any:
         if stage == "splat":
             return realityloom.SplatForge().train({})
-        if stage == "photogrammetry":
-            return realityloom.Photogrammetry().run({})
-        if stage == "mesh":
-            return realityloom.MeshWeaver().convert(Path("x.ply"))
-        return realityloom.GdgsImport().into_godot(Path("x.ply"), Path("."))
+        return realityloom.Photogrammetry().run({})
+    _guard(run)
+
+
+@recon_grp.command("mesh")
+@click.argument("ply", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--out", type=click.Path(dir_okay=False, path_type=Path), default=None, help="OBJ path (default: PLY with .obj).")
+@click.option("--voxel", type=float, default=None, help="Voxel size in scene units (default: median splat sigma).")
+def recon_mesh(ply: Path, out: Path | None, voxel: float | None) -> None:
+    """MeshWeaver (CPU): splat .ply → density field → surface nets → vertex-coloured OBJ."""
+    from forge import realityloom
+
+    def run() -> Any:
+        mw = realityloom.MeshWeaver(voxel)
+        return {"obj": str(mw.convert(ply, out)), **mw.last}
+    _guard(run)
+
+
+@recon_grp.command("godot-import")
+@click.argument("ply", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--project", type=click.Path(file_okay=False, path_type=Path), required=True, help="Godot project dir (created if missing).")
+@click.option("--max-splats", type=int, default=None)
+@click.option("--verify/--no-verify", default=False, help="Load (and under Xvfb render) the scene in Godot.")
+def recon_godot_import(ply: Path, project: Path, max_splats: int | None, verify: bool) -> None:
+    """ShuttleLine GDGS import (CPU): splat .ply → <project>/splats/<name>.tscn (MultiMesh billboard splats)."""
+    from forge import realityloom, splats
+
+    def run() -> Any:
+        gi = realityloom.GdgsImport(max_splats)
+        gi.into_godot(ply, project)
+        res = dict(gi.last)
+        if verify:
+            res["godot"] = splats.verify_in_godot(project, gi.last["res_path"])
+        return res
     _guard(run)
 
 

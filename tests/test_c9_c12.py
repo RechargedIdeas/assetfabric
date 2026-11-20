@@ -36,8 +36,8 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    # 0.7.6 (stub batch 2b, ARCore): 21 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 4 stubs (C12)
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 8, 4)
+    # 0.7.7 (stub batch 3): 23 real · 8 real_unverified_on_device (Android-only, compiled, never on a phone) · 2 stubs (C12 splat training, photogrammetry)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (23, 8, 2)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -357,7 +357,7 @@ def test_splat_ply_validator() -> None:
 
 
 def test_recon_stubs_refuse_and_cli_exit_3() -> None:
-    for stage in ("splat", "photogrammetry", "mesh", "godot-import"):
+    for stage in ("splat", "photogrammetry"):                  # mesh + godot-import are real since 0.7.7
         r = CliRunner().invoke(main, ["recon", "train", "--stage", stage])
         assert r.exit_code == 3 and is_stub_message(json.loads(r.output)["message"])
 
@@ -379,20 +379,20 @@ def test_ladder_declares_new_ops_and_planned_ops_select_nothing(root: Path) -> N
     r = gw.check(root)
     assert r["ok"], r["problems"]
     ladder = gw.load_ladder(root)["ops"]
-    for op in ("mirror.encode", "lens.assess", "depth.distance", "depth.estimate", "recon.plan"):
+    for op in ("mirror.encode", "lens.assess", "depth.distance", "depth.estimate", "recon.plan", "recon.mesh", "shuttle.gdgs"):
         assert gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)["device"] == "cpu"
     assert ladder["depth.estimate"]["ladder"][0] == {"id": "depthanything-v2-onnx", "device": "rocm", "impl": "planned"}
-    for op in ("recon.mesh", "shuttle.gdgs"):
-        s = gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)
-        assert s["status"] == "planned" and s["backend"] is None and ladder[op]["planned"]
-        assert all(x["impl"] == "planned" for x in ladder[op]["ladder"])
+    for op in ("recon.mesh", "shuttle.gdgs"):                   # GPU rungs stay planned above the CPU rung (0.7.7)
+        assert ladder[op]["ladder"][0]["impl"] == "planned" and ladder[op]["ladder"][-1]["device"] == "cpu"
     assert ladder["recon.splat"]["gpu_required"] and ladder["recon.splat"]["route"] == "loomcluster"
 
 
 def test_check_rejects_planned_op_that_claims_a_real_rung(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     bad = copy.deepcopy(gw.load_ladder(root))
-    bad["ops"]["shuttle.gdgs"]["ladder"][-1]["impl"] = "real"
-    del bad["ops"]["recon.mesh"]["route"]
+    bad["ops"]["shuttle.gdgs"]["planned"] = True                  # a planned op keeping its real CPU rung → rejected
+    bad["ops"]["shuttle.gdgs"]["route"] = "local"
+    bad["ops"]["recon.mesh"]["planned"] = True                    # planned without a route → rejected
+    bad["ops"]["recon.mesh"].pop("route", None)
     monkeypatch.setattr(gw, "load_ladder", lambda r=None: bad)
     probs = gw.check(root)["problems"]
     assert any("shuttle.gdgs: planned op must not claim a real backend" in p for p in probs)

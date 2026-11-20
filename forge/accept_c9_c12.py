@@ -1088,6 +1088,57 @@ def _recon_cluster(root: Path, tmp: Path) -> dict[str, Any]:
             "jobs_queued_anywhere": queued, "note": "placement check is real (C7 adverts); the trainer behind it is the C12 stub, so nothing is queued"}
 
 
+def _meshweaver(root: Path, tmp: Path) -> dict[str, Any]:
+    """Synthetic splats on a sphere (r = 0.5, σ = 0.03): the mesh must sit on the shell, colours must follow the splats,
+    and the CLI must write the same OBJ bytes as the API (deterministic)."""
+    import numpy as np
+
+    from forge import splats
+    ply = tmp / "sphere.ply"
+    ply.write_bytes(splats.sphere_splats(2000))
+    m = splats.mesh_from_splats(ply.read_bytes())
+    r = np.linalg.norm(m["vertices"], axis=1)
+    col_err = float(np.abs(m["colors"] - (0.5 + 0.5 * m["vertices"] / r[:, None])).mean())
+    e = np.sort(np.concatenate([m["triangles"][:, [0, 1]], m["triangles"][:, [1, 2]], m["triangles"][:, [2, 0]]]), 1)
+    _, cnt = np.unique(e, axis=0, return_counts=True)
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "mesh", str(ply), "--out", str(tmp / "cli.obj")],
+                       cwd=root, capture_output=True, text=True, timeout=120)
+    same = (tmp / "cli.obj").exists() and (tmp / "cli.obj").read_bytes() == splats.write_obj(m)
+    ok = (abs(float(np.median(r)) - 0.5) < m["voxel"] and float(np.abs(r - 0.5).max()) < 3 * 0.03 + 2 * m["voxel"]
+          and col_err < 0.05 and len(m["triangles"]) > 1000 and float((cnt == 2).mean()) > 0.98 and p.returncode == 0 and same)
+    return {"ok": ok, "vertices": len(m["vertices"]), "triangles": len(m["triangles"]), "voxel": round(m["voxel"], 5),
+            "median_radius": round(float(np.median(r)), 5), "max_radius_err": round(float(np.abs(r - 0.5).max()), 5),
+            "color_mae": round(col_err, 5), "manifold_edge_fraction": round(float((cnt == 2).mean()), 5), "cli_same_bytes": same}
+
+
+def _gdgs(root: Path, tmp: Path) -> dict[str, Any]:
+    """Splat → Godot scene, then Godot loads it: instance count + probe transforms/colours read back from the MultiMesh,
+    and (under Xvfb, Mesa llvmpipe) a rendered frame shows the splats with the expected colour bias (front = +z = blue)."""
+    import shutil as _sh
+
+    from forge import splats
+    ply = tmp / "sphere.ply"
+    ply.write_bytes(splats.sphere_splats(2000))
+    proj = tmp / "gdproj"
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "godot-import", str(ply), "--project", str(proj), "--verify"],
+                       cwd=root, capture_output=True, text=True, timeout=240)
+    try:
+        doc = json.loads(p.stdout)
+    except ValueError:
+        return {"ok": False, "exit": p.returncode, "stderr": p.stderr[-800:]}
+    g = doc.get("godot", {})
+    probes_ok = g.get("count") == doc.get("imported") == 2000 and all(
+        all(abs(a - b) < 1e-4 for a, b in zip(gp["pos"], ep["pos"])) and all(abs(a - b) < 4e-3 for a, b in zip(gp["rgba"], ep["rgba"]))
+        for gp, ep in zip(g.get("probes", []), doc.get("probe", [])))
+    rend = g.get("render")
+    has_display = _sh.which("xvfb-run") is not None
+    render_ok = (rend is not None and rend["lit"] > 1000 and rend["mean_rgb"][2] > rend["mean_rgb"][0]) if has_display else True
+    data_ok = probes_ok if has_display else g.get("count") == 2000      # headless Godot cannot read MultiMesh data back
+    return {"ok": bool(g.get("ok") and g.get("loaded") and data_ok and render_ok and g.get("renderer") == "gl_compatibility"),
+            "imported": doc.get("imported"), "godot_count": g.get("count"), "probes_match": probes_ok, "render": rend,
+            "display": g.get("display"), "xvfb": has_display}
+
+
 def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
     full = full_possible(root)
     tmp = Path(tempfile.mkdtemp(prefix="fabric-c12-"))
@@ -1097,9 +1148,11 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["core"] = _recon_core(root, tmp)
         r["splat_ply"] = _recon_ply()
         r["cluster"] = _recon_cluster(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", s] for s in ("splat", "photogrammetry", "mesh", "godot-import")])
+        r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", s] for s in ("splat", "photogrammetry")])
+        r["meshweaver"] = _meshweaver(root, tmp)
+        r["gdgs"] = _gdgs(root, tmp)
         ladder = gw.load_ladder(root)["ops"]
-        r["groundweave"] = _ladder(root, ["recon.plan"], ["recon.mesh", "shuttle.gdgs"])
+        r["groundweave"] = _ladder(root, ["recon.plan", "recon.mesh", "shuttle.gdgs"], [])
         sp = gw.select("recon.splat", ["cpu"], root)
         r["groundweave"]["recon_splat"] = {"gpu_required": ladder["recon.splat"].get("gpu_required"), "route": sp.get("route"),
                                            "rungs_real": [x["id"] for x in ladder["recon.splat"]["ladder"] if x["impl"] == "real"]}
@@ -1123,7 +1176,7 @@ KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "arcore", "groundweave", "cpu_2core"],
     "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
-    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
+    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 
