@@ -175,6 +175,20 @@ _C_DESC = {
 for _m in C_ORDER:
     INCREMENTS[_m] = Increment(_m, "pocketloom", (), _ac.check(_m), _C_DESC[_m], _ac.perf(_m), _ac.runner(_m))
 
+# Companion track C7 LoomCluster + C8 GroundWeave: loopback fleet + CPU-fallback proofs (forge/accept_cluster.py).
+from forge import accept_cluster as _acl  # noqa: E402
+
+CL_ORDER = ["C7", "C8"]
+_CL_DESC = {
+    "C7": "LoomCluster: equal nodes advertise/negotiate, steal work, checkpoint, retry; node-count-independent results; "
+          "PocketLoom LoomLink offload runs on the fleet",
+    "C8": "GroundWeave: GPU→CPU fallback ladder for every op; 2-core/no-GPU budgets + byte-identical output; pipeline refuses "
+          "undeclared generators",
+}
+for _m in CL_ORDER:
+    INCREMENTS[_m] = Increment(_m, "loomcluster" if _m == "C7" else "groundweave", (), _acl.check(_m), _CL_DESC[_m],
+                               _acl.perf(_m), _acl.runner(_m))
+
 
 def register(inc: Increment) -> None:
     INCREMENTS[inc.milestone] = inc

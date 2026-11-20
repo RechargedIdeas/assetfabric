@@ -305,9 +305,15 @@ def palette_cmd(name: str | None, variant: str | None, root: Path | None) -> Non
 @click.option("--root", type=click.Path(path_type=Path), default=None)
 def accept_cmd(milestone: str, no_write: bool, root: Path | None) -> None:
     """Run the Game Zero headless acceptance for a Fabric milestone (needs Godot),
-    or a companion milestone C1…C6 / all of them with `C1-C6` (needs JDK 17 + Android SDK; else fast mode)."""
-    from forge.milestones import C_ORDER, INCREMENTS, accept
+    or a companion milestone C1…C6 / all of them with `C1-C6` (needs JDK 17 + Android SDK; else fast mode),
+    or C7 / C8 / `C7-C8` (LoomCluster loopback fleet + GroundWeave CPU-fallback proofs)."""
+    from forge.milestones import CL_ORDER, C_ORDER, INCREMENTS, accept
 
+    if milestone.upper() in ("C7-C8", "CLUSTER"):   # LoomCluster + GroundWeave
+        reports = [accept(m, root or find_repo_root(), write=not no_write) for m in CL_ORDER]
+        click.echo(json.dumps({r["milestone"]: {"passed": r["passed"], "errors": r["errors"], "perf": r["perf"]}
+                               for r in reports}, indent=2))
+        sys.exit(0 if all(r["passed"] for r in reports) else 1)
     if milestone.upper() in ("C", "C1-C6"):   # whole PocketLoom track, one Gradle build
         reports = [accept(m, root or find_repo_root(), write=not no_write) for m in C_ORDER]
         click.echo(json.dumps({r["milestone"]: {"passed": r["passed"], "errors": r["errors"], "perf": r["perf"]}

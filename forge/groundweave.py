@@ -38,6 +38,9 @@ HIDE_GPU_ENV = {"HIP_VISIBLE_DEVICES": "-1", "ROCR_VISIBLE_DEVICES": "-1",
                 "CUDA_VISIBLE_DEVICES": "-1", "GPU_DEVICE_ORDINAL": "-1", DEVICE_ENV: "cpu"}
 
 
+SIMULATED_GPU_DEVICES = ("rocm", "directml", "vulkan")   # what `verify` pretends is present (no real GPU needed)
+
+
 class GroundWeaveError(RuntimeError):
     pass
 
@@ -233,7 +236,7 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         wall = time.perf_counter() - t0
         aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         return {"brief": "F3", "ok": not errs, "errors": errs, "wall_s": round(wall, 3), "cores": aff,
-                "device": "cpu" if backends and all(b == "mlp-gdscript" for b in backends) else "unknown",
+                "device": "cpu" if backends and not any(("onnx" in (b or "") or "gpu" in (b or "")) for b in backends) else "unknown",
                 "backend": ",".join(b for b in backends if b), "policy_p95_us": girt.get("policy_p95_us"),
                 "policy_budget_us": girt.get("policy_budget_us"), "policy_fallbacks": girt.get("policy_fallbacks"),
                 "digest": hashlib.sha256(json.dumps(girt.get("registry", []), sort_keys=True).encode()).hexdigest()}
@@ -275,6 +278,7 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
             "MKL_NUM_THREADS": str(cores)}
     weak = {**base, **HIDE_GPU_ENV}
     free = {k: v for k, v in os.environ.items() if k != DEVICE_ENV}
+    simgpu = {**free, DEVICE_ENV: "cpu," + ",".join(d for d in SIMULATED_GPU_DEVICES)}   # every GPU "present"
     results: list[dict[str, Any]] = []
     for op_id, op in ladder["ops"].items():
         if ops and op_id not in ops:
@@ -298,7 +302,10 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
             rec["unpinned_digest"] = free_rec.get("digest")
             rec["unpinned_device"] = free_rec.get("device")
             rec["identical_to_unpinned"] = free_rec.get("digest") == rec["digest"]
-            good = good and rec["identical_to_unpinned"]
+            sim_rec = _run_probe(root, probe, simgpu, None, timeout)
+            rec["identical_with_simulated_gpu"] = sim_rec.get("digest") == rec["digest"]
+            rec["simulated_gpu_selected"] = sim_rec.get("device")
+            good = good and rec["identical_to_unpinned"] and rec["identical_with_simulated_gpu"]
         rec["status"] = "ok" if good else "fail"
         results.append(rec)
     ok = all(r["status"] in ("ok", "not_probed") for r in results)

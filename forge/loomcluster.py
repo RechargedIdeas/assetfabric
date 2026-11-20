@@ -88,7 +88,8 @@ def op_gen(payload: dict[str, Any], devices: list[str] | None = None, timeout_s:
                        capture_output=True, text=True, env=env, timeout=timeout_s)
     line = next((l for l in p.stdout.splitlines() if l.startswith("LOOM_OP ")), None)
     if p.returncode != 0 or line is None:
-        raise RuntimeError(f"gen child failed rc={p.returncode}: {(p.stderr or p.stdout)[-300:]}")
+        tail = [l for l in (p.stderr or p.stdout).splitlines() if l.strip()]
+        raise RuntimeError(f"gen child failed rc={p.returncode}: {tail[-1][:300] if tail else 'no output'}")
     return json.loads(line[len("LOOM_OP "):])
 
 
