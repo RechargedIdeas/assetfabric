@@ -698,9 +698,9 @@ from forge.cli_cluster import cluster_grp, groundweave_grp  # noqa: E402  (C7/C8
 main.add_command(groundweave_grp)
 main.add_command(cluster_grp)
 
-from forge.cli_recon import depth_grp, lens_grp, mirror_grp, recon_grp  # noqa: E402  (C9–C12 command groups)
+from forge.cli_recon import depth_grp, lens_grp, mirror_grp, models_grp, recon_grp  # noqa: E402  (C9–C12 command groups)
 
-for _g in (mirror_grp, lens_grp, depth_grp, recon_grp):
+for _g in (mirror_grp, lens_grp, depth_grp, recon_grp, models_grp):
     main.add_command(_g)
 
 

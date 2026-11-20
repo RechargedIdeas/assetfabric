@@ -8,9 +8,13 @@ REAL (CPU, numpy, deterministic):
   * `align_inverse_depth` — turns ANY relative inverse-depth map (DepthAnything V2 convention: larger = nearer) into a metric
     depth map from ≥2 metric anchors, by least squares on inverse depth (the standard scale/shift alignment).
 
-STUB (refuses, never fabricates a map): `DepthAnythingV2.estimate` (no weights/runtime bundled; licence of the larger
-checkpoints must be checked before BoltPack — see INFERENCES), `ARCoreDepth.estimate` (Android-only SDK).
-So today a metric depth map needs a relative map from somewhere else; this module can scale it but cannot produce it.
+REAL since 0.7.5 (CPU, onnxruntime): `DepthAnythingV2.estimate` — DepthAnything V2 **Small** (Apache-2.0; the Base/Large/
+Giant checkpoints are CC-BY-NC-4.0 and are never used) as ONNX on the onnxruntime CPU execution provider. Weights are not in
+git: `forge models fetch depth-anything-v2-small` (SHA-256 pinned in content/models/models.yaml). `estimate_metric` chains
+it with `align_inverse_depth`. `render_scene` draws an analytic perspective scene (textured ground, wall, box) with exact
+per-pixel depth — the ground truth used by tests and `forge accept C11`.
+
+STUB (refuses, never fabricates a map): `ARCoreDepth.estimate` (Android-only SDK, see INFERENCES C-6x).
 """
 
 from __future__ import annotations
@@ -96,11 +100,191 @@ class RelativeDepthEstimator(Protocol):
     def estimate(self, image: bytes) -> np.ndarray: ...
 
 
+MODEL_ID = "depth-anything-v2-small"
+
+
 class DepthAnythingV2:
-    """STUB: DepthAnything V2 (ONNX) — the planned ladder rungs `depth.estimate` rocm / cpu are both `planned`."""
+    """DepthAnything V2 Small on onnxruntime (CPU EP). `estimate(image)` → relative inverse depth float32[h, w] at the input
+    resolution (larger = nearer). `threads=1` (default) makes the output bit-reproducible across hosts/core counts with
+    the same onnxruntime build; more threads are faster but may differ in the last float bits."""
+
+    def __init__(self, model_path: str | None = None, input_size: int | None = None, threads: int = 1,
+                 providers: list[str] | None = None) -> None:
+        from forge import models
+        spec = models.registry()[MODEL_ID]
+        self.pre = spec["preprocess"]
+        self.input_size = int(input_size or self.pre["size"])
+        self.model_path = model_path or str(models.require(MODEL_ID))
+        self.threads = threads
+        self.providers = providers or ["CPUExecutionProvider"]
+        self._sess = None
+
+    @property
+    def session(self):
+        if self._sess is None:
+            try:
+                import onnxruntime as ort
+            except ImportError as e:   # optional extra `depth`
+                raise RuntimeError(t("depth.ort_missing")) from e
+            so = ort.SessionOptions()
+            so.intra_op_num_threads = self.threads
+            so.inter_op_num_threads = 1
+            so.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+            so.log_severity_level = 3
+            self._sess = ort.InferenceSession(self.model_path, so, providers=self.providers)
+        return self._sess
+
+    def target_size(self, w: int, h: int) -> tuple[int, int]:
+        """DPT 'keep aspect ratio, multiple of 14' resize (the scale closer to 1 wins, like the reference processor)."""
+        m = int(self.pre["multiple_of"])
+        sw, sh = self.input_size / w, self.input_size / h
+        if abs(1 - sw) < abs(1 - sh):
+            sh = sw
+        else:
+            sw = sh
+        return max(m, int(round(w * sw / m)) * m), max(m, int(round(h * sh / m)) * m)
+
+    def preprocess(self, rgb: np.ndarray) -> np.ndarray:
+        from PIL import Image
+        h, w = rgb.shape[:2]
+        tw, th = self.target_size(w, h)
+        im = Image.fromarray(rgb.astype(np.uint8)).resize((tw, th), Image.BICUBIC)
+        x = np.asarray(im, dtype=np.float32) / 255.0
+        x = (x - np.array(self.pre["mean"], np.float32)) / np.array(self.pre["std"], np.float32)
+        return np.ascontiguousarray(x.transpose(2, 0, 1)[None])
+
+    def estimate_rgb(self, rgb: np.ndarray) -> np.ndarray:
+        from PIL import Image
+        if rgb.ndim != 3 or rgb.shape[2] != 3:
+            raise ValueError("expected an RGB image array [h, w, 3]")
+        out = self.session.run(None, {"pixel_values": self.preprocess(rgb)})[0][0].astype(np.float32)
+        h, w = rgb.shape[:2]
+        return np.asarray(Image.fromarray(out, mode="F").resize((w, h), Image.BILINEAR), dtype=np.float32)
 
     def estimate(self, image: bytes) -> np.ndarray:
-        refuse("depth.dense_estimate", "stub.depth.model_missing", MILESTONE)
+        import io
+
+        from PIL import Image
+        with Image.open(io.BytesIO(image)) as im:
+            rgb = np.asarray(im.convert("RGB"))
+        return self.estimate_rgb(rgb)
+
+
+def estimate_metric(rgb: np.ndarray, anchors: list[Anchor], estimator: RelativeDepthEstimator | None = None) -> dict[str, Any]:
+    """Dense metric depth = DepthAnything V2 relative map + inverse-depth alignment on ≥ 2 metric anchors."""
+    est = estimator or DepthAnythingV2()
+    rel = est.estimate_rgb(rgb) if hasattr(est, "estimate_rgb") else est.estimate(rgb)
+    out = align_inverse_depth(rel, anchors)
+    out["relative"] = rel
+    out["model"] = MODEL_ID
+    return out
+
+
+MAX_OFFLOAD_SIDE = 1024
+
+
+def offload_estimate(payload: dict[str, Any], estimator: RelativeDepthEstimator | None = None) -> dict[str, Any]:
+    """LoomLink `depth.estimate` offload (phone → desktop). Payload: `data_b64` (JPEG/PNG/WebP), optional `anchors`
+    [{x, y, depth_m}] in image pixels, optional `max_side` (≤ 1024). Returns the relative map as little-endian uint16
+    (`rel_u16_b64`, 0..65535 over [rel_min, rel_max]) at the (possibly downscaled) size, plus the metric alignment when
+    ≥ 2 anchors are given — no image codec needed on the phone."""
+    import base64
+    import io
+
+    from PIL import Image
+    data = base64.b64decode(payload["data_b64"])
+    with Image.open(io.BytesIO(data)) as im:
+        im = im.convert("RGB")
+        w0, h0 = im.size
+        side = max(16, min(int(payload.get("max_side", 512)), MAX_OFFLOAD_SIDE))
+        s = min(1.0, side / max(w0, h0))
+        if s < 1.0:
+            im = im.resize((max(1, round(w0 * s)), max(1, round(h0 * s))), Image.BICUBIC)
+        rgb = np.asarray(im)
+    est = estimator or DepthAnythingV2()
+    rel = est.estimate_rgb(rgb) if hasattr(est, "estimate_rgb") else est.estimate(data)
+    lo, hi = float(rel.min()), float(rel.max())
+    q = np.round((rel - lo) / max(hi - lo, EPS) * 65535).astype("<u2")
+    out: dict[str, Any] = {"model": MODEL_ID, "width": int(rel.shape[1]), "height": int(rel.shape[0]), "scale_from_input": s,
+                           "rel_min": lo, "rel_max": hi, "rel_u16_b64": base64.b64encode(q.tobytes()).decode(),
+                           "convention": "relative inverse depth, larger = nearer"}
+    anchors = payload.get("anchors") or []
+    if len(anchors) >= 2:
+        al = align_inverse_depth(rel, [Anchor(int(round(a["x"] * s)), int(round(a["y"] * s)), float(a["depth_m"]))
+                                       for a in anchors])
+        d = al["depth_m"]
+        out["metric"] = {"scale": al["scale"], "shift": al["shift"], "anchor_rmse_m": al["anchor_rmse_m"],
+                         "invalid_fraction": al["invalid_fraction"], "median_m": float(np.nanmedian(d)),
+                         "min_m": float(np.nanmin(d)), "max_m": float(np.nanmax(d))}
+    return out
+
+
+def render_scene(w: int = 256, h: int = 192, fov_deg: float = 60.0, cam_h: float = 1.5, pitch_deg: float = 8.0,
+                 wall_z: float = 9.0, seed: int = 7) -> dict[str, Any]:
+    """Analytic ray-cast scene with exact camera-space depth: checker+noise ground (y=0), brick wall (z=wall_z), a crate.
+
+    Returns rgb uint8[h,w,3], depth_m float64[h,w] (camera z, NaN for sky) and the focal length in px."""
+    rng = np.random.default_rng(seed)
+    f = 0.5 * w / math.tan(math.radians(fov_deg) / 2)
+    ys, xs = np.mgrid[0:h, 0:w].astype(np.float64)
+    dx, dy = (xs + 0.5 - w / 2) / f, -(ys + 0.5 - h / 2) / f     # camera ray (z = 1), y up
+    p = math.radians(pitch_deg)                                    # camera pitched down by p
+    wy = dy * math.cos(p) - math.sin(p)                            # world-space ray (x right, y up, z forward)
+    wz = dy * math.sin(p) + math.cos(p)
+    wx = dx
+    inf = np.full((h, w), np.inf)
+    t_ground = np.where(wy < -1e-9, cam_h / np.maximum(-wy, 1e-9), inf)
+    t_wall = np.where(wz > 1e-9, wall_z / np.maximum(wz, 1e-9), inf)
+    # crate: axis-aligned box x∈[-0.9,0.1], y∈[0,0.8], z∈[3.0,4.0]
+    lo, hi = np.array([-0.9, 0.0, 3.0]), np.array([0.1, 0.8, 4.0])
+    o = np.array([0.0, cam_h, 0.0])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        dirs = [wx, wy, wz]
+        t1 = [(lo[i] - o[i]) / dirs[i] for i in range(3)]
+        t2 = [(hi[i] - o[i]) / dirs[i] for i in range(3)]
+        tmin = np.maximum.reduce([np.minimum(a, b) for a, b in zip(t1, t2)])
+        tmax = np.minimum.reduce([np.maximum(a, b) for a, b in zip(t1, t2)])
+    t_box = np.where((tmax >= tmin) & (tmin > 0), tmin, inf)
+    t = np.minimum.reduce([t_ground, t_wall, t_box])
+    hit = np.isfinite(t)
+    px, py, pz = wx * t, cam_h + wy * t, wz * t
+    rgb = np.zeros((h, w, 3))
+    sky = np.stack([0.55 + 0.3 * (ys / h), 0.7 + 0.2 * (ys / h), np.full_like(ys, 0.95)], -1)
+    rgb[:] = sky
+    g = (t == t_ground) & hit
+    chk = ((np.floor(px[g] / 0.5) + np.floor(pz[g] / 0.5)) % 2)
+    base = np.stack([0.35 + 0.25 * chk, 0.42 + 0.2 * chk, 0.25 + 0.1 * chk], -1)
+    rgb[g] = base * (0.85 + 0.3 * rng.random((g.sum(), 1)))
+    wm = (t == t_wall) & hit & ~g
+    row = np.floor(py[wm] / 0.25)
+    mortar = ((py[wm] % 0.25) < 0.03) | (((px[wm] + 0.25 * (row % 2)) % 0.5) < 0.03)
+    brick = np.stack([np.full(wm.sum(), 0.62), np.full(wm.sum(), 0.3), np.full(wm.sum(), 0.22)], -1)
+    brick = brick * (0.85 + 0.3 * rng.random((wm.sum(), 1)))
+    brick[mortar] = [0.8, 0.78, 0.74]
+    rgb[wm] = brick
+    bm = (t == t_box) & hit & ~g & ~wm
+    face = np.where(np.isclose(pz[bm], 3.0, atol=1e-6), 1.0, 0.75)
+    plank = (np.floor(py[bm] / 0.2) % 2)
+    rgb[bm] = np.stack([0.55 + 0.1 * plank, 0.38 + 0.08 * plank, 0.18 + 0.0 * plank], -1) * face[:, None]
+    # camera-space depth (z along the optical axis) = t * (ray z in camera frame) where camera ray has z=1 → depth = t
+    depth = np.where(hit, t, np.nan)        # world ray = R·(dx, dy, 1) (a rotation), so the ray parameter IS camera z
+    return {"rgb": (np.clip(rgb, 0, 1) * 255).astype(np.uint8), "depth_m": depth, "focal_px": f}
+
+
+def depth_metrics(pred: np.ndarray, gt: np.ndarray) -> dict[str, float]:
+    """Standard monocular-depth metrics on pixels where both are finite: AbsRel, δ<1.25, Spearman of inverse depth."""
+    m = np.isfinite(pred) & np.isfinite(gt) & (gt > 0) & (pred > 0)
+    p, g = pred[m], gt[m]
+    ratio = np.maximum(p / g, g / p)
+
+    def rank(v: np.ndarray) -> np.ndarray:
+        r = np.empty(len(v))
+        r[np.argsort(v, kind="stable")] = np.arange(len(v))
+        return r
+    ra, rb = rank(1 / p), rank(1 / g)
+    sp = float(np.corrcoef(ra, rb)[0, 1])
+    return {"abs_rel": float(np.mean(np.abs(p - g) / g)), "delta1": float(np.mean(ratio < 1.25)), "spearman": sp,
+            "pixels": int(m.sum())}
 
 
 class ARCoreDepth:
@@ -111,7 +295,6 @@ class ARCoreDepth:
 
 
 STUB_PROBES = {
-    "depth.dense_estimate": lambda: DepthAnythingV2().estimate(b""),
     "depth.arcore": lambda: ARCoreDepth().estimate(b""),
 }
 
@@ -129,4 +312,4 @@ def probe() -> dict[str, Any]:
 
 
 __all__ = ["focal_px", "distance_to_object", "align_inverse_depth", "Anchor", "DepthAnythingV2", "ARCoreDepth",
-           "RelativeDepthEstimator"]
+           "RelativeDepthEstimator", "estimate_metric", "render_scene", "depth_metrics", "MODEL_ID"]

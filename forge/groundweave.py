@@ -269,7 +269,30 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         return {"brief": f"{name}-probe", "ok": True, "wall_s": round(wall, 3), "cores": aff, "device": sel["device"],
                 "backend": sel["backend"], "digest": hashlib.sha256(json.dumps(out, sort_keys=True, default=str).encode()).hexdigest()}
+    if name == "depth-dense":   # DepthAnything V2 Small, onnxruntime CPU EP, 1 intra-op thread → bit-reproducible map
+        import numpy as np
+
+        from forge import depth
+        sel = select("depth.estimate", root=root)
+        sc = depth.render_scene(160, 120)
+        rel = depth.DepthAnythingV2(threads=1).estimate_rgb(sc["rgb"])
+        m = depth.depth_metrics(depth.align_inverse_depth(rel, _scene_anchors(sc["depth_m"]))["depth_m"], sc["depth_m"])
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "depth-dense-probe", "ok": m["abs_rel"] < 0.15, "abs_rel": round(m["abs_rel"], 4),
+                "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
+                "digest": hashlib.sha256(np.ascontiguousarray(rel, dtype=np.float32).tobytes()).hexdigest()}
     raise GroundWeaveError(f"unknown runtime probe {name!r}")
+
+
+def _scene_anchors(gt: Any, n: int = 12, seed: int = 1) -> list:
+    """Deterministic metric anchors sampled from a ground-truth depth map (the role LensForge/ARCore points play live)."""
+    import numpy as np
+
+    from forge.depth import Anchor
+    ys, xs = np.where(np.isfinite(gt))
+    idx = np.random.default_rng(seed).choice(len(ys), n, replace=False)
+    return [Anchor(int(xs[i]), int(ys[i]), float(gt[ys[i], xs[i]])) for i in idx]
 
 
 def _probe_companion(name: str, backend: str | None = None) -> Any:
@@ -332,6 +355,12 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
         if not probe:
             results.append({"op": op_id, "status": "not_probed", "note": op.get("note", "")})
             continue
+        if op.get("requires_model"):
+            from forge import models
+            if not models.status(op["requires_model"], root, verify=False)["ready"]:
+                results.append({"op": op_id, "status": "model_absent", "model": op["requires_model"],
+                                "note": f"run `forge models fetch {op['requires_model']}` (heavy; local/full runs only)"})
+                continue
         timeout = max(60.0, float(op["budget_s_2core"]) * 4)
         rec = _run_probe(root, probe, weak, cores, timeout)
         rec["op"] = op_id
@@ -353,7 +382,8 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
             good = good and rec["identical_to_unpinned"] and rec["identical_with_simulated_gpu"]
         rec["status"] = "ok" if good else "fail"
         results.append(rec)
-    ok = all(r["status"] in ("ok", "not_probed", "planned") for r in results)
+    allowed = {"ok", "not_probed", "planned"} | (set() if os.environ.get("FORGE_REQUIRE_MODELS") == "1" else {"model_absent"})
+    ok = all(r["status"] in allowed for r in results)
     return {"ok": ok, "cores": cores, "gpu_hidden": True, "results": results}
 
 

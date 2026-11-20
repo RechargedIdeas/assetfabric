@@ -261,7 +261,7 @@ def lens_focus(state_dir: Path, device: str, distance_m: float | None, x: float 
 
 @click.group("depth")
 def depth_grp() -> None:
-    """Metric depth (C11): pinhole monocular distance + scale alignment are real; dense DepthAnything V2 / ARCore are stubs."""
+    """Metric depth (C11): pinhole distance, scale alignment and dense DepthAnything V2 Small (CPU) are real; ARCore is a stub."""
 
 
 @depth_grp.command("distance")
@@ -287,14 +287,66 @@ def depth_distance(size_m: float, size_px: float, width_px: int, focal_mm: float
 @depth_grp.command("estimate")
 @click.argument("file", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.option("--backend", type=click.Choice(["depthanything", "arcore"]), default="depthanything")
-def depth_estimate(file: Path, backend: str) -> None:
-    """Dense depth map — STUB (refuses, exit 3): no model or SDK is bundled."""
+@click.option("--anchor", "anchors", multiple=True, help="metric anchor x,y,metres (≥ 2 → metric depth)")
+@click.option("--out", type=click.Path(dir_okay=False, path_type=Path), help="write a 16-bit PNG (relative, or millimetres with anchors)")
+@click.option("--threads", type=int, default=1, show_default=True)
+def depth_estimate(file: Path, backend: str, anchors: tuple[str, ...], out: Path | None, threads: int) -> None:
+    """Dense depth: DepthAnything V2 Small on onnxruntime CPU (needs `forge models fetch depth-anything-v2-small`);
+    `--backend arcore` is a stub (exit 3)."""
+    import numpy as np
+
     from forge import depth
 
     def run() -> Any:
-        est = depth.DepthAnythingV2() if backend == "depthanything" else depth.ARCoreDepth()
-        return est.estimate(file.read_bytes())
+        if backend == "arcore":
+            return depth.ARCoreDepth().estimate(file.read_bytes())
+        rel = depth.DepthAnythingV2(threads=threads).estimate(file.read_bytes())
+        res: dict[str, Any] = {"model": depth.MODEL_ID, "width": rel.shape[1], "height": rel.shape[0],
+                               "rel_min": float(rel.min()), "rel_max": float(rel.max())}
+        img = (rel - rel.min()) / max(float(rel.max() - rel.min()), 1e-9) * 65535
+        if anchors:
+            pts = [depth.Anchor(int(a.split(",")[0]), int(a.split(",")[1]), float(a.split(",")[2])) for a in anchors]
+            al = depth.align_inverse_depth(rel, pts)
+            d = al["depth_m"]
+            res["metric"] = {k: al[k] for k in ("scale", "shift", "anchor_rmse_m", "invalid_fraction")}
+            res["metric"].update(median_m=float(np.nanmedian(d)), min_m=float(np.nanmin(d)), max_m=float(np.nanmax(d)))
+            img = np.nan_to_num(d * 1000.0, nan=0.0)
+        if out:
+            from PIL import Image
+            Image.fromarray(np.clip(img, 0, 65535).astype(np.uint16)).save(out)
+            res["out"] = str(out)
+        return res
     _guard(run)
+
+
+# --------------------------------------------------------------------------------------------------- models
+
+@click.group("models")
+def models_grp() -> None:
+    """Model weights (content/models/models.yaml): fetched with SHA-256 into store/models/, never committed."""
+
+
+@models_grp.command("list")
+def models_list() -> None:
+    from forge import models
+    _emit([{**models.status(m, verify=False), "use": s.get("use")} for m, s in models.registry().items()])
+
+
+@models_grp.command("fetch")
+@click.argument("model_id")
+def models_fetch(model_id: str) -> None:
+    from forge import models
+    _guard(lambda: models.fetch(model_id))
+
+
+@models_grp.command("verify")
+@click.argument("model_id")
+def models_verify(model_id: str) -> None:
+    from forge import models
+    st = models.status(model_id)
+    _emit(st)
+    if not st["ready"]:
+        raise SystemExit(1)
 
 
 # --------------------------------------------------------------------------------------------------- recon (C12)

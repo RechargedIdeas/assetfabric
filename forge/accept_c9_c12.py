@@ -94,9 +94,15 @@ def _ladder(root: Path, op_cpu: list[str], op_planned: list[str]) -> dict[str, A
     return {"ok": ok and st["ok"], "static_ok": st["ok"], "problems": st["problems"], "ops": rows}
 
 
+def _models_required() -> bool:
+    import os
+    return os.environ.get("FORGE_REQUIRE_MODELS") == "1"
+
+
 def _verify(root: Path, *ops: str) -> dict[str, Any]:
     v = gw.verify(root, ops=list(ops))
-    return {"ok": v["ok"] and all(x["status"] in ("ok", "planned") for x in v["results"]) and len(v["results"]) == len(ops),
+    allowed = ("ok", "planned") + (() if _models_required() else ("model_absent",))
+    return {"ok": v["ok"] and all(x["status"] in allowed for x in v["results"]) and len(v["results"]) == len(ops),
             "cores": v["cores"], "results": [{k: x.get(k) for k in ("op", "status", "backend", "device", "wall_s", "budget_s",
                                                                     "cores", "identical_to_unpinned", "identical_with_simulated_gpu")}
                                              for x in v["results"]]}
@@ -674,28 +680,143 @@ def _depth_align() -> dict[str, Any]:
             "note": "scales a relative map from ≥2 metric anchors; producing the relative map is the DepthAnything V2 stub"}
 
 
+DENSE_FLOORS = {"abs_rel_max": 0.10, "delta1_min": 0.90, "spearman_min": 0.90}   # INFERENCES C-61
+
+
+def _model_ready() -> bool:
+    from forge import models
+    return models.status(depth.MODEL_ID, verify=True)["ready"]
+
+
+def _skipped_no_model() -> dict[str, Any]:
+    return {"ok": not _models_required(), "skipped": "model_absent",
+            "note": f"heavy: run `forge models fetch {depth.MODEL_ID}` (local/full runs; CI skips unless FORGE_REQUIRE_MODELS=1)"}
+
+
+def _scene_jpeg(sc: dict[str, Any]) -> bytes:
+    import io
+
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.fromarray(sc["rgb"]).save(buf, "JPEG", quality=92)
+    return buf.getvalue()
+
+
+def _depth_dense() -> dict[str, Any]:
+    """DepthAnything V2 Small on an analytic ray-cast scene with exact depth: aligned AbsRel / δ1 / Spearman floors,
+    the bytes (JPEG) path agrees with the array path, and a 1-thread run is bit-reproducible."""
+    if not _model_ready():
+        return _skipped_no_model()
+    import time as _t
+    sc = depth.render_scene(256, 192)
+    est = depth.DepthAnythingV2(threads=1)
+    t0 = _t.perf_counter()
+    rel = est.estimate_rgb(sc["rgb"])
+    wall = _t.perf_counter() - t0
+    anchors = gw._scene_anchors(sc["depth_m"])
+    m = depth.depth_metrics(depth.align_inverse_depth(rel, anchors)["depth_m"], sc["depth_m"])
+    rel2 = depth.DepthAnythingV2(threads=1).estimate_rgb(sc["rgb"])
+    relj = est.estimate(_scene_jpeg(sc))
+    mj = depth.depth_metrics(depth.align_inverse_depth(relj, anchors)["depth_m"], sc["depth_m"])
+    two = depth.align_inverse_depth(rel, anchors[:2])            # the minimum: two anchors
+    m2 = depth.depth_metrics(two["depth_m"], sc["depth_m"])
+    ok = (m["abs_rel"] <= DENSE_FLOORS["abs_rel_max"] and m["delta1"] >= DENSE_FLOORS["delta1_min"]
+          and m["spearman"] >= DENSE_FLOORS["spearman_min"] and np.array_equal(rel, rel2)
+          and mj["abs_rel"] <= DENSE_FLOORS["abs_rel_max"] and m2["spearman"] >= DENSE_FLOORS["spearman_min"])
+    return {"ok": bool(ok), "model": depth.MODEL_ID, "scene": "render_scene(256x192): ground + brick wall + crate, depth 2.6–9.1 m",
+            "metrics_12_anchors": m, "metrics_jpeg_path": mj, "metrics_2_anchors": m2, "floors": DENSE_FLOORS,
+            "bit_reproducible_1_thread": bool(np.array_equal(rel, rel2)), "infer_s_1_thread": round(wall, 3)}
+
+
+def _depth_offload(root: Path, tmp: Path) -> dict[str, Any]:
+    """Phone → desktop `depth.estimate` over signed LoomLink (Python client here; Kotlin in full mode)."""
+    if not _model_ready():
+        return _skipped_no_model()
+    sc = depth.render_scene(256, 192)
+    an = gw._scene_anchors(sc["depth_m"], n=4)
+    d = Desktop(tmp / "desk11", allow=("offload",)).start()
+    try:
+        c = LinkClient(d.srv.url, "phone-c11")
+        c.pair(d.srv.code, ["offload"])
+        r = c.offload({"id": "d1", "op": "depth.estimate", "payload": {
+            "data_b64": base64.b64encode(_scene_jpeg(sc)).decode(), "max_side": 256,
+            "anchors": [{"x": a.x, "y": a.y, "depth_m": a.depth_m} for a in an]}})
+        bad = c.offload({"id": "d2", "op": "depth.estimate", "payload": {"data_b64": base64.b64encode(b"not an image").decode()}})
+    finally:
+        d.halt()
+    v = r.get("value") or {}
+    q = np.frombuffer(base64.b64decode(v.get("rel_u16_b64", "")), dtype="<u2")
+    med = (v.get("metric") or {}).get("median_m")
+    true_med = float(np.nanmedian(sc["depth_m"]))
+    ok = (r.get("ok") is True and v.get("width") == 256 and v.get("height") == 192 and q.size == 256 * 192
+          and med is not None and abs(med - true_med) / true_med < 0.1 and bad.get("ok") is False)
+    return {"ok": bool(ok), "size": [v.get("width"), v.get("height")], "metric": v.get("metric"), "true_median_m": true_med,
+            "bad_image_refused": bad.get("ok") is False, "bad_image_error": str(bad.get("error"))[:100]}
+
+
+def _kotlin_depth(root: Path, tmp: Path) -> dict[str, Any]:
+    if not _model_ready():
+        return _skipped_no_model()
+    sc = depth.render_scene(256, 192)
+    f = tmp / "scene.jpg"
+    f.write_bytes(_scene_jpeg(sc))
+    an = gw._scene_anchors(sc["depth_m"], n=4)
+    d = Desktop(tmp / "desk11k", allow=("offload",)).start()
+    home = tmp / "phone11"
+    try:
+        pc, _ = jar(root, "pair", "--url", d.srv.url, "--code", d.srv.code, "--caps", "offload", home=home)
+        rc, out = jar(root, "depth-estimate", "--file", str(f), "--max-side", "256",
+                      "--anchors", ",".join(f"{a.x}:{a.y}:{a.depth_m}" for a in an), home=home)
+    finally:
+        d.halt()
+    med = (out.get("metric") or {}).get("median_m") if rc == 0 else None
+    true_med = float(np.nanmedian(sc["depth_m"]))
+    ok = (pc == 0 and rc == 0 and out.get("width") == 256 and med is not None and abs(med - true_med) / true_med < 0.1
+          and out.get("bottom_mean", 0) > out.get("top_mean", 1))        # floor (bottom) is nearer than the wall (top)
+    return {"ok": bool(ok), "exit": rc, "width": out.get("width"), "metric_median_m": med, "true_median_m": true_med,
+            "bottom_nearer_than_top": out.get("bottom_mean", 0) > out.get("top_mean", 1)}
+
+
+def _depth_cli(root: Path, tmp: Path) -> dict[str, Any]:
+    stub = _cli_stubs(root, [["depth", "estimate", "tests/fixtures/capture_640x480.jpg", "--backend", "arcore"]])
+    if not _model_ready():
+        return {**_skipped_no_model(), "ok": stub["ok"] and not _models_required(), "arcore_stub": stub}
+    out = tmp / "d.png"
+    p = subprocess.run([sys.executable, "-m", "forge.cli", "depth", "estimate", "tests/fixtures/capture_640x480.jpg",
+                        "--anchor", "100,400,1.0", "--anchor", "320,100,3.0", "--out", str(out)],
+                       cwd=root, capture_output=True, text=True, timeout=120)
+    try:
+        doc = json.loads(p.stdout)
+    except ValueError:
+        doc = {}
+    from PIL import Image
+    png_ok = out.exists() and Image.open(out).mode.startswith("I") and Image.open(out).size == (640, 480)
+    return {"ok": stub["ok"] and p.returncode == 0 and doc.get("width") == 640 and "metric" in doc and png_ok,
+            "arcore_stub": stub, "estimate_exit": p.returncode, "metric": doc.get("metric"), "png16": png_ok}
+
+
 def c11_run(root: Path) -> tuple[int, dict[str, Any]]:
     full = full_possible(root)
-    r: dict[str, Any] = {"mode": "full" if full else "fast"}
-    r["register"] = _stubs_refuse("C11", root)
-    r["distance"] = _depth_real()
-    r["align"] = _depth_align()
+    tmp = Path(tempfile.mkdtemp(prefix="fabric-c11-"))
     try:
-        depth.DepthAnythingV2().estimate(_png("sharp", 16, 16))
-        dense = {"ok": False, "error": "returned a map"}
-    except StubError as e:
-        dense = {"ok": is_stub_message(str(e)) and e.key == "stub.depth.model_missing", "message": str(e)[:120]}
-    r["dense_refuses"] = dense
-    r["cli_stubs"] = _cli_stubs(root, [["depth", "estimate", "tests/fixtures/capture_640x480.jpg"],
-                                       ["depth", "estimate", "tests/fixtures/capture_640x480.jpg", "--backend", "arcore"]])
-    r["groundweave"] = _ladder(root, ["depth.distance"], ["depth.estimate"])
-    r["cpu_2core"] = _verify(root, "depth.distance", "depth.estimate")
-    if full:
-        b = gradle_build(root)
-        r["build"] = {"ok": b["ok"], "junit_tests": b["junit"]["tests"], "junit_failures": b["junit"]["failures"],
-                      **({"log_tail": b.get("log_tail", "")[-1500:]} if not b["ok"] else {})}
-        if b["ok"]:
-            r["kotlin_parity"] = _kotlin_suite(b)
+        r: dict[str, Any] = {"mode": "full" if full else "fast", "model_ready": _model_ready()}
+        r["register"] = _stubs_refuse("C11", root)
+        r["distance"] = _depth_real()
+        r["align"] = _depth_align()
+        r["dense"] = _depth_dense()
+        r["offload"] = _depth_offload(root, tmp)
+        r["cli"] = _depth_cli(root, tmp)
+        r["groundweave"] = _ladder(root, ["depth.distance", "depth.estimate"], [])
+        r["cpu_2core"] = _verify(root, "depth.distance", "depth.estimate")
+        if full:
+            b = gradle_build(root)
+            r["build"] = {"ok": b["ok"], "junit_tests": b["junit"]["tests"], "junit_failures": b["junit"]["failures"],
+                          **({"log_tail": b.get("log_tail", "")[-1500:]} if not b["ok"] else {})}
+            if b["ok"]:
+                r["kotlin_parity"] = _kotlin_suite(b)
+                r["kotlin_depth"] = _kotlin_depth(root, tmp)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
     return 0, r
 
 
@@ -831,10 +952,10 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "cli_stubs", "groundweave", "cpu_2core"],
-    "C11": ["register", "distance", "align", "dense_refuses", "cli_stubs", "groundweave", "cpu_2core"],
+    "C11": ["register", "distance", "align", "dense", "offload", "cli", "groundweave", "cpu_2core"],
     "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "groundweave", "cpu_2core"],
 }
-FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity"], "C11": ["kotlin_parity"], "C12": ["kotlin_parity"]}
+FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 
 
 def check(ms: str):  # noqa: ANN201

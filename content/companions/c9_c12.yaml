@@ -64,8 +64,8 @@ features:
      spec: "§9 'monocular distance estimates'", note: "pinhole z=f·S/s from an object of known size, with ±px band"}
   - {id: depth.align, milestone: C11, status: real, entry: "forge.depth:align_inverse_depth", ladder_op: depth.distance,
      spec: "§5.2 DepthAnything V2 output → metric", note: "scale/shift least squares on inverse depth from ≥2 metric anchors; scales any relative map, does not produce one"}
-  - {id: depth.dense_estimate, milestone: C11, status: stub, entry: "forge.depth:DepthAnythingV2.estimate", kotlin: DepthEstimator, ladder_op: depth.estimate,
-     reason_key: stub.depth.model_missing, spec: "§5.2 'DepthAnything V2'"}
+  - {id: depth.dense_estimate, milestone: C11, status: real, entry: "forge.depth:DepthAnythingV2.estimate", kotlin: DepthEstimator, ladder_op: depth.estimate,
+     spec: "§5.2 'DepthAnything V2'", note: "DepthAnything V2 Small (Apache-2.0) ONNX on onnxruntime CPU, weights fetched with SHA-256; phone requests it via LoomLink offload op depth.estimate"}
   - {id: depth.arcore, milestone: C11, status: stub, entry: "forge.depth:ARCoreDepth.estimate", kotlin: ArCoreSession,
      reason_key: stub.depth.arcore, ladder_op: depth.estimate, spec: "§5.2 '(+ ARCore where available)'"}
   # ----------------------------------------------------------------------------------------------------- C12

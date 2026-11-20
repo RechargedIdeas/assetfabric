@@ -19,6 +19,7 @@ import kotlin.system.exitProcess
  *    mirror-video-push --file F.ivf|F.h264 --codec vp8|vp9|h264 --stream S       (C9: push a recorded packet stream)
  *    mirror-input-poll [--after N]      (C9: fetch + verify desktop-queued events; executes into a recording sink, prints it)
  *    studio-key --key K [--shift true]  (C9: phone → Studio key event)
+ *    depth-estimate --file IMG [--anchors x:y:m,…] [--max-side N]  (C11: dense depth on the paired desktop)
  *    stubs                                                     (C9–C12: every Kotlin stub must refuse — prints each refusal)
  */
 fun main(args: Array<String>) {
@@ -68,6 +69,17 @@ fun main(args: Array<String>) {
                     mapOf("results" to r, "performed" to sink.log)
                 }
                 "studio-key" -> MirrorClient(core.link).studioKey(opts["key"] ?: "a", opts["shift"] == "true")
+                "depth-estimate" -> {
+                    val anchors = (opts["anchors"] ?: "").split(",").filter { it.isNotBlank() }.map {
+                        val (x, y, m) = it.split(":"); DepthAnchor(x.toInt(), y.toInt(), m.toDouble()) }
+                    val d = DepthEstimator(core.link, (opts["max-side"] ?: "512").toInt()).request(File(opts["file"]!!).readBytes(), anchors)
+                    val w = d.width; val h = d.height
+                    // top-vs-bottom row means let the caller check orientation without shipping the whole map back
+                    mapOf("width" to w, "height" to h, "metric" to d.metric,
+                        "top_mean" to (0 until w).map { d.at(it, h / 8) }.average(),
+                        "bottom_mean" to (0 until w).map { d.at(it, h - 1 - h / 8) }.average(),
+                        "sum" to d.relative.sumOf { it.toDouble() })
+                }
                 else -> usage()
             }
         }
@@ -90,7 +102,6 @@ private fun usage(): Nothing {
 fun allStubs(): Map<String, Any?> {
     val probes: Map<String, () -> Unit> = mapOf(
         "lens.arcore_session" to { ArCoreSession().start() },
-        "depth.dense_estimate" to { DepthEstimator().estimate(ByteArray(0)) },
         "recon.splatforge" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
         "lens.mode.video" to { CaptureModes.require("video") },
         "lens.mode.depth_assist" to { CaptureModes.require("depth_assist") },

@@ -96,7 +96,7 @@ class C9C12Test {
 
     @Test fun everyStubRefuses() {
         val r = allStubs()
-        assertTrue(r.size >= 5)
+        assertTrue(r.size >= 4)
         for ((id, v) in r) {
             val m = v.asMap()
             assertEquals(true, m["refused"], id)
@@ -178,5 +178,20 @@ class C9C12Test {
         val r = inj.pollOnce()
         assertEquals(5, r.size); assertTrue(r.all { it["ok"] == true }); assertEquals(4L, inj.after)
         assertEquals(mapOf("global" to "back"), sink.log[2]); assertEquals("manual", sink.log[4]["focus"])
+    }
+
+    @Test fun depthMapDecodesUint16AndRefusesWithoutOffload() {
+        // 2x2 map: values 0, 65535, 32768, 1 over [0.5, 2.5]
+        val bb = java.nio.ByteBuffer.allocate(8).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        listOf(0, 65535, 32768, 1).forEach { bb.putShort(it.toShort()) }
+        val m = DepthEstimator.decode(mapOf("width" to 2L, "height" to 2L, "rel_min" to 0.5, "rel_max" to 2.5,
+            "rel_u16_b64" to java.util.Base64.getEncoder().encodeToString(bb.array()), "metric" to mapOf("median_m" to 3.0)))
+        assertEquals(0.5f, m.at(0, 0)); assertEquals(2.5f, m.at(1, 0)); assertEquals(1.5f, m.at(0, 1), 1e-4f)
+        assertEquals(3.0, m.metric!!["median_m"])
+        assertFailsWith<IllegalArgumentException> {
+            DepthEstimator.decode(mapOf("width" to 3L, "height" to 2L, "rel_min" to 0.0, "rel_max" to 1.0,
+                "rel_u16_b64" to java.util.Base64.getEncoder().encodeToString(bb.array())))
+        }
+        assertFailsWith<LinkException> { DepthEstimator(LoomLinkClient("unpaired")).request(ByteArray(4)) }
     }
 }

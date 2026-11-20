@@ -101,7 +101,6 @@
     <string name="cam_failed">Camera unavailable.</string>
     <!-- C9–C12 labelled-stub reasons (shown if a stub feature is ever surfaced; see content/companions/c9_c12.yaml) -->
     <string name="stub_depth_arcore">ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).</string>
-    <string name="stub_depth_model_missing">Dense monocular depth (DepthAnything V2) is not implemented: no model weights or ONNX runtime are bundled, so no depth map is produced.</string>
     <string name="stub_lens_arcore_session">ARCore-assisted capture is not implemented (Android-only SDK, not bundled in FabricCore).</string>
     <string name="stub_recon_splatforge">SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.</string>
 </resources>

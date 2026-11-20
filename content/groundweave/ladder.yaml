@@ -122,14 +122,17 @@ ops:
     ladder:
       - {id: pinhole-align-cpu, device: cpu, impl: real}
   depth.estimate:
-    planned: true
-    route: loomcluster
+    budget_s_2core: 30
+    probe_brief: "runtime:depth-dense"
+    requires_model: depth-anything-v2-small
     note: >-
-      Dense DepthAnything V2 relative depth (C11) — NOT built (no weights/runtime). Every rung is planned; DepthAnythingV2.estimate
-      refuses. The small checkpoint is CPU-capable, so no GPU is claimed to be required; it simply does not exist yet.
+      Dense relative depth (C11): DepthAnything V2 Small (Apache-2.0) ONNX on the onnxruntime CPU EP, single intra-op thread in
+      the probe so the float32 map is bit-identical pinned/unpinned. Weights are fetched with SHA-256 (`forge models fetch`);
+      without them `verify` reports `model_absent` (fails only with FORGE_REQUIRE_MODELS=1). The ROCm EP rung stays planned — no
+      GPU on the build box. ARCore depth (phone) is a separate register row, still a stub.
     ladder:
       - {id: depthanything-v2-onnx, device: rocm, impl: planned}
-      - {id: depthanything-v2-onnx, device: cpu, impl: planned}
+      - {id: depthanything-v2-onnx-cpu, device: cpu, impl: real}
   recon.plan:
     budget_s_2core: 20
     probe_brief: "runtime:recon"

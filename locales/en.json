@@ -7,7 +7,6 @@
   "stub.lens.video_capture": "Continuous video capture and keyframe extraction are not implemented; use still, burst, orbit or sweep modes.",
   "lens.not_an_image": "Not an image (png/jpeg/webp expected).",
   "lens.pillow_missing": "Decoding JPEG/WebP needs Pillow (install forge with the 'lens' extra); the image was not assessed.",
-  "stub.depth.model_missing": "Dense monocular depth (DepthAnything V2) is not implemented: no model weights or ONNX runtime are bundled, so no depth map is produced.",
   "stub.depth.arcore": "ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).",
   "depth.no_intrinsics": "Cannot derive the focal length in pixels: give focal_length_mm with sensor_width_mm, or focal_length_35mm, or a horizontal field of view.",
   "depth.bad_anchors": "Metric alignment needs at least two anchors with distinct relative-depth values and positive distances.",
@@ -40,5 +39,6 @@
   "studio.tab.status": "Status",
   "studio.tab.mirror": "Mirror",
   "studio.tab.console": "Console",
-  "studio.missing_pyside": "Studio needs PySide6 (uv pip install -e '.[studio]'): {err}"
+  "studio.missing_pyside": "Studio needs PySide6 (uv pip install -e '.[studio]'): {err}",
+  "depth.ort_missing": "Dense depth needs onnxruntime: install the `depth` extra (pip install -e '.[depth]')."
 }

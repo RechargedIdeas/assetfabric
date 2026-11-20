@@ -37,7 +37,7 @@ def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
     # 0.7.4 (stub batch 1, C9): 20 real · 5 real_unverified_on_device (Android-only, compiled, never on a phone) · 8 stubs
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (20, 5, 8)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (21, 5, 7)
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -290,11 +290,27 @@ def test_inverse_depth_alignment_recovers_metric_depth() -> None:
         depth.align_inverse_depth(-rel, anchors)                                      # inverted polarity is refused, not flipped
 
 
-def test_dense_depth_is_a_refusing_stub() -> None:
-    for est in (depth.DepthAnythingV2(), depth.ARCoreDepth()):
-        with pytest.raises(StubError) as e:
-            est.estimate(b"")
-        assert is_stub_message(str(e.value))
+def test_arcore_depth_is_a_refusing_stub() -> None:
+    with pytest.raises(StubError) as e:
+        depth.ARCoreDepth().estimate(b"")
+    assert is_stub_message(str(e.value))
+
+
+def test_dense_depth_without_weights_names_the_fetch_command(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FORGE_MODELS_DIR", str(tmp_path))          # empty models dir → refuse with the remedy, no fake map
+    with pytest.raises(FileNotFoundError, match="forge models fetch depth-anything-v2-small"):
+        depth.DepthAnythingV2()
+
+
+def test_render_scene_depth_is_analytic() -> None:
+    sc = depth.render_scene(64, 48, pitch_deg=0.0, cam_h=1.5)
+    d = sc["depth_m"]
+    # bottom-centre ray with zero pitch hits the ground at z = cam_h * f / (y_px offset)
+    f = sc["focal_px"]
+    y = 47
+    want = 1.5 * f / ((y + 0.5) - 24)
+    assert abs(d[y, 60] - want) < 1e-9          # column 60 is right of the crate
+    assert np.nanmax(d) <= 9.0 + 1e-9 and sc["rgb"].dtype == np.uint8
 
 
 # ----------------------------------------------------------------------------- C12 reconstruction path
@@ -351,9 +367,10 @@ def test_ladder_declares_new_ops_and_planned_ops_select_nothing(root: Path) -> N
     r = gw.check(root)
     assert r["ok"], r["problems"]
     ladder = gw.load_ladder(root)["ops"]
-    for op in ("mirror.encode", "lens.assess", "depth.distance", "recon.plan"):
+    for op in ("mirror.encode", "lens.assess", "depth.distance", "depth.estimate", "recon.plan"):
         assert gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)["device"] == "cpu"
-    for op in ("depth.estimate", "recon.mesh", "shuttle.gdgs"):
+    assert ladder["depth.estimate"]["ladder"][0] == {"id": "depthanything-v2-onnx", "device": "rocm", "impl": "planned"}
+    for op in ("recon.mesh", "shuttle.gdgs"):
         s = gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)
         assert s["status"] == "planned" and s["backend"] is None and ladder[op]["planned"]
         assert all(x["impl"] == "planned" for x in ladder[op]["ladder"])
@@ -362,11 +379,11 @@ def test_ladder_declares_new_ops_and_planned_ops_select_nothing(root: Path) -> N
 
 def test_check_rejects_planned_op_that_claims_a_real_rung(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     bad = copy.deepcopy(gw.load_ladder(root))
-    bad["ops"]["depth.estimate"]["ladder"][1]["impl"] = "real"
+    bad["ops"]["shuttle.gdgs"]["ladder"][-1]["impl"] = "real"
     del bad["ops"]["recon.mesh"]["route"]
     monkeypatch.setattr(gw, "load_ladder", lambda r=None: bad)
     probs = gw.check(root)["problems"]
-    assert any("depth.estimate: planned op must not claim a real backend" in p for p in probs)
+    assert any("shuttle.gdgs: planned op must not claim a real backend" in p for p in probs)
     assert any("recon.mesh: planned op must declare route" in p for p in probs)
 
 
@@ -374,7 +391,7 @@ def test_two_core_gpu_hidden_run_of_new_cpu_ops_is_byte_identical(root: Path) ->
     r = gw.verify(root, ops=["mirror.encode", "lens.assess", "depth.distance", "depth.estimate", "recon.plan"])
     assert r["ok"], r
     by = {x["op"]: x for x in r["results"]}
-    assert by["depth.estimate"]["status"] == "planned"
+    assert by["depth.estimate"]["status"] in ("ok", "model_absent")      # weights are heavy: absent in CI
     for op in ("mirror.encode", "lens.assess", "depth.distance", "recon.plan"):
         x = by[op]
         assert x["device"] == "cpu" and x["cores"] == 2 and x["identical_to_unpinned"] and x["identical_with_simulated_gpu"]

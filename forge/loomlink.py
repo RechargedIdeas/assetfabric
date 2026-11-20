@@ -311,6 +311,12 @@ class LinkServer:
                                 "note": "stored for RealityLoom — reconstruction (C12 SplatForge) is a labelled stub"},
                                media=payload.get("media", "image/jpeg"))
             res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub", "quality": quality}}
+        elif op == "depth.estimate":            # C11: dense DepthAnything V2 on this desktop (+ metric alignment if anchors)
+            try:
+                from forge import depth
+                res = {"ok": True, "value": depth.offload_estimate(job.get("payload") or {}, self._depth_estimator())}
+            except Exception as ex:  # noqa: BLE001 — reported to the phone (e.g. model not fetched)
+                res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
         elif op in OPS:
             res = self._offload_cluster(job) if self.cluster is not None else None
             if res is None:
@@ -325,6 +331,12 @@ class LinkServer:
         with self.offload_log.open("a", encoding="utf-8") as f:
             f.write(canonical({"client": cid, "job": job.get("id"), "op": op, "ok": res["ok"]}) + "\n")
         return res
+
+    def _depth_estimator(self):
+        if getattr(self, "_depth", None) is None:
+            from forge.depth import DepthAnythingV2
+            self._depth = DepthAnythingV2(threads=max(1, min(4, os.cpu_count() or 1)))
+        return self._depth
 
     def _offload_cluster(self, job: dict[str, Any]) -> dict[str, Any] | None:
         """LoomCluster hand-off (C7): None → fleet unreachable, caller runs the job locally instead."""
