@@ -4,7 +4,9 @@
 Rules (ASSETFABRIC_SPEC §9, hardware-fleet "weakest acceptance contract"):
 
 * every op has a `device: cpu` backend with `impl: real`, **or** declares
-  `gpu_required: true` + `route: loomcluster` (the job must go to a node advertising a GPU);
+  `gpu_required: true` + `route: loomcluster` (the job must go to a node advertising a GPU), **or** — for a capability
+  that is specified but not built (C9–C12) — `planned: true` + `route: loomcluster|local` with *every* rung `impl: planned`
+  (selection then reports `status: planned`; the module behind it must be a labelled stub that refuses);
 * every registered generator kind maps to a declared `gen.<kind>` op — `forge build`
   refuses to run a generator GroundWeave does not know (see `pipeline.run_brief`);
 * `forge groundweave verify` runs each op's CPU backend pinned to 2 cores with GPUs
@@ -99,6 +101,12 @@ def check(root: Path | None = None, kinds: list[str] | None = None) -> dict[str,
             if st.get("impl") not in ("real", "planned"):
                 problems.append(f"{op_id}: backend {st.get('id')} impl must be real|planned")
         has_cpu = any(st.get("device") == "cpu" and st.get("impl") == "real" for st in steps)
+        if op.get("planned"):
+            if any(st.get("impl") != "planned" for st in steps):
+                problems.append(f"{op_id}: planned op must not claim a real backend")
+            if op.get("route") not in ("loomcluster", "local"):
+                problems.append(f"{op_id}: planned op must declare route: loomcluster|local")
+            continue
         if not has_cpu:
             if not (op.get("gpu_required") and op.get("route") == "loomcluster"):
                 problems.append(f"{op_id}: no real CPU backend and not declared gpu_required+route: loomcluster")
@@ -122,6 +130,9 @@ def select(op_id: str, devices: list[str] | None = None, root: Path | None = Non
     if op is None:
         raise GroundWeaveError(f"op {op_id!r} is not declared in {LADDER_PATH}")
     devs = devices if devices is not None else detect_devices()
+    if op.get("planned"):
+        return {"op": op_id, "backend": None, "device": None, "status": "planned", "route": op.get("route"),
+                "reason": "planned: specified but not implemented; callers must refuse (labelled stub)"}
     for st in op["ladder"]:
         if st.get("impl") == "real" and st.get("device") in devs:
             top = op["ladder"][0]
@@ -250,7 +261,29 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         return {"brief": "balance-smoke", "ok": bool(enc), "wall_s": round(wall, 3), "cores": aff, "device": "cpu",
                 "backend": "godot-headless-shards", "encounters": enc,
                 "digest": hashlib.sha256(json.dumps(agg.get("matchups", agg), sort_keys=True, default=str).encode()).hexdigest()}
+    if name in ("mirror", "lens", "depth", "recon"):   # C9–C12 CPU rungs: pure-CPU, deterministic, no Godot
+        out = _probe_companion(name)
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        sel = select({"mirror": "mirror.encode", "lens": "lens.assess", "depth": "depth.distance", "recon": "recon.plan"}[name],
+                     root=root)
+        return {"brief": f"{name}-probe", "ok": True, "wall_s": round(wall, 3), "cores": aff, "device": sel["device"],
+                "backend": sel["backend"], "digest": hashlib.sha256(json.dumps(out, sort_keys=True, default=str).encode()).hexdigest()}
     raise GroundWeaveError(f"unknown runtime probe {name!r}")
+
+
+def _probe_companion(name: str) -> Any:
+    if name == "mirror":
+        from forge import lensforge, mirrorweave
+        return mirrorweave.encode_still(lensforge.synthetic_png(96, 64, 3)).decode()
+    if name == "lens":
+        from forge import lensforge
+        return lensforge.probe()
+    if name == "depth":
+        from forge import depth
+        return depth.probe()
+    from forge import realityloom
+    return realityloom.probe()
 
 
 def _run_probe(root: Path, probe: str, env: dict[str, str], pin: int | None, timeout: float) -> dict[str, Any]:
@@ -284,6 +317,9 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
         if ops and op_id not in ops:
             continue
         probe = op.get("probe_brief")
+        if op.get("planned"):
+            results.append({"op": op_id, "status": "planned", "route": op.get("route"), "note": op.get("note", "")})
+            continue
         if not probe:
             results.append({"op": op_id, "status": "not_probed", "note": op.get("note", "")})
             continue
@@ -308,7 +344,7 @@ def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | 
             good = good and rec["identical_to_unpinned"] and rec["identical_with_simulated_gpu"]
         rec["status"] = "ok" if good else "fail"
         results.append(rec)
-    ok = all(r["status"] in ("ok", "not_probed") for r in results)
+    ok = all(r["status"] in ("ok", "not_probed", "planned") for r in results)
     return {"ok": ok, "cores": cores, "gpu_hidden": True, "results": results}
 
 

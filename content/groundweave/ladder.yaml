@@ -96,3 +96,52 @@ ops:
     ladder:
       - {id: opensplat-rocm, device: rocm, impl: planned}
       - {id: colmap-cpu-photogrammetry, device: cpu, impl: planned}
+  # ---- C9–C12 (companion track): CPU-real rungs where cheap + spec-grounded; everything else planned + labelled stub ----
+  mirror.encode:
+    budget_s_2core: 10
+    probe_brief: "runtime:mirror"
+    note: >-
+      MirrorWeave frame encoding. The CPU rung is *stills* (png/jpeg/webp validated + canonical wire form); H.264 via a
+      hardware encoder (VAAPI/AMF/MediaCodec) is the planned top rung — video streaming is a labelled stub (C9).
+    ladder:
+      - {id: mirror-h264-hw, device: vulkan, impl: planned}
+      - {id: mirror-stills, device: cpu, impl: real}
+  lens.assess:
+    budget_s_2core: 10
+    probe_brief: "runtime:lens"
+    note: LensForge capture quality (sharpness/exposure/resolution), integer pixel math; pure CPU by design (C10).
+    ladder:
+      - {id: lensforge-quality-cpu, device: cpu, impl: real}
+  depth.distance:
+    budget_s_2core: 10
+    probe_brief: "runtime:depth"
+    note: Monocular distance (pinhole, known size) + scale/shift alignment of a relative depth map (C11). CPU only.
+    ladder:
+      - {id: pinhole-align-cpu, device: cpu, impl: real}
+  depth.estimate:
+    planned: true
+    route: loomcluster
+    note: >-
+      Dense DepthAnything V2 relative depth (C11) — NOT built (no weights/runtime). Every rung is planned; DepthAnythingV2.estimate
+      refuses. The small checkpoint is CPU-capable, so no GPU is claimed to be required; it simply does not exist yet.
+    ladder:
+      - {id: depthanything-v2-onnx, device: rocm, impl: planned}
+      - {id: depthanything-v2-onnx, device: cpu, impl: planned}
+  recon.plan:
+    budget_s_2core: 20
+    probe_brief: "runtime:recon"
+    note: RealityLoom routing + capture bundle + plan + 3DGS .ply validator (C12). CPU only; trains/reconstructs nothing.
+    ladder:
+      - {id: realityloom-plan-cpu, device: cpu, impl: real}
+  recon.mesh:
+    planned: true
+    route: loomcluster
+    note: MeshWeaver splat→mesh (spec "Phase 2 reconstruction") — not built; MeshWeaver.convert refuses.
+    ladder:
+      - {id: meshweaver-sugar, device: rocm, impl: planned}
+  shuttle.gdgs:
+    planned: true
+    route: local
+    note: ShuttleLine Godot 3DGS (GDGS) import adapter — not built; GdgsImport.into_godot refuses.
+    ladder:
+      - {id: gdgs-raster-import, device: vulkan, impl: planned}

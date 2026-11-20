@@ -339,6 +339,17 @@ def synthetic_gray(w: int = 64, h: int = 48, seed: int = 1) -> np.ndarray:
     return ((xs * 7 + ys * 13 + (xs * ys) % 17 + seed * 31) % 256).astype(np.int64)
 
 
+def synthetic_png(w: int = 96, h: int = 64, seed: int = 1) -> bytes:
+    """Deterministic 8-bit gray PNG of `synthetic_gray` (probes, tests, bundles — never presented as a real capture)."""
+    g = synthetic_gray(w, h, seed).astype(np.uint8)
+    rows = b"".join(b"\x00" + bytes(r) for r in g)
+
+    def chunk(tag: bytes, body: bytes) -> bytes:
+        return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body) & 0xFFFFFFFF)
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 0, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(rows, 9)) + chunk(b"IEND", b""))
+
+
 def probe() -> dict[str, Any]:
     """`lens.assess` CPU-rung probe for GroundWeave verify: deterministic, no files."""
     return {m: gray_metrics(synthetic_gray(64, 48, s)) for m, s in (("a", 1), ("b", 2))}
