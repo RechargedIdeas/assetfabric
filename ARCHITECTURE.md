@@ -189,13 +189,15 @@ PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; se
  capture (still/burst/orbit/sweep) ─▶ LensForge.assess (integer luma · Laplacian var · clip %)       real, Kotlin = Python
  metres ◀─ Depth: pinhole + inverse-depth alignment ◀─ DepthAnything V2 Small (onnxruntime CPU)      real
           ◀─ ARCore DEPTH16 anchors + poses (desktop ingest real; phone ArCoreCapture)           real / real_unverified_on_device
- recon.capture ─▶ RealityLoom: route (backdrop→splat · hero_prop→photogrammetry→MeshWeaver) · bundle · plan
-                  └─ submit: cluster placement check (rocm node?) ─▶ SplatForge [STUB] — nothing is queued
+ recon.capture ─▶ RealityLoom: route (backdrop→splat · hero_prop→photogrammetry→MeshWeaver) · bundle · plan  real
+                  ├─ Photogrammetry: OpenCV SIFT SfM (CPU, sparse) ─▶ sfm/sparse.ply + cameras.json        real
+                  ├─ splat .ply ─▶ MeshWeaver (density → surface nets → OBJ) · GDGS (Godot MultiMesh)      real
+                  └─ submit: cluster placement check (rocm node?) ─▶ SplatForge [STUB, GPU] — nothing is queued
 ```
 
 Rules: a stub raises `StubError`/`StubException` (`[STUB <id> <Cn>]`, locale key), never returns data; every capability is
 a row in `content/companions/c9_c12.yaml` and `forge.registry.check` verifies the row against code, locales
 (`stub.*` / Android `stub_*`), Kotlin symbols and GroundWeave ops. Ladder ops: real CPU `mirror.encode`, `lens.assess`,
-`depth.distance`, `recon.plan`; `planned` (all rungs): `depth.estimate`, `recon.mesh`, `shuttle.gdgs`; `gpu_required` +
-`route: loomcluster`: `recon.splat`. Inferences C-32…C-50; batch 1 (C9 real) C-51…C-59. A `real_unverified_on_device`
+`depth.distance`, `depth.estimate`, `recon.plan`, `recon.sfm`, `recon.mesh`, `shuttle.gdgs` (since 0.7.5–0.7.7);
+`gpu_required` + `route: loomcluster`: `recon.splat`. Inferences C-32…C-50; batch 1 (C9 real) C-51…C-59; batch 2/2b C-60…C-70; batch 3 (C12) C-71…C-76. A `real_unverified_on_device`
 row must name an `android_impl` class that exists in the app module (`forge.registry.check`).

@@ -27,3 +27,4 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | MediaRecorder (Android platform) | PocketLoom `Camera2Video` (C10) | Android SDK licence (platform) |
 | ARCore SDK `com.google.ar:core` 1.47.0 (Google Maven) | PocketLoom `ArCoreCapture` (C10/C11) — optional at runtime | **Google APIs Terms of Service + ARCore Additional Terms** (proprietary; commercial use allowed; app must disclose ARCore + Google ToS/Privacy Policy — in-app `arcore_notice`; INFERENCES C-68) |
 | `androidx.annotation` 1.3.0 (transitive via ARCore) | annotations only, inside the APK | Apache-2.0 |
+| opencv-python-headless (optional extra `recon`, in `dev`) | C12 CPU photogrammetry (SIFT SfM) — desktop tooling; not in game builds or the APK. The wheel also bundles FFmpeg (LGPL-2.1, separate shared library, unused) | Apache-2.0 (OpenCV ≥ 4.5) · MIT (packaging) · bundled FFmpeg LGPL-2.1 |

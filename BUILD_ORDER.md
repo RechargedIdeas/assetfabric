@@ -65,7 +65,7 @@ C1–C6 acceptance: `forge accept C1-C6` → `docs/acceptance-tests/results/C*.j
 | C9 | MirrorWeave | ✅ accepted 2026-11-19 (interfaces + stubs) — signed stills/telemetry stream + allow-listed read-only control are real; screen capture, video, input injection are labelled stubs; `forge accept C9` |
 | C10 | LensForge | ✅ accepted (interfaces + stubs) — capture modes/profiles, integer-exact quality, telemetry, set assessment real; since 0.7.5–0.7.6 video ingest + ARCore pose coverage real, phone Camera2 video/focus + ARCore capture `real_unverified_on_device` |
 | C11 | Metric depth | ✅ accepted (interfaces + stubs) — pinhole distance + inverse-depth alignment real; since 0.7.5–0.7.6 DepthAnything V2 Small (CPU) real, ARCore DEPTH16 ingest real / phone capture `real_unverified_on_device` |
-| C12 | SplatForge path | ✅ accepted (interfaces + stubs) — RealityLoom routing/bundle/plan, placement check, `.ply` validator real; SplatForge, photogrammetry, MeshWeaver, GDGS import stubs; nothing is queued |
+| C12 | SplatForge path | ✅ accepted (interfaces + stubs) — RealityLoom routing/bundle/plan, placement check, `.ply` validator real; since 0.7.7 CPU photogrammetry (OpenCV SfM), MeshWeaver and GDGS Godot import real; SplatForge training stays a stub (GPU) |
 | F8 | Retro/console-style | optional per SPEC §13 — confirm scope first |
 | F9 | Post | LiveOps readiness only |
 

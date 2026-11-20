@@ -4,6 +4,33 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.7+f7] — 2026-11-20 — Stub replacement batch 3: C12 CPU photogrammetry, MeshWeaver, GDGS Godot import
+
+### Added
+- **CPU photogrammetry** (`forge/photogrammetry.py`, `realityloom.Photogrammetry`): OpenCV SIFT features, ratio test +
+  fundamental-matrix RANSAC, union-find tracks (inconsistent tracks dropped), initial pair from a USAC_ACCURATE essential
+  matrix scored by inliers × baseline angle, incremental SQPnP registration + LM refine, multi-view DLT triangulation, three
+  alternating refine passes; single-threaded and seeded (deterministic). Writes `<bundle>/sfm/sparse.ply` + `cameras.json`.
+  CLI `forge recon photogrammetry BUNDLE [--focal-px]`. GroundWeave op `recon.sfm` (`opencv-sift-sfm-cpu`).
+  Rendered textured scene, 12 views on 120°: all registered, rotation error 0.38°, centre error 1.1 %, reprojection RMSE 1.26 px
+  (floors 2° / 5 % / 2 px). No bundle adjustment, no dense MVS (C-74).
+- **MeshWeaver** (`forge/splats.py`, `realityloom.MeshWeaver`): INRIA `.ply` splats → Gaussian density grid → surface nets
+  (own NumPy) → OBJ. CLI `forge recon mesh PLY [--out] [--voxel]`; op `recon.mesh` (`meshweaver-density-surfacenets-cpu`).
+  Sphere of splats: median vertex radius 0.5007 (r = 0.5).
+- **GDGS import** (`realityloom.GdgsImport`): INRIA `.ply` → Godot `.tscn` with a MultiMesh of camera-facing billboard quads
+  (colour from SH DC, alpha from opacity, size from scale), Compatibility renderer. CLI `forge recon godot-import PLY --project
+  DIR [--verify]`; op `shuttle.gdgs` (`gdgs-multimesh-billboard-cpu`). Verified in Godot 4.3 under Xvfb (opengl3): instance
+  read-back + a 320×240 render with 5637 lit pixels.
+- Accept C12: `photogrammetry`, `meshweaver`, `gdgs`; tests `tests/test_c12_real.py`.
+
+### Changed
+- Register: `recon.photogrammetry`, `recon.meshweaver`, `recon.gdgs_import` → `real`. Register now 24 real ·
+  8 real_unverified_on_device · **1 stub** (`recon.splatforge`, GPU training — C-75) · 3 deferred. RealityLoom CPU plans
+  are now runnable end to end (`runnable_today: true`); the GPU splat route is blocked only by SplatForge training.
+- `recon.splat` stays `gpu_required` (rungs `planned`); the COLMAP rung is replaced by `recon.sfm` (C-73).
+- `opencv-python-headless` added to the `dev` extra and a new `recon` extra.
+- Version `0.7.6+f7` → `0.7.7+f7` (PocketLoom app unchanged, `0.4.0-c11`). INFERENCES C-71…C-76.
+
 ## [0.7.6+f7] — 2026-11-20 — Stub replacement batch 2b: ARCore session (C10) + ARCore depth (C11), `real_unverified_on_device`
 
 ### Added

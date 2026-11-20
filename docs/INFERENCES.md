@@ -401,3 +401,30 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     camera texture) and samples one frame per 500 ms while tracking, 12 frames, 15 s timeout; no AR preview is drawn. ARCore is
     declared optional (`com.google.ar.core` = optional), so phones without Play Services for AR keep every other feature.
     App `0.4.0-c11` (versionCode 4); APK ≈ 1.9 MB (ARCore client library ≈ +0.9 MB). Version `0.7.5+f7` → `0.7.6+f7`.
+
+### Stub replacement batch 3 (0.7.7+f7) — C12 photogrammetry, MeshWeaver, GDGS import
+
+71. **C-71 GDGS = billboard approximation.** No 3DGS rasteriser exists for Godot 4.3's Compatibility renderer, so the import
+    draws each splat as one camera-facing quad (MultiMesh, radial alpha texture, unshaded, alpha-blended, no per-splat sort).
+    Colour = SH DC (0.5 + 0.282095·f_dc, clamped), alpha = sigmoid(opacity), quad edge = 6·mean(exp(scale)) (±3σ); if capped
+    (`--max-splats`) the most opaque splats are kept. Higher-order SH,
+    anisotropy and correct depth ordering are dropped; a true splat rasteriser (`gdgs-raster-import@vulkan`) stays `planned`.
+    Inputs in tests are synthetic splats of known geometry; no real trained splat has been imported yet.
+72. **C-72 MeshWeaver = density iso-surface.** Splat centres are splatted as isotropic Gaussians (σ = mean exp(scale), opacity
+    weighted) into a voxel grid; the mesh is the naive surface-nets iso-surface at 0.35 × the grid maximum (own NumPy, no
+    scikit-image dependency). Approximate, untextured (vertex colour = opacity-weighted mean of the 8 nearest splats). SuGaR-style refinement
+    (`meshweaver-sugar@rocm`) stays `planned`.
+73. **C-73 OpenCV instead of COLMAP.** COLMAP/pycolmap wheels link SuiteSparse/CHOLMOD and other components whose licences
+    (LGPL/GPL parts) need review for a proprietary product, so the CPU photogrammetry uses `opencv-python-headless` (OpenCV is
+    Apache-2.0; SIFT's patent expired 2020; the wheel bundles LGPL FFmpeg as a separate shared library, unused here — desktop
+    tooling only, never shipped in a game build or APK). The ladder rung is `opencv-sift-sfm-cpu`.
+74. **C-74 SfM scope + measurement.** Sparse only: no global bundle adjustment (alternating PnP-LM / multi-view DLT instead),
+    no dense MVS, no texturing, focal length known (EXIF or `--focal-px`, default 1.2 × long edge). Accuracy is measured on
+    rendered views of a textured box on a ground plane with exact cameras (not real photos): 12 views/120° → 0.38° rotation,
+    1.1 % centre error, all tested configurations ≤ 1.24° / ≤ 3.3 %. Acceptance floors: 2° / 5 % / 2 px RMSE. Drift on long or
+    real captures is untested; real-photo validation needs a capture run.
+75. **C-75 SplatForge training stays a stub (`gpu_required`).** A CPU 3DGS trainer needs a differentiable splat rasteriser
+    (forward + backward) — PyTorch CPU would add ~200 MB and still take hours per real scene; a toy trainer on a tiny scene
+    would prove only the toy. Training stays on a ROCm LoomCluster node (`opensplat-rocm`, `planned`); the import, mesh and
+    validator halves around it are real.
+76. **C-76 Versions.** Patch bump `0.7.6+f7` → `0.7.7+f7`; no Kotlin/APK change (`0.4.0-c11`).
