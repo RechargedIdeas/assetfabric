@@ -14,11 +14,11 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 
 | # | Stub / planned item | Where | Plan | Batch |
 |---|---|---|---|---|
-| 1 | `mirror.screen_capture` (Android MediaProjection) | C9 register, `ScreenCaptureSource` | desktop X11 capture via system ffmpeg `x11grab` (real, Xvfb-tested) + Kotlin MediaProjection service in the APK (`real_unverified_on_device`) | B1 |
-| 2 | `mirror.video_stream` (H.264/WebRTC) | C9 | CPU encode via **system** ffmpeg (VP8/VP9 libvpx BSD; H.264 only if the host's ffmpeg has it — never bundled), chunked + signed over a LoomLink-authenticated WebSocket; decode-back PSNR test | B1 |
-| 3 | `mirror.android_input` | C9 | signed desktop→phone input queue (tap/swipe/key/text, normalised coords) + Kotlin AccessibilityService `dispatchGesture` (`real_unverified_on_device`) | B1 |
-| 4 | `mirror.studio_input` | C9 | phone→desktop input events validated + delivered to a Studio input bus; Studio (PySide6) maps them to Qt events, offscreen-tested | B1 |
-| 5 | `mirror.camera_focus` / `lens.focus_control` | C9/C10 | focus request contract + desktop→phone queue; Kotlin Camera2 AF/manual focus (platform API, no CameraX dep) (`real_unverified_on_device`) | B1/B2 |
+| 1 ✅ 0.7.4 | `mirror.screen_capture` (Android MediaProjection) | C9 register, `ScreenCaptureSource` | desktop X11 capture via system ffmpeg `x11grab` (real, Xvfb-tested) + Kotlin MediaProjection service in the APK (`real_unverified_on_device`) | B1 |
+| 2 ✅ 0.7.4 | `mirror.video_stream` (H.264/WebRTC) | C9 | CPU encode via **system** ffmpeg (VP8/VP9 libvpx BSD; H.264 only if the host's ffmpeg has it — never bundled), chunked + signed over a LoomLink-authenticated WebSocket; decode-back PSNR test | B1 |
+| 3 ✅ 0.7.4 | `mirror.android_input` | C9 | signed desktop→phone input queue (tap/swipe/key/text, normalised coords) + Kotlin AccessibilityService `dispatchGesture` (`real_unverified_on_device`) | B1 |
+| 4 ✅ 0.7.4 | `mirror.studio_input` | C9 | phone→desktop input events validated + delivered to a Studio input bus; Studio (PySide6) maps them to Qt events, offscreen-tested | B1 |
+| 5 ✅ 0.7.4 | `mirror.camera_focus` / `lens.focus_control` | C9/C10 | focus request contract + desktop→phone queue; Kotlin Camera2 AF/manual focus (platform API, no CameraX dep) (`real_unverified_on_device`) | B1/B2 |
 | 6 | `lens.video_capture` | C10 | Kotlin Camera2 + MediaRecorder (H.264 hardware encoder on the phone) (`real_unverified_on_device`); desktop side ingests the clip, extracts frames with ffmpeg, runs `assess_set` | B2 |
 | 7 | `lens.arcore_session`, `depth.arcore` | C10/C11 | Kotlin ARCore session + depth image wrapper if the ARCore AAR licence allows and it builds; else stays stub with reason | B2 |
 | 8 | `depth.dense_estimate` + ladder `depthanything-v2-onnx@cpu` | C11 | DepthAnything V2 **Small** (Apache-2.0; Base/Large are CC-BY-NC — forbidden) ONNX on onnxruntime CPU EP, then the existing metric alignment; `@rocm` rung code via ORT providers stays `planned` (no GPU here) | B2 |
@@ -30,7 +30,7 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 | 14 | `recon.gdgs_import` | C12 | ShuttleLine imports INRIA .ply into a Godot scene (MultiMesh billboard splats, Compatibility renderer), headless-verified | B3 |
 | 15 | Voice (Vosk) not wired | F3 / HANDOVER | vosk (Apache-2.0) + small en model (Apache-2.0) → the existing closed intent grammar; test on synthesized speech | B4 |
 | 16 | Persona "micro-LM" = bigram stand-in | F3 / INFERENCE 39 | tiny neural LM (CPU, NumPy-trained, JSON weights) if it can keep the Python↔GDScript parity gate; else keep bigram and say why | B4 |
-| 17 | Studio GUI placeholder | HANDOVER | minimal PySide6 Studio window (status, mirror viewer, input sink) — offscreen-tested | B1/B4 |
+| 17 ◐ 0.7.4 (window + input bridge; more in B4) | Studio GUI placeholder | HANDOVER | minimal PySide6 Studio window (status, mirror viewer, input sink) — offscreen-tested | B1/B4 |
 | 18 | GPU rungs: `g1-sprite-onnx-tiny@rocm/vulkan`, `g1-tile-nca@rocm`, `dyeworks-sdxl@rocm`, `dyeworks-sd15@directml`, `mlp-train-rocm`, `opensplat-rocm`, `mirror-h264-hw@vulkan`, `meshweaver-sugar@rocm`, `gdgs-raster-import@vulkan` | ladder | **stay `planned`** — no GPU, no ROCm/DirectML/Vulkan device on the build box; cannot be executed or verified here | — |
 | 19 | Deferred `recon.nerf_neural_sdf`, `recon.large_scene_lod`, `recon.rc_models` | C12 register | **stay deferred** — spec marks them research/future; `rc_models` needs real capture runs to train on | — |
 

@@ -180,7 +180,12 @@ REST · CLI (`forge`) · MCP · ACP · WebSocket · gRPC · in-Studio terminal.
 ```
 PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; seq-ordered ring, ≤ 8 MiB)      real
                                 /mirror/control (forge.status · groundweave.show · mirror.stats)    real (read-only)
-                                /mirror/control input · focus · android      ─▶ 501 [STUB]           stub
+                                /mirror/frame screen_video|camera_video (VP8/VP9/H.264, keyframe-checked, GOP resync)  real
+                                /mirror/ws/hello · /mirror/ws/frame (WebSocket, per-message HMAC)  real
+                                /mirror/control input ─▶ Studio spool ─▶ Qt events                   real
+                                /mirror/input/poll ◀─ desktop operator outbox (per-event MAC)       real (desktop) /
+                                  └─ phone: AccessibilityService · Camera2Focus · MediaProjection    real_unverified_on_device
+ desktop: x11grab ─▶ libvpx (system ffmpeg, separate process) ─▶ hub / WS                            real
  capture (still/burst/orbit/sweep) ─▶ LensForge.assess (integer luma · Laplacian var · clip %)       real, Kotlin = Python
  metres ◀─ Depth: pinhole + inverse-depth alignment (dense estimator DepthAnything V2 ─▶ [STUB])     real / stub
  recon.capture ─▶ RealityLoom: route (backdrop→splat · hero_prop→photogrammetry→MeshWeaver) · bundle · plan
@@ -191,4 +196,5 @@ Rules: a stub raises `StubError`/`StubException` (`[STUB <id> <Cn>]`, locale key
 a row in `content/companions/c9_c12.yaml` and `forge.registry.check` verifies the row against code, locales
 (`stub.*` / Android `stub_*`), Kotlin symbols and GroundWeave ops. Ladder ops: real CPU `mirror.encode`, `lens.assess`,
 `depth.distance`, `recon.plan`; `planned` (all rungs): `depth.estimate`, `recon.mesh`, `shuttle.gdgs`; `gpu_required` +
-`route: loomcluster`: `recon.splat`. Inferences C-32…C-50.
+`route: loomcluster`: `recon.splat`. Inferences C-32…C-50; batch 1 (C9 real) C-51…C-59. A `real_unverified_on_device`
+row must name an `android_impl` class that exists in the app module (`forge.registry.check`).

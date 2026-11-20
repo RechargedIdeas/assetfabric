@@ -4,6 +4,34 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.4+f7] — 2026-11-20 — Stub replacement batch 1: MirrorWeave (C9) real; Android paths compiled (`real_unverified_on_device`)
+
+### Added
+- Register state **`real_unverified_on_device`** (`forge/registry.py`): needs an `android_impl` class present in the PocketLoom app
+  module; descriptors carry `verified_on_device: false`. A non-stub with a stub probe is now an error.
+- `forge/mirrorvideo.py`: system-ffmpeg CPU VP8/VP9 encoder (libvpx, realtime), IVF/Annex-B parsing, bitstream keyframe
+  detection, decode-to-RGB + PSNR, X11 desktop capture (`x11grab`). `forge/mirrorws.py`: LoomLink-signed WebSocket transport.
+- MirrorWeave: video kinds `screen_video`/`camera_video`, keyframe-checked envelopes, per-stream `VideoTrack` (GOP resync,
+  session persistence); desktop→phone input/focus outbox with per-event HMAC (`/mirror/input/poll`); phone→Studio input
+  allow-list + spool; CLI `forge mirror latest|stream --source desktop|desktop-video [--ws]|input|control --action input`,
+  `forge lens focus`, `forge link serve --ws-port`.
+- GroundWeave `mirror.encode`: `mirror-vpx-cpu@cpu` (real) between `mirror-h264-hw@vulkan` (planned) and stills.
+- Studio (`studio/assetfabric_studio/app.py`, `assetfabric-studio`): status / mirror viewer / console window and the input
+  bridge that turns spooled phone events into Qt events.
+- PocketLoom app: `ScreenMirrorService` (MediaProjection + MediaCodec H.264), `MirrorAccessibilityService` (`dispatchGesture`),
+  `Camera2Focus` (tap-to-focus live preview); Link-tab mirror controls. FabricCore: video packets, input event verification,
+  gesture/focus maths, injector; 41 JUnit tests. App `0.2.0-c9` (APK ≈ 1.0 MB, lint 0 errors).
+- Fixtures `tests/fixtures/video/tiny_{vp8,vp9}.ivf`, `tiny_h264.h264`; vectors schema `c9_c12_vectors/2`; `tests/test_c9_real.py`.
+
+### Changed
+- Register: C9 has no stubs (20 real · 5 real_unverified_on_device · 8 stub · 3 deferred overall); `lens.focus_control` →
+  `real_unverified_on_device`. `stub.mirror.*` locale keys / Android strings removed; `mirror.*` and `studio.*` keys added.
+- Extras: `mirror` (websockets, pillow), `studio` now `PySide6-Essentials`; `websockets` in `dev`. CI installs `ffmpeg` + `xvfb`.
+- Version `0.7.3+f7` → `0.7.4+f7`.
+
+### Fixed
+- Kotlin `LoomLink.nextTs()` is `@Synchronized` (concurrent pushers could reuse a timestamp).
+
 ## [0.7.3+f7] — 2026-11-19 — Companion track C9 (MirrorWeave), C10 (LensForge), C11 (depth), C12 (SplatForge path): interfaces + labelled stubs
 
 Scope: typed contracts, a real/stub/deferred register, and CPU paths only where cheap and spec-grounded. **No** live streaming,

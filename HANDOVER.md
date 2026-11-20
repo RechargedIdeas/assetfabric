@@ -6,7 +6,9 @@
 **Current Fabric milestone:** **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** (accepted, `0.7.0+f7`)
 **Current game increment:** `launch-candidates`
 **Companion track:** **PocketLoom C1–C6 accepted** (`forge accept C1-C6`, debug APK `0.1.0-c6`, package `0.7.1+f7`) — standalone offline Android companion + LoomLink pairing/offload/sync; not yet run on a device
-**Companion interfaces (C9–C12):** **accepted as typed interfaces + clearly labelled stubs** (`forge accept C9-C12`, package `0.7.3+f7`) — MirrorWeave, LensForge, metric depth, SplatForge path. 16 capabilities are real CPU paths, 14 are stubs that refuse, 3 deferred (`content/companions/c9_c12.yaml`). No live stream, ARCore, dense depth or reconstruction exists; nothing ran on a phone or a GPU
+**Stub replacement sprint (2026-11-20):** batch 1 landed in `0.7.4+f7` — **C9 MirrorWeave has no stubs**: desktop video (CPU VP8/VP9 via system ffmpeg), X11 capture, signed WebSocket transport and Studio input are `real`; Android MediaProjection/H.264, AccessibilityService input and Camera2 focus are compiled into the APK as **`real_unverified_on_device`** (never run on a phone). Plan and remaining batches: TODO.md §Current sprint.
+
+**Companion interfaces (C9–C12):** **accepted as typed interfaces + clearly labelled stubs** (`forge accept C9-C12`, package `0.7.3+f7`; C9 superseded by 0.7.4) — MirrorWeave, LensForge, metric depth, SplatForge path. 16 capabilities are real CPU paths, 14 are stubs that refuse, 3 deferred (`content/companions/c9_c12.yaml`). No live stream, ARCore, dense depth or reconstruction exists; nothing ran on a phone or a GPU
 **Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
 **Next:** nothing in the spec's companion table remains (it ends at C12). The next spec items are **F8 (retro/console-style, optional — confirm scope with the Producer before building; scope is *not* assumed)** and **F9 (post — LiveOps readiness only)**. Non-spec follow-ups (TODO.md): replace the C9–C12 stubs one by one, first real GPU rung, LAN/Tailscale cluster run + node auth, Kotlin cluster peer, PocketLoom on hardware
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
@@ -77,7 +79,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 - F5 acceptance runs 2400 fights; on a 2-core node expect ≈ 7–9 min.
 - **PocketLoom**: debug-signed only; never installed on a phone (camera/picker intents, QR → intent hand-off, on-device timings unverified). ONNX rung is a stub (no runtime bundled). LoomLink has no TLS/PAKE: HMAC gives integrity + replay protection, not confidentiality (use Tailscale); the hello proof allows offline guessing of the 8-char code within its 300 s TTL; desktop `last_ts` not persisted across restarts; deletions not synced (no tombstones); session key not Keystore-wrapped. INFERENCES C-1…C-15.
 
-- **C9–C12 (interfaces + stubs)**: see `docs/acceptance-tests/C9-C12.md` §Not proven — no live stream/video/input injection, no ARCore or dense depth, no reconstruction; capture thresholds unvalidated (C-38), overlap unmeasured, ETAs unmeasured, DepthAnything/ARCore licences unverified (C-42); Kotlin classes JVM-tested only, never on a phone.
+- **C9–C12**: see `docs/acceptance-tests/C9-C12.md` §Not proven — Android mirror/input/focus never ran on a phone (`real_unverified_on_device`), X11-only capture, no WebRTC, no desktop HW H.264; no ARCore or dense depth, no reconstruction; capture thresholds unvalidated (C-38), overlap unmeasured, ETAs unmeasured, DepthAnything/ARCore licences unverified (C-42); Kotlin classes JVM-tested only, never on a phone.
 - **LoomCluster / GroundWeave (C7/C8)**: proven on loopback processes only. Node↔node HTTP has no auth/encryption (don't bind off loopback); PocketLoom is a LoomLink client, not a cluster peer; no real GPU rung exists (all `planned`), runtime demotion proven on a synthetic ladder; reduced balance matrix (not the full 2400 fights) is what was re-timed on 2 cores; origin loss without restart loses results; large artifacts ride in result JSON (INFERENCES C-16…C-31).
 
 ## Next steps (ordered)
@@ -92,7 +94,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 
 ## Recent decisions
 
-ADR-0001 license (proprietary) · ADR-0002 Godot 4 Compatibility · ADR-0011 no LLM in tick · ADR-0012 content-addressed store · ADR-0016 one-milestone offset. ADR-0004 GIRT (CPU/GDScript backend for F3). Inferences: `docs/INFERENCES.md` §F1–§F7, §C1–C6, §C7/C8 (C-17…C-31), §C9–C12 (C-32…C-50). C9–C12 are interfaces + labelled stubs, not features (C-32).
+ADR-0001 license (proprietary) · ADR-0002 Godot 4 Compatibility · ADR-0011 no LLM in tick · ADR-0012 content-addressed store · ADR-0016 one-milestone offset. ADR-0004 GIRT (CPU/GDScript backend for F3). Inferences: `docs/INFERENCES.md` §F1–§F7, §C1–C6, §C7/C8 (C-17…C-31), §C9–C12 (C-32…C-50), stub-replacement batch 1 (C-51…C-59). C9–C12 are interfaces + labelled stubs, not features (C-32).
 
 ## For the next agent
 

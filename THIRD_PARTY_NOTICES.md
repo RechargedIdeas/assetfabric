@@ -16,4 +16,8 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | click | `forge` CLI | BSD-3-Clause |
 | rich | CLI output | MIT |
 | pytest (dev) | tests | MIT |
-| PySide6 (optional, Studio) | desktop Studio GUI | LGPL-3.0 (dynamic linking only) |
+| PySide6-Essentials (optional extra `studio`) | desktop Studio window + input bridge (C9); unmodified wheel, dynamically imported, not bundled in game builds | LGPL-3.0-only (dynamic linking only; relinkable) |
+| websockets (optional extra `mirror`, in `dev`) | MirrorWeave signed WebSocket transport (C9) | BSD-3-Clause |
+| FFmpeg + libvpx (**system tool**, not a dependency) | MirrorWeave CPU VP8/VP9 encode, decode, `x11grab` capture — invoked as a separate process from the host install; never linked, vendored or redistributed | LGPL-2.1+/GPL (host build) · libvpx BSD-3-Clause |
+| Test fixtures `tests/fixtures/video/*` | generated once with the host ffmpeg (testsrc2; H.264 fixture via x264) — test data only, not shipped | own (CC0-equivalent) |
+| Android platform APIs (MediaProjection, MediaCodec, AccessibilityService, Camera2) | PocketLoom app (C9) — platform SDK only, no AndroidX/CameraX added | Android SDK licence (platform) |

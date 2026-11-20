@@ -322,3 +322,28 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 50. **C-50 After C12.** SPEC §13's companion table ends at C12. The next *spec* items are F8 (retro/console-style, optional
     — confirm scope with the Producer first) and F9 (post, LiveOps readiness only). We have not started F8 and its scope
     is not assumed. Non-spec follow-ups (a real GPU rung, LAN/Tailscale cluster with node auth, on-device run) are in TODO.md.
+
+## Stub replacement — batch 1 (C9 MirrorWeave, 0.7.4+f7)
+
+51. **C-51 Desktop capture is X11 only.** `x11grab` through the system ffmpeg works on X11/Xvfb (tested). Windows
+    (`gdigrab`/`ddagrab`) and Wayland (PipeWire portal) are not wired or tested — no such host here.
+52. **C-52 Codecs.** Desktop encodes VP8/VP9 with libvpx (BSD-3) on CPU. H.264 is accepted pass-through from phones
+    (MediaCodec hardware encoder) and decoded by the host ffmpeg; we never ship an H.264 encoder. AV1 is rejected
+    (`mirror.video.unsupported_codec`) — no cheap realtime CPU encoder worth it at this size.
+53. **C-53 GOP persistence / resync.** The hub keeps the latest GOP (`gop.ivf|h264`) and the whole session
+    (`session.*`); after a sequence gap it drops packets until the next bitstream-verified keyframe. A sender lying about
+    `keyframe` is rejected.
+54. **C-54 WebSocket transport.** Python senders may use `/mirror/ws/*`; every message carries the same HMAC/timestamp
+    scheme as LoomLink HTTP (`LinkServer.verify(method="WS", …)`). Phones push over signed HTTP so the APK gains no
+    WebSocket dependency. No WebRTC/NAT traversal.
+55. **C-55 Quality floor.** Acceptance requires PSNR ≥ 28 dB (VP8 and VP9, smooth synthetic content, 400 kbit/s) after
+    decode — a sanity floor, not a perceptual target.
+56. **C-56 Input safety.** Android input and focus can only be *queued by the desktop operator* (CLI / local
+    `handle_control`); a remote `/mirror/control` asking for them is refused. Each event is signed over its exact JSON
+    text (`event_mac`) so Kotlin verifies without re-canonicalising floats. The AccessibilityService only acts on verified
+    events and must be enabled by the user in Android settings.
+57. **C-57 `real_unverified_on_device`.** Means: real platform code compiled into the APK, its platform-free half unit-tested
+    on the JVM, lint clean — never executed on a phone. It is not "device-proven" and must not be reported as such.
+58. **C-58 Studio.** Minimal PySide6-Essentials (LGPL-3.0, unmodified wheel, dynamic import) window; phone→desktop events
+    are allow-listed (key names in `STUDIO_KEYS`, normalised pointer coords, bounded scroll) before becoming Qt events.
+59. **C-59 Versions.** Patch bump `0.7.3+f7` → `0.7.4+f7`; PocketLoom app `0.1.0-c6` → `0.2.0-c9` (versionCode 2).

@@ -22,7 +22,7 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **LensForge** | Lens | Camera intelligence | C10–C11 | quality/modes/telemetry real (CPU); ARCore/video/focus + dense depth stubs |
 | **LoomCluster** | Loom | Equal-node clustering | C7 | **real (C7), loopback-proven**: `forge/loomcluster.py`, `forge cluster …`; negotiation, stealing, leases, retry, journal recovery, device placement, LoomLink bridge. No LAN run, no auth |
 | **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | **real (C8)**: `content/groundweave/ladder.yaml`, `forge/groundweave.py`, `forge groundweave …`; CPU rungs real, every GPU rung `planned` (no GPU backend built); enforced by the pipeline. PocketLoom applies the rule locally (C2) |
-| **MirrorWeave** | Mirror | Cross-device control/stream | C9 | stills + telemetry + read-only control real; screen capture/video/input stubs |
+| **MirrorWeave** | Mirror | Cross-device control/stream | C9 | stills, CPU VP8/VP9 video, X11 capture, signed WS, Studio input real; Android capture/H.264/input/focus `real_unverified_on_device` |
 | **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | **real (C5/C6)**: one-time code + `loomlink://` QR URI + Tailscale address, HMAC-SHA256 mutual proof, capability ∩, signed requests; offload + version-vector sync (`forge link serve`, `forge/loomlink.py`, `fabric.core.LoomLinkClient`). No TLS/PAKE yet |
 | **PocketLoom** | — | Standalone Android companion | C1–C6 | **real, debug APK (C1–C6)**: Generate · Library · Capture · Link · Telemetry; offline-first; not yet run on a device |
 | **FabricCore** | — | Shared Kotlin runtime (JobExecutor, store, queue, telemetry) | C1 | **real, JVM-only** (KMP targets later); also a desktop CLI jar |
