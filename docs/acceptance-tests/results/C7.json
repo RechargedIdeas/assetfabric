@@ -7,12 +7,12 @@
   "perf": {
     "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
     "batch_wall_s": {
-      "n1_2core_nogpu": 3.23,
-      "n2": 2.61,
-      "n3": 2.07
+      "n1_2core_nogpu": 3.27,
+      "n2": 2.76,
+      "n3": 2.35
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.26,
+    "max_gen_job_s_2core": 1.226,
     "mode": "full"
   },
   "result": {
@@ -38,14 +38,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.26,
+          "max_gen_job_s": 1.226,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 3.23,
+          "wall_s": 3.27,
           "wrong": []
         },
         "n2": {
@@ -55,35 +55,35 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.268,
+          "max_gen_job_s": 1.507,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
           "stolen_in": {
-            "a": 0,
-            "b": 7
+            "a": 1,
+            "b": 8
           },
-          "wall_s": 2.61,
+          "wall_s": 2.76,
           "wrong": []
         },
         "n3": {
           "batch_digest": "22d59a065a764f178c3c6a46beb83bd6105bf752b4985fa98a5dd491574d895f",
           "complete": true,
           "executed_by_node": {
-            "a": 26,
-            "b": 5,
-            "c": 5
+            "a": 25,
+            "b": 3,
+            "c": 8
           },
-          "max_gen_job_s": 1.512,
+          "max_gen_job_s": 1.41,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
           "stolen_in": {
-            "a": 2,
-            "b": 6,
+            "a": 0,
+            "b": 5,
             "c": 9
           },
-          "wall_s": 2.07,
+          "wall_s": 2.35,
           "wrong": []
         }
       },
@@ -92,15 +92,15 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.84,
+        "elapsed_s": 7.78,
         "executed_by_node": {
           "a": 28,
-          "b": 16,
-          "c": 4
+          "b": 18,
+          "c": 2
         },
         "killed": {
-          "c_held": 4,
-          "results_at_kill": 17
+          "c_held": 5,
+          "results_at_kill": 12
         },
         "lease_s": 6.0,
         "ok": true,
@@ -111,12 +111,12 @@
       "origin_restart": {
         "completed": 24,
         "executed_by_node": {
-          "a": 10,
-          "b": 14
+          "a": 8,
+          "b": 16
         },
         "ok": true,
-        "parked_results_redelivered_by_peer": 4,
-        "recovered_from_journal": 18,
+        "parked_results_redelivered_by_peer": 8,
+        "recovered_from_journal": 14,
         "wrong": []
       },
       "retry": {
