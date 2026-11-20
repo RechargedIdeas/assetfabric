@@ -624,7 +624,9 @@ def link_grp() -> None:
               help="Capabilities this desktop grants (subset of offload,sync,drive_studio,mirror).")
 @click.option("--state-dir", type=click.Path(path_type=Path), default=None,
               help="Paired devices + synced store (default .fabric/loomlink).")
-def link_serve(bind: str, port: int, allow: str, state_dir: Path | None) -> None:
+@click.option("--cluster", "cluster_url", default=None,
+              help="URL of any LoomCluster node: offloaded hashchain/gen jobs run on the fleet (C7).")
+def link_serve(bind: str, port: int, allow: str, state_dir: Path | None, cluster_url: str | None) -> None:
     """Show a one-time pairing code / loomlink:// URI (QR if `qrcode` is installed) and serve."""
     from forge import loomlink
 
@@ -633,6 +635,10 @@ def link_serve(bind: str, port: int, allow: str, state_dir: Path | None) -> None
     if bad:
         raise click.BadParameter(f"unknown capabilities {sorted(bad)}")
     srv = loomlink.LinkServer(state_dir or find_repo_root() / ".fabric" / "loomlink", allow=caps, bind=bind, port=port)
+    if cluster_url:
+        from forge import loomcluster
+
+        srv.cluster = loomcluster.ClusterBridge(cluster_url)
 
     def ready(s: "loomlink.LinkServer") -> None:
         click.echo(f"LOOMLINK_READY {s.url}")
@@ -662,6 +668,12 @@ def report_cmd(root: Path | None) -> None:
     from forge.report import write
 
     click.echo(str(write(root or find_repo_root())))
+
+
+from forge.cli_cluster import cluster_grp, groundweave_grp  # noqa: E402  (C7/C8 command groups)
+
+main.add_command(groundweave_grp)
+main.add_command(cluster_grp)
 
 
 if __name__ == "__main__":

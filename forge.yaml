@@ -64,7 +64,15 @@ briefs: []
 models: {}
 
 cluster:
-  nodes:
+  protocol:            # LoomCluster (C7) wire settings; loopback unless LoomLink exposes it
+    bind: 127.0.0.1
+    heartbeat_s: 0.5   # advert exchange + lease check cadence
+    lease_s: 6.0       # origin re-queues a job whose owner stopped answering for this long
+    steal_batch: 2     # jobs an idle node takes per steal
+    http_timeout_s: 2.0
+    max_attempts: 3    # a failing job is retried (tail of queue, stealable) up to this many executions
+    job_timeout_s: 300.0
+  nodes:               # mirrors docs/hardware-fleet.md (SPEC §10)
     - id: main
       tier: T1
       role: Studio host / heavy gen-train
@@ -105,6 +113,18 @@ cluster:
       gpus: []
       os: android
       allocation_cap_pct: 30
+    - id: kindle-1
+      tier: T5
+      role: "Second-screen dashboard, no compute offered [INFERENCE: specs unknown, cap 0]"
+      gpus: []
+      os: fireos
+      allocation_cap_pct: 0
+    - id: kindle-2
+      tier: T5
+      role: "Second-screen dashboard, no compute offered [INFERENCE: specs unknown, cap 0]"
+      gpus: []
+      os: fireos
+      allocation_cap_pct: 0
 
 telemetry:
   schema_version: "1.0"

@@ -1,0 +1,328 @@
+"""GroundWeave (C8) — GPU→CPU fallback ladder, enforced by forge.
+
+`content/groundweave/ladder.yaml` declares, for every forge op, the backends best-first.
+Rules (ASSETFABRIC_SPEC §9, hardware-fleet "weakest acceptance contract"):
+
+* every op has a `device: cpu` backend with `impl: real`, **or** declares
+  `gpu_required: true` + `route: loomcluster` (the job must go to a node advertising a GPU);
+* every registered generator kind maps to a declared `gen.<kind>` op — `forge build`
+  refuses to run a generator GroundWeave does not know (see `pipeline.run_brief`);
+* `forge groundweave verify` runs each op's CPU backend pinned to 2 cores with GPUs
+  hidden and fails if it exceeds `budget_s_2core`.
+
+Selection walks the ladder and takes the first backend whose device is detected and whose
+implementation exists on this checkout (`impl: real`). `planned` backends are documented
+intent only and are never selected.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+from forge.paths import find_repo_root
+
+LADDER_PATH = Path("content") / "groundweave" / "ladder.yaml"
+DEVICE_ENV = "FORGE_GW_DEVICES"           # comma list forcing the detected device set (e.g. "cpu")
+HIDE_GPU_ENV = {"HIP_VISIBLE_DEVICES": "-1", "ROCR_VISIBLE_DEVICES": "-1",
+                "CUDA_VISIBLE_DEVICES": "-1", "GPU_DEVICE_ORDINAL": "-1", DEVICE_ENV: "cpu"}
+
+
+class GroundWeaveError(RuntimeError):
+    pass
+
+
+def load_ladder(root: Path | None = None) -> dict[str, Any]:
+    root = root or find_repo_root()
+    return yaml.safe_load((root / LADDER_PATH).read_text(encoding="utf-8"))
+
+
+@lru_cache(maxsize=1)
+def _probe_devices() -> tuple[str, ...]:
+    found = ["cpu"]
+    if Path("/dev/kfd").exists() and shutil.which("rocminfo"):
+        try:
+            out = subprocess.run(["rocminfo"], capture_output=True, text=True, timeout=10).stdout
+            if "gfx" in out:
+                found.append("rocm")
+        except (OSError, subprocess.SubprocessError):
+            pass
+    if shutil.which("vulkaninfo"):
+        try:
+            out = subprocess.run(["vulkaninfo", "--summary"], capture_output=True, text=True, timeout=10).stdout
+            if any(t in out for t in ("PHYSICAL_DEVICE_TYPE_DISCRETE_GPU", "PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU")):
+                found.append("vulkan")
+        except (OSError, subprocess.SubprocessError):
+            pass
+    if sys.platform == "win32":
+        found.append("directml")   # DirectML ships with Windows 10 1903+; presence ≠ a usable adapter
+    return tuple(found)
+
+
+def detect_devices() -> list[str]:
+    forced = os.environ.get(DEVICE_ENV)
+    if forced:
+        return [d.strip() for d in forced.split(",") if d.strip()]
+    devs = list(_probe_devices())
+    if os.environ.get("HIP_VISIBLE_DEVICES") == "-1":
+        devs = [d for d in devs if d != "rocm"]
+    return devs
+
+
+def check(root: Path | None = None, kinds: list[str] | None = None) -> dict[str, Any]:
+    """Static ladder rules. `kinds` defaults to every registered generator kind."""
+    ladder = load_ladder(root)
+    problems: list[str] = []
+    allowed = set(ladder.get("devices", []))
+    ops = ladder.get("ops", {})
+    for op_id, op in ops.items():
+        steps = op.get("ladder") or []
+        if not steps:
+            problems.append(f"{op_id}: empty ladder")
+            continue
+        for st in steps:
+            if st.get("device") not in allowed:
+                problems.append(f"{op_id}: unknown device {st.get('device')!r}")
+            if st.get("impl") not in ("real", "planned"):
+                problems.append(f"{op_id}: backend {st.get('id')} impl must be real|planned")
+        has_cpu = any(st.get("device") == "cpu" and st.get("impl") == "real" for st in steps)
+        if not has_cpu:
+            if not (op.get("gpu_required") and op.get("route") == "loomcluster"):
+                problems.append(f"{op_id}: no real CPU backend and not declared gpu_required+route: loomcluster")
+        elif steps[-1].get("device") != "cpu":
+            problems.append(f"{op_id}: CPU backend must be the last rung of the ladder")
+        if has_cpu and "budget_s_2core" not in op:
+            problems.append(f"{op_id}: missing budget_s_2core")
+    if kinds is None:
+        from forge.generators import load_all
+        kinds = sorted(load_all())
+    declared = {op.get("kind") for op in ops.values() if op.get("kind")}
+    for k in kinds:
+        if k not in declared:
+            problems.append(f"generator kind {k!r} has no GroundWeave op (add gen.{k} to {LADDER_PATH})")
+    return {"ok": not problems, "problems": problems, "ops": len(ops), "kinds": kinds}
+
+
+def select(op_id: str, devices: list[str] | None = None, root: Path | None = None) -> dict[str, Any]:
+    ladder = load_ladder(root)
+    op = ladder["ops"].get(op_id)
+    if op is None:
+        raise GroundWeaveError(f"op {op_id!r} is not declared in {LADDER_PATH}")
+    devs = devices if devices is not None else detect_devices()
+    for st in op["ladder"]:
+        if st.get("impl") == "real" and st.get("device") in devs:
+            top = op["ladder"][0]
+            return {"op": op_id, "backend": st["id"], "device": st["device"],
+                    "fallback": st is not top, "top_rung": f"{top['id']}@{top['device']}:{top['impl']}"}
+    if op.get("gpu_required"):
+        return {"op": op_id, "backend": None, "device": None, "route": op.get("route", "loomcluster"),
+                "reason": "gpu_required: no local device; route to a cluster node"}
+    raise GroundWeaveError(f"op {op_id!r}: no usable backend for devices {devs}")
+
+
+def op_for_kind(kind: str, root: Path | None = None) -> str:
+    for op_id, op in load_ladder(root).get("ops", {}).items():
+        if op.get("kind") == kind:
+            return op_id
+    raise GroundWeaveError(f"generator kind {kind!r} has no GroundWeave op in {LADDER_PATH} — "
+                           "declare its CPU fallback before it can run")
+
+
+def resolve_kind(kind: str, root: Path | None = None) -> dict[str, Any]:
+    """Called by the pipeline before any generator runs (enforcement point)."""
+    sel = select(op_for_kind(kind, root), root=root)
+    if sel.get("backend") is None:
+        raise GroundWeaveError(f"{kind}: GPU-required op cannot run locally ({sel['reason']})")
+    return sel
+
+
+def candidates(op_id: str, devices: list[str] | None = None, root: Path | None = None,
+               ladder: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Every rung this host can attempt, best-first: device present AND `impl: real`."""
+    ladder = ladder or load_ladder(root)
+    op = ladder["ops"].get(op_id)
+    if op is None:
+        raise GroundWeaveError(f"op {op_id!r} is not declared in {LADDER_PATH}")
+    devs = devices if devices is not None else detect_devices()
+    return [st for st in op["ladder"] if st.get("impl") == "real" and st.get("device") in devs]
+
+
+def execute(op_id: str, backends: dict[str, Any], devices: list[str] | None = None, root: Path | None = None,
+            ladder: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Run an op through its ladder with *runtime* fallback.
+
+    `backends` maps a ladder backend id to a callable. The best rung whose device is present is tried first;
+    if it raises (driver missing, out of VRAM, bad kernel …) the next rung is tried, down to the CPU rung.
+    Returns {value, backend, device, fallback, attempts:[{backend, device, ok, error?}]}."""
+    attempts: list[dict[str, Any]] = []
+    for st in candidates(op_id, devices, root, ladder):
+        fn = backends.get(st["id"])
+        if fn is None:
+            attempts.append({"backend": st["id"], "device": st["device"], "ok": False, "error": "no implementation bound"})
+            continue
+        try:
+            value = fn()
+        except Exception as e:  # noqa: BLE001 — any backend failure demotes to the next rung
+            attempts.append({"backend": st["id"], "device": st["device"], "ok": False,
+                             "error": f"{type(e).__name__}: {e}"})
+            continue
+        attempts.append({"backend": st["id"], "device": st["device"], "ok": True})
+        return {"value": value, "backend": st["id"], "device": st["device"], "fallback": len(attempts) > 1,
+                "attempts": attempts}
+    raise GroundWeaveError(f"op {op_id!r}: every rung failed or is unavailable: {attempts}")
+
+
+# ---------------------------------------------------------------------------------- verify
+
+def _pin(cores: int):
+    def fn() -> None:
+        try:
+            avail = sorted(os.sched_getaffinity(0))
+            os.sched_setaffinity(0, set(avail[:cores]))
+        except (AttributeError, OSError):
+            pass
+    return fn
+
+
+def _artifact_digest(out: Any) -> str:
+    h = hashlib.sha256()
+    for a in sorted(out.artifacts, key=lambda a: a.name):
+        h.update(a.name.encode() + b"\0" + hashlib.sha256(a.data).digest())
+    return h.hexdigest()
+
+
+def _probe_one(root: Path, brief_id: str) -> dict[str, Any]:
+    """Child-side: run one brief's generator (no export) and report timings + an output digest."""
+    from forge.pipeline import Context, load_briefs
+    from forge.generators import load_all
+
+    briefs = {b["id"]: b for b in load_briefs(root)}
+    brief = briefs[brief_id]
+    ctx = Context.create(root)
+    sel = resolve_kind(brief["kind"], root)
+    t0 = time.perf_counter()
+    out = load_all()[brief["kind"]](brief, ctx)
+    wall = time.perf_counter() - t0
+    aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+    return {"brief": brief_id, "ok": out.ok, "wall_s": round(wall, 3), "cores": aff,
+            "digest": _artifact_digest(out), **sel}
+
+
+def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
+    """Child-side probes for ops that are not Content Forge generators (Godot headless)."""
+    from forge import milestones
+
+    t0 = time.perf_counter()
+    if name == "girt":       # F3 party-AI increment: GIRT policy + persona LM through the CPU (GDScript) backend
+        inc = milestones.INCREMENTS["F3"]
+        code, out = milestones.run_godot(root, inc.godot_args, timeout=300)
+        res = milestones.parse_output(out)
+        errs = inc.check(res) + ([f"godot exit {code}"] if code else [])
+        girt = (res.get("ai") or {}).get("girt") or {}
+        backends = sorted({r.get("backend") for r in girt.get("registry", [])})
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "F3", "ok": not errs, "errors": errs, "wall_s": round(wall, 3), "cores": aff,
+                "device": "cpu" if backends and all(b == "mlp-gdscript" for b in backends) else "unknown",
+                "backend": ",".join(b for b in backends if b), "policy_p95_us": girt.get("policy_p95_us"),
+                "policy_budget_us": girt.get("policy_budget_us"), "policy_fallbacks": girt.get("policy_fallbacks"),
+                "digest": hashlib.sha256(json.dumps(girt.get("registry", []), sort_keys=True).encode()).hexdigest()}
+    if name == "balance":    # a reduced G-BAL-01 matrix (12 matchups x 2 seeds) over the sharded headless workers
+        from forge.balance import BalanceConfig, run
+
+        agg = run(BalanceConfig(encounter="boss_warden", seeds=2, seed_base=1000, variance=0.20, workers=2), root)
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        enc = agg.get("encounters") or agg.get("total") or agg.get("n")
+        return {"brief": "balance-smoke", "ok": bool(enc), "wall_s": round(wall, 3), "cores": aff, "device": "cpu",
+                "backend": "godot-headless-shards", "encounters": enc,
+                "digest": hashlib.sha256(json.dumps(agg.get("matchups", agg), sort_keys=True, default=str).encode()).hexdigest()}
+    raise GroundWeaveError(f"unknown runtime probe {name!r}")
+
+
+def _run_probe(root: Path, probe: str, env: dict[str, str], pin: int | None, timeout: float) -> dict[str, Any]:
+    t0 = time.perf_counter()
+    proc = subprocess.run([sys.executable, "-m", "forge.groundweave", "_probe", probe], cwd=root, env=env,
+                          capture_output=True, text=True, preexec_fn=_pin(pin) if pin else None, timeout=timeout)
+    line = next((l for l in proc.stdout.splitlines() if l.startswith("GW_PROBE ")), None)
+    if proc.returncode != 0 or line is None:
+        return {"status": "error", "stderr": (proc.stderr or proc.stdout)[-800:]}
+    rec = json.loads(line[len("GW_PROBE "):])
+    rec["process_s"] = round(time.perf_counter() - t0, 3)
+    return rec
+
+
+def verify(root: Path | None = None, cores: int | None = None, ops: list[str] | None = None,
+           compare: bool = True) -> dict[str, Any]:
+    """Run every probed op's CPU backend pinned to the weakest node (`cores`, GPUs hidden) against its budget.
+
+    With `compare`, the same probe also runs unpinned with the host's devices visible and the two output digests
+    must match — a fallback must not change the artifact (determinism across devices)."""
+    root = root or find_repo_root()
+    ladder = load_ladder(root)
+    cores = cores or int(ladder.get("acceptance_node", {}).get("cores", 2))
+    base = {**os.environ, "OMP_NUM_THREADS": str(cores), "OPENBLAS_NUM_THREADS": str(cores),
+            "MKL_NUM_THREADS": str(cores)}
+    weak = {**base, **HIDE_GPU_ENV}
+    free = {k: v for k, v in os.environ.items() if k != DEVICE_ENV}
+    results: list[dict[str, Any]] = []
+    for op_id, op in ladder["ops"].items():
+        if ops and op_id not in ops:
+            continue
+        probe = op.get("probe_brief")
+        if not probe:
+            results.append({"op": op_id, "status": "not_probed", "note": op.get("note", "")})
+            continue
+        timeout = max(60.0, float(op["budget_s_2core"]) * 4)
+        rec = _run_probe(root, probe, weak, cores, timeout)
+        rec["op"] = op_id
+        if rec.get("status") == "error":
+            results.append(rec)
+            continue
+        rec["budget_s"] = op["budget_s_2core"]
+        good = rec["ok"] and rec["device"] == "cpu" and rec["wall_s"] <= op["budget_s_2core"]
+        if rec.get("policy_budget_us") is not None:      # GIRT: per-tick latency inside the in-engine budget
+            good = good and (rec.get("policy_p95_us") or 0) <= rec["policy_budget_us"] and not rec.get("policy_fallbacks")
+        if compare:
+            free_rec = _run_probe(root, probe, free, None, timeout)
+            rec["unpinned_digest"] = free_rec.get("digest")
+            rec["unpinned_device"] = free_rec.get("device")
+            rec["identical_to_unpinned"] = free_rec.get("digest") == rec["digest"]
+            good = good and rec["identical_to_unpinned"]
+        rec["status"] = "ok" if good else "fail"
+        results.append(rec)
+    ok = all(r["status"] in ("ok", "not_probed") for r in results)
+    return {"ok": ok, "cores": cores, "gpu_hidden": True, "results": results}
+
+
+def describe(root: Path | None = None) -> dict[str, Any]:
+    ladder = load_ladder(root)
+    devs = detect_devices()
+    rows = []
+    for op_id in ladder["ops"]:
+        try:
+            rows.append(select(op_id, devs, root))
+        except GroundWeaveError as e:
+            rows.append({"op": op_id, "error": str(e)})
+    return {"devices": devs, "selection": rows}
+
+
+if __name__ == "__main__":   # child entry for verify()
+    if len(sys.argv) == 3 and sys.argv[1] == "_probe":
+        _r = find_repo_root()
+        _rec = (_probe_runtime(_r, sys.argv[2][len("runtime:"):]) if sys.argv[2].startswith("runtime:")
+                else _probe_one(_r, sys.argv[2]))
+        print("GW_PROBE " + json.dumps(_rec), flush=True)
+    else:
+        print("usage: python -m forge.groundweave _probe <brief_id>", file=sys.stderr)
+        sys.exit(2)

@@ -168,14 +168,22 @@ def op_hashchain(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def op_gen(payload: dict[str, Any]) -> dict[str, Any]:
-    """Run one desktop Content Forge brief (heavier than LocalForge) and return artifact digests."""
+    """Run one desktop Content Forge brief (heavier than LocalForge) and return artifact digests.
+
+    GroundWeave (C8) must know the generator's CPU fallback first. `return_data: true` also returns the artifact
+    bytes (base64) so a distributed build can land them on the submitting node."""
+    from forge import groundweave
     from forge.generators import load_all
     from forge.pipeline import Context, load_briefs
 
     ctx = Context.create()
     brief = {b["id"]: b for b in load_briefs(ctx.root)}[payload["brief_id"]]
+    groundweave.resolve_kind(brief["kind"], ctx.root)
     out = load_all()[brief["kind"]](brief, ctx)
-    return {"ok": out.ok, "artifacts": {a.name: hashlib.sha256(a.data).hexdigest() for a in out.artifacts}}
+    res: dict[str, Any] = {"ok": out.ok, "artifacts": {a.name: hashlib.sha256(a.data).hexdigest() for a in out.artifacts}}
+    if payload.get("return_data"):
+        res["data_b64"] = {a.name: base64.b64encode(a.data).decode() for a in out.artifacts}
+    return res
 
 
 OPS = {"hashchain": op_hashchain, "gen": op_gen}
@@ -191,6 +199,7 @@ class LinkServer:
     bind: str = "127.0.0.1"
     port: int = 0
     code: str = field(default_factory=new_code)
+    cluster: Any = None    # loomcluster.ClusterBridge: offloaded hashchain/gen jobs run on the fleet, not just here
 
     def __post_init__(self) -> None:
         self.state_dir = Path(self.state_dir)
@@ -294,16 +303,31 @@ class LinkServer:
                                media=payload.get("media", "image/jpeg"))
             res: dict[str, Any] = {"ok": True, "value": {"stored": e["sha256"], "reconstruction": "stub"}}
         elif op in OPS:
-            try:
-                res = {"ok": True, "value": OPS[op](job.get("payload") or {})}
-            except Exception as ex:  # noqa: BLE001 — reported to the phone, not raised
-                res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
+            res = self._offload_cluster(job) if self.cluster is not None else None
+            if res is None:
+                try:
+                    res = {"ok": True, "value": OPS[op](job.get("payload") or {})}
+                except Exception as ex:  # noqa: BLE001 — reported to the phone, not raised
+                    res = {"ok": False, "error": f"{type(ex).__name__}: {ex}"}
         else:
             res = {"ok": False, "error": f"unsupported op {op!r}"}
-        res.update(job_id=job["id"], node=self.node_id)
+        res.setdefault("node", self.node_id)
+        res["job_id"] = job["id"]
         with self.offload_log.open("a", encoding="utf-8") as f:
             f.write(canonical({"client": cid, "job": job.get("id"), "op": op, "ok": res["ok"]}) + "\n")
         return res
+
+    def _offload_cluster(self, job: dict[str, Any]) -> dict[str, Any] | None:
+        """LoomCluster hand-off (C7): None → fleet unreachable, caller runs the job locally instead."""
+        import urllib.error
+
+        try:
+            r = self.cluster.run(job)
+        except (urllib.error.URLError, OSError, TimeoutError, ValueError):
+            return None
+        r = dict(r)
+        r["via"] = "loomcluster"
+        return r
 
     def sync_manifest(self, cid: str, index: dict[str, Any]) -> dict[str, Any]:
         with self.store.lock:

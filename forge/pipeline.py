@@ -93,6 +93,9 @@ def run_brief(brief: dict[str, Any], ctx: Context, export: bool = True, sandbox:
     kind = brief["kind"]
     if kind not in gens:
         raise KeyError(f"no generator registered for kind {kind!r} (have {sorted(gens)})")
+    from forge import groundweave
+
+    groundweave.resolve_kind(kind, ctx.root)   # GroundWeave (C8): refuse a generator with no declared CPU fallback
     t0 = time.perf_counter()
     if sandbox:
         from forge import sandbox as sbx

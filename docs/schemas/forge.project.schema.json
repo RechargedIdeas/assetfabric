@@ -120,8 +120,20 @@
     },
     "cluster": {
       "type": "object",
-      "description": "LoomCluster node registry stub (populated by forge doctor).",
+      "description": "LoomCluster: wire protocol settings + node registry (C7).",
       "properties": {
+        "protocol": {
+          "type": "object",
+          "properties": {
+            "bind": { "type": "string" },
+            "heartbeat_s": { "type": "number", "exclusiveMinimum": 0 },
+            "lease_s": { "type": "number", "exclusiveMinimum": 0 },
+            "steal_batch": { "type": "integer", "minimum": 1 },
+            "http_timeout_s": { "type": "number", "exclusiveMinimum": 0 },
+            "max_attempts": { "type": "integer", "minimum": 1 },
+            "job_timeout_s": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
         "nodes": {
           "type": "array",
           "items": {
