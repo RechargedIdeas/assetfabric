@@ -133,8 +133,9 @@ def swapbench_run(root: Path, cores: int = SWAPBENCH_CORES, reps: int = 5) -> di
     from forge.manifest import load_manifest
 
     project = root / load_manifest(None, root).game.project_path
-    cpus = sorted(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else list(range(os.cpu_count() or 1))
-    pin = cpus[:cores]
+    from forge.cpus import physical_core_cpus, smt_siblings_pinned
+
+    pin = physical_core_cpus(cores)   # one logical CPU per physical core (SMT runners: 0,1 may be one core)
     argv = [gb, "--headless", "--path", str(project), "--", "--scene=swapbench", f"--reps={reps}", "--no-live"]
     ts = shutil.which("taskset")
     if ts and len(pin) == cores:
@@ -149,6 +150,7 @@ def swapbench_run(root: Path, cores: int = SWAPBENCH_CORES, reps: int = 5) -> di
     if out:
         out["pinned_cores"] = len(pin) if pin else None
         out["pinned_cpus"] = pin
+        out["smt_siblings"] = smt_siblings_pinned(pin) if pin else None
         out["exit_code"] = proc.returncode
     return out
 

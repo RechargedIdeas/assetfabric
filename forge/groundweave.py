@@ -201,8 +201,9 @@ def execute(op_id: str, backends: dict[str, Any], devices: list[str] | None = No
 def _pin(cores: int):
     def fn() -> None:
         try:
-            avail = sorted(os.sched_getaffinity(0))
-            os.sched_setaffinity(0, set(avail[:cores]))
+            from forge.cpus import physical_core_cpus
+
+            os.sched_setaffinity(0, set(physical_core_cpus(cores)))   # N physical cores, not SMT siblings
         except (AttributeError, OSError):
             pass
     return fn

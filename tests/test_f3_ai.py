@@ -120,3 +120,16 @@ def test_swapbench_missing_is_an_error() -> None:
     errs: list[str] = []
     _swapbench_check({}, errs)
     assert errs == ["swapbench did not run"]
+
+
+def test_physical_core_pinning_skips_smt_siblings(monkeypatch: pytest.MonkeyPatch) -> None:
+    from forge import cpus
+
+    # GitHub-runner-like topology: 4 vCPU = 2 cores x 2 threads, siblings (0,1) and (2,3)
+    monkeypatch.setattr(cpus, "_siblings", lambda c: frozenset({c - c % 2, c - c % 2 + 1}))
+    assert cpus.physical_core_cpus(2, [0, 1, 2, 3]) == [0, 2]
+    assert cpus.smt_siblings_pinned([0, 1]) and not cpus.smt_siblings_pinned([0, 2])
+    # only one physical core available: still N CPUs (siblings fill), never more
+    assert cpus.physical_core_cpus(2, [0, 1]) == [0, 1]
+    monkeypatch.setattr(cpus, "_siblings", lambda c: frozenset({c}))
+    assert cpus.physical_core_cpus(2, [3, 5, 7]) == [3, 5]
