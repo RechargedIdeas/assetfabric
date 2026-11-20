@@ -247,3 +247,78 @@ those lines were made concrete.
     GroundWeave enforcement in the pipeline). Its `loomlink.py` was already superseded by `main`'s. `wip/f5-companions` is
     now fully consumed (its F5 game/balance files were superseded long ago) and can be deleted by the Producer.
 
+
+## C9–C12 — MirrorWeave, LensForge, depth, SplatForge path (0.7.3+f7)
+
+The spec (SPEC §4/§7/§8/§9/§13) names these four milestones but defines them only at feature-list level, and the task
+was "real interfaces + clearly labelled stubs, a real CPU path only where cheap and spec-grounded". Everything below is
+`[INFERENCE]` beyond that.
+
+32. **C-32 What "accepted" means for C9–C12.** A milestone is accepted when its typed contract exists, every capability
+    is registered in `content/companions/c9_c12.yaml` as `real`, `stub` or `deferred`, each stub *refuses* with a
+    `[STUB <id> <Cn>]` message (never returns fake output), and the real CPU paths are tested. It does **not** mean the
+    feature works: there is no live stream, no ARCore, no dense depth, no reconstruction. `forge registry` (and
+    `forge accept C9-C12`) cross-checks the register against code, locale keys, Android strings, Kotlin symbols and the
+    GroundWeave ladder so a stub cannot be silently promoted or a real entry silently removed.
+33. **C-33 MirrorWeave wire.** Frames are signed LoomLink HTTP POSTs (`/mirror/frame`, `/mirror/latest`, …), one still or
+    telemetry JSON per request, ≤ 8 MiB, strictly increasing `seq`, newest 8 kept per stream (`RING`), stream ids
+    `[a-z0-9][a-z0-9_-]{0,31}`. The spec lists WebSocket among the transports; no WebSocket/WebRTC is built — H.264/VP9/AV1
+    chunks are a stub. Numbers are engineering defaults, not measurements.
+34. **C-34 Control allow-list.** `drive_studio` permits exactly three read-only queries (`forge.status`,
+    `groundweave.show`, `mirror.stats`). Input events to Studio, desktop→Android input and camera focus are stubs (501
+    over the wire): Studio is itself a stub and Android input injection needs an AccessibilityService/MediaProjection
+    consent flow that cannot be exercised here. Rationale: SPEC §8 "no ambient authority".
+35. **C-35 Capabilities.** `mirror` (frames) and `drive_studio` (control) are the two capabilities C5 already reserved;
+    neither is in the default grant (`offload`, `sync`) — the user opts in at pairing. Without the capability the route is
+    403 (tested), unsigned is 401.
+36. **C-36 Stub mechanism.** `StubError` (Python) / `StubException` (Kotlin) carry the capability id, milestone and a
+    locale key (`stub.*` in `locales/en.json`, `stub_*` in Android `strings.xml`) — no hard-coded user-facing strings.
+    The HTTP surface maps them to 501 with the same message.
+37. **C-37 GroundWeave `planned` op class.** `depth.estimate`, `recon.mesh`, `shuttle.gdgs` are declared with
+    `planned: true` and every rung `planned`: `depth.estimate` *could* run on CPU but is not built, so calling it
+    `gpu_required` would be dishonest. `recon.splat` stays `gpu_required` + `route: loomcluster`; `shuttle.gdgs`
+    has `route: local`. `mirror.encode` has a real CPU rung (stills/PNG pass-through + frame envelope); the hardware
+    H.264 rung (AMF/VAAPI) is `planned`. New real CPU ops (`mirror.encode`, `lens.assess`, `depth.distance`,
+    `recon.plan`) are timed on 2 pinned cores in `forge accept`.
+38. **C-38 Capture profiles are advisory.** Mode names (`still, burst, orbit, sweep, video, depth_assist`), per-mode
+    minimum views (1/3/24/40) and long edge (640/1280 px), and thresholds (sharpness ≥ 60, mean luma 40–215, clip fraction
+    ≤ 5 %) are heuristics in `content/patternvault/capture_profiles.json` (the spec only says "capture modes" and
+    "PatternVault capture profiles"). They have **not** been validated against a reconstruction run — none exists.
+    Kotlin reads the same bundled file, so there is one source of truth.
+39. **C-39 Quality metrics.** Gray = `(299R+587G+114B)//1000`; sharpness = variance of the 4-neighbour Laplacian over
+    interior pixels; exposure = mean luma plus dark (≤ 5) / bright (≥ 250) clip fractions. Integer arithmetic so Python and
+    Kotlin agree bit-for-bit (shared vectors `tests/fixtures/c9_c12_vectors.json`). Decoding: PNG with a built-in decoder;
+    JPEG/WebP/EXIF need Pillow (optional `lens` extra, also in `dev`); a missing Pillow is reported, not faked.
+40. **C-40 Overlap is not measured.** `assess_set` counts views, exact duplicates and best-of-burst; inter-view overlap /
+    parallax would need feature matching and is reported as `"not_measured"`. A set can pass `assess_set` and still
+    fail reconstruction.
+41. **C-41 Depth.** Real: pinhole distance `d = f_px · real_size / pixel_size` with `f_px` from a 35 mm-equivalent focal
+    length against a 36 mm frame width (or a direct pixel focal length), and least-squares scale/shift alignment of
+    relative depth in inverse-depth space against ≥ 2 metric anchors (rejects degenerate/negative fits). The estimator that
+    would *produce* relative depth (DepthAnything V2) is a stub.
+42. **C-42 Depth model / ARCore licensing.** DepthAnything V2 weights have per-size licences (Small reported
+    Apache-2.0, Base/Large/Giant reported CC-BY-NC-4.0) — **[unverified this run]; verify before bundling and run through
+    BoltPack's licence audit.** ARCore (Android-only, Google SDK) is declared as an interface only and is not a dependency.
+43. **C-43 RealityLoom route rule.** From SPEC §7: `backdrop` → 3DGS splat (SplatForge via `recon.splat`),
+    `hero_prop` → photogrammetry (CPU/COLMAP) → MeshWeaver. Without a ROCm node the plan reports a *degraded* route; with
+    one, only the placement check passes. No tool (COLMAP, OpenSplat, nerfstudio, Meshroom) is invoked or bundled; their
+    presence is probed, never assumed.
+44. **C-44 Capture bundle / plan.** `bundle.json` + sorted deterministic layout is our own format (no spec). The plan lists
+    stages, `blocked_by` stub ids and an ETA *class* — always `unmeasured`; there are no timings. `runnable_today` is
+    false for every target.
+45. **C-45 `submit` semantics.** `forge recon submit` performs the real cluster placement check (needs a node advertising
+    `rocm`), then raises the SplatForge stub. Nothing is queued, so a green placement check cannot be mistaken for a started job.
+46. **C-46 3DGS `.ply` validator.** Validates the INRIA layout (binary_little_endian float32 vertex properties `x y z`,
+    `f_dc_*`, `f_rest_*` (count ↔ SH degree 0–3), `opacity`, `scale_*`, `rot_*`). It checks a header + size, not render
+    correctness. The `.splat`/compressed variants and a Godot GDGS importer are not done (`shuttle.gdgs` planned, local).
+47. **C-47 PocketLoom/FabricCore.** FabricCore (pure Kotlin) gains `MirrorWeave`, `LensForge` (`CaptureModes`, `Quality`,
+    `CaptureTelemetry`), `Depth`, `Recon` and `Stubs` with JUnit tests (35 in total) and CLI commands; the Android app only
+    gains the `stub_*` strings. **No UI surfaces any of it and nothing ran on a phone** (no device/KVM). Kotlin stub
+    interfaces (`MediaProjectionSource`, `AndroidInputInjector`, `FocusController`, `ARCoreDepth`) are declarations that throw.
+48. **C-48 Pillow.** Added as an *optional* dev/`lens` dependency only (HPND-style licence; add to BoltPack/THIRD_PARTY
+    review if it ever ships in a build). Core runtime and CI-critical paths work without it.
+49. **C-49 Version / CI.** Patch bump `0.7.2+f7` → `0.7.3+f7` (additive, offset unchanged). CI adds one step
+    (`forge accept C9-C12 --no-write`) to the parallel `pocketloom` job; pytest gains `tests/test_c9_c12.py`.
+50. **C-50 After C12.** SPEC §13's companion table ends at C12. The next *spec* items are F8 (retro/console-style, optional
+    — confirm scope with the Producer first) and F9 (post, LiveOps readiness only). We have not started F8 and its scope
+    is not assumed. Non-spec follow-ups (a real GPU rung, LAN/Tailscale cluster with node auth, on-device run) are in TODO.md.
