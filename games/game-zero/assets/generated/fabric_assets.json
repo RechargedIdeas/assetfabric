@@ -1011,7 +1011,7 @@
       "files": {
         "world.json": {
           "res": "res://data/generated/world.json",
-          "sha256": "91e14d6efc512845362b27b5870b1158916059c991e0be5b0e59dfccde23afe2"
+          "sha256": "f46d039c6a371d7823ac0362d489f3bc32a657ec33042a747af335e468a1977f"
         }
       },
       "kind": "world",

@@ -40,7 +40,6 @@ var _swapped_here := false
 var _boss_engaged := false
 var _msg := ""
 var _boss_built := false
-var _h_was_down := false
 var _transitions := 0             # bumped on every area change: a transition ends the tick (resume parity)
 var rep := {"areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
 	"party_stats": {}, "boss": {}, "buff_at_boss": {}, "music_stems_loaded": {}, "checkpoints": []}
@@ -119,7 +118,7 @@ func _render_select() -> void:
 	for i in p.size():
 		lines.append("%s %s — %s" % ["▶" if i == _sel[1] else " ", tr("pet." + p[i]), tr("pet.style." + str(Fabric.game_data["pets"][p[i]]["style"]))])
 	lines.append("")
-	lines.append(tr("slice.select.hint"))
+	lines.append(Fabric.hint("slice.select.hint"))
 	hud.text = "\n".join(lines)
 
 
@@ -592,6 +591,11 @@ const Loot = preload("res://world/loot.gd")
 # ---------------------------------------------------------------- windowed play
 
 func _physics_process(delta: float) -> void:
+	if settings_open():
+		return
+	if Input.is_action_just_pressed("settings") and phase in ["select", "play"] and not command_box_visible():
+		open_settings()
+		return
 	if phase == "select":
 		_select_input()
 		return
@@ -609,7 +613,7 @@ func _physics_process(delta: float) -> void:
 		toggle_freeze()
 	if frozen:
 		for i in 4:
-			if Input.is_key_pressed(KEY_1 + i) and i < swap_recs.get("recommendations", []).size():
+			if Input.is_action_just_pressed("swap_pick_%d" % (i + 1)) and i < swap_recs.get("recommendations", []).size():
 				do_swap(swap_recs["recommendations"][i]["id"])
 				toggle_freeze()
 				break
@@ -617,7 +621,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("tactic_menu"):
 		submit_command("defend" if sim.tactic == "aggressive" else "charge")
-	if Input.is_key_pressed(KEY_SLASH):
+	if Input.is_action_just_pressed("command"):
 		command_box.visible = true
 		command_box.text = ""
 		command_box.grab_focus()
@@ -625,10 +629,8 @@ func _physics_process(delta: float) -> void:
 	if not autoplay:
 		if Input.is_action_just_pressed("interact"):
 			_interact()
-		var h_down := Input.is_key_pressed(KEY_H)      # edge-triggered: one salve per key press
-		if h_down and not _h_was_down and not in_combat:
+		if Input.is_action_just_pressed("use_salve") and not in_combat:   # edge-triggered: one salve per press
 			_use("moss_salve")
-		_h_was_down = h_down
 	_accum += delta
 	while _accum >= 1.0 / 60.0 and phase == "play":
 		_accum -= 1.0 / 60.0
@@ -659,7 +661,7 @@ func _select_input() -> void:
 		_sel[1] = (_sel[1] + 1) % p.size()
 	elif Input.is_action_just_pressed("move_up"):
 		_sel[1] = (_sel[1] + p.size() - 1) % p.size()
-	elif Input.is_action_just_pressed("interact") or Input.is_key_pressed(KEY_ENTER):
+	elif Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_accept"):
 		for c in get_children():
 			if c != director:
 				c.queue_free()
@@ -719,8 +721,12 @@ func _draw() -> void:
 		for i in ws.plots.size():
 			var c: Array = ws.plots[i]["cell"]
 			if str(ws.plots[i]["crop"]) != "":
-				var col := Color(0.95, 0.85, 0.2) if ws.crop_ready(i) else Color(0.3, 0.8, 0.3)
+				# palette colours (PatternVault ui_roles → live colour-blind remap) + a shape cue: ready crops get a frame
+				var ready: bool = ws.crop_ready(i)
+				var col: Color = A11y.ui_colour("plot_ready" if ready else "plot_growing")
 				draw_rect(Rect2(int(c[0]) * ts + 5, int(c[1]) * ts + 5, ts - 10, ts - 10), col)
+				if ready:
+					draw_rect(Rect2(int(c[0]) * ts + 2, int(c[1]) * ts + 2, ts - 4, ts - 4), col, false, 1.0)
 
 
 func _sync_view() -> void:
@@ -750,6 +756,10 @@ func _sync_view() -> void:
 			lines.append(_msg)
 		if phase == "done":
 			lines.append(tr("slice.done"))
-		lines.append(tr("slice.hint"))
+		lines.append(Fabric.hint("slice.hint"))
 		hud.text = "\n".join(lines)
 	queue_redraw()
+
+
+func command_box_visible() -> bool:
+	return command_box != null and command_box.visible

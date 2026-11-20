@@ -381,6 +381,7 @@ func to_save() -> Dictionary:
 	w["packs_cleared"] = packs_cleared.duplicate(true)
 	w["buffs"] = buffs.duplicate(true)
 	s["profile"]["playtime_ticks"] = tick
+	s["profile"]["settings"] = A11y.settings()      # G-A11Y-01: the player's palette + bindings travel with every save
 	s["profile"]["stats"] = {"encounters_won": encounters_won, "bosses_defeated": bosses.size()}
 	return s
 

@@ -15,9 +15,12 @@ Chrome) — builds every target via ``forge build --target all`` and proves:
    the same final state as an uninterrupted run. Same format, same checksum at every hop.
 5. **G-NET-01** — no networking API in game scripts, Godot ``OfflineMultiplayerPeer`` on every target, the
    desktop slice runs with no network namespace, the APK requests no INTERNET permission, Web boots offline.
-6. **G-A11Y-01 (input remap part)** — a profile input remap round-trips through the same save on all three
-   runtimes and rebinds the actions. Palette variants exist in PatternVault; the in-game palette toggle and
-   rebinding UI are not built (reported, not gated).
+6. **G-A11Y-01** (full since 0.7.10) — the in-game Settings screen is driven with injected keyboard *and* gamepad
+   events (open from the select screen, live palette switch, keyboard rebind, gamepad rebind with a conflict swap,
+   close, the rebound key starts the game); the settings land in the save's profile layer and a fresh process restores
+   them; under a display (Xvfb) the real sprites are rendered per palette and checked pixel-exactly against the
+   PatternVault remap table; the remap table passes its colour-distance gate (forge/a11y.py); and a save carrying
+   keyboard + gamepad bindings + a palette round-trips through desktop, Android content and Web.
 
 No device/emulator is available (no KVM): the Android **content** (APK ``assets/``) is exercised by the
 exported desktop runtime and labelled as such; Windows has no runtime smoke without wine (documented).
@@ -44,7 +47,8 @@ NET_APIS = r"\b(HTTPRequest|HTTPClient|StreamPeerTCP|StreamPeerTLS|TCPServer|UDP
            r"ENetConnection|WebSocketPeer|WebSocketMultiplayerPeer|WebRTCPeerConnection|WebRTCMultiplayerPeer|" \
            r"MultiplayerSpawner|MultiplayerSynchronizer|JavaScriptBridge|OS\.shell_open|OS\.execute|OS\.create_process)\b"
 QUIT_AT = 4
-REMAP = {"attack": ["F"], "interact": ["G"]}
+REMAP = {"attack": ["F", "pad:2"], "interact": ["G"], "use_salve": ["pad:3"]}
+PALETTE = "protanopia"
 
 
 # --------------------------------------------------------------------------- static checks (both modes)
@@ -115,6 +119,7 @@ def remap_save() -> dict[str, Any]:
 
     s = new_save("kael", {"kael": 2, "nyra": 2, "bram": 2, "sola": 2}, ["ember_fox"])
     s["profile"]["settings"]["input_remap"] = REMAP
+    s["profile"]["settings"]["palette_variant"] = PALETTE
     s["checksum"] = checksum(s)
     return s
 
@@ -126,7 +131,90 @@ def _b64(obj_or_bytes: Any) -> str:
 
 def _remap_ok(sc: dict[str, Any]) -> bool:
     inp = sc.get("input", {})
-    return inp.get("attack") == ["F"] and inp.get("interact") == ["G"] and not (inp.get("remap") or {}).get("skipped")
+    tok = inp.get("tokens") or {}
+    return (inp.get("attack") == ["F"] and inp.get("interact") == ["G"] and not (inp.get("remap") or {}).get("skipped")
+            and tok.get("attack") == ["F", "pad:2"] and tok.get("use_salve") == ["H", "pad:3"]
+            and sc.get("palette") == PALETTE)
+
+
+# --------------------------------------------------------------------------- G-A11Y-01 Settings screen (0.7.10)
+
+def _a11ycheck(argv_fn: Any, save_dir: Path, phase: str, *extra: str, timeout: int = 120) -> dict[str, Any]:
+    from forge.milestones import parse_output
+
+    p = subprocess.run(argv_fn("--scene=a11ycheck", f"--phase={phase}", f"--save-dir={save_dir}", *extra),
+                       capture_output=True, text=True, timeout=timeout)
+    r = parse_output(p.stdout + p.stderr).get("a11y", {})
+    r["_exit"] = p.returncode
+    r["_script_errors"] = len(re.findall(r"SCRIPT ERROR", p.stdout + p.stderr))
+    return r
+
+
+def _capture_check(paths: dict[str, Any], table: dict[str, list[list[str]]]) -> dict[str, Any]:
+    """Pixel-exact: under a variant no source colour of its table is left on screen and its targets are; under `default`
+    the sources are visible (so the remap really ran, live, on the same frame content)."""
+    from PIL import Image
+
+    def counts(path: str, cols: list[str]) -> dict[str, int]:
+        im = Image.open(path).convert("RGB")
+        want = {tuple(int(c[i:i + 2], 16) for i in (1, 3, 5)): c for c in cols}
+        out = {c: 0 for c in cols}
+        for px, n in ((p, n) for n, p in im.getcolors(maxcolors=1 << 20) or []):
+            for w, c in want.items():
+                if all(abs(px[i] - w[i]) <= 2 for i in range(3)):
+                    out[c] += n
+        return out
+
+    res: dict[str, Any] = {}
+    ok = bool(paths.get("default", {}).get("path"))
+    srcs = sorted({s for t in table.values() for s, _ in t})
+    if ok:
+        res["default_sources"] = counts(paths["default"]["path"], srcs)
+    for v, pairs in table.items():
+        path = (paths.get(v) or {}).get("path")
+        if not path:
+            ok = False
+            continue
+        src = counts(path, [a for a, _ in pairs])
+        dst = counts(path, sorted({b for _, b in pairs}))
+        shown = [a for a, _ in pairs if res["default_sources"].get(a, 0) > 0]
+        good = shown != [] and all(src[a] == 0 for a in shown) and all(dst[b] > 0 for a, b in pairs if a in shown)
+        res[v] = {"sources_left": {a: src[a] for a in shown}, "targets_seen": dst, "checked_sources": len(shown), "ok": good}
+        ok &= good
+    res["ok"] = ok
+    return res
+
+
+def a11y_screen(root: Path, tmp: Path) -> dict[str, Any]:
+    """Settings screen driven by injected events (editor runtime, headless) + restore in a fresh process + render check."""
+    from forge.a11y import game_table, report
+    from forge.accept_f4 import _godot_argv
+
+    d = tmp / "a11y"
+    conf = _a11ycheck(lambda *a: _godot_argv(root, *a), d, "configure")
+    ver = _a11ycheck(lambda *a: _godot_argv(root, *a), d, "verify")
+    r: dict[str, Any] = {"configure": {k: conf.get(k) for k in ("steps", "errors", "_exit", "_script_errors")},
+                         "verify": {k: ver.get(k) for k in ("steps", "errors", "settings", "_exit", "_script_errors")},
+                         "palettes": report()}
+    xvfb = shutil.which("xvfb-run")
+    if xvfb:
+        from forge.manifest import load_manifest
+        from forge.milestones import godot_binary
+
+        project = root / load_manifest(None, root).game.project_path
+        cap = tmp / "a11y-cap"
+        cap.mkdir(parents=True, exist_ok=True)
+
+        def disp(*a: str) -> list[str]:
+            return [xvfb, "-a", "-s", "-screen 0 1280x720x24", godot_binary(root) or "godot", "--path", str(project),
+                    "--rendering-driver", "opengl3", "--", *a]
+
+        rc = _a11ycheck(disp, tmp / "a11y-disp", "configure", f"--capture={cap / 'a11y'}")
+        r["render"] = {"display": rc.get("display"), "errors": rc.get("errors"), "_exit": rc.get("_exit"),
+                       "check": _capture_check(rc.get("captures") or {}, game_table()["palettes"])}
+    else:
+        r["render"] = {"skipped": "no xvfb-run on this host"}
+    return r
 
 
 def _savecheck_editor(root: Path, save_dir: Path, *extra: str) -> dict[str, Any]:
@@ -149,6 +237,7 @@ def static_part(root: Path, tmp: Path) -> dict[str, Any]:
                              "rewritten_validates": validate(back) == [] if back else False,
                              "checksum_equal": back.get("checksum") == rs["checksum"], "reloaded_equal": sc.get("reloaded_equal"),
                              "remap_applied": _remap_ok(sc), "net": sc.get("net")}
+    r["a11y_screen"] = a11y_screen(root, tmp)
     return r
 
 
@@ -269,9 +358,21 @@ def a11y_report(root: Path, r: dict[str, Any]) -> dict[str, Any]:
 
     variants = PatternVault(root).variants()
     remap = r.get("input_remap") or {"editor": (r.get("editor_roundtrip") or {}).get("remap_applied")}
+    scr = r.get("a11y_screen") or {}
+    steps = {s["step"]: s["ok"] for s in (scr.get("configure") or {}).get("steps") or []}
+    vsteps = {s["step"]: s["ok"] for s in (scr.get("verify") or {}).get("steps") or []}
+    render = (scr.get("render") or {}).get("check") or {}
+    rebind = all(steps.get(k) for k in ("settings_opens_from_select", "keyboard_navigation", "rebind_keyboard",
+                                        "gamepad_navigation", "rebind_gamepad_with_conflict_swap", "settings_closes",
+                                        "rebound_key_drives_game", "settings_in_save", "hint_follows_binding"))
+    toggle = bool(steps.get("palette_switched_live")) and bool(vsteps.get("palette_restored"))
+    full = rebind and toggle and bool(vsteps.get("bindings_restored")) and (scr.get("palettes") or {}).get("ok") is True \
+        and render.get("ok") is True
     return {"palette_variants_in_patternvault": variants, "input_remap_roundtrip": remap,
-            "runtime_palette_toggle": False, "rebinding_ui": False,
-            "status": "partial — data-level remap travels with the save on every target; no in-game palette toggle / rebinding UI yet"}
+            "runtime_palette_toggle": toggle, "rebinding_ui": rebind, "render_check": render.get("ok"),
+            "render_skipped": (scr.get("render") or {}).get("skipped"),
+            "palette_distance_gate": (scr.get("palettes") or {}).get("ok"),
+            "status": "full" if full else "partial"}
 
 
 # --------------------------------------------------------------------------- gate
@@ -286,6 +387,17 @@ def f7_check(r: dict[str, Any]) -> list[str]:
     _need(all(er.get(k) for k in ("loaded_equal", "rewritten_validates", "checksum_equal", "reloaded_equal", "remap_applied")),
           f"editor save/remap round-trip: {er}", errs)
     _need(bool((er.get("net") or {}).get("offline_peer")), "editor runtime networking not dormant", errs)
+    # G-A11Y-01 (0.7.10): Settings screen (rebind + palette) on the editor runtime in both modes
+    scr = r.get("a11y_screen") or {}
+    for ph in ("configure", "verify"):
+        p = scr.get(ph) or {}
+        _need(p.get("_exit") == 0 and not p.get("errors") and p.get("_script_errors") == 0 and bool(p.get("steps")),
+              f"G-A11Y-01 settings screen ({ph}): errors={p.get('errors')} exit={p.get('_exit')}", errs)
+    _need((scr.get("palettes") or {}).get("ok") is True, f"G-A11Y-01 palette distance gate: {scr.get('palettes')}", errs)
+    rend = scr.get("render") or {}
+    if "skipped" not in rend or r.get("mode") == "full":
+        _need((rend.get("check") or {}).get("ok") is True and not rend.get("errors"),
+              f"G-A11Y-01 render check: {rend}", errs)
     if r.get("mode") != "full":
         return errs
     b = r.get("build", {})
@@ -318,6 +430,7 @@ def f7_check(r: dict[str, Any]) -> list[str]:
           f"G-SAVE-01 resume: {sr.get('desktop_resume')}", errs)
     _need(sr.get("same_checksum_all_hops") is True, "G-SAVE-01 checksum changed between platforms", errs)
     _need(all((r.get("input_remap") or {}).get(k) for k in ("desktop", "android_content", "web")), f"G-A11Y-01 remap: {r.get('input_remap')}", errs)
+    _need((r.get("a11y") or {}).get("status") == "full", f"G-A11Y-01 not full: {r.get('a11y')}", errs)
     _need(all((v or {}).get("offline_peer") for v in (r.get("net_runtime") or {}).values()), f"G-NET-01 runtime: {r.get('net_runtime')}", errs)
     _need(not (ts.get("android", {}).get("verify") or {}).get("internet_permission"), "APK requests INTERNET", errs)
     return errs

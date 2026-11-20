@@ -17,12 +17,13 @@ func _ready() -> void:
 	var d := str(Fabric.arg("save-dir", ""))
 	dir = d if d != "" else ProjectSettings.globalize_path("user://saves")
 	DirAccess.make_dir_recursive_absolute(dir)
-	# G-A11Y-01: a remap stored in the profile follows the player across devices (F7).
+	# G-A11Y-01: settings stored in the profile (remap + colour-blind palette) follow the player across devices (F7);
+	# before the first save they live in the settings sidecar (A11y.save_settings).
 	var raw := _read(path())
 	if typeof(raw.get("profile")) == TYPE_DICTIONARY and typeof(raw["profile"].get("settings")) == TYPE_DICTIONARY:
-		var rm = raw["profile"]["settings"].get("input_remap", {})
-		if typeof(rm) == TYPE_DICTIONARY and not rm.is_empty():
-			Fabric.apply_input_remap(rm)
+		A11y.apply_settings(raw["profile"]["settings"])
+	else:
+		A11y.apply_settings(A11y.load_sidecar())
 
 
 # --------------------------------------------------------------------------- canonical form
@@ -208,7 +209,7 @@ func _read(p: String) -> Dictionary:
 
 
 ## Load (+ migrate) a slot; falls back to the backup on a torn/tampered primary.
-func load_slot(slot: String = "slot0") -> Dictionary:
+func load_slot(slot: String = "slot0", apply_settings: bool = true) -> Dictionary:
 	last_load = {"ok": false, "migrated_from": [], "recovered_from_backup": false, "errors": []}
 	for candidate in [path(slot), path(slot) + ".bak"]:
 		var raw := _read(candidate)
@@ -230,8 +231,7 @@ func load_slot(slot: String = "slot0") -> Dictionary:
 		last_load["ok"] = true
 		last_load["migrated_from"] = m[1]
 		last_load["recovered_from_backup"] = candidate.ends_with(".bak")
-		var rm = s["profile"].get("settings", {}).get("input_remap", {})
-		if typeof(rm) == TYPE_DICTIONARY and not rm.is_empty():
-			Fabric.apply_input_remap(rm)
+		if apply_settings:
+			A11y.apply_settings(s["profile"].get("settings", {}))
 		return s
 	return {}

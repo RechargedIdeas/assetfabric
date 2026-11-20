@@ -12,6 +12,8 @@ Gates:
   (forge/world.py `solvability`), so a bad loot roll can never soft-lock the slice.
 - `loot_tables` — positive weights, valid qty ranges.
 - `music_rules` — every macro state names ≥ 1 audible stem that each biome track generates.
+- `a11y_palettes` — colour-blind remap table (forge/a11y.py) is unique, has no collateral recolouring, and every variant
+  separates the game's signal colour pairs under its simulated deficiency (G-A11Y-01, 0.7.10).
 - `budget`.
 """
 
@@ -160,6 +162,17 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
             if not any(s in stems for s in audible):
                 bad_mus.append(f"state {state}: track {track} has none of {audible}")
     gates.append(GateResult("music_rules", not bad_mus and int(mus.get("fade_ticks", 0)) > 0, {"bad": bad_mus}))
+    # G-A11Y-01 (0.7.10): colour-blind remap table for the game's live palette switch + its distinguishability gate
+    from forge.a11y import game_table, report as a11y_report
+    from forge.patternvault import PatternVault
+
+    vault = PatternVault(ctx.root)
+    ar = a11y_report(vault)
+    world["a11y"] = game_table(vault) if ar["table_unique"] is True else {"variants": ["default"], "palettes": {}, "ui": {}}
+    gates.append(GateResult("a11y_palettes", bool(ar["ok"]), {"min_delta_e": ar["min_delta_e"], "collateral": ar["collateral"],
+                                                             "table_unique": ar["table_unique"],
+                                                             "worst": {v: min(r["variant_seen"] for r in rows) if rows else None
+                                                                       for v, rows in ar["variants"].items()}}))
     data = (json.dumps(world, indent=1, sort_keys=True) + "\n").encode()
     elapsed = (time.perf_counter() - t0) * 1000
     gates.append(budget_gate(elapsed, len(data), float(brief.get("budget_ms", 2000)), 256 * 1024))

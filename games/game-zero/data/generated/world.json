@@ -1,4 +1,61 @@
 {
+ "a11y": {
+  "palettes": {
+   "deuteranopia": [
+    [
+     "#40c060",
+     "#3080f0"
+    ],
+    [
+     "#6b1d2a",
+     "#3b2a6b"
+    ],
+    [
+     "#c2413a",
+     "#6a5acd"
+    ],
+    [
+     "#f08a4b",
+     "#f0a04b"
+    ],
+    [
+     "#ffd6a5",
+     "#ffe0a5"
+    ]
+   ],
+   "protanopia": [
+    [
+     "#40c060",
+     "#3080f0"
+    ],
+    [
+     "#6b1d2a",
+     "#2a3b6b"
+    ],
+    [
+     "#c2413a",
+     "#4a7acd"
+    ],
+    [
+     "#f08a4b",
+     "#f0c04b"
+    ],
+    [
+     "#ffd6a5",
+     "#ffe8a5"
+    ]
+   ]
+  },
+  "ui": {
+   "plot_growing": "#40c060",
+   "plot_ready": "#f0c040"
+  },
+  "variants": [
+   "default",
+   "deuteranopia",
+   "protanopia"
+  ]
+ },
  "areas": {
   "cave_deep": {
    "biome": "cave",

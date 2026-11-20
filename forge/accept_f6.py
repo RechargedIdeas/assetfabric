@@ -59,6 +59,13 @@ def _summary(s: dict[str, Any]) -> dict[str, Any]:
             "boss_ticks": (s.get("boss") or {}).get("ticks"), "wall_ms": s.get("wall_ms")}
 
 
+def w_variants(root: Path) -> list[str]:
+    from forge.a11y import game_table
+    from forge.patternvault import PatternVault
+
+    return game_table(PatternVault(root))["variants"]
+
+
 def locale_report(root: Path) -> dict[str, Any]:
     """Every literal ``tr("key")`` in the slice scripts + every dynamic id key exists in locale/en.json."""
     from forge.world import load_world
@@ -66,10 +73,16 @@ def locale_report(root: Path) -> dict[str, Any]:
     game = root / "games" / "game-zero"
     loc = json.loads((game / "locale" / "en.json").read_text(encoding="utf-8"))
     used: set[str] = set()
-    for f in ["scenes/slice.gd", "scenes/encounter.gd", "audio/music_director.gd", "world/world_state.gd"]:
+    for f in ["scenes/slice.gd", "scenes/encounter.gd", "audio/music_director.gd", "world/world_state.gd",
+              "ui/settings_menu.gd", "autoload/fabric.gd"]:
         p = game / f
         if p.exists():
-            used |= {k for k in re.findall(r'tr\("([a-z0-9_.]+)"\)', p.read_text(encoding="utf-8"))}
+            used |= {k for k in re.findall(r'(?:tr|hint)\("([a-z0-9_.]+)"\)', p.read_text(encoding="utf-8"))}
+    # G-A11Y-01 (0.7.10): every action has a Settings label, every palette variant a name, every tactic a word
+    fab = (game / "autoload" / "fabric.gd").read_text(encoding="utf-8")
+    schema = fab[fab.index("const INPUT_SCHEMA"):fab.index("## Order of the rows")]
+    used |= {f"input.{a}" for a in re.findall(r'^\t"([a-z0-9_]+)": \{', schema, re.M)}
+    used |= {f"settings.palette.{v}" for v in w_variants(root)} | {"tactic.aggressive", "tactic.defensive", "input.pad.generic"}
     w = load_world(root)
     used |= {f"item.{i}" for i in w["items"]} | {f"area.{a}" for a in w["areas"]}
     for q in w["quests"]:
@@ -79,7 +92,9 @@ def locale_report(root: Path) -> dict[str, Any]:
     used |= {f"roster.{k}" for k in fs} | {f"role.{f['role']}" for f in fs.values()}
     used |= {f"pet.{k}" for k in ps} | {f"pet.style.{p['style']}" for p in ps.values()}
     missing = sorted(k for k in used if k not in loc)
-    return {"ok": not missing, "keys_checked": len(used), "missing": missing}
+    actions = set(re.findall(r'^\t"([a-z0-9_]+)": \{', schema, re.M))
+    bad_ph = sorted(f"{k}:{{{ph}}}" for k, v in loc.items() for ph in re.findall(r"\{([a-z0-9_]+)\}", str(v)) if ph not in actions)
+    return {"ok": not missing and not bad_ph, "keys_checked": len(used), "missing": missing + bad_ph}
 
 
 def f6_run(root: Path) -> tuple[int, dict[str, Any]]:

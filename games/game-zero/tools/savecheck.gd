@@ -24,7 +24,9 @@ func _ready() -> void:
 	if FileAccess.file_exists(Save.path()):
 		out["file_b64"] = Marshalls.raw_to_base64(FileAccess.get_file_as_bytes(Save.path()))
 	out["input"] = {"remap": Fabric.input_remap_applied, "attack": Fabric.action_keys("attack"),
-		"interact": Fabric.action_keys("interact")}
+		"interact": Fabric.action_keys("interact"),
+		"tokens": {"attack": Fabric.action_tokens("attack"), "use_salve": Fabric.action_tokens("use_salve")}}
+	out["palette"] = A11y.palette
 	var fx := str(Fabric.arg("fixtures", ""))
 	if fx != "":
 		var d = JSON.parse_string(FileAccess.get_file_as_string(fx))

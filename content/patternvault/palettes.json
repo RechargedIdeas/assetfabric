@@ -106,6 +106,21 @@
         "#f0a04b",
         "#ffe0a5",
         "#fff1e6"
+      ],
+      "ui_retro": [
+        "#0b0b10",
+        "#f4f4f4",
+        "#e04040",
+        "#3080f0",
+        "#f0c040"
+      ],
+      "hero_amber": [
+        "#1a120a",
+        "#6b4a1d",
+        "#b8862f",
+        "#f2d27a",
+        "#e8b890",
+        "#6a5acd"
       ]
     },
     "protanopia": {
@@ -116,7 +131,68 @@
         "#f0c04b",
         "#ffe8a5",
         "#fff1e6"
+      ],
+      "ui_retro": [
+        "#0b0b10",
+        "#f4f4f4",
+        "#e04040",
+        "#3080f0",
+        "#f0c040"
+      ],
+      "hero_amber": [
+        "#1a120a",
+        "#6b4a1d",
+        "#b8862f",
+        "#f2d27a",
+        "#e8b890",
+        "#4a7acd"
       ]
     }
+  },
+  "a11y_checks": {
+    "_doc": "G-A11Y-01 (0.7.10, forge/a11y.py): colour pairs the game uses as signals. Each colour-blind variant must show every pair with \u0394E*ab \u2265 min_delta_e under its simulated deficiency (Machado 2009) and never worse than the default palette. [INFERENCE C-86]",
+    "min_delta_e": 25.0,
+    "pairs": [
+      {
+        "what": "crop growing vs ready",
+        "pair": [
+          "ui_retro:3",
+          "ui_retro:4"
+        ]
+      },
+      {
+        "what": "red vs green UI",
+        "pair": [
+          "ui_retro:2",
+          "ui_retro:3"
+        ]
+      },
+      {
+        "what": "hostile vs hero base",
+        "pair": [
+          "enemy_ember:2",
+          "hero_teal:2"
+        ]
+      },
+      {
+        "what": "hostile on moss floor",
+        "pair": [
+          "enemy_ember:2",
+          "cave_moss:3"
+        ]
+      },
+      {
+        "what": "hostile on dark moss",
+        "pair": [
+          "enemy_ember:2",
+          "cave_moss:2"
+        ]
+      }
+    ]
+  },
+  "ui_roles": {
+    "_doc": "Game UI colours by role (a11y.gd ui_colour), so the remap table covers them.",
+    "plot_growing": "ui_retro:3",
+    "plot_ready": "ui_retro:4"
   }
 }

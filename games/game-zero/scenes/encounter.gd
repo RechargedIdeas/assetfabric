@@ -154,7 +154,10 @@ func _physics_process(delta: float) -> void:
 		_publish_status(true)
 	if _serve and Live.enabled and sim.tick > 0 and sim.tick % AUTOSNAP_TICKS == 0 and sim.tick != _last_autosnap:
 		_autosnap()
-	if command_box.visible:
+	if command_box.visible or settings_open():
+		return
+	if Input.is_action_just_pressed("settings"):
+		open_settings()
 		return
 	if Input.is_action_just_pressed("restart"):
 		_build()
@@ -166,7 +169,7 @@ func _physics_process(delta: float) -> void:
 		toggle_freeze()
 	if frozen:
 		for i in 4:
-			if Input.is_key_pressed(KEY_1 + i) and i < swap_recs.get("recommendations", []).size():
+			if Input.is_action_just_pressed("swap_pick_%d" % (i + 1)) and i < swap_recs.get("recommendations", []).size():
 				do_swap(swap_recs["recommendations"][i]["id"])
 				toggle_freeze()
 				break
@@ -174,7 +177,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if Input.is_action_just_pressed("tactic_menu"):
 		submit_command("defend" if sim.tactic == "aggressive" else "charge")
-	if Input.is_key_pressed(KEY_SLASH):
+	if Input.is_action_just_pressed("command"):
 		command_box.visible = true
 		command_box.text = ""
 		command_box.grab_focus()
@@ -530,7 +533,7 @@ func _sync_view() -> void:
 	if frozen:
 		overlay.text = "\n".join(freeze_overlay())
 	else:
-		overlay.text = "%s: %s%s" % [tr("hud.tactic"), sim.tactic, (" · focus " + sim.focus_kind) if sim.focus_kind != "" else ""]
+		overlay.text = "%s: %s%s" % [tr("hud.tactic"), tr("tactic." + sim.tactic), (" · " + tr("hud.focus") + " " + sim.focus_kind) if sim.focus_kind != "" else ""]
 	for e in sim.entities:
 		if e.team == 0 and e.kind == "fighter":
 			lines.append("%s%s %s %d/%d" % ["> " if e.is_leader else "  ", tr("roster." + e.id), tr("hud.hp"), e.hp, e.max_hp])
@@ -539,7 +542,7 @@ func _sync_view() -> void:
 		"victory": lines.append(tr("hud.victory"))
 		"defeat": lines.append(tr("hud.defeat"))
 		_: lines.append(tr("hud.objective.defeat"))
-	lines.append(tr("hud.hint.controls"))
+	lines.append(Fabric.hint("hud.hint.controls"))
 	hud.text = "\n".join(lines)
 
 
@@ -573,7 +576,7 @@ func freeze_overlay() -> Array:
 		if p.kind == "pet" and p.team == 0:
 			pets.append("%s→%s %d/%d" % [str(p.get_meta("ref", p.id)), tr("roster." + p.owner_id), p.hp, p.max_hp])
 	ol.append(tr("hud.freeze.pets") + ": " + (", ".join(pets) if not pets.is_empty() else "-"))
-	ol.append(tr("hud.freeze.hint"))
+	ol.append(Fabric.hint("hud.freeze.hint"))
 	return ol
 
 
@@ -744,3 +747,28 @@ func _max_hp_of(ref: String) -> int:
 		if str(e.get_meta("ref", "")) == ref:
 			return e.max_hp
 	return -1
+
+
+# ---------------------------------------------------------------- settings (G-A11Y-01)
+
+const SettingsMenu = preload("res://ui/settings_menu.gd")
+var settings_menu: Node = null
+
+
+func settings_open() -> bool:
+	return settings_menu != null and is_instance_valid(settings_menu)
+
+
+var _settings_closed_at := -100
+
+
+func open_settings() -> Node:
+	# the key press that closed the menu (Escape = ui_cancel = `settings`) must not reopen it in the same frame
+	if settings_open() or Engine.get_physics_frames() - _settings_closed_at <= 1:
+		return settings_menu
+	settings_menu = SettingsMenu.new()
+	settings_menu.closed.connect(func():
+		settings_menu = null
+		_settings_closed_at = Engine.get_physics_frames())
+	add_child(settings_menu)
+	return settings_menu

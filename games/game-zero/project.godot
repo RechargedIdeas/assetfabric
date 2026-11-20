@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Fabric="*res://autoload/fabric.gd"
+A11y="*res://autoload/a11y.gd"
 GIRT="*res://autoload/girt.gd"
 CascadeHub="*res://autoload/cascade_hub.gd"
 Live="*res://autoload/live.gd"
