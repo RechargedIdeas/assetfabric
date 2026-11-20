@@ -78,5 +78,5 @@ jobs:
         run: source .venv/bin/activate && forge accept C1-C6 --no-write
       - name: forge accept C7-C8 (LoomCluster loopback fleet + GroundWeave, full mode; incl. the Kotlin LoomLink hop)
         run: source .venv/bin/activate && forge accept C7-C8 --no-write
-      - name: forge accept C9-C12 (MirrorWeave / LensForge / depth / SplatForge path: contracts + labelled stubs; Gradle is warm from C1-C6)
+      - name: "forge accept C9-C12 (MirrorWeave / LensForge / depth / SplatForge path: contracts + labelled stubs; Gradle is warm from C1-C6)"
         run: source .venv/bin/activate && forge accept C9-C12 --no-write
