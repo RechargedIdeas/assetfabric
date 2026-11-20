@@ -16,6 +16,7 @@ dependencies {
 // PatternVault palettes are bundled from the repo's single source of truth at build time.
 val bundlePalettes by tasks.registering(Copy::class) {
     from(rootProject.file("../../content/patternvault/palettes.json"))
+    from(rootProject.file("../../content/patternvault/capture_profiles.json"))   // C10 LensForge capture modes
     into(layout.buildDirectory.dir("generated/fabricres/fabric"))
 }
 sourceSets.main { resources.srcDir(layout.buildDirectory.dir("generated/fabricres")) }
