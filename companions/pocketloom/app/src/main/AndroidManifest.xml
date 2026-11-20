@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Only used after the user pairs with a desktop (LoomLink, C5/C6). Standalone mode makes no
-         network calls. No CAMERA permission: capture is delegated to the system camera app. -->
+         network calls. Still capture is delegated to the system camera app; CAMERA is only requested when
+         the user opens the live camera (C9/C10 focus control). -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- C9 MirrorWeave screen capture (user consents to MediaProjection every session) + C9/C10 live camera focus -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="false"
@@ -40,6 +47,24 @@
             android:authorities="com.rechargedideas.pocketloom.capture"
             android:exported="false"
             android:grantUriPermissions="true" />
+
+        <service
+            android:name=".ScreenMirrorService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".MirrorAccessibilityService"
+            android:exported="false"
+            android:label="@string/a11y_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
     </application>
 
     <queries>

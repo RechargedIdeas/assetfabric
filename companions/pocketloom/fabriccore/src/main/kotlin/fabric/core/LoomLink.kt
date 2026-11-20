@@ -115,7 +115,7 @@ class LoomLinkClient(val clientId: String, var session: LinkSession? = null, pri
 
     fun pair(uri: PairingUri, caps: List<String> = listOf("offload", "sync")) = pair(uri.url, uri.code, caps)
 
-    private fun nextTs(): Long { val t = maxOf(clock(), lastTs + 1); lastTs = t; return t }
+    @Synchronized private fun nextTs(): Long { val t = maxOf(clock(), lastTs + 1); lastTs = t; return t }   // app + services share one client
 
     private fun signHeaders(method: String, path: String, raw: ByteArray): Map<String, String> {
         val s = session ?: throw LinkException(0, "not paired")

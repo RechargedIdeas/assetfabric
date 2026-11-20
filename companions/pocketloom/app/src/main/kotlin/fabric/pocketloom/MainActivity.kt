@@ -2,7 +2,15 @@ package fabric.pocketloom
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.SurfaceTexture
+import android.media.projection.MediaProjectionManager
+import android.provider.Settings
+import android.view.MotionEvent
+import android.view.Surface
+import android.view.TextureView
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -27,6 +35,7 @@ import fabric.core.PairingUri
 import fabric.core.PocketLoomCore
 import fabric.core.asList
 import fabric.core.asMap
+import fabric.core.FocusRequest
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
@@ -42,11 +51,13 @@ class MainActivity : Activity() {
     private var pendingUri: PairingUri? = null
     private var selectedId: String? = null
 
-    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2 }
+    companion object { const val REQ_CAMERA = 1; const val REQ_IMPORT = 2; const val REQ_MIRROR = 3; const val REQ_CAMERA_PERM = 4 }
+    private var mirrorMode = "stills"
+    private var focus: Camera2Focus? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        core = PocketLoomCore(filesDir.resolve("pocketloom"))
+        core = CoreHolder.get(this)
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(12), dp(12), dp(12), dp(12)) }
         header = TextView(this).apply { textSize = 13f }
         root.addView(TextView(this).apply { setText(R.string.app_name); textSize = 22f })
@@ -72,7 +83,7 @@ class MainActivity : Activity() {
         }
     }
 
-    override fun onDestroy() { worker.shutdown(); super.onDestroy() }
+    override fun onDestroy() { focus?.close(); worker.shutdown(); super.onDestroy() }
 
     // ------------------------------------------------------------------ helpers
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
@@ -187,6 +198,11 @@ class MainActivity : Activity() {
         content.addView(button(R.string.cap_import) {
             startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*"), REQ_IMPORT)
         })
+        content.addView(button(R.string.cam_live) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), REQ_CAMERA_PERM)
+            else liveCamera(out)
+        })
         content.addView(out)
         bg {
             val n = core.store.list().count { it["kind"] == "capture" }
@@ -194,9 +210,52 @@ class MainActivity : Activity() {
         }
     }
 
+    /** C9/C10 live camera with tap-to-focus (Camera2). A desktop can also queue focus events (MirrorAccessibilityService). */
+    private fun liveCamera(out: TextView) {
+        focus?.close(); focus = null
+        val tv = TextureView(this)
+        content.addView(tv, LinearLayout.LayoutParams(-1, dp(320)))
+        tv.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+            override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
+                st.setDefaultBufferSize(1280, 720)
+                focus = Camera2Focus(this@MainActivity, Surface(st)).also { f ->
+                    f.open { ok -> ui { out.setText(if (ok) R.string.cam_ready else R.string.cam_failed) } }
+                }
+            }
+            override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {}
+            override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean { focus?.close(); focus = null; return true }
+            override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
+        }
+        tv.setOnTouchListener { v, e ->
+            if (e.action == MotionEvent.ACTION_UP) {
+                val ok = focus?.apply(FocusRequest("auto", null, (e.x / v.width).toDouble().coerceIn(0.0, 1.0), (e.y / v.height).toDouble().coerceIn(0.0, 1.0))) ?: false
+                out.setText(if (ok) R.string.cam_focus_ok else R.string.cam_failed)
+                v.performClick()
+            }
+            true
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQ_CAMERA_PERM && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED && tab == 2) statusLine?.let { liveCamera(it) }
+    }
+
+    private fun startMirror(mode: String) {
+        mirrorMode = mode
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+        startActivityForResult(getSystemService(MediaProjectionManager::class.java).createScreenCaptureIntent(), REQ_MIRROR)
+    }
+
     @Deprecated("platform API; no AndroidX ActivityResult in this build")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_MIRROR) {
+            if (resultCode == RESULT_OK && data != null) startForegroundService(mirrorIntent(this, resultCode, data, mirrorMode))
+            else toastLine(getString(R.string.mirror_no_consent))
+            return
+        }
         if (resultCode != RESULT_OK) return
         val source = if (requestCode == REQ_CAMERA) "camera" else "import"
         val read: () -> ByteArray? = when (requestCode) {
@@ -242,6 +301,14 @@ class MainActivity : Activity() {
         content.addView(button(R.string.link_drain) { bg { val r = core.drain(); ui { out.text = getString(R.string.link_drain_ok, (r["sent"] as Number).toInt(), (r["pending"] as Number).toInt()); refreshHeader() } } })
         content.addView(button(R.string.link_sync) { bg { val r = core.sync(); ui { out.text = getString(R.string.link_sync_ok, r["pushed"] as Int, r["pulled"] as Int, r["conflicts"].asList().size); refreshHeader() } } })
         content.addView(button(R.string.link_unpair) { bg { core.unpair(); ui { show(3) } } })
+        // C9 MirrorWeave: screen → desktop (MediaProjection, user consent each time) and desktop → phone control (Accessibility)
+        content.addView(text(getString(R.string.mirror_intro)))
+        content.addView(button(R.string.mirror_start_stills) { startMirror("stills") })
+        content.addView(button(R.string.mirror_start_h264) { startMirror("h264") })
+        content.addView(button(R.string.mirror_stop) { startService(Intent(this, ScreenMirrorService::class.java).setAction(ScreenMirrorService.ACTION_STOP)) })
+        content.addView(button(R.string.mirror_remote_settings) { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) })
+        content.addView(text(if (ScreenMirrorService.running) resources.getQuantityString(R.plurals.mirror_running, ScreenMirrorService.framesSent, ScreenMirrorService.framesSent)
+            else ScreenMirrorService.lastError?.let { getString(R.string.mirror_error, it) } ?: getString(R.string.mirror_idle)))
         content.addView(out)
         bg {
             val s = core.link.session

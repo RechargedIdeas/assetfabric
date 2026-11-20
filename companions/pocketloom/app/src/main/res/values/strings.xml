@@ -77,13 +77,31 @@
     <string name="tel_device">Device: %1$s · Android API %2$d · CPU cores: %3$d</string>
     <string name="tel_node">Node %1$s · FabricCore %2$s</string>
     <string name="tel_refresh">Refresh</string>
+    <!-- C9 MirrorWeave (real code; not yet verified on a phone) -->
+    <string name="mirror_intro">Mirror this screen to the paired desktop, or let the desktop control this phone (needs the mirror capability).</string>
+    <string name="mirror_start_stills">Mirror screen (stills)</string>
+    <string name="mirror_start_h264">Mirror screen (H.264 video)</string>
+    <string name="mirror_stop">Stop mirroring</string>
+    <string name="mirror_remote_settings">Desktop remote control — Accessibility settings</string>
+    <plurals name="mirror_running">
+        <item quantity="one">Mirroring: %1$d frame sent</item>
+        <item quantity="other">Mirroring: %1$d frames sent</item>
+    </plurals>
+    <string name="mirror_idle">Not mirroring.</string>
+    <string name="mirror_error">Mirroring stopped: %1$s</string>
+    <string name="mirror_no_consent">Screen capture was not allowed.</string>
+    <string name="mirror_channel">Screen mirroring</string>
+    <string name="mirror_notif_title">PocketLoom is mirroring your screen</string>
+    <string name="mirror_notif_text">Frames go only to your paired desktop. Stop from the Link tab.</string>
+    <string name="a11y_description">Lets your paired AssetFabric desktop tap, swipe, press Back/Home and type on this phone. Every command is signed by the desktop you paired with; nothing else is accepted.</string>
+    <string name="a11y_label">PocketLoom remote control</string>
+    <string name="cam_live">Live camera (tap to focus)</string>
+    <string name="cam_ready">Camera ready — tap the preview to focus.</string>
+    <string name="cam_focus_ok">Focus requested.</string>
+    <string name="cam_failed">Camera unavailable.</string>
     <!-- C9–C12 labelled-stub reasons (shown if a stub feature is ever surfaced; see content/companions/c9_c12.yaml) -->
     <string name="stub_depth_arcore">ARCore depth is not implemented (Android-only SDK, not bundled in FabricCore).</string>
     <string name="stub_depth_model_missing">Dense monocular depth (DepthAnything V2) is not implemented: no model weights or ONNX runtime are bundled, so no depth map is produced.</string>
     <string name="stub_lens_arcore_session">ARCore-assisted capture is not implemented (Android-only SDK, not bundled in FabricCore).</string>
-    <string name="stub_mirror_android_input">Desktop-to-Android remote control (tap/swipe/key injection) is not implemented; it needs an on-phone AccessibilityService or adb bridge.</string>
-    <string name="stub_mirror_camera_focus">Remote or local camera focus control is not implemented (needs CameraX/Camera2 on the phone).</string>
-    <string name="stub_mirror_screen_capture">Live Android screen capture (MediaProjection foreground service + user consent) is not implemented. Only still frames pushed via MirrorWeave are supported.</string>
-    <string name="stub_mirror_video_codec">Video streaming (H.264/WebRTC) is not implemented; MirrorWeave carries still frames (png/jpeg/webp) and telemetry only. The hardware-encoder rung of mirror.encode is planned.</string>
     <string name="stub_recon_splatforge">SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.</string>
 </resources>
