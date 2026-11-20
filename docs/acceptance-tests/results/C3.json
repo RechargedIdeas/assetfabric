@@ -19,7 +19,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 9.7
+      "seconds": 11.3
     },
     "c3": {
       "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
@@ -78,8 +78,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 22.7,
-              "mean_ms": 13.2,
+              "max_ms": 19.8,
+              "mean_ms": 11.2,
               "n": 2
             }
           }

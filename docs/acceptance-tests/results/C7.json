@@ -7,12 +7,12 @@
   "perf": {
     "batch_digest": "5300f109d4016c6c3e76bd9105a88dd1c3966595007be863e234df21171370a7",
     "batch_wall_s": {
-      "n1_2core_nogpu": 3.25,
-      "n2": 2.66,
-      "n3": 1.86
+      "n1_2core_nogpu": 3.02,
+      "n2": 2.31,
+      "n3": 1.95
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.202,
+    "max_gen_job_s_2core": 1.243,
     "mode": "full"
   },
   "result": {
@@ -38,14 +38,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.202,
+          "max_gen_job_s": 1.243,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 3.25,
+          "wall_s": 3.02,
           "wrong": []
         },
         "n2": {
@@ -55,15 +55,15 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.33,
+          "max_gen_job_s": 1.201,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
           "stolen_in": {
-            "a": 2,
-            "b": 9
+            "a": 0,
+            "b": 7
           },
-          "wall_s": 2.66,
+          "wall_s": 2.31,
           "wrong": []
         },
         "n3": {
@@ -71,19 +71,19 @@
           "complete": true,
           "executed_by_node": {
             "a": 26,
-            "b": 4,
-            "c": 6
+            "b": 3,
+            "c": 7
           },
-          "max_gen_job_s": 1.408,
+          "max_gen_job_s": 1.418,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
           "stolen_in": {
             "a": 0,
             "b": 4,
-            "c": 6
+            "c": 7
           },
-          "wall_s": 1.86,
+          "wall_s": 1.95,
           "wrong": []
         }
       },
@@ -92,15 +92,15 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.33,
+        "elapsed_s": 8.24,
         "executed_by_node": {
-          "a": 28,
-          "b": 16,
-          "c": 4
+          "a": 25,
+          "b": 15,
+          "c": 8
         },
         "killed": {
-          "c_held": 4,
-          "results_at_kill": 13
+          "c_held": 3,
+          "results_at_kill": 28
         },
         "lease_s": 6.0,
         "ok": true,
@@ -115,8 +115,8 @@
           "b": 16
         },
         "ok": true,
-        "parked_results_redelivered_by_peer": 4,
-        "recovered_from_journal": 14,
+        "parked_results_redelivered_by_peer": 8,
+        "recovered_from_journal": 13,
         "wrong": []
       },
       "retry": {

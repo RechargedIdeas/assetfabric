@@ -8,7 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "lens.assess": 0.01
+      "lens.assess": 0.014
     },
     "planned_ops": [],
     "real": 5,
@@ -75,7 +75,7 @@
           "identical_with_simulated_gpu": true,
           "op": "lens.assess",
           "status": "ok",
-          "wall_s": 0.01
+          "wall_s": 0.014
         }
       ]
     },

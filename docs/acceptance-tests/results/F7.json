@@ -10,10 +10,10 @@
       "android": {
         "artifact": {
           "path": "dist/android/GameZero-debug.apk",
-          "sha256": "7df6b527a957897b6d7d5a94727271b9e6c2d186c82dd8aaa841eff936e1c913",
+          "sha256": "1a87fff8d21401fa328d797b4380df9b5ca98fa2982a1116eec09e0c19023ca8",
           "size": 25631294
         },
-        "export_wall_s": 10.2,
+        "export_wall_s": 9.4,
         "total_size": 25860072
       },
       "desktop-linux": {
@@ -22,8 +22,8 @@
           "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
           "size": 66074584
         },
-        "export_wall_s": 4.5,
-        "total_size": 67703381
+        "export_wall_s": 4.1,
+        "total_size": 67703413
       },
       "desktop-windows": {
         "artifact": {
@@ -31,8 +31,8 @@
           "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
           "size": 84214784
         },
-        "export_wall_s": 5.3,
-        "total_size": 86029519
+        "export_wall_s": 4.0,
+        "total_size": 86029567
       },
       "web": {
         "artifact": {
@@ -40,14 +40,14 @@
           "sha256": "2efad3f8e79f321f784e445e06715076faeacebd3ba70ba67e140c927aa26aa4",
           "size": 5158
         },
-        "export_wall_s": 4.3,
+        "export_wall_s": 4.1,
         "total_size": 35891032
       }
     },
     "desktop_slice_game_minutes": 2.92,
     "mode": "full",
-    "web_budget_headroom_bytes": 35677280,
-    "web_gzip9_bytes": 9322720
+    "web_budget_headroom_bytes": 35677234,
+    "web_gzip9_bytes": 9322766
   },
   "result": {
     "a11y": {
@@ -453,13 +453,13 @@
         "android": {
           "artifact": {
             "path": "dist/android/GameZero-debug.apk",
-            "sha256": "7df6b527a957897b6d7d5a94727271b9e6c2d186c82dd8aaa841eff936e1c913",
+            "sha256": "1a87fff8d21401fa328d797b4380df9b5ca98fa2982a1116eec09e0c19023ca8",
             "size": 25631294
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-android.fabricbolt",
-            "bolt_sha256": "af78a46b11c0f8c78599c15e027316b0ff9aa6106346164b9d6cd5c926092c19",
-            "bolt_size": 25335816,
+            "bolt_sha256": "8da39d543f50a8c8f94a428c1c6b968f2c94c344e53b5f01f61f33f0160f7472",
+            "bolt_size": 25335675,
             "components": 85,
             "copyleft": {},
             "licenses": {
@@ -489,11 +489,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:06:32-0500",
+          "built_at": "2026-11-20T14:51:16-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 10.2,
+          "export_wall_s": 9.4,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-android",
           "mode": "debug",
@@ -519,7 +519,7 @@
           "total_size": 25860072,
           "verify": {
             "apk_size": 25631294,
-            "apkanalyzer_download_size": 25093410,
+            "apkanalyzer_download_size": 25093283,
             "internet_permission": false,
             "launchable": true,
             "min_sdk": 21,
@@ -554,8 +554,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-linux.fabricbolt",
-            "bolt_sha256": "8f93cc3c1bebe768aad44a4a30974c4da754e66a80f14d29d0ac520201f28b59",
-            "bolt_size": 25490610,
+            "bolt_sha256": "18f5668a6cb03e749b48e3540f0936299a7178d75f961e1714bedd073711d094",
+            "bolt_size": 25490674,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -584,11 +584,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:06:10-0500",
+          "built_at": "2026-11-20T14:50:57-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.5,
+          "export_wall_s": 4.1,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -611,7 +611,7 @@
           "target": "desktop-linux",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 67703381,
+          "total_size": 67703413,
           "verify": {
             "boots": true,
             "how": "exported binary run headless (--net-report)",
@@ -634,8 +634,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-windows.fabricbolt",
-            "bolt_sha256": "8295060244f710e958af40bde57af632257833be538a8f48d5a775d4e817adb6",
-            "bolt_size": 31617745,
+            "bolt_sha256": "cee01b723cdbc44ab5c615d28b33dbcd0e124493f579224f9b1df7e2ac39c9dc",
+            "bolt_size": 31617775,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -664,11 +664,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:06:19-0500",
+          "built_at": "2026-11-20T14:51:04-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 5.3,
+          "export_wall_s": 4.0,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -691,7 +691,7 @@
           "target": "desktop-windows",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 86029519,
+          "total_size": 86029567,
           "verify": {
             "console_wrapper": {
               "machine": "0x8664",
@@ -729,8 +729,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-web.fabricbolt",
-            "bolt_sha256": "30af8c3f2d9471ab77fde64c582de5831ff07b6b81c302d150b91c1df4a95a02",
-            "bolt_size": 9408275,
+            "bolt_sha256": "20815bef7853e3873624985d645dd4252af14f5a786fcfb4e903404b435dc8d3",
+            "bolt_size": 9408334,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -760,11 +760,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:06:54-0500",
+          "built_at": "2026-11-20T14:51:39-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.3,
+          "export_wall_s": 4.1,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-web",
           "mode": "release",
@@ -821,7 +821,7 @@
                 },
                 "index.pck": {
                   "bytes": 1606384,
-                  "gzip9": 1279208
+                  "gzip9": 1279254
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -840,10 +840,10 @@
                   "gzip9": 217
                 }
               },
-              "headroom_bytes": 35677280,
+              "headroom_bytes": 35677234,
               "ok": true,
               "total_bytes": 35868517,
-              "total_gzip9": 9322720
+              "total_gzip9": 9322766
             },
             "hook": true,
             "ok": true,
@@ -956,7 +956,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:46675/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:41875/index.js:9:234048"
                 ],
                 "offline": true,
                 "page": {
@@ -986,7 +986,7 @@
                   "version": "0.7.0+f7"
                 },
                 "script_errors": 0,
-                "wall_s": 2.1
+                "wall_s": 2.3
               },
               "ok": true,
               "online": {
@@ -996,7 +996,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:46675/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:41875/index.js:9:234048"
                 ],
                 "offline": false,
                 "page": {
@@ -1074,11 +1074,8 @@
         "jdk": "/workspace/jdk/jdk-17.0.21+9",
         "templates": {
           "dir": "/workspace/af-q3/.fabric/godot-home/data/godot/export_templates/4.3.stable",
-          "fetched": true,
           "missing": [],
           "ok": true,
-          "tpz": "/workspace/godot-templates/templates.tpz",
-          "tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
           "version": "4.3.stable"
         },
         "wine": null
@@ -1099,7 +1096,7 @@
       },
       "network_namespace": "bwrap --unshare-net",
       "script_errors": 0,
-      "wall_ms": 2133.1
+      "wall_ms": 2029.4
     },
     "editor_roundtrip": {
       "checksum_equal": true,

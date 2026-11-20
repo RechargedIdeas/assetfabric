@@ -12,7 +12,7 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
   `SwapAdvisor.rank` 5× each. `forge accept F3` runs it **pinned to 2 CPU cores** (`taskset`, weakest node) and gates
   p95 ≤ 50 ms, max ≤ 150 ms, threaded == serial ranking, and LOD fidelity (shipped 15 Hz-LOD top pick inside the
   full-fidelity LOD-1 top 2 in every state, top-1 agreement ≥ 80 %). Recorded on the 8-vCPU box pinned to CPUs 0,1:
-  **p50 23.0 ms, p95 39.4 ms, max 42.2 ms** (earlier run 23.4 / 37.0 / 48.6); LOD fidelity 17/17 top-1 agreement. In-game freezes: party scene 28 ms;
+  **p50 23.0 ms, p95 37.8 ms, max 50.4 ms** (earlier runs 23.0 / 39.4 / 42.2 and 23.4 / 37.0 / 48.6); LOD fidelity 17/17 top-1 agreement. In-game freezes: party scene 28 ms;
   F4 live-tune freeze 73.6 → 32.7 ms.
 - **Where the target is hard-gated**: `forge accept F3` (reference node, recorded in `results/F3.json`). FAST mode
   (pytest / CI) and the GroundWeave probe record the p95 but gate only the 150 ms ceiling, parity and fidelity, because
