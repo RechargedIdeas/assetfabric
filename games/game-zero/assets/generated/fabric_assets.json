@@ -1011,7 +1011,7 @@
       "files": {
         "world.json": {
           "res": "res://data/generated/world.json",
-          "sha256": "f46d039c6a371d7823ac0362d489f3bc32a657ec33042a747af335e468a1977f"
+          "sha256": "80c01036deea1f2614c27d30c7426f28a2ad2e9d6af08dad3577acbf1ca50f74"
         }
       },
       "kind": "world",
@@ -1049,7 +1049,7 @@
         ],
         "supply": {
           "cave_moss": 4,
-          "coin": 38.0,
+          "coin": 42.0,
           "ember_tonic": 3.0,
           "flint": 7,
           "flint_edge": 0,

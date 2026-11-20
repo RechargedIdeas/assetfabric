@@ -1,0 +1,25 @@
+# Human-pace estimate for the vertical slice (Q4, GAME_SPEC §6.1 "15–20 minutes"). [INFERENCE C-92]
+# The QA autopilot plays at machine efficiency at 1× game speed, so its game time is a *floor*. This model
+# turns one autopilot run into an estimate of a first-time human playthrough from what the run actually
+# did (ticks spent travelling / fighting / waiting on crops, every interaction, every objective shown).
+# It is a model, not a measurement: the constants are generic action-game heuristics written down before
+# this gate existed in code, NOT fitted to a playtest (none exists yet). A human GUI playtest replaces it
+# (TODO "Not worked here"). Changing a constant needs a DECISIONS entry.
+schema_version: "1.0"
+select_s: 45            # read the roster + pet cards, pick (character select screen)
+reading_wpm: 200        # casual reading speed for objective / message text
+min_read_s: 2.5         # floor per text shown (glance + parse), applied per objective change
+nav_factor: 1.6         # human path length / A* path length while exploring (detours, backtracking)
+combat_factor: 1.5      # human fight time / BT-autoplay fight time (manual leader, positioning, swaps)
+wait_factor: 1.0        # crop timers run in real time either way; counted once, never multiplied
+first_visit_s: 30       # look around a newly entered area (map reading, finding exits/nodes)
+overlay_s: 10           # read the time-freeze swap overlay and choose
+interact_s:             # per action, including walking the last tile and reading the result
+  plant: 3
+  harvest: 3
+  gather: 3
+  craft: 8
+  buy: 6
+  use: 3
+  save: 6
+target_min: [15.0, 20.0]

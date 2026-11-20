@@ -17,7 +17,11 @@ quests:
       - {id: moss, when: gather, guard: "have:cave_moss>=2"}
       - {id: clear_cave, when: "cleared:cave_deep", reward: {xp: 40}}
       - {id: return_farm, when: "enter:field"}
-      - {id: harvest, when: harvest, guard: "total:harvested>=4"}
+      # Q4 pacing [INFERENCE C-91]: a full first harvest, then a second crop cycle paid with stall seeds
+      # (deterministic coin: start kit + forage reward) before the boss prep — real farming loop, not a slower bot.
+      - {id: harvest, when: harvest, guard: "total:harvested>=8", reward: {xp: 10}}
+      - {id: replant, when: plant, guard: "total:planted>=6"}
+      - {id: second_harvest, when: harvest, guard: "total:harvested>=12", reward: {coin: 4}}
       - {id: craft, when: craft, guard: "have:ember_tonic>=1&have:moss_salve>=1"}
       - {id: warden, when: "defeated:cave_warden", reward: {unlock: vex, flag: warden_down}}
       - {id: open_world, when: "enter:field"}

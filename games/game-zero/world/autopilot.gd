@@ -10,6 +10,8 @@ extends RefCounted
 ##          {"kind": "goto", "cell": Vector2i, "act", "arg"} · {"kind": "done"}
 
 const SALVE_AT := 0.55          # use a salve out of combat below this party HP ratio
+## Main-quest stages that complete on a harvest/plant event: crops still growing → wait by the plot.
+const WAIT_STAGES := ["harvest", "replant", "second_harvest"]
 const CRAFT_PLAN := [["moss_salve", 2], ["ember_tonic", 1], ["flint_edge", 1]]
 
 
@@ -72,11 +74,19 @@ static func decide(s) -> Dictionary:
 			if ws.crop_ready(i):
 				return _go(here, _plot_cell(ws, i), "harvest", i)
 		var seed_item: String = ws.seed_in_bag()
-		if seed_item != "":
-			for i in ws.plots.size():
-				if str(ws.plots[i]["crop"]) == "":
-					return _go(here, _plot_cell(ws, i), "plant", seed_item)
+		var free_plot := -1
+		for i in ws.plots.size():
+			if str(ws.plots[i]["crop"]) == "":
+				free_plot = i
+				break
+		if seed_item != "" and free_plot >= 0:
+			return _go(here, _plot_cell(ws, free_plot), "plant", seed_item)
 		var bench: Array = s.cells("W")
+		# Q4 second crop cycle: no seed in the bag → buy the cheapest affordable one at the stall
+		if seed_item == "" and free_plot >= 0 and ws.quests.stage("q_warden") == "replant" and not bench.is_empty():
+			var buy := cheapest_seed(ws)
+			if buy != "":
+				return _go(here, bench[0], "buy", buy)
 		if ws.stage_at_least("q_warden", "craft") and not bench.is_empty():
 			for p in CRAFT_PLAN:
 				if not crafted or p[0] == "flint_edge":
@@ -87,7 +97,7 @@ static func decide(s) -> Dictionary:
 				return _go(here, bench[0], "craft", "warden_charm")
 		if not nodes.is_empty() and not ws.stage_at_least("q_warden", "moss"):
 			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])
-		if ws.quests.stage("q_warden") == "harvest":
+		if WAIT_STAGES.has(ws.quests.stage("q_warden")):
 			for i in ws.plots.size():
 				if str(ws.plots[i]["crop"]) != "":
 					return _go(here, _plot_cell(ws, i), "wait", null)    # crops still growing: wait by the plot
@@ -112,6 +122,19 @@ static func decide(s) -> Dictionary:
 		return _link(s, here, "S")
 	# boss lair, warden down: walk out to the open world
 	return _link(s, here, "E")
+
+
+static func cheapest_seed(ws) -> String:
+	var best := ""
+	var bp := 1 << 30
+	var ids: Array = ws.world["shop"].keys()
+	ids.sort()
+	for k in ids:
+		var price := int(ws.world["shop"][k])
+		if price < bp and price <= ws.count("coin"):
+			best = k
+			bp = price
+	return best
 
 
 static func _plot_cell(ws, i: int) -> Vector2i:

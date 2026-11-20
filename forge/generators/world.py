@@ -124,6 +124,11 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
                     miss.append(f"area {a['id']}→enemy:{u['ref']}")
             if int(p["spawn"]) >= int(tb.get("constraints", {}).get("enemies", 1)):
                 miss.append(f"area {a['id']}→spawn index {p['spawn']} ≥ tilemap spawns")
+            req = str(p.get("requires", ""))
+            if req.startswith("stage:"):   # Q4 gated packs: the quest stage must exist
+                qid, _, sid = req[6:].partition(">=")
+                if not any(q["id"] == qid and any(st["id"] == sid for st in q["stages"]) for q in world["quests"]):
+                    miss.append(f"area {a['id']}→pack requires unknown stage {req}")
     for q in world["quests"]:
         for st in q["stages"]:
             r = st.get("reward", {})

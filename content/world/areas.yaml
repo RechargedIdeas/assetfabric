@@ -19,6 +19,10 @@ areas:
     packs:
       - {spawn: 0, units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 1}]}
       - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 1}]}
+      # Q4 pacing [INFERENCE C-91]: the route repopulates once the party is crafting its boss prep, so the
+      # trip to the Warden is a fight, not an empty walk (packs carry a `requires` gate, same syntax as links).
+      - {spawn: 0, requires: "stage:q_warden>=craft", units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 2}]}
+      - {spawn: 1, requires: "stage:q_warden>=craft", units: [{ref: rock_brute, count: 1}, {ref: cave_mite, count: 1}]}
   - id: cave_deep
     tilemap: cave_deep
     biome: cave
@@ -28,6 +32,8 @@ areas:
       - {spawn: 0, units: [{ref: cave_mite, count: 3}]}
       - {spawn: 1, units: [{ref: emberling, count: 2}, {ref: cave_mite, count: 1}]}
       - {spawn: 2, units: [{ref: rock_brute, count: 1}, {ref: cave_mite, count: 2}]}
+      - {spawn: 1, requires: "stage:q_warden>=craft", units: [{ref: emberling, count: 2}, {ref: cave_mite, count: 2}]}
+      - {spawn: 2, requires: "stage:q_warden>=craft", units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 1}]}
   - id: warden_lair
     tilemap: cave_boss
     biome: cave

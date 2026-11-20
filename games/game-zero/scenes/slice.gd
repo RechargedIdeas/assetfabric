@@ -41,7 +41,7 @@ var _boss_engaged := false
 var _msg := ""
 var _boss_built := false
 var _transitions := 0             # bumped on every area change: a transition ends the tick (resume parity)
-var rep := {"areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
+var rep := {"wait_ticks": 0, "areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
 	"party_stats": {}, "boss": {}, "buff_at_boss": {}, "music_stems_loaded": {}, "checkpoints": []}
 
 
@@ -209,7 +209,7 @@ func _area_encounter() -> Dictionary:
 		var done: Array = ws.packs_cleared.get(ws.area, [])
 		var packs: Array = area_def.get("packs", [])
 		for i in packs.size():
-			if done.has(i):
+			if done.has(i) or not ws.requires_ok(str(packs[i].get("requires", ""))):
 				continue
 			for u in packs[i]["units"]:
 				enc["hostiles"].append({"ref": u["ref"], "count": int(u.get("count", 1)), "spawn": int(packs[i]["spawn"]), "pack": i})
@@ -316,12 +316,23 @@ func _process_kills() -> void:
 					ws.packs_cleared[ws.area] = []
 				ws.packs_cleared[ws.area].append(pk)
 				ws.note("pack_cleared", {"area": ws.area, "pack": pk})
-				if ws.packs_cleared[ws.area].size() == area_def.get("packs", []).size() and not ws.cleared.has(ws.area):
+				if _active_packs_cleared() and not ws.cleared.has(ws.area):
 					ws.cleared.append(ws.area)
 					ws.encounters_won += 1
 		ws.emit("defeated:" + ref)
 		if ws.cleared.has(ws.area):
 			ws.emit("cleared:" + ws.area)
+
+
+## Every pack that is live in this area right now (Q4: packs may carry a `requires` gate — the route
+## repopulates for the boss trip) is cleared.
+func _active_packs_cleared() -> bool:
+	var done: Array = ws.packs_cleared.get(ws.area, [])
+	var packs: Array = area_def.get("packs", [])
+	for i in packs.size():
+		if not done.has(i) and ws.requires_ok(str(packs[i].get("requires", ""))):
+			return false
+	return true
 
 
 func _update_combat() -> void:
@@ -482,6 +493,9 @@ func _autopilot_input() -> Dictionary:
 		rep["softlocks"].append({"tick": ws.tick, "area": ws.area, "kind": "stuck", "goal": key})
 		_goal_ticks = 0
 	if a["arrived"]:
+		if a["act"] == "wait":
+			_goal_ticks = 0     # waiting by a growing crop is a timer, not a soft-lock (Q4 crop cycle)
+			rep["wait_ticks"] += 1
 		perform(a["act"], a["arg"])
 		return {"move": Vector2.ZERO}
 	var l = sim.leader()
@@ -578,6 +592,7 @@ func _slice_report(final: Dictionary, wall_ms: float) -> Dictionary:
 		"swaps": rep["swaps"], "swap_parity": rep["swap_parity"], "overlay": rep["overlay"],
 		"boss": rep["boss"], "buff_at_boss": rep["buff_at_boss"],
 		"music": {"trace": director.trace, "stems_loaded": rep["music_stems_loaded"]},
+		"wait_ticks": int(rep["wait_ticks"]), "buys": ws.log_.filter(func(n): return n["kind"] == "buy").size(),
 		"callouts_total": callout_log.size(), "intents": intents_handled.size(),
 		"softlocks": rep["softlocks"], "checkpoints": rep["checkpoints"],
 		"resumed_from": rep.get("resumed_from", {}),

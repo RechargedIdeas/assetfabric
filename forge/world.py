@@ -198,11 +198,35 @@ def deterministic_supply(world: dict[str, Any], node_counts: dict[str, int]) -> 
     return sup
 
 
+def _buyable_seeds(world: dict[str, Any], coin: float) -> dict[str, int]:
+    """Seeds the stall sells for `coin` deterministic coins, cheapest first (greedy; Q4 second crop cycle)."""
+    out: dict[str, int] = {}
+    for seed, price in sorted(world["shop"].items(), key=lambda kv: (kv[1], kv[0])):
+        n = int(coin // price) if price > 0 else 0
+        if n > 0:
+            out[seed] = n
+            coin -= n * price
+    return out
+
+
+def stage_coin(world: dict[str, Any], quest: dict[str, Any], upto: int) -> float:
+    """Deterministic coin in hand when `quest` reaches stage `upto`: start kit + coin rewards of the
+    stages before it in that quest. Random drops, side quests and the boss's guaranteed coin
+    (later in the chain) do not count, so a bad roll can never block a purchase the quest needs."""
+    coin = float(world["start_kit"].get("coin", 0))
+    for st in quest["stages"][:upto]:
+        coin += float(st.get("reward", {}).get("coin", 0))
+    return coin
+
+
 def solvability(world: dict[str, Any], node_counts: dict[str, int]) -> dict[str, Any]:
     sup = deterministic_supply(world, node_counts)
     missing = []
+    crops_by_seed = {c["seed"]: c for c in world["crops"].values()}
+    kit_seeds = {s: float(world["start_kit"].get(s, 0)) for s in crops_by_seed}
     for q in world["quests"]:
-        for st in q["stages"]:
+        for si, st in enumerate(q["stages"]):
+            buy = _buyable_seeds(world, stage_coin(world, q, si)) if q.get("main") else {}
             for part in (st.get("guard") or "").split("&"):
                 if part.startswith("have:"):
                     name, _, n = part[5:].partition(">=")
@@ -210,8 +234,9 @@ def solvability(world: dict[str, Any], node_counts: dict[str, int]) -> dict[str,
                         missing.append(f"{q['id']}.{st['id']}: {name} needs {n}, deterministic supply {sup.get(name, 0)}")
                 elif part.startswith("total:"):
                     name, _, n = part[6:].partition(">=")
-                    cap = {"planted": sum(sup.get(c["seed"], 0) for c in world["crops"].values()),
-                           "harvested": sum(sup.get(c["seed"], 0) * c["yield"] for c in world["crops"].values()),
+                    seeds = {s: kit_seeds[s] + buy.get(s, 0) for s in crops_by_seed}
+                    cap = {"planted": sum(seeds.values()),
+                           "harvested": sum(seeds[s] * crops_by_seed[s]["yield"] for s in seeds),
                            "gathered": float(sum(node_counts.values()))}.get(name, float("inf"))
                     if cap < float(n):
                         missing.append(f"{q['id']}.{st['id']}: total {name} needs {n}, deterministic cap {cap}")

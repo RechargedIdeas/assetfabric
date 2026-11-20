@@ -19,9 +19,10 @@ items:
   - {id: flint_edge, kind: gear, slot: shared, bonus: {atk_pct: 0.06}} # shared item: whole party
   - {id: warden_charm, kind: gear, slot: unique, bonus: {def_flat: 1.5}}  # character-unique: leader
 crops:
-  # growth in world ticks (60 Hz); the farm keeps growing while the party is away
-  - {id: sunroot, seed: sunroot_seed, grow_ticks: 2400, yield: 2}
-  - {id: glowcap, seed: glowcap_spore, grow_ticks: 3600, yield: 2}
+  # growth in world ticks (60 Hz); the farm keeps growing while the party is away.
+  # Q4 pacing [INFERENCE C-91]: 2 / 3 game-minutes (was 40 s / 60 s) so a crop cycle spans a cave run.
+  - {id: sunroot, seed: sunroot_seed, grow_ticks: 7200, yield: 2}
+  - {id: glowcap, seed: glowcap_spore, grow_ticks: 10800, yield: 2}
 recipes:
   - {id: moss_salve, out: {moss_salve: 1}, in: {cave_moss: 1, sunroot: 1}}
   - {id: ember_tonic, out: {ember_tonic: 1}, in: {glowcap: 2, flint: 1}}

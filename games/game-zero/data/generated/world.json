@@ -109,6 +109,34 @@
        "ref": "cave_mite"
       }
      ]
+    },
+    {
+     "requires": "stage:q_warden>=craft",
+     "spawn": 1,
+     "units": [
+      {
+       "count": 2,
+       "ref": "emberling"
+      },
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      }
+     ]
+    },
+    {
+     "requires": "stage:q_warden>=craft",
+     "spawn": 2,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 1,
+       "ref": "emberling"
+      }
+     ]
     }
    ],
    "tilemap": "cave_deep"
@@ -180,6 +208,34 @@
        "ref": "emberling"
       }
      ]
+    },
+    {
+     "requires": "stage:q_warden>=craft",
+     "spawn": 0,
+     "units": [
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      },
+      {
+       "count": 2,
+       "ref": "emberling"
+      }
+     ]
+    },
+    {
+     "requires": "stage:q_warden>=craft",
+     "spawn": 1,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 1,
+       "ref": "cave_mite"
+      }
+     ]
     }
    ],
    "tilemap": "tunnels_01"
@@ -204,13 +260,13 @@
  },
  "crops": {
   "glowcap": {
-   "grow_ticks": 3600,
+   "grow_ticks": 10800,
    "id": "glowcap",
    "seed": "glowcap_spore",
    "yield": 2
   },
   "sunroot": {
-   "grow_ticks": 2400,
+   "grow_ticks": 7200,
    "id": "sunroot",
    "seed": "sunroot_seed",
    "yield": 2
@@ -546,8 +602,8 @@
      "harvest": {
       "on": {
        "harvest": {
-        "guard": "total:harvested>=4",
-        "target": "craft"
+        "guard": "total:harvested>=8",
+        "target": "replant"
        }
       }
      },
@@ -572,6 +628,14 @@
        }
       }
      },
+     "replant": {
+      "on": {
+       "plant": {
+        "guard": "total:planted>=6",
+        "target": "second_harvest"
+       }
+      }
+     },
      "rest": {
       "on": {
        "save": "done"
@@ -580,6 +644,14 @@
      "return_farm": {
       "on": {
        "enter:field": "harvest"
+      }
+     },
+     "second_harvest": {
+      "on": {
+       "harvest": {
+        "guard": "total:harvested>=12",
+        "target": "craft"
+       }
       }
      },
      "warden": {
@@ -637,8 +709,24 @@
      "when": "enter:field"
     },
     {
-     "guard": "total:harvested>=4",
+     "guard": "total:harvested>=8",
      "id": "harvest",
+     "reward": {
+      "xp": 10
+     },
+     "when": "harvest"
+    },
+    {
+     "guard": "total:planted>=6",
+     "id": "replant",
+     "when": "plant"
+    },
+    {
+     "guard": "total:harvested>=12",
+     "id": "second_harvest",
+     "reward": {
+      "coin": 4
+     },
      "when": "harvest"
     },
     {
