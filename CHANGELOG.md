@@ -4,6 +4,25 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.3+f7] — 2026-11-19 — Companion track C9 (MirrorWeave), C10 (LensForge), C11 (depth), C12 (SplatForge path): interfaces + labelled stubs
+
+Scope: typed contracts, a real/stub/deferred register, and CPU paths only where cheap and spec-grounded. **No** live streaming,
+ARCore, dense depth or reconstruction exists; nothing ran on a phone or GPU (INFERENCES C-32…C-50).
+
+### Added
+- **Stub framework** `forge/stubs.py` (`StubError`), `forge/registry.py`, `content/companions/c9_c12.yaml` (16 real · 14 stub · 3 deferred), `forge/i18n.py` + `stub.*` locale keys; Kotlin `StubException` + Android `stub_*` strings. Stubs refuse (CLI exit 3, LoomLink 501) and never fake output.
+- **MirrorWeave (C9)** `forge/mirrorweave.py`, `forge mirror …`, LoomLink `/mirror/*` (capabilities `mirror`, `drive_studio`): frame envelope + ring hub, stills/telemetry stream, allow-listed read-only control. Stubs: screen capture, H.264/WebRTC video, desktop→Android input, Studio input, camera focus.
+- **LensForge (C10)** `forge/lensforge.py`, `forge lens …`, `content/patternvault/capture_profiles.json`: capture modes, integer-exact quality (Python = Kotlin), set assessment, telemetry + EXIF, quality on offloaded captures. Stubs: ARCore session, video, focus.
+- **Depth (C11)** `forge/depth.py`, `forge depth …`: pinhole distance, inverse-depth scale alignment. Stubs: DepthAnything V2, ARCore depth.
+- **SplatForge path (C12)** `forge/realityloom.py`, `forge recon …`: route rule, deterministic capture bundle, plan (degraded route, `blocked_by`, unmeasured ETA), cluster placement check, 3DGS `.ply` validator. Stubs: SplatForge, CPU photogrammetry, MeshWeaver, GDGS import.
+- **GroundWeave** ops `mirror.encode`, `lens.assess`, `depth.distance`, `recon.plan` (real CPU rung) and a new `planned: true` op class (`depth.estimate`, `recon.mesh`, `shuttle.gdgs`); `recon.splat` stays `gpu_required` → loomcluster.
+- **FabricCore (Kotlin)** `Stubs/MirrorWeave/LensForge/Depth/Recon` + CLI commands; 35 JUnit tests; shared vectors `tests/fixtures/c9_c12_vectors.json`.
+- `forge accept C9`…`C12` (+ `C9-C12`), `tests/test_c9_c12.py` (27), CI step in the parallel `pocketloom` job, `docs/acceptance-tests/C9-C12.md`, results `C9–C12.json`.
+
+### Changed
+- `forge/loomlink.py` (mirror routes, 501 stubs, capture quality), `forge/groundweave.py` (planned ops), `forge/milestones.py`, `forge/report.py`; Pillow added as optional `lens`/`dev` extra.
+- Version `0.7.2+f7` → `0.7.3+f7`. HANDOVER next step now states F8 needs Producer scope confirmation and cites inferences §C7/C8.
+
 ## [0.7.2+f7] — 2026-11-19 — Companion track C7 (LoomCluster) + C8 (GroundWeave)
 
 ### Added

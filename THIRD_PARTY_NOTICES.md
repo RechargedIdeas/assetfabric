@@ -9,6 +9,7 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | Android NDK `libc++_shared` | inside the APK (from the Godot Android template) | Apache-2.0 WITH LLVM-exception |
 | Emscripten runtime | inside the Web build (from the Godot Web template) | MIT OR NCSA |
 | Playwright (optional extra `package`) | PWAPipeline smoke (drives the system Chrome; not shipped) | Apache-2.0 |
+| Pillow (optional extra `lens`, in `dev`) | LensForge JPEG/WebP decode + EXIF (C10); not shipped in any build | MIT-CMU / HPND (verify before shipping) |
 | PyYAML | `forge.yaml` parsing | MIT |
 | pydantic | data models | MIT |
 | jsonschema | manifest / telemetry validation | MIT |

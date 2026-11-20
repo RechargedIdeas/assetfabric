@@ -80,6 +80,7 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
 | `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
+| `forge/mirrorweave.py`, `forge/lensforge.py`, `forge/depth.py`, `forge/realityloom.py`, `forge/stubs.py`, `forge/registry.py`, `content/companions/c9_c12.yaml`, `content/patternvault/capture_profiles.json` | C9–C12: MirrorWeave frame hub + LoomLink routes, LensForge quality/modes/telemetry, pinhole depth + alignment, RealityLoom route/bundle/plan + `.ply` validator; the register marks each capability real / stub / deferred and is cross-checked against code, locales, Kotlin and the ladder (Kotlin: `fabric/core/{Stubs,MirrorWeave,LensForge,Depth,Recon}.kt`) | real CPU paths + labelled stubs (see §C9–C12) |
 | `studio/` | Studio GUI | stub |
 | `forge/loomcluster.py`, `cluster/loomcluster/` | LoomCluster (C7) equal-node scheduler | real, loopback-proven (see §LoomCluster / GroundWeave) |
 | `forge/groundweave.py`, `content/groundweave/ladder.yaml` | GroundWeave (C8) GPU→CPU ladder | real; all GPU rungs `planned` |
@@ -173,3 +174,21 @@ REST · CLI (`forge`) · MCP · ACP · WebSocket · gRPC · in-Studio terminal.
 - **Placement:** `requires.device` is matched against adverts; unmatched → HTTP 400. GPU-required GroundWeave ops (`recon.splat`) are routed this way.
 - **PocketLoom:** `forge link serve --cluster URL` plugs a `ClusterBridge` into LoomLink's `/offload`; the phone is a client of the fleet (a Kotlin peer node is future work).
 - **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback — see SECURITY.md for what that does not cover.
+
+## C9–C12 companion interfaces (MirrorWeave · LensForge · depth · SplatForge path)
+
+```
+PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; seq-ordered ring, ≤ 8 MiB)      real
+                                /mirror/control (forge.status · groundweave.show · mirror.stats)    real (read-only)
+                                /mirror/control input · focus · android      ─▶ 501 [STUB]           stub
+ capture (still/burst/orbit/sweep) ─▶ LensForge.assess (integer luma · Laplacian var · clip %)       real, Kotlin = Python
+ metres ◀─ Depth: pinhole + inverse-depth alignment (dense estimator DepthAnything V2 ─▶ [STUB])     real / stub
+ recon.capture ─▶ RealityLoom: route (backdrop→splat · hero_prop→photogrammetry→MeshWeaver) · bundle · plan
+                  └─ submit: cluster placement check (rocm node?) ─▶ SplatForge [STUB] — nothing is queued
+```
+
+Rules: a stub raises `StubError`/`StubException` (`[STUB <id> <Cn>]`, locale key), never returns data; every capability is
+a row in `content/companions/c9_c12.yaml` and `forge.registry.check` verifies the row against code, locales
+(`stub.*` / Android `stub_*`), Kotlin symbols and GroundWeave ops. Ladder ops: real CPU `mirror.encode`, `lens.assess`,
+`depth.distance`, `recon.plan`; `planned` (all rungs): `depth.estimate`, `recon.mesh`, `shuttle.gdgs`; `gpu_required` +
+`route: loomcluster`: `recon.splat`. Inferences C-32…C-50.

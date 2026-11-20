@@ -60,10 +60,10 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge accept <F>` | Headless Godot increment passes; result recorded |
 | `forge accept C1-C6` / `C<n>` | PocketLoom Gradle build + APK verify + Kotlin↔Python interop pass; `results/C<n>.json` recorded |
 | `forge accept C9-C12` / `C<n>` | MirrorWeave / LensForge / depth / SplatForge-path contracts verified, every stub refuses with a `[STUB …]` label, real CPU paths exact on 2 cores; `results/C<n>.json` |
-| `forge mirror info|push|latest|stream|control` | stills/telemetry real; `stream --source screen|camera-video`, `control --target android` exit 3 (stub) |
-| `forge lens modes|assess|exif|session` | modes/quality/EXIF real; `session --kind arcore|focus|video` exit 3 |
-| `forge depth distance|estimate` | `distance` real (pinhole); `estimate` exit 3 (stub) |
-| `forge recon route|tools|bundle|plan|submit|check-splat|train` | all real except `train` (exit 3) and `submit` (placement check, then SplatForge stub; nothing queued) |
+| `forge mirror info/push/latest/stream/control` | stills/telemetry real; `stream --source screen` / `camera-video`, `control --target android` exit 3 (stub) |
+| `forge lens modes/assess/exif/session` | modes/quality/EXIF real; `session --kind arcore` / `focus` / `video` exit 3 |
+| `forge depth distance/estimate` | `distance` real (pinhole); `estimate` exit 3 (stub) |
+| `forge recon route/tools/bundle/plan/submit/check-splat/train` | all real except `train` (exit 3) and `submit` (placement check, then SplatForge stub; nothing queued) |
 | `forge link serve` | Prints one-time code + `loomlink://` URI (QR if `qrcode` installed); serves pairing/offload/sync |
 | `forge report` | Regenerates STATUS.md |
 | `forge sandbox doctor` / `run <brief>` | Lists real tiers; runs one brief sandboxed |
