@@ -22,10 +22,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pillow>=10", "websockets>=13", "onnxruntime>=1.18", "onnx>=1.16", "opencv-python-headless>=4.8"]   # pillow: C10 decode/EXIF; websockets: C9; onnxruntime/onnx: C11 + GIRT ONNX (model tests skip without fetched weights)
+dev = ["pytest>=8", "pillow>=10", "websockets>=13", "onnxruntime>=1.18", "onnx>=1.16", "opencv-python-headless>=4.8", "vosk>=0.3.45", "tokenizers>=0.19"]   # vosk/tokenizers: VoiceBridge + persona micro-LM (model tests skip without fetched weights); pillow: C10 decode/EXIF; websockets: C9; onnxruntime/onnx: C11 + GIRT ONNX (model tests skip without fetched weights)
 mirror = ["websockets>=13", "pillow>=10"]   # C9 MirrorWeave WebSocket transport + video decode-to-PNG (system ffmpeg is a tool, not a dep)
 depth = ["onnxruntime>=1.18", "onnx>=1.16", "pillow>=10"]   # C11 DepthAnything V2 Small on the CPU EP (onnxruntime MIT, onnx Apache-2.0); weights via `forge models fetch`
 recon = ["opencv-python-headless>=4.8", "pillow>=10"]   # C12 CPU photogrammetry (OpenCV Apache-2.0; wheel packaging MIT, bundled FFmpeg LGPL — desktop tool only)
+voice = ["vosk>=0.3.45"]           # VoiceBridge offline STT (Vosk, Apache-2.0); model via `forge models fetch vosk-small-en-us-0.15`
+lm = ["onnxruntime>=1.18", "tokenizers>=0.19"]   # persona micro-LM (Qwen2.5-0.5B int8 ONNX; onnxruntime MIT, tokenizers Apache-2.0)
 lens = ["pillow>=10"]             # LensForge (C10): decode JPEG/WebP, read EXIF; PNG works without it
 studio = ["PySide6-Essentials>=6.6"]   # Studio window (LGPL-3.0, dynamically imported wheel — THIRD_PARTY_NOTICES)
 tune = ["optuna>=3.6"]

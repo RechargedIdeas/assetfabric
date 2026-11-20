@@ -29,12 +29,20 @@
   "mirror.ws.auth_failed": "MirrorWeave WebSocket authentication failed: {reason}",
   "studio.title": "AssetFabric Studio",
   "studio.mirror.empty": "No mirrored frame yet — pair a phone with forge link serve and start mirroring.",
-  "studio.console.placeholder": "Type here (remote Studio input from a paired phone lands here; nothing is executed)",
+  "studio.console.placeholder": "Type here — remote Studio input from a paired phone lands here. Plain text is echoed; /help lists the read-only commands.",
   "studio.tab.status": "Status",
   "studio.tab.mirror": "Mirror",
   "studio.tab.console": "Console",
   "studio.missing_pyside": "Studio needs PySide6 (uv pip install -e '.[studio]'): {err}",
   "depth.ort_missing": "Dense depth needs onnxruntime: install the `depth` extra (pip install -e '.[depth]').",
   "recon.splat.cpu_too_large": "CPU splat training is bounded to tiny scenes ({splats} splats, {width} px, {views} views requested; limits {max_splats} splats, {max_w} px, {max_views} views). Larger scenes need the GPU trainer (recon.splat, route loomcluster).",
-  "recon.splat.sfm_failed": "CPU SfM could not pose the capture for splat training ({registered} views registered, {points} points); need at least 3 views and 20 points."
+  "recon.splat.sfm_failed": "CPU SfM could not pose the capture for splat training ({registered} views registered, {points} points); need at least 3 views and 20 points.",
+  "studio.tab.swatches": "Swatches",
+  "studio.tab.voice": "Voice",
+  "studio.tab.persona": "Persona",
+  "studio.slash.help": "Read-only commands: /status · /models · /palettes · /intent <command text> · /help. Nothing here writes files or runs a shell.",
+  "studio.slash.unknown": "Unknown or not allowed: /{cmd} (see /help).",
+  "studio.voice.open": "Transcribe a WAV…",
+  "studio.persona.draft": "Draft lines",
+  "studio.persona.note": "Micro-LM drafts for review only — Studio writes nothing; use `forge persona author --write` to queue drafts (reviewed: false)."
 }

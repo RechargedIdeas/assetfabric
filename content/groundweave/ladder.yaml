@@ -53,6 +53,28 @@ ops:
     probe_brief: callouts
     ladder:
       - {id: persona-bigram, device: cpu, impl: real}
+  lm.persona:
+    budget_s_2core: 60
+    probe_brief: "runtime:persona-lm"
+    requires_model: qwen2.5-0.5b-instruct-onnx
+    note: >-
+      Persona micro-LM (SPEC backbone Qwen2.5-0.5B, Apache-2.0): int8 ONNX on the onnxruntime CPU EP, own KV-cache decoding loop,
+      persona-card prompt; drafts lines for human review (`forge persona author`), never loaded by the game (callout cache +
+      in-engine bigram stay the runtime path, G-AI-03). Probe: one greedy line, intra-op threads = 1 (byte-identical tokens).
+      Per-character LoRA adapters need GPU training → planned. Without the weights `verify` reports `model_absent`.
+    ladder:
+      - {id: qwen-lora-rocm, device: rocm, impl: planned}
+      - {id: qwen2.5-0.5b-int8-onnx-cpu, device: cpu, impl: real}
+  stt.voice:
+    budget_s_2core: 30
+    probe_brief: "runtime:voice"
+    requires_model: vosk-small-en-us-0.15
+    note: >-
+      VoiceBridge (ADR-0006): Vosk small en-us (Apache-2.0) constrained to the closed intent grammar, word-confidence gate
+      (< 0.7 → unknown). Probe: the 20 committed synthetic-speech fixtures → intents (accuracy ≥ 0.85, wrong-action ≤ 0.08).
+      whisper.cpp (the spec's optional accurate fallback) is not built. Without the model `verify` reports `model_absent`.
+    ladder:
+      - {id: vosk-small-grammar-cpu, device: cpu, impl: real}
   gen.persona_lm:
     kind: persona_lm
     budget_s_2core: 30

@@ -295,6 +295,27 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         return {"brief": "sfm-probe", "ok": ev["registered"] == 8 and ev["rot_err_deg_max"] < 2.0, "rot_err_deg_max": round(ev["rot_err_deg_max"], 4),
                 "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
                 "digest": hashlib.sha256(np.round(rec["points"], 6).tobytes()).hexdigest()}
+    if name == "voice":                      # VoiceBridge on the committed synthetic-speech fixtures
+        from forge import voice
+        sel = select("stt.voice", root=root)
+        r = voice.evaluate_fixtures(voice.VoiceBridge(root))
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "voice-probe", "ok": r["accuracy"] >= 0.85 and r["wrong_action_rate"] <= 0.08, "accuracy": r["accuracy"],
+                "wrong_action_rate": r["wrong_action_rate"], "wall_s": round(wall, 3), "cores": aff, "device": sel["device"],
+                "backend": sel["backend"], "digest": hashlib.sha256(json.dumps([(x["heard"], x["intent"]) for x in r["rows"]]).encode()).hexdigest()}
+    if name == "persona-lm":                 # one greedy persona line, single intra-op thread (deterministic tokens)
+        from forge import microlm
+        from forge.generators.callouts import load_personas
+        sel = select("lm.persona", root=root)
+        src = load_personas(root)
+        lm = microlm.QwenLM(root, threads=1)
+        g = lm.generate(microlm.chat_prompt(microlm.persona_card("kael", src["personas"]["kael"], "low_hp", src["safety"])), max_new_tokens=24)
+        line = microlm.clean(g["text"])
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "persona-lm-probe", "ok": bool(line), "line": line, "tok_per_s": g["tok_per_s"], "wall_s": round(wall, 3),
+                "cores": aff, "device": sel["device"], "backend": sel["backend"], "digest": hashlib.sha256(json.dumps(g["tokens"]).encode()).hexdigest()}
     if name == "splat-cpu":                 # C12 tiny-scene CPU 3DGS training on SfM poses (BLAS-free → byte-identical)
         from forge import photogrammetry as pg
         from forge import splattrain as st

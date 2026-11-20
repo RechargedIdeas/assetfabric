@@ -51,6 +51,9 @@ def generate_callouts(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
         cache[pid] = {}
         for ev in src["events"]:
             templates = p["callouts"].get(ev, [])
+            if brief.get("include_reviewed_lm_drafts", True):     # human-reviewed micro-LM drafts (forge persona author)
+                from forge.microlm import reviewed_lines
+                templates = templates + [x for x in reviewed_lines(ctx.root, pid, ev) if x not in templates]
             if not templates:
                 missing.append(f"{pid}:{ev}")
             lines = []
