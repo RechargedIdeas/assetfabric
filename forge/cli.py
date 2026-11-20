@@ -310,9 +310,17 @@ def accept_cmd(milestone: str, no_write: bool, root: Path | None) -> None:
     """Run the Game Zero headless acceptance for a Fabric milestone (needs Godot),
     or a companion milestone C1…C6 / all of them with `C1-C6` (needs JDK 17 + Android SDK; else fast mode),
     or C7 / C8 / `C7-C8` (LoomCluster loopback fleet + GroundWeave CPU-fallback proofs),
-    or C9…C12 / `C9-C12` (MirrorWeave, LensForge, metric depth, SplatForge path: real paths, real_unverified_on_device Android impls, remaining labelled stubs)."""
+    or C9…C12 / `C9-C12` (MirrorWeave, LensForge, metric depth, SplatForge path: real paths, real_unverified_on_device Android impls, remaining labelled stubs).
+    `all` runs every one of them in order (F0…F7, C1–C12)."""
     from forge.milestones import CL_ORDER, CX_ORDER, C_ORDER, INCREMENTS, accept
 
+    if milestone.upper() == "ALL":   # every Fabric milestone + every companion milestone, in order (0.7.9)
+        from forge.milestones import ORDER
+
+        names = [m for m in ORDER if m in INCREMENTS] + list(C_ORDER) + list(CL_ORDER) + list(CX_ORDER)
+        reports = [accept(m, root or find_repo_root(), write=not no_write) for m in names]
+        click.echo(json.dumps({r["milestone"]: {"passed": r["passed"], "errors": r["errors"]} for r in reports}, indent=2))
+        sys.exit(0 if all(r["passed"] for r in reports) else 1)
     if milestone.upper() in ("C9-C12", "RECON"):   # MirrorWeave + LensForge + depth + SplatForge path
         reports = [accept(m, root or find_repo_root(), write=not no_write) for m in CX_ORDER]
         click.echo(json.dumps({r["milestone"]: {"passed": r["passed"], "errors": r["errors"], "perf": r["perf"]}
