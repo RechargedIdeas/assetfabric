@@ -47,7 +47,7 @@ jobs:
       - name: System tools (ffmpeg/libvpx + Xvfb + Qt runtime libs; cached — game shard needs Xvfb for the G-A11Y-01 render check)
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 openscad
           version: "1"
       - name: Install
         run: |
@@ -96,7 +96,7 @@ jobs:
       - name: System tools for C9 (ffmpeg/libvpx video + X11 capture under Xvfb; cached)
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 openscad
           version: "1"
       - name: Install forge
         run: |

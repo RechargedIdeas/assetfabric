@@ -44,5 +44,17 @@
   "studio.slash.unknown": "Unknown or not allowed: /{cmd} (see /help).",
   "studio.voice.open": "Transcribe a WAV…",
   "studio.persona.draft": "Draft lines",
-  "studio.persona.note": "Micro-LM drafts for review only — Studio writes nothing; use `forge persona author --write` to queue drafts (reviewed: false)."
+  "studio.persona.note": "Micro-LM drafts for review only — Studio writes nothing; use `forge persona author --write` to queue drafts (reviewed: false).",
+  "universal.parametric.crate.title": "Panelled crate",
+  "universal.parametric.pillar.title": "Fluted pillar",
+  "universal.parametric.barrel.title": "Hooped barrel",
+  "universal.parametric.cog.title": "Gear cog",
+  "universal.parametric.error.unknown_template": "Unknown parametric template.",
+  "universal.parametric.error.param_out_of_range": "Parameter value is outside the template's allowed range.",
+  "universal.export.error.unknown_target": "Unknown adapter or engine.",
+  "universal.plugin.rejected": "Plugin rejected: it failed the manifest, security or contract checks.",
+  "universal.plugin.registered": "Plugin verified in the sandbox and registered.",
+  "universal.plugin.tampered": "Plugin files changed after registration; it was not loaded.",
+  "universal.evolve.promoted": "A better recipe passed every gate and was promoted.",
+  "universal.evolve.no_improvement": "No candidate beat the active recipe; nothing changed."
 }
