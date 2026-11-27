@@ -41,3 +41,29 @@ pin: p95 ≈ 56 ms. The cost is spread across interpreted movement, BT and polic
 remaining GDScript-level change gets the ≈ 25 % needed on GitHub's slower 2-core runners. The native step (GDExtension)
 stays the follow-up; it was not attempted because the box has no C++ toolchain and a native sim needs per-platform
 builds (Linux, Windows, Android arm64, Web with dlink templates) plus a bit-parity gate against the GDScript sim.
+
+## 0.9.2 — native step feasibility (2026-11-27, INFERENCE C-104)
+
+Toolchain: g++ 14.2.0 (Debian) + SCons are now on the build box. `godot-cpp` tag `godot-4.3-stable` (`fbbf9ec`) builds
+cleanly: `scons platform=linux target=template_release -j8` → `libgodot-cpp.linux.template_release.x86_64.a` (75 MB) in
+1 min 41 s wall on 8 vCPU (≈ 5–7 min expected on a 2-core runner without cache). So building an extension is feasible.
+
+What a native piece would buy — swapbench pinned to 2 cores (`taskset -c 0,1`, `--reps=5`), same box, 2 runs each:
+
+| Variant | p50 ms | p95 ms |
+|---|---|---|
+| shipped (GDScript) | 21.59 / 22.04 | 38.21 / 35.97 |
+| `move()` short-circuited in forward clones (upper bound of a native movement kernel) | 19.39 / 20.49 | 31.96 / 36.55 |
+
+Even a free movement step saves ≈ 5–15 %; GitHub's 2-core runners need ≈ 25 % (63–66 → < 50 ms). The rest of the cost is
+brains (BT interpreter + GIRT policy ≈ 55 % per the table above), casts and cooldowns — all reading `SimEntity` objects. So
+the only native change that closes the gap is the **whole forward sim** in C++ (combat sim, entities, grid flow fields,
+BT interpreter, GIRT policy), fed from the struct-of-arrays mirror and gated by a bit-parity check against the GDScript
+sim (Godot's `Vector2` is float32 while GDScript `float` is double — every conversion point must be replicated), plus
+Linux/Windows/Android-arm64/Web(dlink) binaries and a cached CI build. That is scoped as its own milestone; nothing native
+was added in 0.9.2 and the GDScript path remains the only implementation.
+
+Reproduce the probe: copy `games/game-zero` to a scratch dir, insert at the top of `CombatSim.move()`
+`if forward: e.moving = dir.length_squared() > 0.0001; return`, then run
+`taskset -c 0,1 godot --headless --path <scratch> -- --scene=swapbench --reps=5`.
+

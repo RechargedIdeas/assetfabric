@@ -384,10 +384,20 @@ def recorded(root: Path, milestone: str) -> dict[str, Any] | None:
 
 def offset_report(root: Path, fabric_milestone: str) -> dict[str, Any]:
     """Fabric may be at most one milestone ahead: all milestones before the current
-    one must have a passing recorded Game acceptance."""
-    idx = ORDER.index(fabric_milestone) if fabric_milestone in ORDER else 0
+    one must have a passing recorded Game acceptance.
+
+    U-track ids (U1…) start after every F milestone is accepted; prior U milestones
+    on that track must also have a passing record. Game Zero stays on the last F
+    increment (`liveops-readiness`).
+    """
+    if fabric_milestone in U_ORDER:
+        prior = list(ORDER) + U_ORDER[: U_ORDER.index(fabric_milestone)]
+    elif fabric_milestone in ORDER:
+        prior = ORDER[: ORDER.index(fabric_milestone)]
+    else:
+        prior = list(ORDER)
     missing = []
-    for m in ORDER[:idx]:
+    for m in prior:
         rec = recorded(root, m)
         if m != "F0" and not (rec and rec.get("passed")):
             missing.append(m)

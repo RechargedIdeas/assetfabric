@@ -98,7 +98,7 @@ class C9C12Test {
 
     @Test fun everyStubRefuses() {
         val r = allStubs()
-        assertTrue(r.size >= 1)                                  // only recon.splatforge left since 0.7.6
+        assertTrue(r.size >= 1)                                  // only recon.splat_submit left (0.9.2; was recon.splatforge since 0.7.6)
         for ((id, v) in r) {
             val m = v.asMap()
             assertEquals(true, m["refused"], id)

@@ -4,7 +4,11 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
-### Added — U1 universal 2D/2.5D/3D engine (user request t65u; branch `feat/universal-engine-u1`)
+## [0.10.0+u1] — 2026-11-27 — U1 universal 2D/2.5D/3D engine
+
+User request t65u; branch `feat/universal-engine-u1` merged into `main`.
+
+### Added — U1 universal 2D/2.5D/3D engine (user request t65u)
 - **Scene IR** `forge/universal/ir.py` (2D sprites/atlases, 2.5D layers/cards, 3D meshes + skins + PBR + cameras, point
   clouds, 3DGS splats; deterministic JSON digest) and **10 coordinate conventions** (`coords.py`: glTF/Godot, Unity,
   Unreal, Blender, Source, OpenGL/DirectX Y-up, Z-up variants) with sub-1e-9 round trips.
@@ -23,9 +27,84 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 - **Plugins + gap detector** `plugins.py`: manifest rules, static AST policy, contract suite inside forge.sandbox
   (bwrap), versioned register/rollback, sandboxed hot-load proxies, tamper refusal, scaffold; `capabilities.yaml` gap
   report; example X3D exporter plugin; hostile fixtures (ADR-0026).
-- `forge accept U1` (`forge/accept_u1.py`, ≈ 50 s), `tests/test_universal_engine.py` (54 tests),
+- `forge accept U1` (`forge/accept_u1.py`, ≈ 50 s), `tests/test_universal_engine.py`,
   `docs/architecture/universal-engine.md`, ADR-0023…0026, INFERENCES §U1, locale keys `universal.*`; OpenSCAD added
-  to the CI apt packages.
+  to the CI apt packages (core shard, uncached step).
+
+### Changed
+- Version `0.10.0+u1` (Fabric). Game Zero stays `0.9.1+f9` — no game code changed. Merges `0.9.2+f9` (post-F9 batch 2)
+  and `0.9.1+f9` (batch 1).
+- `forge.yaml` `fabric.milestone` may be `U[0-9]+` as well as `F[0-9]+`; `forge status` / `forge report` treat U1 as the
+  current Fabric milestone while Game Zero stays on `liveops-readiness`. STATUS.md lists U1 with F0–F9 and C1–C12.
+
+### Verified
+- `tests/test_universal_engine.py` 53 passed (23.6 s, local); `forge accept U1` green (≈ 45 s wall; OpenSCAD 2021.01,
+  Blender 4.3.2, Godot 4.3 all `native_verified` on this box); `forge status` HEALTHY `0.10.0+u1` / U1; STATUS regenerated
+  (F0–F9, C1–C12, U1 all green). F0–F9 + C1–C12 recordings are those landed in `0.9.2+f9` (`forge accept all` on that
+  branch: 22 green, 14 min 57 s). No GPU or hardware claim.
+
+## [0.9.2+f9] — 2026-11-27 — Post-F9 operations batch 2: AMD-first ONNX EPs, full-scale SplatForge runner + cluster job
+
+HANDOVER §Next steps 5 (GPU) and 7 (Q3 native step) — everything that can be built and proven on a CPU-only box.
+INFERENCES C-101…C-104. **Nothing here ran on a GPU.**
+
+### Added
+- **`forge/onnx_ep.py`** (C-101): AMD-first ONNX Runtime EP selection (MIGraphX/ROCm → DirectML → CPU) with CPU fallback
+  at session creation and demotion on a failing GPU run; used by DepthAnything (`forge/depth.py`), GIRT parity
+  (`forge/girt_onnx.py`) and the persona micro-LM (`forge/microlm.py`); `forge groundweave onnx-ep [--selftest]`;
+  C11 acceptance `onnx_ep` (8-case contract vs a fake onnxruntime + the real CPU wheel). Status `rocm_ready_unverified`.
+- **`forge/splatforge_gpu.py`** (C-102): full-scale SplatForge runner — bundle → CPU SfM → nerfstudio project →
+  deterministic config → external OpenSplat-class trainer (`--trainer-cmd` / `FORGE_SPLAT_CMD` / `opensplat`) →
+  `check_splat_ply` + scene-bounds check → `BUNDLE/splat_gpu/{point_cloud.ply,train.json,config.json,trainer.log}`;
+  `forge recon train BUNDLE --stage splat [--contract-probe]`; contract-probe trainer (`python -m forge.splatforge_gpu
+  probe-trainer`, trains nothing). `realityloom.SplatForge` is now a thin alias. Status `real_unverified_on_gpu`.
+- **LoomCluster op `recon.splat`** (C-103): `requires: rocm`, hash-verified inline bundle, node-local trainer only,
+  artifacts as verified blobs; `forge recon submit --bundle DIR | FILES --out DIR --cluster URL`; C12 acceptance
+  `cluster.cluster_splat_job` (loopback fleet, simulated-rocm node, contract probe). Register row `recon.splat_cluster`.
+- GroundWeave ladder rule: a real non-CPU rung must declare `verified: true|false` (`true` needs `evidence:`);
+  `depth.estimate` ROCm/DirectML and `recon.splat` `opensplat-rocm` rungs are real with `verified: false`.
+
+### Changed
+- Register: `recon.splatforge` stub → `real_unverified_on_gpu`; the remaining stub is `recon.splat_submit`
+  (phone-initiated submit, Kotlin `SplatForgeClient`). 25 real · 8 real_unverified_on_device · 2 real_unverified_on_gpu ·
+  1 stub · 3 deferred. `realityloom.plan()["cluster_submit"]` now names the real command.
+- Version `0.9.2+f9` (Fabric). Game Zero stays `0.9.1+f9` — no game code changed.
+
+### Verified
+- `pytest -q` 321 passed (6 min 56 s, local); `forge accept all` F0–F9 + C1–C12 all 22 green, re-recorded (14 min 57 s
+  wall, local box, CPU only); `forge status` healthy; STATUS regenerated. No GPU claim anywhere.
+
+### Investigated, not built
+- **Q3 native GDExtension step** (C-104): C++ toolchain + godot-cpp 4.3 build proven (1 min 41 s, 8 vCPU), but a native
+  movement kernel can save only ≈ 5–15 % of a forward sim; closing the 2-core-runner gap needs a full native forward sim
+  with a bit-parity gate and per-platform builds — scoped as its own milestone (docs/perf/gdscript-thread-scaling/).
+
+## [0.9.1+f9] — 2026-11-27 — Post-F9 operations batch 1: consent toggle, LoomCluster TLS, hardware kit
+
+Software-completable items from HANDOVER §Next steps (2, 4, 5 partially). INFERENCES F9-12, C-99, C-100.
+
+### Added
+- **In-game diagnostics consent toggle + privacy notice** (F9-8 → F9-12): Settings row (keyboard/gamepad), default Off,
+  wired to `LiveOps.set_diagnostics_consent` (on writes the local session record, off deletes it), mirrored into the
+  save profile (`diagnostics_consent`), reset → Off; notice locale key `settings.diagnostics.notice` marked
+  `[PLACEHOLDER — LEGAL REVIEW REQUIRED]`. `forge accept F9` gains `consent_ui` (9 UI steps via injected keyboard +
+  gamepad events, reboot keeps it, a new device adopts it from the profile); readiness items
+  `consent_toggle_in_settings` (pass) and `privacy_text_legal_review` (user_gated).
+- **LoomCluster TLS 1.3 + mTLS** (C-99): `forge/cluster_tls.py`, `forge cluster tls-keygen / tls-show`, `forge cluster
+  --tls-dir`, `forge cluster node --bind/--advertise/--tls-dir`, status `transport: https+mtls`, `tls_rejected` stat;
+  C7 acceptance `tls` check (real loopback HTTPS fleet + 6 refusal cases); docs/cluster-lan-runbook.md.
+- **Hardware verification kit** (C-100): `scripts/verify-hardware/` — `verify-windows.ps1` (smoke + timed playtest),
+  `verify_android.py` (adb install/launch/autoplay/logcat), `verify_web.py` (public HTTPS, both Web builds),
+  `hwreport.py` + `checklists.json`; docs/hardware-verification.md; tests incl. a scripted fake `adb`.
+
+### Changed
+- `.gitignore`: `/.fabric/cluster-tls/`, `/hw-reports/`. Settings list area 470 → 360 px to fit the notice.
+- SECURITY.md (LoomCluster TLS, consent toggle). Version `0.9.1+f9`.
+
+### Verified
+- `pytest -q` 304 passed (6 min 41 s, local); `forge accept all` F0–F9 + C1–C12 all green, re-recorded (14 min 45 s wall,
+  local box, CPU only); STATUS regenerated. No hardware or GPU claim: the kit is the instrument for that, not the result.
+
 
 ## [0.9.0+f9] — 2026-11-27 — F9 LiveOps foundation, readiness only (`liveops-readiness`)
 

@@ -385,7 +385,8 @@ def models_audit() -> None:
 @click.group("recon")
 def recon_grp() -> None:
     """RealityLoom / SplatForge path (C12): routing, bundle, plan, placement, .ply check, CPU photogrammetry, tiny-scene CPU
-    splat training, meshing and Godot import are real; full-scale (GPU) splat training and cluster submit are stubs."""
+    splat training, meshing and Godot import are real; full-scale splat training runs an external trainer on a ROCm node
+    (real_unverified_on_gpu); cluster submit is a stub."""
 
 
 @recon_grp.command("route")
@@ -438,16 +439,36 @@ def recon_plan(files: tuple[Path, ...], target: str, mode: str, devices: str | N
 
 
 @recon_grp.command("submit")
-@click.argument("files", nargs=-1, required=True, type=click.Path(exists=True, dir_okay=False, path_type=Path))
-@click.option("--target", type=click.Choice(["backdrop", "hero_prop"]), required=True)
+@click.argument("files", nargs=-1, type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--bundle", "bundle_dir", type=click.Path(exists=True, file_okay=False, path_type=Path), default=None,
+              help="Existing capture bundle (`forge recon bundle`). Otherwise FILES are bundled into --out first.")
+@click.option("--out", type=click.Path(path_type=Path), default=None, help="Bundle directory to write FILES into (with FILES).")
+@click.option("--target", type=click.Choice(["backdrop", "hero_prop"]), default="backdrop", show_default=True)
 @click.option("--mode", default="sweep")
 @click.option("--cluster", "cluster_url", required=True)
-def recon_submit(files: tuple[Path, ...], target: str, mode: str, cluster_url: str) -> None:
-    """Try to run reconstruction on a cluster: real GPU-placement check, then the SplatForge STUB refusal (nothing is queued)."""
+@click.option("--iters", type=int, default=30000, show_default=True)
+@click.option("--sh-degree", type=int, default=3, show_default=True)
+@click.option("--downscale", type=float, default=1.0, show_default=True)
+@click.option("--focal-px", type=float, default=None)
+@click.option("--timeout", "timeout_s", type=float, default=6 * 3600, show_default=True)
+@click.option("--contract-probe", is_flag=True, help="Run the whole cluster path with the CPU contract-probe trainer "
+              "(the placed node still has to advertise rocm; trains nothing).")
+def recon_submit(files: tuple[Path, ...], bundle_dir: Path | None, out: Path | None, target: str, mode: str,
+                 cluster_url: str, iters: int, sh_degree: int, downscale: float, focal_px: float | None, timeout_s: float,
+                 contract_probe: bool) -> None:
+    """Full-scale splat training on the fleet (0.9.2, real_unverified_on_gpu): real placement check (a node must advertise
+    rocm) → LoomCluster job `recon.splat` → that node's trainer → hash-verified blobs → BUNDLE/splat_gpu/ + local .ply check."""
     from forge import realityloom
 
     def run() -> Any:
-        return realityloom.submit(realityloom.bundle_manifest(_images(files), target, mode), cluster_url)
+        b = bundle_dir
+        if b is None:
+            if not files or out is None:
+                raise click.UsageError("give --bundle DIR, or FILES with --out DIR")
+            realityloom.write_bundle(out, _images(files), target, mode)
+            b = out
+        return realityloom.submit_bundle(b, cluster_url, iters=iters, sh_degree=sh_degree, downscale=downscale,
+                                         focal_px=focal_px, timeout_s=timeout_s, contract_probe=contract_probe)
     _guard(run)
 
 
@@ -464,23 +485,42 @@ def recon_check_splat(file: Path) -> None:
 @click.option("--stage", type=click.Choice(["splat", "splat-cpu"]), default="splat")
 @click.option("--splats", type=int, default=600, show_default=True, help="splat-cpu: Gaussians to train (≤ 2000).")
 @click.option("--width", type=int, default=64, show_default=True, help="splat-cpu: training width in px (≤ 96).")
-@click.option("--iters", type=int, default=400, show_default=True, help="splat-cpu: Adam steps.")
-@click.option("--focal-px", type=float, default=None, help="splat-cpu: focal length of the capture in pixels.")
+@click.option("--iters", type=int, default=None, help="Steps: splat-cpu default 400 (Adam); splat default 30000 (trainer -n).")
+@click.option("--focal-px", type=float, default=None, help="Focal length of the capture in pixels (CPU SfM).")
 @click.option("--holdout", type=int, default=None, help="splat-cpu: bundle view index kept out of training for PSNR.")
-def recon_train(bundle: Path | None, stage: str, splats: int, width: int, iters: int, focal_px: float | None,
-                holdout: int | None) -> None:
-    """Train a 3DGS splat. `--stage splat` (full-scale, GPU) is a STUB — refuses, exit 3; nothing is fabricated.
-    `--stage splat-cpu BUNDLE` is real: bounded tiny-scene CPU training (SfM poses → isotropic 3DGS) →
-    BUNDLE/splat/point_cloud.ply + train.json. Photogrammetry, meshing and Godot import: `forge recon photogrammetry|mesh|godot-import`."""
+@click.option("--sh-degree", type=int, default=3, show_default=True, help="splat: max spherical-harmonics degree (1–3).")
+@click.option("--downscale", type=float, default=1.0, show_default=True, help="splat: image downscale factor (trainer -d).")
+@click.option("--seed", type=int, default=0, show_default=True, help="splat: recorded in config; passed only if the template uses {seed}.")
+@click.option("--trainer-cmd", default=None, help="splat: trainer command template ({data} {out} {iters} {sh_degree} {downscale} {seed}); "
+              "default $FORGE_SPLAT_CMD, else `opensplat` on PATH.")
+@click.option("--timeout", "timeout_s", type=float, default=6 * 3600, show_default=True, help="splat: trainer wall-clock limit (s).")
+@click.option("--contract-probe", is_flag=True, help="splat: run the whole runner contract on CPU with the probe trainer "
+              "(checks the exported project, writes a .ply from the sparse points — trains nothing).")
+def recon_train(bundle: Path | None, stage: str, splats: int, width: int, iters: int | None, focal_px: float | None,
+                holdout: int | None, sh_degree: int, downscale: float, seed: int, trainer_cmd: str | None, timeout_s: float,
+                contract_probe: bool) -> None:
+    """Train a 3DGS splat from a capture bundle (`forge recon bundle`).
+
+    `--stage splat` (full scale): CPU SfM → nerfstudio project → deterministic config → external trainer (OpenSplat, ROCm;
+    not bundled, AGPL-3.0) → validated BUNDLE/splat_gpu/point_cloud.ply + train.json. Refuses without a ROCm device or a
+    trainer. Status real_unverified_on_gpu: never executed on an AMD GPU by AssetFabric.
+    `--stage splat-cpu`: bounded tiny-scene CPU training (SfM poses → isotropic 3DGS) → BUNDLE/splat/point_cloud.ply."""
     from forge import realityloom
-    if stage == "splat":
-        _guard(lambda: realityloom.SplatForge().train({}))
-        return
     if bundle is None:
-        raise click.UsageError("--stage splat-cpu needs a BUNDLE directory (`forge recon bundle`)")
+        raise click.UsageError(f"--stage {stage} needs a BUNDLE directory (`forge recon bundle`)")
+    if stage == "splat":
+        from forge import splatforge_gpu as sg
+
+        def run_gpu() -> Any:
+            r = sg.GpuSplatRunner(iters=iters or 30000, sh_degree=sh_degree, downscale=downscale, seed=seed,
+                                  trainer_cmd=trainer_cmd, timeout_s=timeout_s, focal_px=focal_px, contract_probe=contract_probe)
+            r.train(bundle)
+            return r.last
+        _guard(run_gpu)
+        return
 
     def run() -> Any:
-        sf = realityloom.SplatForgeCPU(splats, width, iters, focal_px, holdout)
+        sf = realityloom.SplatForgeCPU(splats, width, iters or 400, focal_px, holdout)
         sf.train(bundle)
         return sf.last
     _guard(run)

@@ -32,6 +32,17 @@ def gw_show() -> None:
     click.echo(json.dumps(groundweave.describe(), indent=2))
 
 
+@groundweave_grp.command("onnx-ep")
+@click.option("--selftest", is_flag=True, help="Also run the selection/fallback/demotion contract against a fake onnxruntime.")
+def gw_onnx_ep(selftest: bool) -> None:
+    """Which onnxruntime execution provider this host would use (AMD-first, CPU fallback). ROCm: rocm_ready_unverified."""
+    from forge import onnx_ep
+    out = onnx_ep.selftest() if selftest else onnx_ep.report()
+    click.echo(json.dumps(out, indent=2))
+    if selftest and not out["ok"]:
+        raise SystemExit(1)
+
+
 @groundweave_grp.command("verify")
 @click.option("--cores", type=int, default=None, help="Pin to N cores (default: acceptance_node.cores = 2).")
 @click.option("--op", "ops", multiple=True, help="Limit to these op ids.")
@@ -45,9 +56,35 @@ def gw_verify(cores: int | None, ops: tuple[str, ...], no_compare: bool) -> None
     sys.exit(0 if r["ok"] else 1)
 
 
-@click.group("cluster")
-def cluster_grp() -> None:
+class _ClusterGroup(click.Group):
+    """Turn transport/auth failures of client commands into one clear message instead of a traceback."""
+
+    def invoke(self, ctx: click.Context):  # noqa: ANN201
+        from forge import cluster_tls
+        from forge import loomcluster as lc
+
+        try:
+            return super().invoke(ctx)
+        except (lc.ClusterAuthError, cluster_tls.ClusterTLSError) as e:
+            hint = ("" if "TLS" not in str(e) and "https" not in str(e)
+                    else " (TLS fleet: pass `forge cluster --tls-dir <dir> …` or set FORGE_CLUSTER_TLS_DIR)")
+            raise click.ClickException(f"{e}{hint}") from e
+        except OSError as e:          # URLError, refused, TLS handshake failures
+            raise click.ClickException(f"cluster node unreachable or refused the connection: {e}") from e
+
+
+@click.group("cluster", cls=_ClusterGroup)
+@click.option("--tls-dir", type=click.Path(path_type=Path), default=None,
+              help="Talk to a TLS/mTLS fleet with this client's certs (`operator` unless FORGE_CLUSTER_TLS_NAME); "
+                   "same as FORGE_CLUSTER_TLS_DIR.")
+def cluster_grp(tls_dir: Path | None) -> None:
     """LoomCluster equal nodes (advertise / negotiate / queue / steal / retry)."""
+    import os
+
+    from forge import cluster_tls
+
+    if tls_dir:
+        os.environ[cluster_tls.DIR_ENV] = str(tls_dir.resolve())
 
 
 @cluster_grp.command("node")
@@ -59,19 +96,37 @@ def cluster_grp() -> None:
 @click.option("--port", type=int, default=0)
 @click.option("--pin", type=int, default=0, help="Pin the node and its job children to N CPUs.")
 @click.option("--peer", "peers", multiple=True, help="Seed peer URL (gossip discovers the rest).")
+@click.option("--bind", default=None, help="Listen address (default cluster.protocol.bind = 127.0.0.1). "
+              "Off loopback use the LAN / Tailscale IP, and TLS (docs/cluster-lan-runbook.md).")
+@click.option("--advertise", default=None, help="Host name/IP peers use to reach this node (must be in its TLS cert SANs).")
+@click.option("--tls-dir", type=click.Path(path_type=Path), default=None,
+              help="Enable TLS/mTLS with certs from `forge cluster tls-keygen` (same as FORGE_CLUSTER_TLS_DIR).")
 def cluster_node(node_id: str, cores: int | None, devices: str | None, cap: int, state_dir: Path,
-                 port: int, pin: int, peers: tuple[str, ...]) -> None:
+                 port: int, pin: int, peers: tuple[str, ...], bind: str | None, advertise: str | None,
+                 tls_dir: Path | None) -> None:
     """Run one node in the foreground (prints LOOM_READY <url>). Needs the fleet secret (`forge cluster keygen`)."""
+    import os
+
+    from forge import cluster_tls
     from forge import loomcluster as lc
 
+    if tls_dir:
+        os.environ[cluster_tls.DIR_ENV] = str(tls_dir.resolve())
     try:
         lc.cluster_key()
-    except lc.ClusterAuthError as e:
+        if cluster_tls.enabled():
+            cluster_tls.server_context(os.environ.get(cluster_tls.NAME_ENV) or node_id)
+    except (lc.ClusterAuthError, cluster_tls.ClusterTLSError, OSError) as e:
         raise click.ClickException(str(e)) from e
     if pin:
         lc.pin_cpus(pin)
     caps = lc.local_caps(node_id, cores, devices.split(",") if devices else None, cap)
-    node = lc.Node(caps, state_dir, list(peers), lc.protocol_config(), port)
+    cfg = lc.protocol_config()
+    if bind:
+        cfg["bind"] = bind
+    if advertise:
+        cfg["advertise"] = advertise
+    node = lc.Node(caps, state_dir, list(peers), cfg, port)
     node.serve(ready=lambda nd: click.echo(f"LOOM_READY {nd.url}"))
 
 
@@ -82,6 +137,35 @@ def cluster_keygen() -> None:
     from forge import loomcluster as lc
 
     click.echo(str(lc.keygen()))
+
+
+@cluster_grp.command("tls-keygen")
+@click.option("--name", "names", multiple=True, required=True,
+              help="Node id (or `operator` for CLI clients) to issue a certificate for; repeatable.")
+@click.option("--host", "hosts", multiple=True,
+              help="Extra SAN: LAN IP, Tailscale IP (100.x) or MagicDNS name; localhost/127.0.0.1/::1 always included.")
+@click.option("--this-host", is_flag=True, help="Also add this machine's hostname/FQDN as SANs.")
+@click.option("--dir", "tls_dir", type=click.Path(path_type=Path), default=None,
+              help="Default .fabric/cluster-tls/ (gitignored). The CA key never leaves this machine.")
+def cluster_tls_keygen(names: tuple[str, ...], hosts: tuple[str, ...], this_host: bool, tls_dir: Path | None) -> None:
+    """Create the private fleet CA (once) and issue mTLS certificates (ECDSA P-256, TLS 1.3) for nodes / operators."""
+    from forge import cluster_tls
+
+    d = tls_dir or cluster_tls.default_dir()
+    hs = list(hosts) + (cluster_tls.local_hosts() if this_host else [])
+    try:
+        click.echo(json.dumps(cluster_tls.keygen(d, list(names), hs), indent=2))
+    except cluster_tls.ClusterTLSError as e:
+        raise click.ClickException(str(e)) from e
+
+
+@cluster_grp.command("tls-show")
+@click.option("--dir", "tls_dir", type=click.Path(path_type=Path), default=None)
+def cluster_tls_show(tls_dir: Path | None) -> None:
+    """List the fleet CA and issued certificates (subjects, SANs, expiry — never key material)."""
+    from forge import cluster_tls
+
+    click.echo(json.dumps(cluster_tls.describe(tls_dir or cluster_tls.default_dir()), indent=2))
 
 
 @cluster_grp.command("submit")

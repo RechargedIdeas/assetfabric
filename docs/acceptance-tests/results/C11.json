@@ -8,8 +8,8 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.012,
-      "depth.estimate": 0.935
+      "depth.distance": 0.011,
+      "depth.estimate": 0.937
     },
     "planned_ops": [],
     "real": 4,
@@ -83,7 +83,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.distance",
           "status": "ok",
-          "wall_s": 0.012
+          "wall_s": 0.011
         },
         {
           "backend": "depthanything-v2-onnx-cpu",
@@ -94,7 +94,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.estimate",
           "status": "ok",
-          "wall_s": 0.935
+          "wall_s": 0.937
         }
       ]
     },
@@ -105,7 +105,7 @@
         "delta1_min": 0.9,
         "spearman_min": 0.9
       },
-      "infer_s_1_thread": 0.791,
+      "infer_s_1_thread": 0.896,
       "metrics_12_anchors": {
         "abs_rel": 0.024602137795421513,
         "delta1": 0.99835205078125,
@@ -126,6 +126,17 @@
       },
       "model": "depth-anything-v2-small",
       "ok": true,
+      "onnx_ep": {
+        "active": [
+          "CPUExecutionProvider"
+        ],
+        "demoted": null,
+        "device": "cpu",
+        "fallback": null,
+        "providers": [
+          "CPUExecutionProvider"
+        ]
+      },
       "scene": "render_scene(256x192): ground + brick wall + crate, depth 2.6\u20139.1 m"
     },
     "distance": {
@@ -169,14 +180,18 @@
         "depth.distance": {
           "backend": "pinhole-align-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "pinhole-align-cpu"
         },
         "depth.estimate": {
           "backend": "depthanything-v2-onnx-cpu",
           "device": "cpu",
+          "gpu_rung_verified": false,
           "ok": true,
-          "with_all_gpus_present": "depthanything-v2-onnx-cpu"
+          "with_all_gpus_device": "rocm",
+          "with_all_gpus_present": "depthanything-v2-onnx"
         }
       },
       "problems": [],
@@ -212,7 +227,7 @@
     },
     "model_ready": true,
     "offload": {
-      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f0aa40573d0>",
+      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f4728583c40>",
       "bad_image_refused": true,
       "metric": {
         "anchor_rmse_m": 0.15766392751650302,
@@ -229,6 +244,47 @@
         192
       ],
       "true_median_m": 8.60565707202007
+    },
+    "onnx_ep": {
+      "cases": {
+        "cpu_failure_raises": true,
+        "cpu_wheel_cpu": true,
+        "create_failure_falls_back": true,
+        "directml": true,
+        "force_cpu": true,
+        "no_device_cpu": true,
+        "rocm_selected_first": true,
+        "run_failure_demotes": true
+      },
+      "host": {
+        "available": [
+          "AzureExecutionProvider",
+          "CPUExecutionProvider"
+        ],
+        "device": "cpu",
+        "devices": [
+          "cpu"
+        ],
+        "onnxruntime": "1.32.0",
+        "selected": [
+          "CPUExecutionProvider"
+        ],
+        "skipped": [
+          {
+            "device": "rocm",
+            "why": "onnxruntime build has no MIGraphXExecutionProvider/ROCMExecutionProvider"
+          },
+          {
+            "device": "directml",
+            "why": "onnxruntime build has no DmlExecutionProvider"
+          }
+        ],
+        "status": "rocm_ready_unverified",
+        "verified_on_gpu": false
+      },
+      "note": "selection/fallback/demotion proven against a fake onnxruntime; nothing here ran on a GPU",
+      "ok": true,
+      "status": "rocm_ready_unverified"
     },
     "register": {
       "ok": true,

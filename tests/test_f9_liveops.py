@@ -179,3 +179,37 @@ def test_cli_bundle_verify_rollback(tmp_path: Path, keys) -> None:
     assert res.exit_code == 0
     res = r.invoke(main, ["liveops", "diag-export", str(out), "--out", str(tmp_path / "d.json")])
     assert res.exit_code == 1
+
+
+# --------------------------------------------------------------------------- post-F9 (0.9.1): Settings consent toggle
+
+
+def test_consent_toggle_locale_and_readiness(root: Path) -> None:
+    loc = L.locale_en(root)
+    for k in ("settings.diagnostics", "settings.diagnostics.notice", "settings.diagnostics.changed_on",
+              "settings.diagnostics.changed_off"):
+        assert loc.get(k), k
+    assert loc["settings.diagnostics.notice"].startswith(L.LEGAL_PLACEHOLDER)
+    menu = (root / "games/game-zero/ui/settings_menu.gd").read_text(encoding="utf-8")
+    assert 'tr("settings.diagnostics.notice")' in menu and "LiveOps.set_diagnostics_consent" in menu
+    assert '"Diagnostics' not in menu                       # no hard-coded label
+    r = L.readiness(root)
+    items = {i["id"]: i["status"] for i in r["items"]}
+    assert items["consent_toggle_in_settings"] == "pass"
+    assert items["privacy_text_legal_review"] == "user_gated"
+    # consent defaults stay off in the manifest
+    assert L.defaults(root)["diagnostics"] is False
+
+
+def test_consent_toggle_in_game(root: Path, tmp_path: Path) -> None:
+    from forge.milestones import godot_binary
+
+    if not godot_binary(root):
+        pytest.skip("Godot not available")
+    from forge.accept_f9 import consent_ui_part, f9_check
+
+    keys = L.keygen(tmp_path / "keys", "t")
+    cu = consent_ui_part(root, tmp_path, keys)
+    errs = [e for e in f9_check({"consent_ui": cu}) if e.startswith("consent")]
+    assert not errs, errs
+    assert cu["toggle"]["events"] == [{"diagnostics": True}, {"diagnostics": False}, {"diagnostics": True}]

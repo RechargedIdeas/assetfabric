@@ -19,6 +19,10 @@ Everything runs locally against throw-away directories and an ephemeral RSA key 
  6. saves — a save from a newer build is never migrated down, never replaced by its .bak, never overwritten.
  7. privacy — diagnostics consent defaults off (nothing written); opt-in writes a local session record with no paths;
     diag-export refuses without consent, scrubs PII, validates against forge/schemas/diag_bundle.schema.json.
+ 7b. consent toggle (post-F9, 0.9.1) — the real Settings screen, driven by injected keyboard + gamepad events: default
+    off, ↑×3 + Enter turns it on (consent.json + profile layer + local record), pad A turns it off (record deleted),
+    a fresh boot keeps the choice, and a NEW device dir booted on the same save adopts it from the profile layer; the
+    privacy notice is a locale key starting with the legal-review placeholder marker (INFERENCES F9-8, F9-12).
  8. G-NET-01 — every LiveOps run reports Godot's OfflineMultiplayerPeer, no network API in any game script, and one
     full bundle boot runs inside `bwrap --unshare-net` (when bwrap exists).
  9. readiness checklist — `forge liveops readiness`: no failures; user-gated items listed (production key, service).
@@ -226,6 +230,22 @@ def diag_part(root: Path, tmp: Path, session: str) -> dict[str, Any]:
             "redactions": b["scrub"]["redactions"], "files": [f["name"] for f in b["files"]], "uploaded": b["uploaded"]}
 
 
+def consent_ui_part(root: Path, tmp: Path, keys: dict[str, Any]) -> dict[str, Any]:
+    pub = Path(keys["public"])
+    saves = tmp / "consent-saves"
+    dev = Device(root, tmp / "consent-a", pub)
+    toggle = dev.check(f"--save-dir={saves}", "--consent-ui=toggle")
+    again = dev.check(f"--save-dir={saves}", "--consent-ui=verify")
+    other = Device(root, tmp / "consent-b", pub).check(f"--save-dir={saves}", "--consent-ui=verify")
+    pick = lambda x: {"exit": x.get("_exit"), "script_errors": x.get("_script_errors"),  # noqa: E731
+                      "state": x.get("consent_ui"), "diag_written": x.get("diag_written")}
+    t = toggle.get("consent_ui") or {}
+    return {"toggle": {"exit": toggle.get("_exit"), "script_errors": toggle.get("_script_errors"),
+                       "steps": [s.get("step") for s in t.get("steps", []) if s.get("ok")], "errors": t.get("errors"),
+                       "events": t.get("events")},
+            "reboot_same_device": pick(again), "new_device_same_profile": pick(other)}
+
+
 def f9_run(root: Path) -> tuple[int, dict[str, Any]]:
     from forge import liveops as L
     from forge.accept_f7 import net_scan
@@ -249,6 +269,7 @@ def f9_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["device"] = dp
         r["combat"] = combat_part(root, tmp, keys)
         r["diagnostics"] = diag_part(root, tmp, session)
+        r["consent_ui"] = consent_ui_part(root, tmp, keys)
         r["net_scan"] = net_scan(root)
         r["readiness"] = L.readiness(root)
         r["wall_s"] = round(time.perf_counter() - t0, 1)
@@ -310,6 +331,17 @@ def f9_check(r: dict[str, Any]) -> list[str]:
           f"save forward-compat: {sg}", errs)
     _need(g("diag_off").get("diag_written") is False and g("diag_on").get("diag_written") is True
           and not g("diag_on").get("session_has_paths"), "diagnostics consent", errs)
+    cu = r.get("consent_ui") or {}
+    tg = cu.get("toggle", {})
+    want = {"default_off", "notice_is_locale_text", "notice_legal_placeholder", "label_shows_off", "keyboard_reaches_toggle",
+            "keyboard_on", "label_shows_on", "gamepad_off_deletes_record", "gamepad_on_again"}
+    _need(tg.get("exit") == 0 and tg.get("script_errors") == 0 and not tg.get("errors") and want <= set(tg.get("steps") or []),
+          f"consent toggle (Settings): {tg}", errs)
+    for n in ("reboot_same_device", "new_device_same_profile"):
+        x = cu.get(n, {})
+        stt = x.get("state") or {}
+        _need(x.get("exit") == 0 and x.get("script_errors") == 0 and x.get("diag_written") is True
+              and stt.get("consent") is True and stt.get("profile") is True, f"consent {n}: {x}", errs)
     c = r.get("combat", {})
     _need(c.get("baseline_no_liveops") is not None and c.get("defaults") == c.get("baseline_no_liveops"),
           f"defaults changed gameplay: {c}", errs)
@@ -333,4 +365,5 @@ def f9_perf(r: dict[str, Any]) -> dict[str, Any]:
             "forge_bad_bundles_refused": sum(1 for k, v in fr.items() if k != "valid" and not v.get("ok")),
             "forge_bad_bundles": len(fr) - 1, "knobs": (r.get("manifest") or {}).get("knobs"),
             "flags": len((r.get("manifest") or {}).get("flags", [])), "device_wall_s": (r.get("device") or {}).get("wall_s"),
+            "consent_ui_steps": len((r.get("consent_ui") or {}).get("toggle", {}).get("steps") or []),
             "wall_s": r.get("wall_s"), "user_gated": (r.get("readiness") or {}).get("user_gated")}

@@ -36,9 +36,11 @@ def png(kind: str = "sharp", w: int = 640, h: int = 480, seed: int = 1) -> bytes
 def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
-    # 0.7.7 (stub batch 3): 25 real (incl. the tiny-scene CPU SplatForge rung) · 8 real_unverified_on_device (Android-only, compiled,
-    # never on a phone) · 1 stub (full-scale SplatForge training, GPU)
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["stubs"])) == (25, 8, 1)
+    # 0.9.2: 25 real (incl. the tiny-scene CPU SplatForge rung) · 8 real_unverified_on_device (Android-only, compiled, never on a
+    # phone) · 2 real_unverified_on_gpu (full-scale SplatForge runner + its LoomCluster job, never on an AMD GPU) · 1 stub
+    # (phone-initiated splat submit)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["real_unverified_on_gpu"]), len(r["stubs"])) == (25, 8, 2, 1)
+    assert r["real_unverified_on_gpu"] == ["recon.splatforge", "recon.splat_cluster"] and r["stubs"] == ["recon.splat_submit"]
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -53,16 +55,25 @@ def test_register_check_catches_unverified_without_android_impl(root: Path, monk
 
 
 def test_register_check_catches_a_stub_that_returns(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setitem(realityloom.STUB_PROBES, "recon.splatforge", lambda: "fake splat")
+    monkeypatch.setitem(realityloom.STUB_PROBES, "recon.splat_submit", lambda: "fake job id")
     probs = registry.check(root, "C12")["problems"]
-    assert any("recon.splatforge: stub returned" in p for p in probs)
+    assert any("recon.splat_submit: stub returned" in p for p in probs)
+
+
+def test_register_check_requires_gpu_unverified_flag(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    reg = copy.deepcopy(registry.load(root))
+    row = next(f for f in reg["features"] if f["id"] == "recon.splatforge")
+    row.pop("verified_on_gpu")
+    monkeypatch.setattr(registry, "load", lambda r=None: reg)
+    assert any("recon.splatforge: real_unverified_on_gpu must carry verified_on_gpu: false" in p for p in registry.check(root, "C12")["problems"])
+    assert registry.descriptor("C12", root) and True
 
 
 def test_register_check_catches_unregistered_locale_key(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     reg = copy.deepcopy(registry.load(root))
-    next(f for f in reg["features"] if f["id"] == "recon.splatforge")["reason_key"] = "stub.recon.nope"
+    next(f for f in reg["features"] if f["id"] == "recon.splat_submit")["reason_key"] = "stub.recon.nope"
     monkeypatch.setattr(registry, "load", lambda r=None: reg)
-    assert any("recon.splatforge: reason_key" in p for p in registry.check(root, "C12")["problems"])
+    assert any("recon.splat_submit: reason_key" in p for p in registry.check(root, "C12")["problems"])
 
 
 def test_shared_vectors_are_current(root: Path) -> None:
@@ -342,7 +353,8 @@ def test_routing_bundle_and_plan(tmp_path: Path, root: Path) -> None:
     cpu = realityloom.plan(m, ["cpu"], tools={})
     assert (cpu["effective_route"], cpu["degraded_from"], cpu["runnable_today"], cpu["eta_measured"]) == ("photogrammetry", "splat", True, False)   # CPU route real since 0.7.7
     gpu = realityloom.plan(m, ["cpu", "rocm"], tools={})
-    assert gpu["effective_route"] == "splat" and {"recon.splatforge"} <= set(gpu["blocked_by"])
+    assert gpu["effective_route"] == "splat" and gpu["blocked_by"] == [] and gpu["runnable_today"] is True     # 0.9.2
+    assert gpu["unverified_on_gpu"] == ["recon.splatforge"] and gpu["cluster_submit"].startswith("forge recon submit --bundle")
     assert next(s for s in gpu["stages"] if s["id"] == "train_splat")["requires"] == {"device": "rocm"}
     few = realityloom.plan(realityloom.bundle_manifest(imgs[:1], "backdrop", "burst", root), ["cpu"], tools={})
     assert few["problems"] and "no runnable route" in few["eta"]
@@ -357,10 +369,14 @@ def test_splat_ply_validator() -> None:
             realityloom.check_splat_ply(blob)
 
 
-def test_recon_stubs_refuse_and_cli_exit_3() -> None:
-    for stage in ("splat",):                                    # photogrammetry/mesh/godot-import are real since 0.7.7
-        r = CliRunner().invoke(main, ["recon", "train", "--stage", stage])
-        assert r.exit_code == 3 and is_stub_message(json.loads(r.output)["message"])
+def test_recon_train_splat_needs_bundle_and_submit_stub_exits_3() -> None:
+    # 0.9.2: `--stage splat` is a real external-trainer runner (real_unverified_on_gpu) — no bundle → usage error, not a stub
+    r = CliRunner().invoke(main, ["recon", "train", "--stage", "splat"])
+    assert r.exit_code == 2 and "BUNDLE" in r.output
+    # the only remaining C12 stub is cluster submit; its probe refuses with a stub message (CLI exit 3 via _guard)
+    with pytest.raises(StubError) as e:
+        realityloom.STUB_PROBES["recon.splat_submit"]()
+    assert e.value.feature == "recon.splat_submit" and is_stub_message(str(e.value))
 
 
 def test_submit_checks_placement_then_refuses(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -371,7 +387,7 @@ def test_submit_checks_placement_then_refuses(root: Path, monkeypatch: pytest.Mo
     monkeypatch.setattr(realityloom, "cluster_devices", lambda url: {"a": ["cpu"], "g": ["cpu", "rocm"]})
     with pytest.raises(StubError) as e:
         realityloom.submit(m, "http://x")
-    assert e.value.feature == "recon.splatforge"
+    assert e.value.feature == "recon.splat_submit"
 
 
 # ----------------------------------------------------------------------------- GroundWeave planned ops
@@ -380,9 +396,13 @@ def test_ladder_declares_new_ops_and_planned_ops_select_nothing(root: Path) -> N
     r = gw.check(root)
     assert r["ok"], r["problems"]
     ladder = gw.load_ladder(root)["ops"]
-    for op in ("mirror.encode", "lens.assess", "depth.distance", "depth.estimate", "recon.plan", "recon.mesh", "shuttle.gdgs"):
+    for op in ("mirror.encode", "lens.assess", "depth.distance", "recon.plan", "recon.mesh", "shuttle.gdgs"):
         assert gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)["device"] == "cpu"
-    assert ladder["depth.estimate"]["ladder"][0] == {"id": "depthanything-v2-onnx", "device": "rocm", "impl": "planned"}
+    # 0.9.2: DepthAnything's ROCm/DirectML rungs are real code paths (forge.onnx_ep) but never ran on a GPU → verified: false
+    assert ladder["depth.estimate"]["ladder"][0] == {"id": "depthanything-v2-onnx", "device": "rocm", "impl": "real", "verified": False}
+    sel = gw.select("depth.estimate", ["cpu", *gw.SIMULATED_GPU_DEVICES], root)
+    assert (sel["device"], sel["verified"]) == ("rocm", False)
+    assert gw.select("depth.estimate", ["cpu"], root)["backend"] == "depthanything-v2-onnx-cpu"
     for op in ("recon.mesh", "shuttle.gdgs"):                   # GPU rungs stay planned above the CPU rung (0.7.7)
         assert ladder[op]["ladder"][0]["impl"] == "planned" and ladder[op]["ladder"][-1]["device"] == "cpu"
     assert ladder["recon.splat"]["gpu_required"] and ladder["recon.splat"]["route"] == "loomcluster"

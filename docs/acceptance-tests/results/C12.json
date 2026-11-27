@@ -8,11 +8,11 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.mesh": 0.565,
-      "recon.plan": 0.014,
-      "recon.sfm": 1.271,
-      "recon.splat_cpu": 2.93,
-      "shuttle.gdgs": 0.022
+      "recon.mesh": 0.55,
+      "recon.plan": 0.013,
+      "recon.sfm": 1.28,
+      "recon.splat_cpu": 2.633,
+      "shuttle.gdgs": 0.021
     },
     "planned_ops": [],
     "real": 9,
@@ -24,17 +24,18 @@
       "junit_tests": 46,
       "ok": true
     },
-    "cli_stubs": {
-      "commands": {
-        "recon train --stage splat": {
-          "exit": 3,
-          "label": true,
-          "stub": true
-        }
-      },
-      "ok": true
-    },
     "cluster": {
+      "cluster_splat_job": {
+        "attempts": 1,
+        "capable": [
+          "g"
+        ],
+        "config_sha256": "67fab940cd876dc11645bbc7c266f0441b25958f3c1b59132f103f51b2b777a1",
+        "ok": true,
+        "placed_on": "g",
+        "ply_sha256": "332a7f22f463564683d6a1c076d15d44bb72481d65d738180d6a62197e7daa0b",
+        "splats": 558
+      },
       "cpu_only_fleet": {
         "capable": [],
         "submit": "refused:no_gpu_node"
@@ -43,11 +44,11 @@
         "capable": [
           "g"
         ],
-        "photogrammetry_submit": "refused:stub",
-        "splat_submit": "refused:stub"
+        "phone_photogrammetry_submit": "refused:stub",
+        "phone_splat_submit": "refused:stub"
       },
-      "jobs_queued_anywhere": 0,
-      "note": "placement check is real (C7 adverts); the trainer behind it is the C12 stub, so nothing is queued",
+      "jobs_queued_by_stub_path": 0,
+      "note": "placement check is real (C7 adverts); the phone/manifest path (recon.splat_submit) is the C12 stub and queues nothing; the desktop bundle path (recon.splat_cluster, LoomCluster op recon.splat) ran on the simulated-rocm node with the CPU contract-probe trainer \u2014 nothing ran on a GPU",
       "ok": true
     },
     "core": {
@@ -66,11 +67,14 @@
         "Capture set has 1 usable views; mode burst needs at least 3."
       ],
       "plan_with_rocm": {
-        "blocked_by": [
-          "recon.splatforge"
-        ],
+        "blocked_by": [],
+        "cluster_submit": "forge recon submit --bundle <bundle> --cluster <url>  (LoomCluster op recon.splat, real_unverified_on_gpu; phone-initiated submit is stub recon.splat_submit)",
         "effective_route": "splat",
-        "eta": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)"
+        "eta": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)",
+        "runnable_today": true,
+        "unverified_on_gpu": [
+          "recon.splatforge"
+        ]
       },
       "routes": {
         "backdrop": "splat",
@@ -91,7 +95,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.splat_cpu",
           "status": "ok",
-          "wall_s": 2.93
+          "wall_s": 2.633
         },
         {
           "backend": "opencv-sift-sfm-cpu",
@@ -102,7 +106,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.sfm",
           "status": "ok",
-          "wall_s": 1.271
+          "wall_s": 1.28
         },
         {
           "backend": "realityloom-plan-cpu",
@@ -113,7 +117,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.014
+          "wall_s": 0.013
         },
         {
           "backend": "meshweaver-density-surfacenets-cpu",
@@ -124,7 +128,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.mesh",
           "status": "ok",
-          "wall_s": 0.565
+          "wall_s": 0.55
         },
         {
           "backend": "gdgs-multimesh-billboard-cpu",
@@ -135,7 +139,7 @@
           "identical_with_simulated_gpu": true,
           "op": "shuttle.gdgs",
           "status": "ok",
-          "wall_s": 0.022
+          "wall_s": 0.021
         }
       ]
     },
@@ -163,31 +167,41 @@
         "recon.mesh": {
           "backend": "meshweaver-density-surfacenets-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "meshweaver-density-surfacenets-cpu"
         },
         "recon.plan": {
           "backend": "realityloom-plan-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "realityloom-plan-cpu"
         },
         "recon.sfm": {
           "backend": "opencv-sift-sfm-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "opencv-sift-sfm-cpu"
         },
         "recon.splat_cpu": {
           "backend": "splatforge-numpy-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "splatforge-numpy-cpu"
         },
         "shuttle.gdgs": {
           "backend": "gdgs-multimesh-billboard-cpu",
           "device": "cpu",
+          "gpu_rung_verified": null,
           "ok": true,
+          "with_all_gpus_device": "cpu",
           "with_all_gpus_present": "gdgs-multimesh-billboard-cpu"
         }
       },
@@ -195,7 +209,14 @@
       "recon_splat": {
         "gpu_required": true,
         "route": "loomcluster",
-        "rungs_real": []
+        "rungs_real": [
+          "opensplat-rocm"
+        ],
+        "select_with_rocm": {
+          "backend": "opensplat-rocm",
+          "device": "rocm",
+          "verified": false
+        }
       },
       "static_ok": true
     },
@@ -252,10 +273,10 @@
       ],
       "real_unverified_on_device": [],
       "refusals": {
-        "recon.splatforge": "[STUB recon.splatforge C12] Full-scale SplatForge training (anisotropic 3D Gaussian Splatting at capture resol"
+        "recon.splat_submit": "[STUB recon.splat_submit C12] Submitting a reconstruction to the cluster (or from the phone) is not wired: Loo"
       },
       "stubs": [
-        "recon.splatforge"
+        "recon.splat_submit"
       ]
     },
     "splat_cpu": {
@@ -278,10 +299,46 @@
         64,
         48
       ],
-      "seconds": 58.055,
+      "seconds": 54.464,
       "splats": 600,
       "views_registered": 8,
       "views_train": 7
+    },
+    "splat_gpu": {
+      "c2w_roundtrip_max_err": 2.938660870199783e-09,
+      "config_sha256": "f2fc177c035a7d972adfe6a03f30e00ccfe24d862b7cb796e148c82aad8ec247",
+      "deterministic_config_and_project": true,
+      "export_s": 0.456,
+      "frames": 8,
+      "not_proven": "no real trainer ran: OpenSplat is not installed and this box has no GPU \u2014 the probe trainer checks the project and writes a .ply from the sparse points; it learns nothing (C-102)",
+      "ok": true,
+      "ply": {
+        "bytes": 139912,
+        "inside_scene_frac": 1.0,
+        "properties": 62,
+        "sh_degree": 3,
+        "vertices": 558
+      },
+      "refusals": {
+        "no_rocm": "refused",
+        "no_trainer": "refused",
+        "nothing_written": true
+      },
+      "sparse_points": 558,
+      "status": "real_unverified_on_gpu",
+      "trainer_failures": {
+        "garbage_ply": "rejected",
+        "garbage_ply_msg": "Not a valid 3DGS splat .ply: missing ply header",
+        "nan_positions": "rejected",
+        "nan_positions_msg": "The splat trainer's output was rejected: non-finite values",
+        "no_output": "rejected",
+        "no_output_msg": "The splat trainer exited cleanly but wrote no point_cloud.ply.",
+        "nonzero_exit": "rejected",
+        "nonzero_exit_msg": "The splat trainer exited with code 7: ",
+        "timeout": "rejected",
+        "timeout_msg": "The splat trainer did not finish within 3 s and was stopped; no output was kept."
+      },
+      "verified_on_gpu": false
     },
     "splat_ply": {
       "note": "validator only; the fixture is a header + zeros, not reconstruction output",

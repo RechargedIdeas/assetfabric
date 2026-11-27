@@ -45,12 +45,20 @@ def to_onnx(policy: dict[str, Any]) -> bytes:
     return m.SerializeToString()
 
 
-def session(model: bytes):  # noqa: ANN201
+def session(model: bytes, prefer: str = "cpu"):  # noqa: ANN201
+    """CPU by default on purpose: the parity gate compares float32 outputs to the NumPy forward at 1e-5 and the policy is a
+    few-KB MLP where GPU dispatch costs more than the math. `prefer="auto"` goes through `forge.onnx_ep` AMD-first
+    selection (CPU fallback) for experiments; the combat tick never calls ONNX either way (GDScript forward)."""
     import onnxruntime as ort
-    so = ort.SessionOptions()
-    so.intra_op_num_threads = 1
-    so.log_severity_level = 3
-    return ort.InferenceSession(model, so, providers=["CPUExecutionProvider"])
+
+    from forge import onnx_ep
+
+    def options():  # noqa: ANN202
+        so = ort.SessionOptions()
+        so.intra_op_num_threads = 1
+        so.log_severity_level = 3
+        return so
+    return onnx_ep.session(model, options, ort=ort, prefer=prefer)
 
 
 def parity(root: Path, n: int = 2000, seed: int = 3) -> dict[str, Any]:

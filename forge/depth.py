@@ -104,9 +104,14 @@ MODEL_ID = "depth-anything-v2-small"
 
 
 class DepthAnythingV2:
-    """DepthAnything V2 Small on onnxruntime (CPU EP). `estimate(image)` → relative inverse depth float32[h, w] at the input
-    resolution (larger = nearer). `threads=1` (default) makes the output bit-reproducible across hosts/core counts with
-    the same onnxruntime build; more threads are faster but may differ in the last float bits."""
+    """DepthAnything V2 Small on onnxruntime. `estimate(image)` → relative inverse depth float32[h, w] at the input
+    resolution (larger = nearer). `threads=1` (default) makes the CPU output bit-reproducible across hosts/core counts with
+    the same onnxruntime build; more threads are faster but may differ in the last float bits.
+
+    Execution provider (0.9.2, `forge.onnx_ep`): `providers=None` selects AMD-first (MIGraphX/ROCm when the onnxruntime
+    build and GroundWeave both offer it, else CPU) with automatic CPU fallback + demotion; `FORGE_ONNX_EP=cpu` pins CPU.
+    A GPU session is *not* bit-identical to CPU — reproducibility claims hold for the CPU EP only. ROCm is
+    `rocm_ready_unverified` (never executed on an AMD GPU). Explicit `providers=[...]` bypasses selection (old behaviour)."""
 
     def __init__(self, model_path: str | None = None, input_size: int | None = None, threads: int = 1,
                  providers: list[str] | None = None) -> None:
@@ -116,8 +121,9 @@ class DepthAnythingV2:
         self.input_size = int(input_size or self.pre["size"])
         self.model_path = model_path or str(models.require(MODEL_ID))
         self.threads = threads
-        self.providers = providers or ["CPUExecutionProvider"]
+        self.providers = providers          # None → forge.onnx_ep selection
         self._sess = None
+        self.ep: dict | None = None
 
     @property
     def session(self):
@@ -126,12 +132,20 @@ class DepthAnythingV2:
                 import onnxruntime as ort
             except ImportError as e:   # optional extra `depth`
                 raise RuntimeError(t("depth.ort_missing")) from e
-            so = ort.SessionOptions()
-            so.intra_op_num_threads = self.threads
-            so.inter_op_num_threads = 1
-            so.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-            so.log_severity_level = 3
-            self._sess = ort.InferenceSession(self.model_path, so, providers=self.providers)
+            def options():  # noqa: ANN202
+                so = ort.SessionOptions()
+                so.intra_op_num_threads = self.threads
+                so.inter_op_num_threads = 1
+                so.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+                so.log_severity_level = 3
+                return so
+            if self.providers is not None:
+                self._sess = ort.InferenceSession(self.model_path, options(), providers=self.providers)
+                self.ep = {"providers": list(self.providers), "active": list(self._sess.get_providers()), "selected_by": "caller"}
+            else:
+                from forge import onnx_ep
+                self._sess = onnx_ep.session(self.model_path, options, ort=ort)
+                self.ep = self._sess.info
         return self._sess
 
     def target_size(self, w: int, h: int) -> tuple[int, int]:

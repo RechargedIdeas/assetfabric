@@ -16,6 +16,8 @@ var _rows := {}               # action -> Button
 var _palette_btn: Button
 var _retro_btn: Button        # F8: retro / console-style profile (◀ ▶), above the palette row
 var _scan_btn: Button         # F8: scanlines on/off (accept toggles)
+var _diag_btn: Button         # post-F9: diagnostics consent on/off (accept toggles; default off — INFERENCES F9-8/F9-12)
+var _diag_notice: Label       # privacy notice under the toggle (locale key, legal placeholder marked)
 var _capturing := ""          # action waiting for its new binding
 var _capture_armed := false   # ignore the press that opened capture
 var events_log := []               # what happened, for headless reports: [{"rebind"...}, {"palette"...}]
@@ -34,7 +36,16 @@ func _ready() -> void:
 	title.text = tr("settings.title")
 	v.add_child(title)
 	# F8 display rows sit *above* the palette row: focus still opens on the palette (G-A11Y-01 flow unchanged); pad/arrow
-	# up reaches the retro profile, then scanlines.
+	# up reaches the retro profile, then scanlines, then (post-F9) the diagnostics consent toggle at the top.
+	_diag_btn = Button.new()
+	_diag_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_diag_btn.pressed.connect(_toggle_diagnostics)
+	v.add_child(_diag_btn)
+	_diag_notice = Label.new()
+	_diag_notice.autowrap_mode = TextServer.AUTOWRAP_WORD
+	_diag_notice.custom_minimum_size = Vector2(740, 0)
+	_diag_notice.text = tr("settings.diagnostics.notice")
+	v.add_child(_diag_notice)
 	_scan_btn = Button.new()
 	_scan_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_scan_btn.pressed.connect(_toggle_scanlines)
@@ -50,7 +61,7 @@ func _ready() -> void:
 	_palette_btn.gui_input.connect(_palette_gui_input)
 	v.add_child(_palette_btn)
 	var sc := ScrollContainer.new()
-	sc.custom_minimum_size = Vector2(740, 470)
+	sc.custom_minimum_size = Vector2(740, 360)
 	sc.follow_focus = true
 	v.add_child(sc)
 	_list = VBoxContainer.new()
@@ -82,6 +93,7 @@ func _ready() -> void:
 func _refresh() -> void:
 	_retro_btn.text = "%s: %s  ◀ ▶" % [tr("settings.retro"), tr("retro.profile." + Retro.profile)]
 	_scan_btn.text = "%s: %s" % [tr("settings.scanlines"), tr("settings.on" if Retro.scanlines else "settings.off")]
+	_diag_btn.text = "%s: %s" % [tr("settings.diagnostics"), tr("settings.on" if LiveOps.diagnostics_consent() else "settings.off")]
 	_palette_btn.text = "%s: %s  ◀ ▶" % [tr("settings.palette"), tr("settings.palette." + A11y.palette)]
 	for action in _rows:
 		var labels := []
@@ -121,6 +133,16 @@ func _toggle_scanlines() -> void:
 	A11y.save_settings()
 	events_log.append({"scanlines": Retro.scanlines})
 	_status.text = "%s: %s" % [tr("settings.scanlines"), tr("settings.on" if Retro.scanlines else "settings.off")]
+	_refresh()
+
+
+## Opt in / out of local session diagnostics. LiveOps owns the effect (writes or deletes the local record at once);
+## the choice is also mirrored into the save's profile layer so it follows the player like the other settings.
+func _toggle_diagnostics() -> void:
+	var on := LiveOps.set_diagnostics_consent(not LiveOps.diagnostics_consent())
+	A11y.save_settings()
+	events_log.append({"diagnostics": on})
+	_status.text = tr("settings.diagnostics.changed_on" if on else "settings.diagnostics.changed_off")
 	_refresh()
 
 
@@ -177,6 +199,7 @@ func _reset() -> void:
 	Retro.scanlines = false
 	Retro.set_profile("off")
 	A11y.set_palette("default")
+	LiveOps.set_diagnostics_consent(false)
 	A11y.save_settings()
 	events_log.append({"reset": true})
 	_status.text = tr("settings.reset.done")

@@ -35,7 +35,7 @@ CI_GROUPS: dict[str, tuple[str, ...]] = {
               "tests/test_game_increments.py::test_increment_acceptance[C10]",
               "tests/test_game_increments.py::test_increment_acceptance[C9]",
               "tests/test_c12_real.py", "tests/test_c11_dense.py", "tests/test_c9_real.py", "tests/test_c9_c12.py",
-              "tests/test_girt_onnx.py",
+              "tests/test_girt_onnx.py", "tests/test_post_f9_gpu.py",
               # F8 retro (Xvfb captures + emulator, ~40 s) balances the shards
               "tests/test_game_increments.py::test_increment_acceptance[F8]"),
 }

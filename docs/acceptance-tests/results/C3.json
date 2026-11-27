@@ -5,21 +5,21 @@
   "milestone": "C3",
   "passed": true,
   "perf": {
-    "apk_bytes": 1944299,
-    "apk_sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746",
+    "apk_bytes": 2042862,
+    "apk_sha256": "6c5f68193acdb86a43cc6947a44d6e431260d34e533d3225fa68b22ab7f90933",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 1944299,
+        "bytes": 2042862,
         "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
-        "sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746"
+        "sha256": "6c5f68193acdb86a43cc6947a44d6e431260d34e533d3225fa68b22ab7f90933"
       },
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 10.2
+      "seconds": 7.3
     },
     "c3": {
       "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
@@ -29,7 +29,9 @@
         "issues": {
           "Warning:ClickableViewAccessibility": 1,
           "Warning:GradleDependency": 1,
+          "Warning:OldTargetApi": 1,
           "Warning:PluralsCandidate": 1,
+          "Warning:TypographyDashes": 1,
           "Warning:UnusedResources": 1
         },
         "ok": true
@@ -55,7 +57,7 @@
         "ok": true,
         "unused": [
           "a11y_description",
-          "stub_recon_splatforge"
+          "stub_recon_splat_submit"
         ],
         "used": 88
       },
@@ -78,8 +80,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 19.0,
-              "mean_ms": 11.0,
+              "max_ms": 21.2,
+              "mean_ms": 12.0,
               "n": 2
             }
           }
@@ -101,7 +103,7 @@
       "ok": true,
       "unused": [
         "a11y_description",
-        "stub_recon_splatforge"
+        "stub_recon_splat_submit"
       ],
       "used": 88
     },

@@ -51,6 +51,8 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/voice.py`, `forge/cli_voice.py` | VoiceBridge: Vosk STT constrained to the intent grammar (`VERBS` read from `intent_grammar.gd`), confidence gate, `forge voice` | F3 / 0.7.8 |
 | `forge/microlm.py` | Persona micro-LM: Qwen2.5-0.5B int8 ONNX (onnxruntime CPU), persona cards, review-gated drafts (`forge persona author`) merged into the callout cache | F3 / 0.7.8 |
 | `forge/splattrain.py` | SplatForge CPU rung: tiny-scene isotropic 3DGS trainer (NumPy, analytic gradients) | C12 / 0.7.7 |
+| `forge/splatforge_gpu.py` | SplatForge full-scale runner: bundle → CPU SfM → nerfstudio project → deterministic config → external OpenSplat-class trainer (ROCm) → validated `.ply`; LoomCluster job `recon.splat` (pack/unpack, `submit_to_cluster`); contract-probe trainer. `real_unverified_on_gpu` | C12 / 0.9.2 |
+| `forge/onnx_ep.py` | ONNX Runtime execution-provider selection, AMD-first (MIGraphX/ROCm → DirectML → CPU), CPU fallback + demotion, fake-ort contract self-test. `rocm_ready_unverified` | C8/C11 / 0.9.2 |
 | `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
 | `forge/report.py` | STATUS.md generator | F1 |
 | `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
@@ -209,10 +211,11 @@ REST · CLI (`forge`) · MCP · ACP · WebSocket · gRPC · in-Studio terminal.
 ```
 
 - **Execution semantics:** at-least-once; ops are deterministic functions of their payload, so duplicates and placement do not change results (the first result wins). Failing jobs retry (`cluster.protocol.max_attempts`). `gen` runs in a child process whose device set is the node's advert.
-- **Auth + artifacts (0.7.14):** every request/response is HMAC-SHA256 signed with the fleet secret (`X-Loom-Ts/Nonce/Sig`, `X-Loom-RSig`; ±120 s, nonce replay guard → 401; no secret → node refuses to start). Results carry `{sha256,size}`; the origin pulls signed `GET /blob/<sha256>` and verifies the digest before accepting. Not encrypted (C-95, C-96).
+- **Auth + artifacts (0.7.14):** every request/response is HMAC-SHA256 signed with the fleet secret (`X-Loom-Ts/Nonce/Sig`, `X-Loom-RSig`; ±120 s, nonce replay guard → 401; no secret → node refuses to start). Results carry `{sha256,size}`; the origin pulls signed `GET /blob/<sha256>` and verifies the digest before accepting (C-95, C-96).
+- **TLS / mTLS (0.9.1, C-99):** optional (`FORGE_CLUSTER_TLS_DIR` / `--tls-dir`): private fleet CA (`forge/cluster_tls.py`), TLS 1.3, client cert required, chain + hostname checked against the fleet CA, `http://` refused while on, HMAC kept inside TLS; `--bind/--advertise` for LAN/Tailscale (docs/cluster-lan-runbook.md).
 - **Placement:** `requires.device` is matched against adverts; unmatched → HTTP 400. GPU-required GroundWeave ops (`recon.splat`) are routed this way.
 - **PocketLoom:** `forge link serve --cluster URL` plugs a `ClusterBridge` into LoomLink's `/offload`; the phone is a client of the fleet (a Kotlin peer node is future work).
-- **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback — see SECURITY.md for what that does not cover.
+- **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback by default, HTTPS + mTLS when enabled — see SECURITY.md for what that does not cover.
 
 ## C9–C12 companion interfaces (MirrorWeave · LensForge · depth · SplatForge path)
 
@@ -232,7 +235,9 @@ PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; se
                   ├─ Photogrammetry: OpenCV SIFT SfM (CPU, sparse) ─▶ sfm/sparse.ply + cameras.json        real
                   ├─ splat .ply ─▶ MeshWeaver (density → surface nets → OBJ) · GDGS (Godot MultiMesh)      real
                   ├─ SplatForgeCPU: SfM poses ─▶ tiny isotropic 3DGS (NumPy, ≤2k splats/96 px) ─▶ splat/*.ply real
-                  └─ submit: cluster placement check (rocm node?) ─▶ SplatForge full-scale [STUB, GPU] — nothing is queued
+                  ├─ SplatForge full-scale (0.9.2): SfM ─▶ nerfstudio project ─▶ external OpenSplat (ROCm) ─▶ .ply check  real_unverified_on_gpu
+                  └─ submit --bundle: placement (rocm node?) ─▶ LoomCluster op recon.splat ─▶ verified blobs   real_unverified_on_gpu
+                     (phone-initiated submit: SplatForgeClient ─▶ [STUB recon.splat_submit], nothing queued)
 ```
 
 Rules: a stub raises `StubError`/`StubException` (`[STUB <id> <Cn>]`, locale key), never returns data; every capability is

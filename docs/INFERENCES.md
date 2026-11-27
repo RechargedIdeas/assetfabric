@@ -716,6 +716,74 @@ feature flags (launch content deferred)", GAME_SPEC §5 "Live seasonal content (
 11. **F9-11 Versions.** Fabric and game `0.9.0+f9`; increment `liveops-readiness`. Android versionCode/name and the
     Windows file version stay at the F7 values (no new store build).
 
+## Post-F9 operations batch 1 (0.9.1+f9)
+
+12. **F9-12 Diagnostics consent toggle.** Settings gets a "Diagnostics (kept on this device)" row at the top (↑ from
+    the display rows; Enter / pad A toggles), **Off by default**. LiveOps owns the effect: on → `consent.json` +
+    session record written at once; off → the local `diag/` record is deleted (opting out removes what was kept;
+    nothing was ever uploaded). The choice is mirrored into the save's profile layer (`profile.settings.
+    diagnostics_consent`) like the other settings, so a profile carried to a new device carries the opt-in — older
+    profiles without the key leave the device's own choice alone. "Reset to defaults" turns it off. The privacy notice
+    is ours, a placeholder starting with `[PLACEHOLDER — LEGAL REVIEW REQUIRED]` (F9-8): `forge liveops readiness`
+    reports `privacy_text_legal_review: user_gated` until the marker is removed by a legal-reviewed text.
+99. **C-99 LoomCluster TLS / mTLS.** Spec §10 asks for the fleet over LAN/Tailscale; Q6 left it unencrypted. Ours:
+    optional TLS **1.3 only**, ECDSA P-256 private fleet CA (825 days) issuing one leaf per node/operator (397 days,
+    serverAuth + clientAuth, SANs = given hosts + localhost/127.0.0.1/::1), client certificate **required**, server
+    chain + hostname verified against the fleet CA only, `http://` refused while TLS is on, HMAC kept inside TLS
+    (defence in depth: cert without secret or secret without cert gets nothing). The node id picks its cert. No CRL —
+    revocation = re-issue the CA (runbook). Handshakes run in the handler thread (15 s timeout) so a stalled client
+    cannot block accept. Proven on loopback only (C7 `tls`): 8-job batch + 1 MiB blob over `https+mtls`; plaintext,
+    no client cert, foreign-CA cert, untrusted server CA, wrong hostname, downgrade refused; unsigned-inside-TLS 401.
+100. **C-100 Hardware kit assumptions.** (a) Godot 4.3's Android activity takes engine args from the
+    `command_line_params` string-array intent extra; if a device build ignores it, `verify_android.py` reports the two
+    headless checks `null` (not failed) and the manual playtest covers the slice. (b) The Windows script runs the
+    console wrapper (`GameZero.console.exe`) for stdout; the windowed boot proves the GPU driver path, not gameplay.
+    (c) A report passes only with every automated check true and every checklist item answered; reports stay local
+    (`hw-reports/`, user folder written as `~`). The scripts were exercised on the build box only: the PowerShell
+    script under PowerShell 7 on Linux against the Linux export, the Android flow against a scripted fake `adb`, the
+    Web script against loopback copies of `dist/web*` — none of that is the target hardware.
+
+## Post-F9 operations batch 2 (0.9.2+f9)
+
+101. **C-101 ONNX execution-provider selection.** SPEC §9 says AMD-first with a CPU fallback for everything but names no
+     EP order. Ours (`forge/onnx_ep.py`): `MIGraphXExecutionProvider`, `ROCMExecutionProvider` (onnxruntime-rocm/-migraphx
+     wheels, ROCm 6.x) → `DmlExecutionProvider` (Windows) → `CPUExecutionProvider`, always appended last. A GPU EP is
+     requested only if the installed onnxruntime build exposes it **and** GroundWeave reports the device
+     (`FORGE_DEVICES` override; `HIP_VISIBLE_DEVICES=-1` hides ROCm); `FORGE_ONNX_EP=cpu|rocm|directml` forces/prefers.
+     Session-creation failure on the GPU EP rebuilds on CPU and records `fallback`; a failing GPU `run()` (e.g. VRAM
+     exhaustion) demotes to CPU and reruns once (`demoted`). Acceptance probes and bit-reproducible paths force CPU.
+     Status `rocm_ready_unverified`: the contract is proven against a fake onnxruntime (8 cases) and the real CPU wheel;
+     no AMD GPU, no ROCm wheel on the build box. GPU numerics are not claimed equal to CPU (parity gates run on CPU).
+102. **C-102 Full-scale SplatForge runner.** SPEC §7 names OpenSplat+ROCm on the 7900 without an interface. Ours: the
+     runner exports a nerfstudio project (`transforms.json` with OpenGL camera-to-world, `images/`, `sparse_pc.ply` via
+     `ply_file_path`) — keys taken from OpenSplat's nerfstudio reader; OpenSplat needs sparse points (no random init) —
+     writes a deterministic `config.json` (sorted keys, no host paths/timestamps, SHA-256 recorded), runs a command
+     template (`--trainer-cmd` → `FORGE_SPLAT_CMD` → `opensplat` on PATH; default `opensplat {data} -n {iters} -o {out}
+     --sh-degree {sh_degree} -d {downscale}`) under a timeout, then validates the `.ply` with `check_splat_ply` plus finite
+     positions with ≥ 95 % inside 10× the SfM bounds. OpenSplat exposes no RNG seed, so GPU output is not claimed
+     bit-reproducible (`seed_honoured_by_trainer: false`). OpenSplat is AGPL-3.0: invoked as a separate program, never
+     bundled or linked. The bundled contract-probe trainer checks the project (cameras re-project the sparse cloud) and
+     writes an SH-3 `.ply` from the sparse points — it trains nothing and is labelled `contract_probe: true`.
+103. **C-103 LoomCluster splat job.** SPEC §9 "declare GPU-required and LoomCluster must route" — Q6 gave blobs for
+     results but jobs still carry JSON payloads. Ours: op `recon.splat` with `requires: {device: rocm}`; the payload
+     carries the capture bundle inline (base64, ≤ 256 MiB, every object re-hashed on unpack, missing views refused) plus
+     numeric config only — **the trainer command is always the placed node's own** (`FORGE_SPLAT_CMD`/`opensplat`), a
+     payload can never name one. The job id is content-addressed (same bundle + config → same id). The op ignores the
+     node's generic `job_timeout_s` and uses the payload's `timeout_s` (default 6 h). Artifacts (`point_cloud.ply`,
+     `train.json`, `config.json`) return as signed, hash-verified blobs; the origin re-runs the `.ply` check. Proven on a
+     loopback fleet whose node `g` only *advertises* `rocm`, with the contract-probe trainer. The phone-initiated path
+     (Kotlin `SplatForgeClient`, manifest without bytes) stays the `recon.splat_submit` stub.
+104. **C-104 Native swap-advisor step — investigated, not built.** The box now has g++ 14.2 and SCons; godot-cpp
+     `godot-4.3-stable` builds `template_release` for linux x86_64 in 1 min 41 s on 8 vCPU (75 MB static lib, outside the
+     repo). Probe (2 runs each, `taskset -c 0,1`, swapbench reps 5): shipped p50/p95 21.6/38.2 and 22.0/36.0 ms; with
+     `move()` short-circuited in forward clones 19.4/32.0 and 20.5/36.6 ms — movement + separation + grid collision are
+     only ≈ 5–15 % of a forward sim (earlier: brains ≈ 55 %, BT/policy/casts the rest). A cleanly scoped native kernel
+     therefore cannot deliver the ≈ 25 % cut GitHub's 2-core runners need (63–66 → < 50 ms); only a full native forward sim
+     (combat sim, entities, grid flow fields, BT interpreter, GIRT policy — ≈ 1.5 k GDScript lines, Vector2 float32 vs
+     double semantics replicated) behind a bit-parity gate would, plus per-platform binaries (Linux, Windows, Android
+     arm64, Web dlink templates) and a CI build/cache. That is a milestone of its own, not a patch; no native code or
+     binary was added, the GDScript path stays the only path.
+
 ## U1 — Universal 2D/2.5D/3D engine (user request t65u)
 
 Scope: `forge/universal/`, `content/universal/`, `forge accept U1`. Design: ADR-0023…0026 and
@@ -765,5 +833,5 @@ Scope: `forge/universal/`, `content/universal/`, `forge accept U1`. Design: ADR-
 14. **U1-14 Capability list.** `content/universal/capabilities.yaml` (16 formats, 3 features) is our reading of what a
     "universal" engine needs next. It is not exhaustive, and adding an entry is how a newly emerging format enters the
     gap report.
-15. **U1-15 Versions.** Code is on branch `feat/universal-engine-u1`. Merging and choosing the version number are
-    release decisions: the Fabric version stays at the base branch's value and the milestone id is `U1`.
+15. **U1-15 Versions.** Fabric `0.10.0+u1`; milestone id `U1`. Game Zero stays `0.9.1+f9` — no game code changed.
+

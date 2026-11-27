@@ -142,9 +142,11 @@ ops:
       Full-scale 3DGS training (SplatForge, C12: anisotropic, SH3, densification, capture resolution) has no practical CPU
       path; the honest degraded route is CPU photogrammetry (`recon.sfm`, real since 0.7.7). A bounded tiny-scene CPU
       trainer is real as its own op `recon.splat_cpu`; it is not a rung here because it cannot do this op's job at scale.
-      A COLMAP-binary CPU rung stays planned (not bundled).
+      0.9.2: the ROCm rung is a real runner (`forge.splatforge_gpu`: bundle → CPU SfM → nerfstudio project → external
+      OpenSplat, AGPL-3.0, not bundled → validated .ply) whose contract is tested on CPU with a probe trainer —
+      `verified: false`, it has never executed on an AMD GPU. A COLMAP-binary CPU rung stays planned (not bundled).
     ladder:
-      - {id: opensplat-rocm, device: rocm, impl: planned}
+      - {id: opensplat-rocm, device: rocm, impl: real, verified: false}
       - {id: colmap-cpu-photogrammetry, device: cpu, impl: planned}
   recon.splat_cpu:
     budget_s_2core: 60
@@ -196,11 +198,13 @@ ops:
     note: >-
       Dense relative depth (C11): DepthAnything V2 Small (Apache-2.0) ONNX on the onnxruntime CPU EP, single intra-op thread in
       the probe so the float32 map is bit-identical pinned/unpinned. Weights are fetched with SHA-256 (`forge models fetch`);
-      without them `verify` reports `model_absent` (fails only with FORGE_REQUIRE_MODELS=1). The ROCm EP rung stays planned — no
-      GPU on the build box. ARCore depth (phone, `depth.arcore`) supplies metric anchors for this map; its phone half is
-      `real_unverified_on_device`.
+      without them `verify` reports `model_absent` (fails only with FORGE_REQUIRE_MODELS=1). The ROCm EP rung: see below. ARCore depth (phone, `depth.arcore`) supplies metric anchors for this map; its phone half is
+      `real_unverified_on_device`. 0.9.2: the ROCm (MIGraphX/ROCm EP) and DirectML rungs are real code paths in
+      `forge.onnx_ep` — chosen only when the onnxruntime build and GroundWeave both offer the device, CPU fallback at session
+      creation and on a failing run — `verified: false`: never executed on a GPU (CPU-only wheel, no GPU on the build box).
     ladder:
-      - {id: depthanything-v2-onnx, device: rocm, impl: planned}
+      - {id: depthanything-v2-onnx, device: rocm, impl: real, verified: false}
+      - {id: depthanything-v2-onnx-dml, device: directml, impl: real, verified: false}
       - {id: depthanything-v2-onnx-cpu, device: cpu, impl: real}
   recon.plan:
     budget_s_2core: 20

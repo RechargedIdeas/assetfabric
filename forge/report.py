@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from forge import __milestone__, __version__
-from forge.milestones import CL_ORDER, CX_ORDER, C_ORDER, INCREMENTS, ORDER, recorded
+from forge.milestones import CL_ORDER, CX_ORDER, C_ORDER, INCREMENTS, ORDER, U_ORDER, recorded
 
 PLAN = {
     "F0": "Manifest, forge CLI, asset store, orchestrator, telemetry schema",
@@ -18,6 +18,7 @@ PLAN = {
     "F7": "Godot 4.3 exports (Linux, Windows, debug APK, Web PWA) via forge build --target, PWAPipeline (G-WEB-01), ShuttleLine multi-target contract, BoltPack SBOM + license audit",
     "F8": "Console Profile Registry, R1 LUT post-process (integer scale, palette quantisation, optional scanlines), Q1 camera/scale policy, V1 frame gates, R2 discriminator, ConsoleReadiness, C1 solver + NES field-demo ROM in cynes, gamepad-first Display style, sim byte-identical",
     "F9": "LiveOps readiness only: flag/kill-switch manifest with safe offline defaults, RSA-signed local config bundles for balance knobs (anti-replay serial), device state machine (promote/reject/roll-forward rollback/crash-loop quarantine/tamper → defaults), newer saves read-only, opt-in scrubbed local diagnostics, runbook + readiness checklist; no service, G-NET-01 strict",
+    "U1": "Universal 2D/2.5D/3D engine: scene IR + 10 coordinate conventions, parametric OpenSCAD CLI + NumPy CSG fallback, 23 tiered adapters (Godot/Blender native, OpenSCAD CLI bridge, Unreal/Unity/RPG Maker/… interchange packs), Wikipedia engines catalog, benchmark-gated self-improvement, sandboxed plugins + gap report",
 }
 
 
@@ -41,6 +42,16 @@ def render(root: Path) -> str:
             status = "✅ passed" if rec.get("passed") else "❌ failed"
         ev = f"[results/{m}.json](docs/acceptance-tests/results/{m}.json)" if rec else "—"
         lines.append(f"| {m} | {PLAN.get(m, '')} | {inc.increment if inc else '—'} | {status} | {ev} |")
+    for m in U_ORDER:
+        inc = INCREMENTS.get(m)
+        rec = recorded(root, m)
+        if rec is None:
+            status = "not run" if inc else "not started"
+        else:
+            status = "✅ passed" if rec.get("passed") else "❌ failed"
+        ev = f"[results/{m}.json](docs/acceptance-tests/results/{m}.json)" if rec else "—"
+        game = "— (Game Zero stays liveops-readiness)"
+        lines.append(f"| {m} | {PLAN.get(m, inc.description if inc else '')} | {game} | {status} | {ev} |")
     lines += ["", "## Companion track (parallel, not an F-gate)", "",
               "| Companion | Delivers | Acceptance | Evidence |", "|---|---|---|---|"]
     for m in C_ORDER:
@@ -57,7 +68,7 @@ def render(root: Path) -> str:
             status += " (fast mode only)"
         ev = f"[results/{m}.json](docs/acceptance-tests/results/{m}.json)" if rec else "—"
         lines.append(f"| {m} | {INCREMENTS[m].description} | {status} | {ev} |")
-    lines += ["", "Run `forge accept <F|Cn|C1-C6|C7-C8|C9-C12>` to (re)record a milestone; `forge report` to refresh this file.", ""]
+    lines += ["", "Run `forge accept <F|U1|Cn|C1-C6|C7-C8|C9-C12>` to (re)record a milestone; `forge report` to refresh this file.", ""]
     return "\n".join(lines)
 
 

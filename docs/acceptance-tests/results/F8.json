@@ -34,13 +34,13 @@
       "gz-native",
       "nes-style"
     ],
-    "r2_control_modern_as_nes": 0.4836,
+    "r2_control_modern_as_nes": 0.4824,
     "r2_holdout": {
       "gb-style": 0.9931,
       "gz-native": 0.9931,
       "nes-style": 0.9931
     },
-    "r2_min_capture": 0.8739,
+    "r2_min_capture": 0.8741,
     "rom_bytes": 40976,
     "rom_chr_tiles": [
       28,
@@ -50,11 +50,11 @@
     "rom_prg_used": 2063,
     "rom_sha256": "2cd18d666f354b1c0aebf5b3b7bb88f1babbda1b38b05836830ab4f37aa20da7",
     "timing_s": {
-      "generator": 1.09,
-      "godot_headless": 6.1,
-      "render_v1_r2": 26.34,
+      "generator": 1.2,
+      "godot_headless": 6.34,
+      "render_v1_r2": 28.12,
       "rom_readiness_emulator": 5.05,
-      "total": 38.58
+      "total": 40.71
     },
     "v1_frames_checked": 6
   },
@@ -142,7 +142,7 @@
             "ok": true,
             "step": "pad_moves_leader",
             "to": [
-              759.000732421875,
+              755.700805664062,
               408
             ]
           },
@@ -157,6 +157,7 @@
           {
             "ok": true,
             "settings": {
+              "diagnostics_consent": false,
               "input_remap": {},
               "palette_variant": "deuteranopia",
               "retro_profile": "nes-style",
@@ -171,6 +172,7 @@
         "_script_errors": 0,
         "errors": [],
         "settings": {
+          "diagnostics_consent": false,
           "input_remap": {},
           "palette_variant": "deuteranopia",
           "retro_profile": "nes-style",
@@ -476,7 +478,7 @@
           ],
           "colours_on_screen": 33,
           "palette_conformance": 1.0,
-          "r2_authenticity": 0.9287,
+          "r2_authenticity": 0.9289,
           "scale": 4,
           "shader_exact": 1.0,
           "size": [
@@ -487,7 +489,7 @@
           "zoom": 4
         },
         "gz-native__deuteranopia": {
-          "a11y_changes_frame": 0.003541666666666665,
+          "a11y_changes_frame": 0.0035069444444444375,
           "a11y_effect_required": true,
           "block_uniformity": 1.0,
           "camera": [
@@ -496,7 +498,7 @@
           ],
           "colours_on_screen": 33,
           "palette_conformance": 1.0,
-          "r2_authenticity": 0.9287,
+          "r2_authenticity": 0.9289,
           "scale": 4,
           "shader_exact": 1.0,
           "size": [
@@ -514,7 +516,7 @@
           ],
           "colours_on_screen": 22,
           "palette_conformance": 1.0,
-          "r2_authenticity": 0.8739,
+          "r2_authenticity": 0.8741,
           "scale": 5,
           "scanlines": {
             "bottom_rows_darkened": 1.0,
@@ -529,7 +531,7 @@
           "zoom": 5
         },
         "nes-style__deuteranopia": {
-          "a11y_changes_frame": 0.00455729166666663,
+          "a11y_changes_frame": 0.00439453125,
           "a11y_effect_required": true,
           "block_uniformity": 1.0,
           "camera": [
@@ -538,7 +540,7 @@
           ],
           "colours_on_screen": 21,
           "palette_conformance": 1.0,
-          "r2_authenticity": 0.8739,
+          "r2_authenticity": 0.8741,
           "scale": 5,
           "shader_exact": 1.0,
           "size": [
@@ -578,7 +580,7 @@
           "train": 336
         }
       },
-      "r2_control_modern_as_nes": 0.4836
+      "r2_control_modern_as_nes": 0.4824
     },
     "roms": {
       "nes-style": {
@@ -689,7 +691,7 @@
               ]
             },
             {
-              "anim_frame": 1,
+              "anim_frame": 2,
               "bijective": true,
               "input": "left",
               "match": 1.0,
@@ -756,11 +758,11 @@
       }
     },
     "timing_s": {
-      "generator": 1.09,
-      "godot_headless": 6.1,
-      "render_v1_r2": 26.34,
+      "generator": 1.2,
+      "godot_headless": 6.34,
+      "render_v1_r2": 28.12,
       "rom_readiness_emulator": 5.05,
-      "total": 38.58
+      "total": 40.71
     }
   }
 }

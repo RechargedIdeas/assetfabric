@@ -37,6 +37,7 @@ companions/pocketloom/local.properties
 /.fabric/cache/
 /.fabric/jdk/
 /.fabric/cluster.key
+/.fabric/cluster-tls/
 # F9 LiveOps signing keys (dev keys from `forge liveops keygen`; production key = Producer key ceremony, never in git)
 /.fabric/liveops/
 games/game-zero/*.import
@@ -52,4 +53,4 @@ store/models/**
 
 # U1 universal engine local state (evolution telemetry/history, active plugins, export scratch)
 /.fabric/universal/
-godot-bin
+/hw-reports/

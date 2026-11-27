@@ -110,5 +110,5 @@
     <string name="arcore_depth_no">not supported (poses only)</string>
     <string name="arcore_notice">ARCore capture uses Google Play Services for AR (ARCore), provided by Google LLC and governed by the Google Terms of Service (policies.google.com/terms) and Google Privacy Policy (google.com/policies/privacy).</string>
     <!-- C9–C12 labelled-stub reasons (shown if a stub feature is ever surfaced; see content/companions/c9_c12.yaml) -->
-    <string name="stub_recon_splatforge">SplatForge (3D Gaussian Splatting training) is not implemented: no trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The job bundle and plan are real; training is not.</string>
+    <string name="stub_recon_splat_submit">Asking for a reconstruction is not wired: the cluster has no splat-training job yet, so nothing is queued. Run training on the desktop ROCm node (forge recon train --stage splat).</string>
 </resources>

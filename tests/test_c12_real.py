@@ -126,10 +126,14 @@ def test_splattrain_tiny_scene_on_sfm_poses_generalises_and_is_deterministic() -
     assert realityloom.check_splat_ply(ply)["vertices"] == len(runs[0]["params"]["mu"])
 
 
-def test_splatforge_cpu_bounds_and_full_scale_still_refuses(tmp_path: Path) -> None:
+def test_splatforge_cpu_bounds_and_full_scale_refuses_without_rocm(tmp_path: Path) -> None:
+    from forge.splatforge_gpu import SplatRunError
     from forge.stubs import StubError
     (tmp_path / "bundle.json").write_text('{"views": []}', encoding="utf-8")
     with pytest.raises(ValueError, match="bounded to tiny scenes"):
         realityloom.SplatForgeCPU(splats=50_000).train(tmp_path)
-    with pytest.raises(StubError):
-        realityloom.SplatForge().train({})
+    with pytest.raises(SplatRunError, match="ROCm"):              # 0.9.2: a real runner that refuses honestly, not a stub
+        realityloom.SplatForge(devices=["cpu"]).train(tmp_path)
+    assert not (tmp_path / "splat_gpu").exists()
+    with pytest.raises(StubError):                                # cluster submission stays the labelled stub
+        realityloom.request_splat({})

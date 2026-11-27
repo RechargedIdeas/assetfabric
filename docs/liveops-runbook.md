@@ -69,7 +69,7 @@ Consent flag `diagnostics` defaults **off** and is the player's decision (`conse
 the game keeps a local session record (`diag/session.json`: build, platform, LiveOps state, whether the previous boot
 crashed — no paths or ids). `forge liveops diag-export --consent FILES… --out diag.json` scrubs home paths, user/host
 names, e-mails, IPs, MACs and long tokens and validates `forge/schemas/diag_bundle.schema.json`. Nothing is uploaded.
-A consent toggle in the in-game Settings screen and the legal/privacy text are user-gated (INFERENCES F9-8).
+Since 0.9.1 the player sets consent in the in-game Settings screen ("Diagnostics (kept on this device)", default Off; turning it off deletes the local record; mirrored into the save profile — INFERENCES F9-12). The privacy text is a placeholder marked `[PLACEHOLDER — LEGAL REVIEW REQUIRED]` until legal review (`forge liveops readiness` → `privacy_text_legal_review: user_gated`).
 
 ## Save compatibility
 

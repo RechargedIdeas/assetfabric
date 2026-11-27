@@ -1,6 +1,8 @@
 # Companion-track register C9–C12 (MirrorWeave, LensForge capture, metric depth, SplatForge path).
 # One row per capability the SPEC names for these milestones. `status: real` = implemented on a CPU path, tested, and
-# accepted by `forge accept C9..C12`; `status: real_unverified_on_device` = an Android-only capability whose real platform code
+# accepted by `forge accept C9..C12`; `status: real_unverified_on_gpu` (0.9.2) = a GPU-node runner whose full contract is tested on
+# CPU with a probe but which has never executed on an AMD GPU (`verified_on_gpu: false` required);
+# `status: real_unverified_on_device` = an Android-only capability whose real platform code
 # (`android_impl`, app module) compiles into the APK and whose platform-free half is JVM-tested, but which has NEVER run on a
 # phone (no device/emulator on the build box) — the desktop side named by `entry` is real and tested; `status: stub` = typed
 # interface only, refuses with StubError carrying `reason_key` (locales/en.json) — it never returns made-up output.
@@ -82,9 +84,15 @@ features:
      spec: "§9 'declare GPU-required and LoomCluster must route'", note: "asks a real LoomCluster which nodes advertise rocm"}
   - {id: recon.splat_ply_check, milestone: C12, status: real, entry: "forge.realityloom:check_splat_ply", ladder_op: recon.plan,
      spec: "§7 '.ply/.splat → Godot GDGS'", note: "validates the INRIA-layout 3DGS .ply a trainer must emit"}
-  - {id: recon.splatforge, milestone: C12, status: stub, entry: "forge.realityloom:SplatForge.train", kotlin: SplatForgeClient, ladder_op: recon.splat,
-     reason_key: stub.recon.splatforge, spec: "§4 'SplatForge — 3DGS training from capture (C12)'",
-     note: "full-scale (anisotropic, SH3, densification, capture resolution) needs a GPU trainer — the CPU tiny-scene rung is recon.splatforge_cpu"}
+  - {id: recon.splatforge, milestone: C12, status: real_unverified_on_gpu, verified_on_gpu: false, entry: "forge.splatforge_gpu:GpuSplatRunner.train",
+     ladder_op: recon.splat, spec: "§4 'SplatForge — 3DGS training from capture (C12)'; §7 'OpenSplat+ROCm on Linux (7900)'",
+     note: "0.9.2: full-scale (anisotropic, SH3, densification, capture resolution) through an external OpenSplat-class trainer on a ROCm node — bundle → CPU SfM → nerfstudio project → deterministic config → trainer → check_splat_ply. Whole contract tested on CPU with a contract-probe trainer; never run on an AMD GPU (C-102)"}
+  - {id: recon.splat_submit, milestone: C12, status: stub, entry: "forge.realityloom:request_splat", kotlin: SplatForgeClient, ladder_op: recon.splat,
+     reason_key: stub.recon.splat_submit, spec: "§7 'route: loomcluster'; §8 'LensForge capture → RealityLoom/SplatForge on desktop/cluster'",
+     note: "phone-initiated splat request (manifest only, no image bytes): placement check is real, then it refuses — PocketLoom → cluster submission is not wired (split out of recon.splatforge in 0.9.2; the desktop path is recon.splat_cluster)"}
+  - {id: recon.splat_cluster, milestone: C12, status: real_unverified_on_gpu, verified_on_gpu: false, entry: "forge.splatforge_gpu:submit_to_cluster",
+     ladder_op: recon.splat, spec: "§7 'route: loomcluster'; §9 'declare GPU-required and LoomCluster must route'",
+     note: "0.9.2: desktop → fleet. Real placement check, LoomCluster op recon.splat (requires rocm) carrying the hash-verified bundle, the placed node runs its own trainer (node env, never a payload command), artifacts return as hash-verified blobs and the .ply is re-checked at the origin. Proven on a local 2-process fleet with a simulated-rocm node + contract-probe trainer; never run on an AMD GPU (C-103)"}
   - {id: recon.splatforge_cpu, milestone: C12, status: real, entry: "forge.realityloom:SplatForgeCPU.train", ladder_op: recon.splat_cpu,
      spec: "§4 'SplatForge — 3DGS training from capture (C12)'; AMD honesty 'CPU COLMAP + burst GPU'",
      note: "bounded tiny-scene 3DGS on CPU (NumPy, isotropic, SH0, dense sorted alpha, analytic grads checked vs finite differences): bundle → SfM poses/init → train → validated .ply; rendered 9-view scene, held-out view PSNR ≥ 20 dB and ≥ +10 dB over init (measured 23.3 dB, +13.1 dB)"}

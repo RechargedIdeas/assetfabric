@@ -21,8 +21,8 @@
       "properties": {
         "milestone": {
           "type": "string",
-          "pattern": "^F[0-9]+$",
-          "description": "Current Fabric milestone id (e.g. F0)."
+          "pattern": "^(F[0-9]+|U[0-9]+)$",
+          "description": "Current Fabric milestone id (e.g. F0, U1). F-track is Game Zero-coupled; U-track is Fabric-only after F9."
         },
         "version": { "type": "string" }
       }

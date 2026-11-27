@@ -27,6 +27,8 @@ forge accept F8                   # F8 retro: profiles, ROM + emulator, Godot fl
 forge accept F9                   # F9 LiveOps readiness: forge bundle rules, 22 device boots, combat-hash proof, saves, privacy (≈ 11 s)
 forge liveops readiness           # LiveOps checklist (fails on `fail`, lists user-gated items)
 forge accept C9-C12               # MirrorWeave (video PSNR, WS signing, Xvfb capture, Studio Qt events, APK impls) / LensForge / depth / SplatForge-path; needs ffmpeg(libvpx) + Xvfb; fast mode skips Gradle
+forge groundweave onnx-ep --selftest   # ONNX EP selection: what this host would use + fallback/demotion contract (fake ort)
+forge recon train BUNDLE --stage splat --contract-probe   # full-scale SplatForge runner contract on CPU (trains nothing)
 forge accept C7-C8                # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (Godot for the GIRT/balance probes; JDK+SDK adds the Kotlin LoomLink hop)
 forge groundweave verify          # every op's CPU path: 2 cores pinned, GPUs hidden, budget + byte-identity vs unpinned / simulated-GPU runs
 forge cluster demo                # 3 local nodes, work stealing + SIGKILL failover
@@ -73,6 +75,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | F7 | [F7.md](docs/acceptance-tests/F7.md) | launch-candidates (custom runner: `forge build --target all` + desktop slice in a network-less namespace + Android content slice + G-SAVE-01 ring desktop → Android → Web → desktop + PWA smoke + remap; ≈ 2.5 min full, ≈ 3 s fast) |
 | F8 | [F8.md](docs/acceptance-tests/F8.md) | retro-console (custom runner: retro generator gates + ROM build/budgets + cynes boot/d-pad + ConsoleReadiness + gamepad settings flow + restore + Xvfb captures per profile × palette with V1/R2 + sim invariance; ≈ 40 s; needs Godot, Xvfb, cynes) |
 | F9 | [F9.md](docs/acceptance-tests/F9.md) | liveops-readiness (custom runner, ≈ 11 s: manifest + generated table, forge refuses 10 bad bundles, 22 headless `liveopscheck` boots with an ephemeral key — promote / reject / replay / roll-forward rollback / real `OS.crash` crash-loop quarantine / on-disk tamper + downgrade → defaults / no key → ignored, kill switches, F2 combat state-hash proof, newer-save guard, diagnostics consent + scrub, `bwrap --unshare-net` boot, readiness checklist); unit tests `tests/test_f9_liveops.py` (25) |
+| U1 | [U1.md](docs/acceptance-tests/U1.md) | universal-engine (custom runner `forge/accept_u1.py`, ≈ 50 s: parametric OpenSCAD/CSG, IR + coordinate round-trips, 23 adapters × reference scenes + Godot/Blender/OpenSCAD native when installed, catalog integrity, evolution promote/reject/rollback, plugin register/hot-load/hostile rejection); unit tests `tests/test_universal_engine.py` |
 
 ## 4. CI gates
 
@@ -91,6 +94,15 @@ feature branches are cancelled (`main` runs are never cancelled).
 PocketLoom: job **`pocketloom`** (setup-java 17, Gradle cache via `gradle/actions/setup-gradle`, runner Android SDK) runs `forge accept C1-C6`, `C7-C8` and `C9-C12 --no-write` in **full mode**, in parallel with the shards. Pushes to `feat/**` branches also run CI.
 
 F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, ShuttleLine vs sources, BoltPack SBOM + license audit for every target, network-API scan, editor save/remap round-trip). Platform exports + `forge accept F7` (full) are **local-only** (≈1 GB templates, JDK + Android SDK, headless Chrome; ≈ 2.5 min) — see [docs/packaging.md §CI](docs/packaging.md#ci). Planned: cached `package` job, Windows runner for DirectML. `[INFERENCE: workflow shape]`
+
+### Hardware verification (0.9.1, not CI)
+
+What CI cannot run — a Windows PC, a real Android phone, a public HTTPS host, a human — is covered by
+`scripts/verify-hardware/` (docs/hardware-verification.md): each script writes a JSON report (`hw-reports/`, gitignored)
+that `hwreport.py check` validates (pass only with every automated check true and the manual checklist answered).
+CI only tests the kit itself (`tests/test_hw_verification.py`: report format, the Android flow against a scripted fake
+`adb`, PowerShell parse when `pwsh` exists). LoomCluster TLS/mTLS is proven on loopback in `forge accept C7` (`tls`)
+and `tests/test_c7_c8.py`; real two-machine runs follow docs/cluster-lan-runbook.md.
 
 ## 5. Performance & fidelity contracts
 

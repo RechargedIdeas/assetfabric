@@ -28,7 +28,12 @@ def test_manifest_milestone_matches_package_and_increment(root: Path) -> None:
     m = load_manifest(root / "forge.yaml", root)
     assert m.fabric.milestone == forge.__milestone__
     assert m.game.id == "game-zero"
-    assert m.game.increment == INCREMENTS[m.fabric.milestone].increment
+    # U-track milestones are Fabric-only; Game Zero stays on the last F increment.
+    if m.fabric.milestone.startswith("F"):
+        assert m.game.increment == INCREMENTS[m.fabric.milestone].increment
+    else:
+        assert m.fabric.milestone in INCREMENTS
+        assert m.game.increment == INCREMENTS["F9"].increment
     assert any(t.renderer == "compatibility" for t in m.targets)
 
 
