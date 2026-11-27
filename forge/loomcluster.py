@@ -141,9 +141,17 @@ def op_bytes(payload: dict[str, Any]) -> dict[str, Any]:
             "data_b64": {"blob.bin": base64.b64encode(data).decode()}}
 
 
+def op_recon_splat(payload: dict[str, Any], devices: list[str] | None = None, timeout_s: float = 300.0) -> dict[str, Any]:
+    """C12 full-scale SplatForge run on this node (0.9.2): placed only on nodes advertising `rocm` (`requires`), uses the
+    node's own trainer (FORGE_SPLAT_CMD / opensplat) — never a command from the payload. real_unverified_on_gpu."""
+    from forge.splatforge_gpu import cluster_op
+
+    return cluster_op(payload, devices=devices, timeout_s=None)   # own limit: payload timeout_s (≤ 6 h default)
+
+
 OPS: dict[str, Callable[..., dict[str, Any]]] = {"hashchain": op_hashchain, "gen": op_gen, "flaky": op_flaky,
-                                                 "bytes": op_bytes}
-NEEDS_DEVICES = {"gen"}      # ops whose implementation takes the node's advertised device list
+                                                 "bytes": op_bytes, "recon.splat": op_recon_splat}
+NEEDS_DEVICES = {"gen", "recon.splat"}      # ops whose implementation takes the node's advertised device list
 
 
 def expected_hashchain(seed: Any, rounds: int) -> str:

@@ -190,3 +190,53 @@ def test_cli_stage_splat_contract_probe(root: Path, bundle: tuple[Path, float]) 
     p = subprocess.run([sys.executable, "-m", "forge.cli", "recon", "train", str(b), "--stage", "splat"], cwd=root,
                        capture_output=True, text=True, timeout=120, env={**__import__("os").environ, gw.DEVICE_ENV: "cpu"})
     assert p.returncode == 1 and "ROCm" in json.loads(p.stdout)["error"]
+
+
+# ----------------------------------------------------------------------------- LoomCluster op recon.splat (C-103)
+
+def test_pack_unpack_bundle_verifies_hashes(bundle: tuple[Path, float], tmp_path: Path) -> None:
+    import base64
+    b, _ = bundle
+    packed = sg.pack_bundle(b)
+    out = sg.unpack_bundle(copy.deepcopy(packed), tmp_path / "ok")
+    assert (out / "bundle.json").read_bytes() == (b / "bundle.json").read_bytes()
+    bad = copy.deepcopy(packed)
+    sha = next(iter(bad["objects"]))
+    bad["objects"][sha] = base64.b64encode(b"tampered").decode()
+    with pytest.raises(sg.SplatRunError, match="does not match its hash"):
+        sg.unpack_bundle(bad, tmp_path / "bad")
+    gone = copy.deepcopy(packed)
+    gone["objects"].pop(sha)
+    with pytest.raises(sg.SplatRunError, match="missing"):
+        sg.unpack_bundle(gone, tmp_path / "gone")
+    job = sg.cluster_job(b, iters=10)
+    assert job["op"] == "recon.splat" and job["requires"] == {"device": "rocm"} and "trainer_cmd" not in job["payload"]
+    assert sg.cluster_job(b, iters=10)["id"] == job["id"]            # content-addressed job id
+
+
+def test_cluster_op_ignores_payload_commands(bundle: tuple[Path, float]) -> None:
+    b, f = bundle
+    job = sg.cluster_job(b, iters=5, focal_px=f)
+    job["payload"]["trainer_cmd"] = "rm -rf /"                       # a payload can never name a command
+    with pytest.raises(sg.SplatRunError, match="ROCm"):
+        sg.cluster_op(job["payload"], devices=["cpu"])
+
+
+def test_loomcluster_places_splat_job_on_rocm_node(bundle: tuple[Path, float], tmp_path: Path) -> None:
+    """2-process local fleet: `a` (cpu) is the origin, `g` advertises rocm (simulated) → the job must run on `g`; the
+    contract-probe trainer stands in for OpenSplat. Artifacts come back as hash-verified blobs."""
+    from forge import loomcluster as lc
+    b, f = bundle
+    with lc.Fleet(tmp_path / "fleet") as fl:
+        ua = fl.add("a", 1, devices="cpu")
+        assert fl.wait_mesh()
+        with pytest.raises(sg.SplatRunError, match="No cluster node advertises rocm"):
+            realityloom.submit_bundle(b, ua, iters=5, focal_px=f, contract_probe=True)
+        fl.add("g", 1, devices="cpu,rocm")
+        assert fl.wait_mesh()
+        r = realityloom.submit_bundle(b, ua, iters=5, focal_px=f, contract_probe=True, timeout_s=240, poll_s=0.2)
+    assert r["cluster"]["node"] == "g" and r["cluster"]["capable_nodes"] == ["g"]
+    assert r["status"] == "real_unverified_on_gpu" and r["verified_on_gpu"] is False and r["contract_probe"] is True
+    ply = (b / "splat_gpu" / "point_cloud.ply").read_bytes()
+    assert realityloom.check_splat_ply(ply)["sh_degree"] == 3
+    assert json.loads((b / "splat_gpu" / "train.json").read_text())["ply_sha256"] == __import__("hashlib").sha256(ply).hexdigest()

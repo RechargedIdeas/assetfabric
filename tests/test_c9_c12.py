@@ -37,9 +37,10 @@ def test_register_matches_code_and_every_stub_refuses(root: Path) -> None:
     r = registry.check(root)
     assert r["ok"], r["problems"]
     # 0.9.2: 25 real (incl. the tiny-scene CPU SplatForge rung) · 8 real_unverified_on_device (Android-only, compiled, never on a
-    # phone) · 1 real_unverified_on_gpu (full-scale SplatForge runner, never on an AMD GPU) · 1 stub (cluster splat submit)
-    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["real_unverified_on_gpu"]), len(r["stubs"])) == (25, 8, 1, 1)
-    assert r["real_unverified_on_gpu"] == ["recon.splatforge"] and r["stubs"] == ["recon.splat_submit"]
+    # phone) · 2 real_unverified_on_gpu (full-scale SplatForge runner + its LoomCluster job, never on an AMD GPU) · 1 stub
+    # (phone-initiated splat submit)
+    assert (len(r["real"]), len(r["real_unverified_on_device"]), len(r["real_unverified_on_gpu"]), len(r["stubs"])) == (25, 8, 2, 1)
+    assert r["real_unverified_on_gpu"] == ["recon.splatforge", "recon.splat_cluster"] and r["stubs"] == ["recon.splat_submit"]
     for fid, rec in r["stub_refusals"].items():
         assert rec["message"].startswith(f"[STUB {fid} C"), rec
 
@@ -353,7 +354,7 @@ def test_routing_bundle_and_plan(tmp_path: Path, root: Path) -> None:
     assert (cpu["effective_route"], cpu["degraded_from"], cpu["runnable_today"], cpu["eta_measured"]) == ("photogrammetry", "splat", True, False)   # CPU route real since 0.7.7
     gpu = realityloom.plan(m, ["cpu", "rocm"], tools={})
     assert gpu["effective_route"] == "splat" and gpu["blocked_by"] == [] and gpu["runnable_today"] is True     # 0.9.2
-    assert gpu["unverified_on_gpu"] == ["recon.splatforge"] and gpu["cluster_submit"] == "stub: recon.splat_submit"
+    assert gpu["unverified_on_gpu"] == ["recon.splatforge"] and gpu["cluster_submit"].startswith("forge recon submit --bundle")
     assert next(s for s in gpu["stages"] if s["id"] == "train_splat")["requires"] == {"device": "rocm"}
     few = realityloom.plan(realityloom.bundle_manifest(imgs[:1], "backdrop", "burst", root), ["cpu"], tools={})
     assert few["problems"] and "no runnable route" in few["eta"]
@@ -368,10 +369,14 @@ def test_splat_ply_validator() -> None:
             realityloom.check_splat_ply(blob)
 
 
-def test_recon_stubs_refuse_and_cli_exit_3() -> None:
-    for stage in ("splat",):                                    # photogrammetry/mesh/godot-import are real since 0.7.7
-        r = CliRunner().invoke(main, ["recon", "train", "--stage", stage])
-        assert r.exit_code == 3 and is_stub_message(json.loads(r.output)["message"])
+def test_recon_train_splat_needs_bundle_and_submit_stub_exits_3() -> None:
+    # 0.9.2: `--stage splat` is a real external-trainer runner (real_unverified_on_gpu) — no bundle → usage error, not a stub
+    r = CliRunner().invoke(main, ["recon", "train", "--stage", "splat"])
+    assert r.exit_code == 2 and "BUNDLE" in r.output
+    # the only remaining C12 stub is cluster submit; its probe refuses with a stub message (CLI exit 3 via _guard)
+    with pytest.raises(StubError) as e:
+        realityloom.STUB_PROBES["recon.splat_submit"]()
+    assert e.value.feature == "recon.splat_submit" and is_stub_message(str(e.value))
 
 
 def test_submit_checks_placement_then_refuses(root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -382,7 +387,7 @@ def test_submit_checks_placement_then_refuses(root: Path, monkeypatch: pytest.Mo
     monkeypatch.setattr(realityloom, "cluster_devices", lambda url: {"a": ["cpu"], "g": ["cpu", "rocm"]})
     with pytest.raises(StubError) as e:
         realityloom.submit(m, "http://x")
-    assert e.value.feature == "recon.splatforge"
+    assert e.value.feature == "recon.splat_submit"
 
 
 # ----------------------------------------------------------------------------- GroundWeave planned ops

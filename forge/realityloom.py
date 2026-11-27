@@ -137,7 +137,8 @@ def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | No
             "blocked_by": sorted({s["blocked_by"] for s in stages if "blocked_by" in s}),
             "unverified_on_gpu": sorted({s["unverified"] for s in stages if "unverified" in s}),
             "run_on_node": "forge recon train --stage splat <bundle>" if eff == "splat" else "forge recon photogrammetry <bundle>",
-            "cluster_submit": "stub: recon.splat_submit",
+            "cluster_submit": ("forge recon submit --bundle <bundle> --cluster <url>  (LoomCluster op recon.splat, "
+                               "real_unverified_on_gpu; phone-initiated submit is stub recon.splat_submit)") if eff == "splat" else None,
             "tools_on_host": tools}
 
 
@@ -161,17 +162,26 @@ def check_placement(url: str, device: str = "rocm") -> dict[str, Any]:
 
 
 def submit(manifest: dict[str, Any], cluster_url: str) -> None:
-    """Try to run reconstruction on a cluster. REAL placement check first; then — because LoomCluster has no `recon.splat`
-    worker op — the stub refusal (`recon.splat_submit`). Never submits a job, so nothing is queued that no node can run."""
+    """Phone/manifest path (Python twin of the Kotlin `SplatForgeClient.request`): REAL placement check, then the stub
+    refusal `recon.splat_submit` — a manifest carries no image bytes, and PocketLoom → cluster splat submission is not
+    wired. The desktop path with bytes is real: `submit_bundle` (LoomCluster op `recon.splat`)."""
     p = check_placement(cluster_url, "rocm")
     if manifest["route"] == "splat" and not p["ok"]:
         raise RuntimeError(t("recon.no_gpu_node", device="rocm"))
     request_splat(manifest)
 
 
+def submit_bundle(bundle: Path, cluster_url: str, **kw: Any) -> dict[str, Any]:
+    """REAL (0.9.2, real_unverified_on_gpu): run full-scale SplatForge on the fleet's ROCm node via LoomCluster op
+    `recon.splat` — see `forge.splatforge_gpu.submit_to_cluster`."""
+    from forge.splatforge_gpu import submit_to_cluster
+
+    return submit_to_cluster(Path(bundle), cluster_url, **kw)
+
+
 def request_splat(manifest: dict[str, Any]) -> None:
-    """STUB (C12, 0.9.2): hand a placed reconstruction job to a LoomCluster worker. Refuses; the Kotlin twin is
-    `SplatForgeClient.request`. Training itself is real on the ROCm node: `SplatForge.train` / `forge recon train --stage splat`."""
+    """STUB (C12, 0.9.2): a *phone-initiated* splat request (manifest only, no bytes). Refuses; the Kotlin twin is
+    `SplatForgeClient.request`. Desktop → cluster is real: `submit_bundle` / `forge recon submit --bundle`."""
     refuse("recon.splat_submit", "stub.recon.splat_submit", MILESTONE)
 
 

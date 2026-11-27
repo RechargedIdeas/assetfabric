@@ -55,5 +55,8 @@
   "recon.splat.gpu.no_output": "The splat trainer exited cleanly but wrote no {path}.",
   "recon.splat.gpu.bad_output": "The splat trainer's output was rejected: {why}",
   "recon.splat.gpu.probe_note": "Contract probe on CPU: the exported project was checked and a valid .ply was written from the sparse points. Nothing was trained; this is not a reconstruction.",
-  "recon.splat.gpu.unverified_note": "Trained by the external trainer; output validated. This path has not been verified on an AMD GPU by AssetFabric (real_unverified_on_gpu); GPU output is not bit-reproducible."
+  "recon.splat.gpu.unverified_note": "Trained by the external trainer; output validated. This path has not been verified on an AMD GPU by AssetFabric (real_unverified_on_gpu); GPU output is not bit-reproducible.",
+  "recon.splat.cluster.bad_bundle": "The splat job's capture bundle was rejected: {why}",
+  "recon.splat.cluster.too_large": "The capture bundle is larger than {mib} MiB; LoomCluster splat jobs carry the bundle inline. Downscale or split the capture.",
+  "recon.splat.cluster.job_failed": "The splat job failed on cluster node {node}: {why}"
 }

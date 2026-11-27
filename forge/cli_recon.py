@@ -439,16 +439,36 @@ def recon_plan(files: tuple[Path, ...], target: str, mode: str, devices: str | N
 
 
 @recon_grp.command("submit")
-@click.argument("files", nargs=-1, required=True, type=click.Path(exists=True, dir_okay=False, path_type=Path))
-@click.option("--target", type=click.Choice(["backdrop", "hero_prop"]), required=True)
+@click.argument("files", nargs=-1, type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option("--bundle", "bundle_dir", type=click.Path(exists=True, file_okay=False, path_type=Path), default=None,
+              help="Existing capture bundle (`forge recon bundle`). Otherwise FILES are bundled into --out first.")
+@click.option("--out", type=click.Path(path_type=Path), default=None, help="Bundle directory to write FILES into (with FILES).")
+@click.option("--target", type=click.Choice(["backdrop", "hero_prop"]), default="backdrop", show_default=True)
 @click.option("--mode", default="sweep")
 @click.option("--cluster", "cluster_url", required=True)
-def recon_submit(files: tuple[Path, ...], target: str, mode: str, cluster_url: str) -> None:
-    """Try to run reconstruction on a cluster: real GPU-placement check, then the STUB refusal recon.splat_submit (nothing is queued)."""
+@click.option("--iters", type=int, default=30000, show_default=True)
+@click.option("--sh-degree", type=int, default=3, show_default=True)
+@click.option("--downscale", type=float, default=1.0, show_default=True)
+@click.option("--focal-px", type=float, default=None)
+@click.option("--timeout", "timeout_s", type=float, default=6 * 3600, show_default=True)
+@click.option("--contract-probe", is_flag=True, help="Run the whole cluster path with the CPU contract-probe trainer "
+              "(the placed node still has to advertise rocm; trains nothing).")
+def recon_submit(files: tuple[Path, ...], bundle_dir: Path | None, out: Path | None, target: str, mode: str,
+                 cluster_url: str, iters: int, sh_degree: int, downscale: float, focal_px: float | None, timeout_s: float,
+                 contract_probe: bool) -> None:
+    """Full-scale splat training on the fleet (0.9.2, real_unverified_on_gpu): real placement check (a node must advertise
+    rocm) → LoomCluster job `recon.splat` → that node's trainer → hash-verified blobs → BUNDLE/splat_gpu/ + local .ply check."""
     from forge import realityloom
 
     def run() -> Any:
-        return realityloom.submit(realityloom.bundle_manifest(_images(files), target, mode), cluster_url)
+        b = bundle_dir
+        if b is None:
+            if not files or out is None:
+                raise click.UsageError("give --bundle DIR, or FILES with --out DIR")
+            realityloom.write_bundle(out, _images(files), target, mode)
+            b = out
+        return realityloom.submit_bundle(b, cluster_url, iters=iters, sh_degree=sh_degree, downscale=downscale,
+                                         focal_px=focal_px, timeout_s=timeout_s, contract_probe=contract_probe)
     _guard(run)
 
 

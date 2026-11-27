@@ -220,6 +220,136 @@ def check_output(data: bytes, bounds: list[list[float]], slack: float = 10.0) ->
     return {**info, "inside_scene_frac": round(inside, 4)}
 
 
+# ------------------------------------------------------------------------------------------------ LoomCluster job (0.9.2)
+# `forge recon submit BUNDLE --cluster URL` → LoomCluster op `recon.splat` with `requires: {device: rocm}`: the fleet's
+# negotiated placement sends it to a node that advertises ROCm; that node unpacks the bundle (every object re-hashed),
+# runs `GpuSplatRunner` with ITS OWN trainer (node env FORGE_SPLAT_CMD / opensplat on PATH — a payload can never name a
+# command) and returns point_cloud.ply / train.json / config.json as hash-verified blobs (Q6 blob path).
+
+PACK_MAX_BYTES = 256 << 20
+PACK_SCHEMA = "splatforge-bundle/1"
+
+
+def pack_bundle(bundle: Path) -> dict[str, Any]:
+    """Capture bundle → JSON-safe dict (bundle.json + the content-addressed view objects it references)."""
+    import base64
+    bundle = Path(bundle)
+    raw = (bundle / "bundle.json").read_bytes()
+    m = json.loads(raw)
+    objs: dict[str, str] = {}
+    total = len(raw)
+    for v in m["views"]:
+        sha = v["sha256"]
+        if sha in objs:
+            continue
+        b = (bundle / "objects" / sha[:2] / sha).read_bytes()
+        if hashlib.sha256(b).hexdigest() != sha:
+            raise SplatRunError(t("recon.splat.cluster.bad_bundle", why=f"object {sha[:12]} does not match its hash"))
+        total += len(b)
+        if total > PACK_MAX_BYTES:
+            raise SplatRunError(t("recon.splat.cluster.too_large", mib=PACK_MAX_BYTES >> 20))
+        objs[sha] = base64.b64encode(b).decode()
+    return {"schema": PACK_SCHEMA, "bundle_json": base64.b64encode(raw).decode(), "objects": objs}
+
+
+def unpack_bundle(packed: dict[str, Any], dest: Path) -> Path:
+    """Worker side: rebuild the bundle directory, re-verifying every object hash and that every view is present."""
+    import base64
+    if packed.get("schema") != PACK_SCHEMA:
+        raise SplatRunError(t("recon.splat.cluster.bad_bundle", why=f"schema {packed.get('schema')!r}"))
+    dest = Path(dest)
+    raw = base64.b64decode(packed["bundle_json"])
+    m = json.loads(raw)
+    objs = packed.get("objects") or {}
+    for v in m.get("views") or []:
+        sha = str(v.get("sha256", ""))
+        if len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha) or sha not in objs:
+            raise SplatRunError(t("recon.splat.cluster.bad_bundle", why=f"view {sha[:12]!r} missing"))
+    for sha, b64 in objs.items():
+        b = base64.b64decode(b64)
+        if hashlib.sha256(b).hexdigest() != sha:
+            raise SplatRunError(t("recon.splat.cluster.bad_bundle", why=f"object {sha[:12]} does not match its hash"))
+        o = dest / "objects" / sha[:2] / sha
+        o.parent.mkdir(parents=True, exist_ok=True)
+        o.write_bytes(b)
+    (dest / "bundle.json").write_bytes(raw)
+    return dest
+
+
+CLUSTER_ARTIFACTS = ("point_cloud.ply", "train.json", "config.json")
+
+
+def cluster_job(bundle: Path, iters: int = 30000, sh_degree: int = 3, downscale: float = 1.0, seed: int = 0,
+                focal_px: float | None = None, contract_probe: bool = False, timeout_s: float = 6 * 3600,
+                job_id: str | None = None) -> dict[str, Any]:
+    """The LoomCluster job dict for one full-scale splat run (placement: a node advertising `rocm`)."""
+    payload = {"bundle": pack_bundle(bundle), "iters": int(iters), "sh_degree": int(sh_degree),
+               "downscale": float(downscale), "seed": int(seed), "focal_px": focal_px,
+               "contract_probe": bool(contract_probe), "timeout_s": float(timeout_s)}
+    jid = job_id or "splat:" + hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:16]
+    return {"id": jid, "op": "recon.splat", "requires": {"device": "rocm"}, "payload": payload}
+
+
+def cluster_op(payload: dict[str, Any], devices: list[str] | None = None, timeout_s: float | None = None) -> dict[str, Any]:
+    """LoomCluster worker body of op `recon.splat` (runs on the node the job was placed on)."""
+    import base64
+    import tempfile
+    limit = float(payload.get("timeout_s") or 6 * 3600)
+    if timeout_s:
+        limit = min(limit, float(timeout_s))
+    with tempfile.TemporaryDirectory(prefix="splatjob-") as td:
+        b = unpack_bundle(payload["bundle"], Path(td) / "bundle")
+        r = GpuSplatRunner(iters=payload.get("iters", 30000), sh_degree=payload.get("sh_degree", 3),
+                           downscale=payload.get("downscale", 1.0), seed=payload.get("seed", 0), trainer_cmd=None,
+                           timeout_s=limit, focal_px=payload.get("focal_px"),
+                           contract_probe=bool(payload.get("contract_probe")), devices=devices)
+        r.train(b)
+        work = Path(r.last["work"])
+        data = {n: (work / n).read_bytes() for n in CLUSTER_ARTIFACTS}
+        doc = {k: v for k, v in r.last.items() if k not in ("ply_path", "work")}
+    return {"train": doc, "artifacts": {n: hashlib.sha256(v).hexdigest() for n, v in data.items()},
+            "data_b64": {n: base64.b64encode(v).decode() for n, v in data.items()}}
+
+
+def submit_to_cluster(bundle: Path, url: str, timeout_s: float = 6 * 3600, poll_s: float = 1.0,
+                      **kw: Any) -> dict[str, Any]:
+    """Origin side: real placement check (a `rocm` node must exist), submit, wait, pull + verify the blobs, write
+    BUNDLE/splat_gpu/{point_cloud.ply,train.json,config.json} and re-validate the .ply locally."""
+    from forge import loomcluster as lc
+    from forge import realityloom
+    bundle = Path(bundle)
+    url = url.rstrip("/")
+    place = realityloom.check_placement(url, "rocm")
+    if not place["ok"]:
+        raise SplatRunError(t("recon.no_gpu_node", device="rocm"))
+    job = cluster_job(bundle, timeout_s=timeout_s, **kw)
+    lc._http(url + "/submit", job, 30.0)
+    deadline = time.time() + timeout_s + 60
+    while True:
+        r = lc._http(url + f"/result/{job['id']}", timeout=5.0)
+        if not r.get("pending"):
+            break
+        if time.time() > deadline:
+            raise SplatRunError(t("recon.splat.gpu.timeout", seconds=int(timeout_s)))
+        time.sleep(poll_s)
+    if not r.get("ok"):
+        raise SplatRunError(t("recon.splat.cluster.job_failed", node=r.get("node", "?"), why=str(r.get("error"))[:300]))
+    v = r["value"]
+    work = bundle / "splat_gpu"
+    work.mkdir(exist_ok=True)
+    for n in CLUSTER_ARTIFACTS:
+        bl = v["blobs"][n]
+        data = lc.fetch_blob(url, bl["sha256"], 60.0)
+        if v["artifacts"][n] != bl["sha256"]:
+            raise SplatRunError(t("recon.splat.cluster.bad_bundle", why=f"{n} digest mismatch"))
+        (work / n).write_bytes(data)
+    ply = (work / "point_cloud.ply").read_bytes()
+    info = check_output(ply, v["train"]["project"]["bounds"])
+    return {**v["train"], "cluster": {"job_id": job["id"], "node": r.get("node"), "attempts": r.get("attempts"),
+                                      "wall_s": r.get("wall_s"), "capable_nodes": place["capable"]},
+            "ply": info, "ply_path": str(work / "point_cloud.ply"), "work": str(work)}
+
+
 # ------------------------------------------------------------------------------------------------ contract-probe trainer
 
 def _read_ascii_points(p: Path) -> tuple[np.ndarray, np.ndarray]:
