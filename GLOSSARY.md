@@ -32,4 +32,8 @@
 | **OffloadQueue** | PocketLoom durable queue of jobs waiting for a paired desktop. |
 | **RC family** | Reality-capture models (chat "R1"), renamed to avoid the Retro R1 clash. |
 | **SwatchStudio** | Live material tuning UI with CLI echo. |
+| **Config bundle (LiveOps)** | F9 signed local file: kill-switch flags + balance-knob patches, strictly increasing serial; never content, never consent (ADR-0022). |
+| **Kill switch** | F9 flag (default on) a config bundle may turn off without a rebuild (`retro_styles`, `adaptive_music`, `remote_balance`). |
+| **Roll-forward rollback** | F9: re-issue an earlier bundle's content (or defaults) under a new serial — devices never accept an older serial. |
+| **Crash-loop quarantine** | F9: a bundle whose boots die `max_boot_fails` (2) times is moved to `quarantine/` and the previous bundle restored. |
 | **docs/design/** | Frozen imports of the authoritative design specs. |
