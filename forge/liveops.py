@@ -365,8 +365,8 @@ _SCRUB_RULES: list[tuple[str, str, str]] = [
     ("email", r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "<email>"),
     ("home_path", r"(/home/|/Users/|[A-Za-z]:\\Users\\|/data/user/\d+/)[^/\\\s\"']+", r"\1<user>"),
     ("ipv4", r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "<ip>"),
-    ("ipv6", r"\b(?:[0-9a-fA-F]{1,4}:){4,7}[0-9a-fA-F]{1,4}\b", "<ip>"),
     ("mac", r"\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b", "<mac>"),
+    ("ipv6", r"\b(?:[0-9a-fA-F]{1,4}:){4,7}[0-9a-fA-F]{1,4}\b", "<ip>"),
     ("token", r"\b[0-9a-fA-F]{32,}\b|\b[A-Za-z0-9+/_-]{40,}={0,2}", "<redacted>"),
 ]
 

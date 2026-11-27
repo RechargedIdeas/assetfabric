@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "cynes>=0.1.2", "pillow>=10", "websockets>=13", "onnxruntime>=1.18", "onnx>=1.16", "opencv-python-headless>=4.8", "vosk>=0.3.45", "tokenizers>=0.19"]   # vosk/tokenizers: VoiceBridge + persona micro-LM (model tests skip without fetched weights); pillow: C10 decode/EXIF; cynes: F8 EmulatorHarness; websockets: C9; onnxruntime/onnx: C11 + GIRT ONNX (model tests skip without fetched weights)
+dev = ["pytest>=8", "cryptography>=42", "cynes>=0.1.2", "pillow>=10", "websockets>=13", "onnxruntime>=1.18", "onnx>=1.16", "opencv-python-headless>=4.8", "vosk>=0.3.45", "tokenizers>=0.19"]   # vosk/tokenizers: VoiceBridge + persona micro-LM (model tests skip without fetched weights); pillow: C10 decode/EXIF; cynes: F8 EmulatorHarness; websockets: C9; onnxruntime/onnx: C11 + GIRT ONNX (model tests skip without fetched weights)
 mirror = ["websockets>=13", "pillow>=10"]   # C9 MirrorWeave WebSocket transport + video decode-to-PNG (system ffmpeg is a tool, not a dep)
 depth = ["onnxruntime>=1.18", "onnx>=1.16", "pillow>=10"]   # C11 DepthAnything V2 Small on the CPU EP (onnxruntime MIT, onnx Apache-2.0); weights via `forge models fetch`
 recon = ["opencv-python-headless>=4.8", "pillow>=10"]   # C12 CPU photogrammetry (OpenCV Apache-2.0; wheel packaging MIT, bundled FFmpeg LGPL — desktop tool only)
@@ -33,6 +33,7 @@ studio = ["PySide6-Essentials>=6.6"]   # Studio window (LGPL-3.0, dynamically im
 tune = ["optuna>=3.6"]
 package = ["playwright>=1.45"]   # F7 PWAPipeline smoke (drives the system Chrome; no browser download)
 retro = ["cynes>=0.1.2"]          # F8 EmulatorHarness: headless NES emulator (MIT) — acceptance/dev tool, never shipped
+liveops = ["cryptography>=42"]    # F9 LiveOps bundle signing/verification (Apache-2.0 OR BSD-3-Clause) — forge tool only, never shipped
 
 [project.scripts]
 forge = "forge.cli:main"
