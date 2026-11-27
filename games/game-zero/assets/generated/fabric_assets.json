@@ -521,7 +521,7 @@
         },
         "game_data.json": {
           "res": "res://data/generated/game_data.json",
-          "sha256": "70c7fa379b9ca4c20ee50a0f5c6e36f8e6bdf14b2cec30f115c2122800c359c3"
+          "sha256": "1ad380843d45402414ab4f94efab7f58215b5fff27ddac8c5370b81d31337f9f"
         }
       },
       "kind": "codegen",
@@ -1071,11 +1071,22 @@
       "files": {
         "world.json": {
           "res": "res://data/generated/world.json",
-          "sha256": "9bd91a33a5f37195e4e59adf2672e7440699c9422797add389e4d7e2bbc6a022"
+          "sha256": "83216482971d3396eb6f5725325fda5518cf7bf5dbc1afc951dab3cd10014788"
         }
       },
       "kind": "world",
       "meta": {
+        "economy": {
+          "crop_roi": {
+            "glowcap": 1.5,
+            "sunroot": 1.333
+          },
+          "loot_value_per_kill": {
+            "1": 2.04,
+            "2": 8.33,
+            "3": 64.14
+          }
+        },
         "kind": "world",
         "loot_ev": {
           "1": {
@@ -1122,7 +1133,7 @@
           "moss_salve": 4,
           "sunroot": 4.0,
           "sunroot_seed": 2.0,
-          "warden_charm": 1,
+          "warden_charm": 0,
           "warden_core": 1
         }
       },

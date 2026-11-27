@@ -1,0 +1,45 @@
+# Economy design model (Q5, quality gap P4 / D-005; ADR-0018, INFERENCE C-93). Not loaded by the game.
+# GAME_SPEC §4.4 leaves the farming economy unspecified ("minimal gather/grow/craft loop that feeds loot/economy
+# schema"); §10 lists "farming loop economy numbers" as a design decision. This file is that decision in data:
+# a few base values and targets set by design; Codegen-World derives every other price from them and gates the
+# tables against the targets (`economy_design`), and `forge accept F6` replays the recorded slice kill sequence
+# through the loot tables with many seeds (`forge/economy.py`) to check the reliability and XP-pacing targets.
+schema_version: "1.0"
+
+# coin-equivalent of base goods: gathered = effort of one node visit, drops = rarity, crops = grow time.
+# Derived: seeds = shop price, crafted goods = Σ inputs × craft_markup (rounded), coin = 1.
+base_value:
+  flint: 1
+  cave_moss: 1
+  ember_ore: 2
+  ember_shard: 3
+  brute_hide: 5
+  warden_core: 25
+  sunroot: 2
+  glowcap: 3
+craft_markup: 1.25
+
+targets:
+  # farming must pay: (yield × crop value) / seed price
+  crop_roi: [1.25, 2.25]
+  # expected coin-equivalent per kill, by enemy tier (tier tables + per-enemy extras)
+  loot_value_per_kill:
+    "1": [1.5, 3.5]
+    "2": [5.0, 11.0]
+    "3": [40.0, 90.0]
+  # every material a node or a drop yields has a use (a recipe input or a quest guard): no dead drops
+  no_dead_materials: true
+  # Monte Carlo over the recorded slice kill sequence (loot RNG re-seeded; kills/ticks as played)
+  mc_seeds: 2000
+  p_flint_edge_before_boss: 0.95     # ember shards for the Flint Edge in hand when the boss prep starts
+  p_warden_charm_by_end: 0.95        # brute hide for the Warden Charm in hand by the end of the slice
+  coin_end_p50: [32, 160]            # coin in the bag at the end: ≥ two full replants (2 × 4 plots × 4); v1 has no
+                                     # sink beyond seeds, so coin accumulates (≈ 130) — open Game Design item (TODO)
+  # XP pacing (deterministic: kill XP + quest XP; levels from `xp.level_at`), checked on the recorded run
+  level_at_stage:
+    "q_warden.clear_cave": [3, 3]    # first cave run = early game
+    "q_warden.craft": [4, 4]         # boss prep done at level 4 ...
+    "boss_start": [4, 4]             # ... and the party meets the Warden at level 4: one above the G-BAL-01
+                                     # tuning level (3, no gear, ≈ 72 % win rate), plus crafted gear — a
+                                     # deliberately forgiving first boss for a first-time player
+    "q_warden.rest": [5, 5]          # level cap by the end (ridge + rewards)

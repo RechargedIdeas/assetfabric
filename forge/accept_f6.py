@@ -142,11 +142,18 @@ def f6_run(root: Path) -> tuple[int, dict[str, Any]]:
             parity[name] = {"steps_py": steps, "steps_gd": g.get("steps"), "gd_errors": g.get("errors"),
                             "checksum_equal": py["checksum"] == (g.get("save") or {}).get("checksum")}
         result["save_quit_reload"]["migration_parity"] = parity
+        # Q5 economy design targets (ADR-0018): loot MC over the recorded kill sequence + XP pacing
+        from forge.economy import load_design, slice_report
+
+        result["economy"] = slice_report(load_world(root), load_design(root), s) if s.get("ticks") else {"ok": False}
         # 2. selection matrix
         sels = FAST_SELECTIONS if fast_mode() else [(l, p) for l in LEADERS for p in PETS]
         def one(sel: tuple[str, str]) -> dict[str, Any]:
             c, o = _slice(root, tmp / f"m_{sel[0]}_{sel[1]}", f"--leader={sel[0]}", f"--pet={sel[1]}")
-            return {"leader": sel[0], "pet": sel[1], "exit": c, "script_errors": o["_script_errors"]} | _summary(o.get("slice", {}))
+            ms = o.get("slice", {})
+            eco = slice_report(load_world(root), load_design(root), ms) if ms.get("ticks") else {"ok": False}
+            return ({"leader": sel[0], "pet": sel[1], "exit": c, "script_errors": o["_script_errors"]} | _summary(ms)
+                    | {"economy_ok": eco.get("ok"), "levels": {k: v["level"] for k, v in eco.get("levels", {}).items()}})
         with ThreadPoolExecutor(max_workers=max(1, min(4, (os.cpu_count() or 2)))) as ex:
             result["matrix"] = {"mode": "fast" if fast_mode() else "full", "runs": list(ex.map(one, sels))}
         # 3. parity with the Python twins
@@ -215,6 +222,10 @@ def f6_check(r: dict[str, Any]) -> list[str]:
     ests = [pace.get("human_estimate_min")] + [x.get("human_estimate_min") for x in runs]
     _need(all(e is not None and TARGET_MIN[0] <= e <= TARGET_MIN[1] for e in ests),
           f"length: human-pace estimates {ests} min outside {TARGET_MIN}", errs)
+    # Q5 economy / loot / XP targets (content/world/economy_design.yaml) on the main run and every selection
+    eco = r.get("economy", {})
+    _need(eco.get("ok") is True, f"economy targets: {eco.get('checks')} levels={eco.get('levels')}", errs)
+    _need(all(x.get("economy_ok") is True for x in runs), f"economy targets per selection: {[(x.get('leader'), x.get('pet'), x.get('levels')) for x in runs if not x.get('economy_ok')]}", errs)
     # (5) party combat with followers + pet
     ps = s.get("party_stats", {})
     _need(sum(1 for k, v in ps.items() if not v.get("pet") and v.get("damage", 0) + v.get("healing", 0) > 0) >= 4
@@ -236,7 +247,7 @@ def f6_check(r: dict[str, Any]) -> list[str]:
     mu = s.get("music", {})
     _need({t["state"] for t in mu.get("trace", [])} >= {"explore", "tension", "combat", "boss"}
           and {t["biome"] for t in mu.get("trace", [])} >= {"field", "cave"}, "adaptive music did not cover biomes × states", errs)
-    _need(any(t == 3 for _, t, _ in s.get("loot", {}).get("drops", [])), "no tier-3 loot drop", errs)
+    _need(any(int(d[1]) == 3 for d in s.get("loot", {}).get("drops", [])), "no tier-3 loot drop", errs)
     p = r.get("parity", {})
     _need(not p.get("quest_mismatches") and p.get("quest_events", 0) > 0, f"quest parity: {p.get('quest_mismatches')}", errs)
     _need(p.get("loot_probe_equal") is True, "loot probe rolls differ between GDScript and Python", errs)
