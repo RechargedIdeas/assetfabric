@@ -1,0 +1,766 @@
+{
+  "description": "Retro / console-style: Console Profile Registry, R1 LUT post-process (pixel-perfect integer scale, palette quantisation, optional scanlines), Q1 camera/scale policy, V1 frame gates, R2 fidelity + discriminator, ConsoleReadiness, C1 sub-palette solver + cycle predictor, NES ROM built from Fabric content and booted in a real emulator, gamepad-only console-first flow, gameplay unchanged",
+  "errors": [],
+  "increment": "retro-console",
+  "milestone": "F8",
+  "passed": true,
+  "perf": {
+    "emulator_boot_match": 1.0,
+    "emulator_moves": [
+      [
+        29,
+        0
+      ],
+      [
+        1,
+        29
+      ],
+      [
+        -29,
+        1
+      ],
+      [
+        -1,
+        -29
+      ]
+    ],
+    "fidelity_mean_de": {
+      "gb-style": 4.529,
+      "gz-native": null,
+      "nes-style": 17.693
+    },
+    "profiles": [
+      "gb-style",
+      "gz-native",
+      "nes-style"
+    ],
+    "r2_control_modern_as_nes": 0.488,
+    "r2_holdout": {
+      "gb-style": 0.9931,
+      "gz-native": 0.9931,
+      "nes-style": 0.9931
+    },
+    "r2_min_capture": 0.8733,
+    "rom_bytes": 40976,
+    "rom_chr_tiles": [
+      28,
+      11
+    ],
+    "rom_nmi_cycles": 554,
+    "rom_prg_used": 2063,
+    "rom_sha256": "2cd18d666f354b1c0aebf5b3b7bb88f1babbda1b38b05836830ab4f37aa20da7",
+    "timing_s": {
+      "generator": 1.18,
+      "godot_headless": 6.24,
+      "render_v1_r2": 27.37,
+      "rom_readiness_emulator": 5.13,
+      "total": 39.92
+    },
+    "v1_frames_checked": 6
+  },
+  "result": {
+    "console_first": {
+      "configure": {
+        "_exit": 0,
+        "_script_errors": 0,
+        "errors": [],
+        "steps": [
+          {
+            "ok": true,
+            "step": "select_screen"
+          },
+          {
+            "ok": true,
+            "step": "settings_opens_from_pad_start"
+          },
+          {
+            "ok": true,
+            "step": "focus_on_palette"
+          },
+          {
+            "ok": true,
+            "step": "pad_up_reaches_display_style"
+          },
+          {
+            "ok": true,
+            "profile": "gz-native",
+            "step": "profile_cycles_live"
+          },
+          {
+            "ok": true,
+            "profile": "nes-style",
+            "scale": 5,
+            "step": "profile_nes_style"
+          },
+          {
+            "ok": true,
+            "step": "integer_stretch"
+          },
+          {
+            "ok": true,
+            "step": "label_is_locale_key"
+          },
+          {
+            "ok": true,
+            "step": "pad_up_reaches_scanlines"
+          },
+          {
+            "ok": true,
+            "step": "scanlines_on"
+          },
+          {
+            "ok": true,
+            "step": "scanlines_off"
+          },
+          {
+            "ok": true,
+            "step": "pad_down_back_to_palette"
+          },
+          {
+            "ok": true,
+            "palette": "deuteranopia",
+            "step": "palette_inside_retro_pass"
+          },
+          {
+            "ok": true,
+            "step": "settings_closes_pad_b"
+          },
+          {
+            "ok": true,
+            "step": "pad_a_starts_game"
+          },
+          {
+            "ok": true,
+            "step": "camera_policy_zoom",
+            "zoom": "(5, 5)"
+          },
+          {
+            "from": [
+              792,
+              408
+            ],
+            "ok": true,
+            "step": "pad_moves_leader",
+            "to": [
+              757.900756835938,
+              408
+            ]
+          },
+          {
+            "camera": [
+              704,
+              408
+            ],
+            "ok": true,
+            "step": "camera_whole_pixels"
+          },
+          {
+            "ok": true,
+            "settings": {
+              "input_remap": {},
+              "palette_variant": "deuteranopia",
+              "retro_profile": "nes-style",
+              "retro_scanlines": false
+            },
+            "step": "settings_in_save"
+          }
+        ]
+      },
+      "verify": {
+        "_exit": 0,
+        "_script_errors": 0,
+        "errors": [],
+        "settings": {
+          "input_remap": {},
+          "palette_variant": "deuteranopia",
+          "retro_profile": "nes-style",
+          "retro_scanlines": false
+        },
+        "steps": [
+          {
+            "ok": true,
+            "profile": "nes-style",
+            "step": "profile_restored"
+          },
+          {
+            "ok": true,
+            "step": "palette_restored"
+          },
+          {
+            "ok": true,
+            "step": "scanlines_restored_off"
+          }
+        ]
+      }
+    },
+    "generator": {
+      "artifacts_match_tree": {
+        "gb-style_lut.png": true,
+        "gz-native_lut.png": true,
+        "nes-style_lut.png": true,
+        "retro.json": true
+      },
+      "c1_overrides": {
+        "gb-style": {
+          "#2f5a3d": 0,
+          "#3080f0": 2,
+          "#4a8352": 2
+        }
+      },
+      "collapsed_with_shape_cue": [
+        "gb-style: crop growing vs ready"
+      ],
+      "details": {},
+      "gates": {
+        "a11y_signals": true,
+        "budget": true,
+        "lut_exact": true,
+        "q1_pixel_stability": true,
+        "registry": true
+      }
+    },
+    "invariance": {
+      "identical": true,
+      "runs": {
+        "gb-style": {
+          "exit": 0,
+          "outcome": "victory",
+          "state_hash": "642df8161c490e15"
+        },
+        "gz-native": {
+          "exit": 0,
+          "outcome": "victory",
+          "state_hash": "642df8161c490e15"
+        },
+        "nes-style": {
+          "exit": 0,
+          "outcome": "victory",
+          "state_hash": "642df8161c490e15"
+        },
+        "off": {
+          "exit": 0,
+          "outcome": "victory",
+          "state_hash": "642df8161c490e15"
+        }
+      }
+    },
+    "readiness": {
+      "gb-style": {
+        "colour_reduced_sprite_tiles": 37,
+        "content": {
+          "areas": [
+            "cave_01",
+            "cave_02",
+            "cave_boss",
+            "cave_deep",
+            "field_01",
+            "hollow_01",
+            "ridge_01",
+            "tunnels_01"
+          ],
+          "registry_assets": 33,
+          "sprites": [
+            "spr_bram",
+            "spr_cave_mite",
+            "spr_cave_warden",
+            "spr_dusk_owl",
+            "spr_ember_fox",
+            "spr_emberling",
+            "spr_kael",
+            "spr_lumen_wisp",
+            "spr_nyra",
+            "spr_orrin",
+            "spr_rock_brute",
+            "spr_sola",
+            "spr_stone_tortle",
+            "spr_vex"
+          ]
+        },
+        "errors": [],
+        "fidelity": {
+          "bg_mean_de_console_worst_area": 7.106,
+          "sprites": {
+            "mean_de_console": 4.529,
+            "mean_de_quantise": 4.514,
+            "metric": "dL*",
+            "p95_de_console": 13.491,
+            "pixels": 7707
+          }
+        },
+        "ok": true,
+        "profile": "gb-style",
+        "rows": [
+          {
+            "check": "sprite_sub_palettes",
+            "limit": 1,
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": "bg_sub_palettes_per_area",
+            "limit": 1,
+            "ok": true,
+            "value": 1
+          },
+          {
+            "check": "vram_tiles_sprites_plus_largest_area",
+            "limit": 384,
+            "ok": true,
+            "value": 135
+          }
+        ]
+      },
+      "gz-native": {
+        "content": {
+          "areas": [
+            "cave_01",
+            "cave_02",
+            "cave_boss",
+            "cave_deep",
+            "field_01",
+            "hollow_01",
+            "ridge_01",
+            "tunnels_01"
+          ],
+          "registry_assets": 33,
+          "sprites": [
+            "spr_bram",
+            "spr_cave_mite",
+            "spr_cave_warden",
+            "spr_dusk_owl",
+            "spr_ember_fox",
+            "spr_emberling",
+            "spr_kael",
+            "spr_lumen_wisp",
+            "spr_nyra",
+            "spr_orrin",
+            "spr_rock_brute",
+            "spr_sola",
+            "spr_stone_tortle",
+            "spr_vex"
+          ]
+        },
+        "errors": [],
+        "ok": true,
+        "profile": "gz-native",
+        "rows": [
+          {
+            "check": "colours_per_16px_tile",
+            "limit": 8,
+            "ok": true,
+            "value": 6
+          }
+        ]
+      },
+      "nes-style": {
+        "colour_reduced_sprite_tiles": 252,
+        "content": {
+          "areas": [
+            "cave_01",
+            "cave_02",
+            "cave_boss",
+            "cave_deep",
+            "field_01",
+            "hollow_01",
+            "ridge_01",
+            "tunnels_01"
+          ],
+          "registry_assets": 33,
+          "sprites": [
+            "spr_bram",
+            "spr_cave_mite",
+            "spr_cave_warden",
+            "spr_dusk_owl",
+            "spr_ember_fox",
+            "spr_emberling",
+            "spr_kael",
+            "spr_lumen_wisp",
+            "spr_nyra",
+            "spr_orrin",
+            "spr_rock_brute",
+            "spr_sola",
+            "spr_stone_tortle",
+            "spr_vex"
+          ]
+        },
+        "errors": [],
+        "fidelity": {
+          "bg_mean_de_console_worst_area": 15.924,
+          "sprites": {
+            "mean_de_console": 17.693,
+            "mean_de_quantise": 13.38,
+            "metric": "dE76",
+            "p95_de_console": 42.793,
+            "pixels": 7707
+          }
+        },
+        "ok": true,
+        "profile": "nes-style",
+        "rows": [
+          {
+            "check": "sprite_sub_palettes",
+            "limit": 4,
+            "ok": true,
+            "value": 4
+          },
+          {
+            "check": "bg_sub_palettes_per_area",
+            "limit": 4,
+            "ok": true,
+            "value": 4
+          },
+          {
+            "check": "chr_sprite_tiles_all_sprites_idle_frames",
+            "limit": 256,
+            "ok": true,
+            "value": 131
+          },
+          {
+            "check": "chr_bg_tiles_per_area",
+            "limit": 256,
+            "ok": true,
+            "value": 28
+          }
+        ]
+      }
+    },
+    "render": {
+      "_exit": 0,
+      "_script_errors": 0,
+      "display": "X11",
+      "errors": [],
+      "frames": {
+        "gb-style__default": {
+          "block_uniformity": 1.0,
+          "camera": [
+            752,
+            408
+          ],
+          "colours_on_screen": 4,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.8777,
+          "scale": 8,
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 8
+        },
+        "gb-style__deuteranopia": {
+          "a11y_changes_frame": 0.0,
+          "a11y_effect_required": false,
+          "block_uniformity": 1.0,
+          "camera": [
+            752,
+            408
+          ],
+          "colours_on_screen": 4,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.8777,
+          "scale": 8,
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 8
+        },
+        "gz-native__default": {
+          "block_uniformity": 1.0,
+          "camera": [
+            672,
+            390
+          ],
+          "colours_on_screen": 31,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.9284,
+          "scale": 4,
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 4
+        },
+        "gz-native__deuteranopia": {
+          "a11y_changes_frame": 0.0004861111111110761,
+          "a11y_effect_required": true,
+          "block_uniformity": 1.0,
+          "camera": [
+            672,
+            390
+          ],
+          "colours_on_screen": 31,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.9284,
+          "scale": 4,
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 4
+        },
+        "nes-style__default": {
+          "block_uniformity": 1.0,
+          "camera": [
+            704,
+            408
+          ],
+          "colours_on_screen": 22,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.8733,
+          "scale": 5,
+          "scanlines": {
+            "bottom_rows_darkened": 1.0,
+            "top_rows_unchanged": 1.0
+          },
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 5
+        },
+        "nes-style__deuteranopia": {
+          "a11y_changes_frame": 0.0007595486111111605,
+          "a11y_effect_required": true,
+          "block_uniformity": 1.0,
+          "camera": [
+            704,
+            408
+          ],
+          "colours_on_screen": 20,
+          "palette_conformance": 1.0,
+          "r2_authenticity": 0.8733,
+          "scale": 5,
+          "shader_exact": 1.0,
+          "size": [
+            1280,
+            720
+          ],
+          "subpixel_identical": 1.0,
+          "zoom": 5
+        },
+        "off__default": {
+          "camera": [
+            792,
+            408
+          ],
+          "size": [
+            1280,
+            720
+          ],
+          "unchanged_vs_source": 1.0,
+          "zoom": 2
+        }
+      },
+      "r2": {
+        "gb-style": {
+          "holdout": 144,
+          "holdout_accuracy": 0.9931,
+          "train": 336
+        },
+        "gz-native": {
+          "holdout": 144,
+          "holdout_accuracy": 0.9931,
+          "train": 336
+        },
+        "nes-style": {
+          "holdout": 144,
+          "holdout_accuracy": 0.9931,
+          "train": 336
+        }
+      },
+      "r2_control_modern_as_nes": 0.488
+    },
+    "roms": {
+      "nes-style": {
+        "budgets": {
+          "errors": [],
+          "ok": true,
+          "rows": [
+            {
+              "check": "prg_rom_bytes",
+              "limit": 32768,
+              "ok": true,
+              "value": 32768
+            },
+            {
+              "check": "prg_used_bytes",
+              "limit": 32768,
+              "ok": true,
+              "value": 2063
+            },
+            {
+              "check": "chr_rom_bytes",
+              "limit": 8192,
+              "ok": true,
+              "value": 8192
+            },
+            {
+              "check": "chr_bg_tiles",
+              "limit": 256,
+              "ok": true,
+              "value": 28
+            },
+            {
+              "check": "chr_sprite_tiles",
+              "limit": 256,
+              "ok": true,
+              "value": 11
+            },
+            {
+              "check": "bg_sub_palettes",
+              "limit": 4,
+              "ok": true,
+              "value": 4
+            },
+            {
+              "check": "sprite_sub_palettes",
+              "limit": 4,
+              "ok": true,
+              "value": 4
+            },
+            {
+              "check": "ram_bytes",
+              "limit": 2048,
+              "ok": true,
+              "value": 304
+            },
+            {
+              "check": "oam_sprites",
+              "limit": 64,
+              "ok": true,
+              "value": 20
+            },
+            {
+              "check": "sprites_per_scanline",
+              "limit": 8,
+              "ok": true,
+              "value": 8
+            },
+            {
+              "check": "nmi_worst_case_cycles",
+              "limit": 2273,
+              "ok": true,
+              "value": 554
+            }
+          ]
+        },
+        "bytes": 40976,
+        "deterministic": true,
+        "emulator": {
+          "boot": {
+            "bijective": true,
+            "classes": 11,
+            "crashed": false,
+            "match": 1.0
+          },
+          "crashed": false,
+          "deterministic": true,
+          "emulator": "cynes 0.1.2",
+          "frame_sha256": "3564e4467ae86f4b093b00ab99434c719da20a577e1fd15fddd297613c402f9f",
+          "moves": [
+            {
+              "anim_frame": 1,
+              "bijective": true,
+              "input": "right",
+              "match": 1.0,
+              "moved": [
+                29,
+                0
+              ]
+            },
+            {
+              "anim_frame": 1,
+              "bijective": true,
+              "input": "down",
+              "match": 1.0,
+              "moved": [
+                1,
+                29
+              ]
+            },
+            {
+              "anim_frame": 1,
+              "bijective": true,
+              "input": "left",
+              "match": 1.0,
+              "moved": [
+                -29,
+                1
+              ]
+            },
+            {
+              "anim_frame": 2,
+              "bijective": true,
+              "input": "up",
+              "match": 1.0,
+              "moved": [
+                -1,
+                -29
+              ]
+            }
+          ],
+          "release": {
+            "bijective": true,
+            "frame": 0,
+            "match": 1.0
+          },
+          "rom_sha256": "2cd18d666f354b1c0aebf5b3b7bb88f1babbda1b38b05836830ab4f37aa20da7",
+          "walk_frames_seen": [
+            1,
+            2
+          ]
+        },
+        "profile": "nes-style",
+        "report": {
+          "bg_sub_palettes": 4,
+          "chr_bg_tiles": 28,
+          "chr_sprite_tiles": 11,
+          "code_bytes": 451,
+          "fidelity": {
+            "background": {
+              "mean_de_console": 15.818,
+              "mean_de_quantise": 15.801,
+              "metric": "dE76",
+              "p95_de_console": 17.423,
+              "pixels": 1792
+            },
+            "sprites": {
+              "mean_de_console": 18.257,
+              "mean_de_quantise": 12.512,
+              "metric": "dE76",
+              "p95_de_console": 47.439,
+              "pixels": 696
+            }
+          },
+          "nmi_cycles": 554,
+          "oam_shadow_bytes": 256,
+          "prg_used": 2063,
+          "sprite_sub_palettes": 4,
+          "window": [
+            36,
+            15
+          ],
+          "zero_page_bytes": 16
+        },
+        "sha256": "2cd18d666f354b1c0aebf5b3b7bb88f1babbda1b38b05836830ab4f37aa20da7"
+      }
+    },
+    "timing_s": {
+      "generator": 1.18,
+      "godot_headless": 6.24,
+      "render_v1_r2": 27.37,
+      "rom_readiness_emulator": 5.13,
+      "total": 39.92
+    }
+  }
+}

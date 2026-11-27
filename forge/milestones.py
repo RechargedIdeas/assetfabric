@@ -231,7 +231,16 @@ INCREMENTS["F7"] = Increment("F7", "launch-candidates", ("--net-report",), f7_ch
                              "Desktop + Android + Web launch candidates: Godot 4.3 exports (Linux, Windows, debug APK, Web PWA), "
                              "G-WEB-01, G-SAVE-01 desktop→Android→Web→desktop, G-NET-01, ShuttleLine contract, BoltPack SBOM",
                              f7_perf, f7_run)
-ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7"]
+# F8 retro / console-style (optional in the spec; confirmed by the Producer, t59u) — forge/accept_f8.py
+from forge.accept_f8 import f8_check, f8_perf, f8_run  # noqa: E402
+
+INCREMENTS["F8"] = Increment("F8", "retro-console", (), f8_check,
+                             "Retro / console-style: Console Profile Registry, R1 LUT post-process (pixel-perfect integer scale, "
+                             "palette quantisation, optional scanlines), Q1 camera/scale policy, V1 frame gates, R2 fidelity + "
+                             "discriminator, ConsoleReadiness, C1 sub-palette solver + cycle predictor, NES ROM built from Fabric "
+                             "content and booted in a real emulator, gamepad-only console-first flow, gameplay unchanged",
+                             f8_perf, f8_run)
+ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]
 
 # Companion track (parallel, not an F-gate — BUILD_ORDER.md): PocketLoom C1–C6.
 from forge import accept_companions as _ac  # noqa: E402
