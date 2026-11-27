@@ -4,12 +4,12 @@ name: assetfabric
 description: Universal content fabric + execution substrate; Game Zero is the first MVP product.
 
 fabric:
-  milestone: F7
-  version: "0.7.3+f7"
+  milestone: F8
+  version: "0.8.0+f8"
 
 game:
   id: game-zero
-  increment: launch-candidates
+  increment: retro-console
   project_path: games/game-zero
 
 targets:

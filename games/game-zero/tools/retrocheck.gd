@@ -152,6 +152,16 @@ func _render() -> void:
 	var caps := {}
 	var l = slice.sim.leader()
 	var base_pos: Vector2 = l.pos
+	# a line-up of real enemy sprites in world space next to the party, so hostile palette colours (the ones the
+	# colour-blind variants remap) are on screen under every profile; they go through the same retro pass
+	var x := -56.0
+	for id in ["spr_emberling", "spr_cave_mite", "spr_rock_brute"]:
+		var sp := Sprite2D.new()
+		sp.texture = Fabric.texture(id)
+		sp.hframes = 6
+		sp.position = (base_pos + Vector2(x, -36.0)).round()
+		slice.add_child(sp)
+		x += 22.0
 	for v in ["default", "deuteranopia"]:
 		A11y.set_palette(v)
 		for p in Retro.order:

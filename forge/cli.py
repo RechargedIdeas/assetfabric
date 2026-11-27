@@ -311,7 +311,7 @@ def accept_cmd(milestone: str, no_write: bool, root: Path | None) -> None:
     or a companion milestone C1…C6 / all of them with `C1-C6` (needs JDK 17 + Android SDK; else fast mode),
     or C7 / C8 / `C7-C8` (LoomCluster loopback fleet + GroundWeave CPU-fallback proofs),
     or C9…C12 / `C9-C12` (MirrorWeave, LensForge, metric depth, SplatForge path: real paths, real_unverified_on_device Android impls, remaining labelled stubs).
-    `all` runs every one of them in order (F0…F7, C1–C12)."""
+    `all` runs every one of them in order (F0…F8, C1–C12)."""
     from forge.milestones import CL_ORDER, CX_ORDER, C_ORDER, INCREMENTS, accept
 
     if milestone.upper() == "ALL":   # every Fabric milestone + every companion milestone, in order (0.7.9)
@@ -747,6 +747,10 @@ from forge.cli_voice import persona_grp, voice_grp  # noqa: E402  (VoiceBridge +
 
 main.add_command(voice_grp)
 main.add_command(persona_grp)
+
+from forge.cli_retro import retro_grp  # noqa: E402  (F8 retro / console-style)
+
+main.add_command(retro_grp)
 
 
 if __name__ == "__main__":
