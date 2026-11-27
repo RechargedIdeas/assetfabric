@@ -78,11 +78,17 @@ class QwenLM:
         st = models.status(MODEL_ID, self.root, verify=False)
         if not st["ready"]:
             raise FileNotFoundError(f"model {MODEL_ID!r} not fetched — run `forge models fetch {MODEL_ID}` (~520 MB)")
-        so = ort.SessionOptions()
-        so.intra_op_num_threads = threads
-        so.inter_op_num_threads = 1
-        self.sess = ort.InferenceSession(str(models.path_for(MODEL_ID, "model_int8.onnx", self.root)), so,
-                                         providers=["CPUExecutionProvider"])
+        from forge import onnx_ep
+
+        def options():  # noqa: ANN202
+            so = ort.SessionOptions()
+            so.intra_op_num_threads = threads
+            so.inter_op_num_threads = 1
+            return so
+        # AMD-first EP selection with CPU fallback (forge.onnx_ep; ROCm rocm_ready_unverified). Offline/authoring only:
+        # the micro LM never runs in the combat tick.
+        self.sess = onnx_ep.session(str(models.path_for(MODEL_ID, "model_int8.onnx", self.root)), options, ort=ort)
+        self.ep = self.sess.info
         self.tok = Tokenizer.from_file(str(models.path_for(MODEL_ID, "tokenizer.json", self.root)))
         self.threads = threads
 

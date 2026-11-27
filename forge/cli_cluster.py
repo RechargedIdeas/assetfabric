@@ -32,6 +32,17 @@ def gw_show() -> None:
     click.echo(json.dumps(groundweave.describe(), indent=2))
 
 
+@groundweave_grp.command("onnx-ep")
+@click.option("--selftest", is_flag=True, help="Also run the selection/fallback/demotion contract against a fake onnxruntime.")
+def gw_onnx_ep(selftest: bool) -> None:
+    """Which onnxruntime execution provider this host would use (AMD-first, CPU fallback). ROCm: rocm_ready_unverified."""
+    from forge import onnx_ep
+    out = onnx_ep.selftest() if selftest else onnx_ep.report()
+    click.echo(json.dumps(out, indent=2))
+    if selftest and not out["ok"]:
+        raise SystemExit(1)
+
+
 @groundweave_grp.command("verify")
 @click.option("--cores", type=int, default=None, help="Pin to N cores (default: acceptance_node.cores = 2).")
 @click.option("--op", "ops", multiple=True, help="Limit to these op ids.")

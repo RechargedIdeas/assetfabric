@@ -100,6 +100,12 @@ def check(root: Path | None = None, kinds: list[str] | None = None) -> dict[str,
                 problems.append(f"{op_id}: unknown device {st.get('device')!r}")
             if st.get("impl") not in ("real", "planned"):
                 problems.append(f"{op_id}: backend {st.get('id')} impl must be real|planned")
+            # 0.9.2: a real non-CPU rung must state whether it has run on that device (`verified: false` until a hardware
+            # report under hw-reports/ backs it — nothing may imply GPU-proven by omission).
+            if st.get("impl") == "real" and st.get("device") != "cpu" and not isinstance(st.get("verified"), bool):
+                problems.append(f"{op_id}: real {st.get('device')} backend {st.get('id')} must declare verified: true|false")
+            if st.get("verified") is True and not st.get("evidence"):
+                problems.append(f"{op_id}: backend {st.get('id')} verified: true needs an evidence path")
         has_cpu = any(st.get("device") == "cpu" and st.get("impl") == "real" for st in steps)
         if op.get("planned"):
             if any(st.get("impl") != "planned" for st in steps):
@@ -136,7 +142,7 @@ def select(op_id: str, devices: list[str] | None = None, root: Path | None = Non
     for st in op["ladder"]:
         if st.get("impl") == "real" and st.get("device") in devs:
             top = op["ladder"][0]
-            return {"op": op_id, "backend": st["id"], "device": st["device"],
+            return {"op": op_id, "backend": st["id"], "device": st["device"], "verified": st.get("verified", True),
                     "fallback": st is not top, "top_rung": f"{top['id']}@{top['device']}:{top['impl']}"}
     if op.get("gpu_required"):
         return {"op": op_id, "backend": None, "device": None, "route": op.get("route", "loomcluster"),
@@ -286,12 +292,16 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         from forge import depth
         sel = select("depth.estimate", root=root)
         sc = depth.render_scene(160, 120)
-        rel = depth.DepthAnythingV2(threads=1).estimate_rgb(sc["rgb"])
+        est = depth.DepthAnythingV2(threads=1)
+        rel = est.estimate_rgb(sc["rgb"])
+        ran_on = "cpu" if (est.ep or {}).get("active", ["CPUExecutionProvider"])[0] == "CPUExecutionProvider" else (est.ep or {}).get("device")
         m = depth.depth_metrics(depth.align_inverse_depth(rel, _scene_anchors(sc["depth_m"]))["depth_m"], sc["depth_m"])
         wall = time.perf_counter() - t0
         aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         return {"brief": "depth-dense-probe", "ok": m["abs_rel"] < 0.15, "abs_rel": round(m["abs_rel"], 4),
-                "wall_s": round(wall, 3), "cores": aff, "device": sel["device"], "backend": sel["backend"],
+                "wall_s": round(wall, 3), "cores": aff, "device": ran_on, "selected_device": sel["device"],
+                "backend": sel["backend"] if ran_on == sel["device"] else "depthanything-v2-onnx-cpu",
+                "onnx_ep": {k: (est.ep or {}).get(k) for k in ("providers", "active", "fallback", "demoted")},
                 "digest": hashlib.sha256(np.ascontiguousarray(rel, dtype=np.float32).tobytes()).hexdigest()}
     if name == "sfm":                       # C12 CPU photogrammetry on the rendered 8-view scene (deterministic)
         import numpy as np

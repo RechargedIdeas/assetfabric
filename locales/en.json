@@ -8,7 +8,6 @@
   "depth.no_intrinsics": "Cannot derive the focal length in pixels: give focal_length_mm with sensor_width_mm, or focal_length_35mm, or a horizontal field of view.",
   "depth.bad_anchors": "Metric alignment needs at least two anchors with distinct relative-depth values and positive distances.",
   "depth.non_monotone": "The fitted scale is not positive: the relative depth map disagrees with the anchors (wrong map polarity or bad anchors).",
-  "stub.recon.splatforge": "Full-scale SplatForge training (anisotropic 3D Gaussian Splatting at capture resolution) is not implemented: no GPU trainer (OpenSplat/Nerfstudio) is bundled and no GPU worker is registered. The bounded tiny-scene CPU trainer is real: `forge recon train --stage splat-cpu <bundle>`.",
   "recon.no_gpu_node": "No cluster node advertises {device}; the splat job cannot be placed (gpu_required, route loomcluster).",
   "recon.too_few_views": "Capture set has {have} usable views; mode {mode} needs at least {need}.",
   "recon.eta.gpu": "tens of minutes to hours on a ROCm/CUDA node (unmeasured; depends on views and resolution)",
@@ -44,5 +43,17 @@
   "studio.slash.unknown": "Unknown or not allowed: /{cmd} (see /help).",
   "studio.voice.open": "Transcribe a WAV…",
   "studio.persona.draft": "Draft lines",
-  "studio.persona.note": "Micro-LM drafts for review only — Studio writes nothing; use `forge persona author --write` to queue drafts (reviewed: false)."
+  "studio.persona.note": "Micro-LM drafts for review only — Studio writes nothing; use `forge persona author --write` to queue drafts (reviewed: false).",
+  "stub.recon.splat_submit": "Submitting a reconstruction to the cluster (or from the phone) is not wired: LoomCluster has no `recon.splat` worker op yet, so nothing is queued. Run the trainer on the ROCm node itself: `forge recon train --stage splat <bundle>` (external OpenSplat, real_unverified_on_gpu); the tiny-scene CPU rung is `--stage splat-cpu`.",
+  "recon.splat.gpu.no_device": "Full-scale splat training needs a ROCm GPU on this host (GroundWeave devices: {devices}). Run it on the fleet's ROCm node, or use `--stage splat-cpu` (tiny scenes) / `forge recon photogrammetry` (CPU route).",
+  "recon.splat.gpu.no_trainer": "No 3DGS trainer found: install OpenSplat (ROCm/HIP build, AGPL-3.0, not bundled) so `opensplat` is on PATH, or set {env} / --trainer-cmd to a command template using {{data}} {{out}} {{iters}} {{sh_degree}} {{downscale}} {{seed}}.",
+  "recon.splat.gpu.bad_config": "Splat training config out of range (iters {iters}: 1–1000000; SH degree {sh}: 1–3; downscale {downscale}: 1–16).",
+  "recon.splat.gpu.bad_template": "Trainer command template is invalid: {why}",
+  "recon.splat.gpu.bad_image": "Capture view is neither PNG nor JPEG; the trainer project cannot include it.",
+  "recon.splat.gpu.timeout": "The splat trainer did not finish within {seconds} s and was stopped; no output was kept.",
+  "recon.splat.gpu.trainer_failed": "The splat trainer exited with code {code}: {tail}",
+  "recon.splat.gpu.no_output": "The splat trainer exited cleanly but wrote no {path}.",
+  "recon.splat.gpu.bad_output": "The splat trainer's output was rejected: {why}",
+  "recon.splat.gpu.probe_note": "Contract probe on CPU: the exported project was checked and a valid .ply was written from the sparse points. Nothing was trained; this is not a reconstruction.",
+  "recon.splat.gpu.unverified_note": "Trained by the external trainer; output validated. This path has not been verified on an AMD GPU by AssetFabric (real_unverified_on_gpu); GPU output is not bit-reproducible."
 }

@@ -50,7 +50,10 @@ def test_selection_never_picks_a_planned_backend(root: Path) -> None:
         for devs in (["cpu"], ["cpu", *gw.SIMULATED_GPU_DEVICES]):
             sel = gw.select(op_id, devs, root)
             if sel.get("backend"):
-                assert sel["device"] == "cpu", (op_id, sel)       # every GPU rung is `planned` today
+                # 0.9.2: a GPU rung may be selected only if it is real AND declares verified: false (no GPU-proven claims)
+                assert sel["device"] == "cpu" or sel["verified"] is False, (op_id, sel)
+                rung = next(x for x in op["ladder"] if x["id"] == sel["backend"] and x["device"] == sel["device"])
+                assert rung["impl"] == "real"
             elif op.get("planned"):                  # C9–C12: specified-but-unbuilt ops select nothing and say so
                 assert sel["status"] == "planned" and sel["route"] in ("loomcluster", "local")
             else:

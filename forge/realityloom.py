@@ -19,9 +19,12 @@ REAL (CPU, deterministic, no external tools):
   * (0.7.7) `SplatForgeCPU.train` — bounded tiny-scene 3DGS training on CPU (`forge.splattrain`).
   * (0.7.7) `Photogrammetry.run` — incremental SIFT SfM on OpenCV (CPU) → sparse cloud + cameras (`forge.photogrammetry`).
 
-STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): full-scale `SplatForge.train` (GPU) and `submit` (after the real
-placement check).
-Whether any of this beats the CPU-only photogrammetry route on the fleet is unmeasured: no trainer has ever run here.
+REAL, UNVERIFIED ON GPU (0.9.2): full-scale `SplatForge.train` → `forge.splatforge_gpu.GpuSplatRunner` (external
+OpenSplat-class trainer on a ROCm host; contract tested on CPU with a probe trainer; never executed on an AMD GPU).
+
+STUB (refuses with `StubError`; nothing is queued, nothing is fabricated): `submit` / `request_splat` — sending a splat job
+to the cluster (after the real placement check): LoomCluster has no `recon.splat` worker op.
+Whether any of this beats the CPU-only photogrammetry route on the fleet is unmeasured: no GPU trainer has ever run here.
 """
 
 from __future__ import annotations
@@ -94,7 +97,7 @@ STAGES = {
     "splat": [
         ("bundle", "recon.plan", "cpu", "real"),
         ("sfm", "recon.sfm", "cpu", "real"),
-        ("train_splat", "recon.splat", "rocm", "stub"),
+        ("train_splat", "recon.splat", "rocm", "real_unverified_on_gpu"),
         ("validate_ply", "recon.plan", "cpu", "real"),
         ("import_godot", "shuttle.gdgs", "cpu", "real"),
     ],
@@ -103,7 +106,9 @@ STAGES = {
         ("photogrammetry_sfm", "recon.sfm", "cpu", "real"),
     ],
 }
-BLOCKERS = {"train_splat": "recon.splatforge"}
+BLOCKERS: dict[str, str] = {}             # 0.9.2: nothing in a plan is a stub any more; cluster *submission* is (`recon.splat_submit`)
+UNVERIFIED = {"train_splat": "recon.splatforge"}
+REAL_STATUSES = ("real", "real_unverified_on_gpu")
 
 
 def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | None] | None = None) -> dict[str, Any]:
@@ -118,6 +123,7 @@ def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | No
     for sid, op, dev, status in STAGES[eff]:
         stages.append({"id": sid, "op": op, "device": dev, "status": status,
                        **({"blocked_by": BLOCKERS[sid]} if sid in BLOCKERS else {}),
+                       **({"unverified": UNVERIFIED[sid]} if sid in UNVERIFIED else {}),
                        **({"requires": {"device": dev}} if dev != "cpu" else {})})
     if manifest["usable_views"] < manifest["min_views"]:
         eta = t("recon.eta.none")
@@ -127,7 +133,11 @@ def plan(manifest: dict[str, Any], devices: list[str], tools: dict[str, str | No
         problems = []
     return {"route": r, "effective_route": eff, "degraded_from": r if degraded else None, "devices": list(devices),
             "stages": stages, "problems": problems, "eta": eta, "eta_measured": False,
-            "runnable_today": not problems and all(s["status"] == "real" for s in stages), "blocked_by": sorted({s["blocked_by"] for s in stages if "blocked_by" in s}),
+            "runnable_today": not problems and all(s["status"] in REAL_STATUSES for s in stages),
+            "blocked_by": sorted({s["blocked_by"] for s in stages if "blocked_by" in s}),
+            "unverified_on_gpu": sorted({s["unverified"] for s in stages if "unverified" in s}),
+            "run_on_node": "forge recon train --stage splat <bundle>" if eff == "splat" else "forge recon photogrammetry <bundle>",
+            "cluster_submit": "stub: recon.splat_submit",
             "tools_on_host": tools}
 
 
@@ -151,12 +161,18 @@ def check_placement(url: str, device: str = "rocm") -> dict[str, Any]:
 
 
 def submit(manifest: dict[str, Any], cluster_url: str) -> None:
-    """Try to run reconstruction on a cluster. REAL placement check first; then — because no SplatForge worker op exists —
-    the stub refusal. Never submits a job, so nothing can be queued that no node can run."""
+    """Try to run reconstruction on a cluster. REAL placement check first; then — because LoomCluster has no `recon.splat`
+    worker op — the stub refusal (`recon.splat_submit`). Never submits a job, so nothing is queued that no node can run."""
     p = check_placement(cluster_url, "rocm")
     if manifest["route"] == "splat" and not p["ok"]:
         raise RuntimeError(t("recon.no_gpu_node", device="rocm"))
-    SplatForge().train(manifest)
+    request_splat(manifest)
+
+
+def request_splat(manifest: dict[str, Any]) -> None:
+    """STUB (C12, 0.9.2): hand a placed reconstruction job to a LoomCluster worker. Refuses; the Kotlin twin is
+    `SplatForgeClient.request`. Training itself is real on the ROCm node: `SplatForge.train` / `forge recon train --stage splat`."""
+    refuse("recon.splat_submit", "stub.recon.splat_submit", MILESTONE)
 
 
 # ------------------------------------------------------------------------------------------------ splat .ply check
@@ -208,12 +224,20 @@ def make_test_ply(n: int, sh_rest: int = 0) -> bytes:
 # ------------------------------------------------------------------------------------------------ stubs
 
 class SplatForge:
-    """STUB (C12): full-scale 3DGS training (anisotropic, SH 3, densification, full resolution) from a capture bundle.
-    GroundWeave op `recon.splat` (gpu_required, route loomcluster) — needs a ROCm/CUDA trainer (OpenSplat), none bundled.
-    The bounded tiny-scene CPU trainer is real: `SplatForgeCPU` (op `recon.splat_cpu`)."""
+    """Full-scale 3DGS training (C12; anisotropic, SH ≤ 3, densification, capture resolution) — since 0.9.2 a thin alias of
+    `forge.splatforge_gpu.GpuSplatRunner` (external OpenSplat-class trainer on a ROCm node, `real_unverified_on_gpu`).
+    GroundWeave op `recon.splat` (gpu_required, route loomcluster). The tiny-scene CPU rung is `SplatForgeCPU`."""
 
-    def train(self, bundle: dict[str, Any]) -> Path:
-        refuse("recon.splatforge", "stub.recon.splatforge", MILESTONE)
+    def __init__(self, **kw: Any) -> None:
+        from forge.splatforge_gpu import GpuSplatRunner
+        self.runner = GpuSplatRunner(**kw)
+
+    @property
+    def last(self) -> dict[str, Any]:
+        return self.runner.last
+
+    def train(self, bundle: Path) -> Path:
+        return self.runner.train(Path(bundle))
 
 
 class SplatForgeCPU:
@@ -320,7 +344,7 @@ class GdgsImport:
 
 
 STUB_PROBES = {
-    "recon.splatforge": lambda: SplatForge().train({}),
+    "recon.splat_submit": lambda: request_splat({}),
 }
 
 

@@ -104,7 +104,7 @@ private fun usage(): Nothing {
 /** C9–C12: invoke every Kotlin stub; each must throw [StubException] (reported here), never return. */
 fun allStubs(): Map<String, Any?> {
     val probes: Map<String, () -> Unit> = mapOf(
-        "recon.splatforge" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
+        "recon.splat_submit" to { SplatForgeClient().request("0".repeat(64), "backdrop") },
     )
     return probes.mapValues { (id, f) ->
         try { f(); mapOf("refused" to false, "feature" to id) } catch (e: StubException) { e.toMap() + ("refused" to true) }

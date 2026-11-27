@@ -24,6 +24,8 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -83,8 +85,12 @@ def _ladder(root: Path, op_cpu: list[str], op_planned: list[str]) -> dict[str, A
     ok = True
     for op in op_cpu:
         a, b = gw.select(op, ["cpu"], root), gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)
-        good = a["device"] == "cpu" and b["device"] == "cpu" and a["backend"] == b["backend"]
-        rows[op] = {"backend": a["backend"], "device": a["device"], "with_all_gpus_present": b["backend"], "ok": good}
+        # 0.9.2: with GPUs present an op may pick a real-but-unverified GPU rung (verified: false, CPU fallback at runtime);
+        # otherwise it must stay on the CPU rung. Never a planned rung, never one claiming verification.
+        gpu_ok = (b["device"] == "cpu" and a["backend"] == b["backend"]) or (b["device"] != "cpu" and b.get("verified") is False)
+        good = a["device"] == "cpu" and gpu_ok
+        rows[op] = {"backend": a["backend"], "device": a["device"], "with_all_gpus_present": b["backend"],
+                    "with_all_gpus_device": b["device"], "gpu_rung_verified": b.get("verified") if b["device"] != "cpu" else None, "ok": good}
         ok = ok and good
     for op in op_planned:
         s = gw.select(op, ["cpu", *gw.SIMULATED_GPU_DEVICES], root)
@@ -802,7 +808,8 @@ def _depth_dense() -> dict[str, Any]:
           and mj["abs_rel"] <= DENSE_FLOORS["abs_rel_max"] and m2["spearman"] >= DENSE_FLOORS["spearman_min"])
     return {"ok": bool(ok), "model": depth.MODEL_ID, "scene": "render_scene(256x192): ground + brick wall + crate, depth 2.6–9.1 m",
             "metrics_12_anchors": m, "metrics_jpeg_path": mj, "metrics_2_anchors": m2, "floors": DENSE_FLOORS,
-            "bit_reproducible_1_thread": bool(np.array_equal(rel, rel2)), "infer_s_1_thread": round(wall, 3)}
+            "bit_reproducible_1_thread": bool(np.array_equal(rel, rel2)), "infer_s_1_thread": round(wall, 3),
+            "onnx_ep": {k: (est.ep or {}).get(k) for k in ("providers", "active", "device", "fallback", "demoted")}}
 
 
 def _depth_offload(root: Path, tmp: Path) -> dict[str, Any]:
@@ -954,6 +961,17 @@ def _model_audit(root: Path) -> dict[str, Any]:
     return models.audit(root)
 
 
+def _onnx_ep() -> dict[str, Any]:
+    """0.9.2 AMD-first EP selection (forge.onnx_ep): ROCm/DirectML chosen only when offered, CPU fallback on session failure,
+    demotion on a failing GPU run, FORGE_ONNX_EP=cpu pin — proven against a fake onnxruntime; the host row is the real one.
+    Status rocm_ready_unverified: nothing ran on a GPU."""
+    try:
+        from forge import onnx_ep
+        return onnx_ep.selftest()
+    except ImportError as e:
+        return {"ok": False, "error": f"onnxruntime missing: {e}"}
+
+
 def _girt_onnx(root: Path) -> dict[str, Any]:
     """GIRT policy → ONNX → onnxruntime CPU parity with the NumPy/GDScript maths (shares C11's onnxruntime dependency)."""
     try:
@@ -977,6 +995,7 @@ def c11_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["cli"] = _depth_cli(root, tmp)
         r["model_licences"] = _model_audit(root)
         r["girt_onnx"] = _girt_onnx(root)
+        r["onnx_ep"] = _onnx_ep()
         r["groundweave"] = _ladder(root, ["depth.distance", "depth.estimate"], [])
         r["cpu_2core"] = _verify(root, "depth.distance", "depth.estimate")
         if full:
@@ -1013,15 +1032,17 @@ def _recon_core(root: Path, tmp: Path) -> dict[str, Any]:
     prop = realityloom.plan(realityloom.bundle_manifest(imgs, "hero_prop", "burst", root), ["cpu", "rocm"], tools={})
     few = realityloom.plan(realityloom.bundle_manifest(imgs[:1], "backdrop", "burst", root), ["cpu"], tools={})
     train = next(s for s in gpu["stages"] if s["id"] == "train_splat")
-    # 0.7.7: the CPU photogrammetry route is runnable end to end; the GPU splat route is blocked only by SplatForge training
+    # 0.7.7: the CPU photogrammetry route is runnable end to end. 0.9.2: the GPU splat route has no stub stage any more — its
+    # training stage is real_unverified_on_gpu (external trainer on the ROCm node) and is labelled as such; submit stays a stub.
     plan_ok = (cpu["degraded_from"] == "splat" and cpu["effective_route"] == "photogrammetry" and cpu["runnable_today"] is True
-               and cpu["blocked_by"] == [] and cpu["eta_measured"] is False
-               and gpu["effective_route"] == "splat" and train["requires"] == {"device": "rocm"} and train["status"] == "stub"
-               and gpu["runnable_today"] is False and set(gpu["blocked_by"]) == {"recon.splatforge"}
+               and cpu["blocked_by"] == [] and cpu["eta_measured"] is False and cpu["unverified_on_gpu"] == []
+               and gpu["effective_route"] == "splat" and train["requires"] == {"device": "rocm"}
+               and train["status"] == "real_unverified_on_gpu" and train.get("unverified") == "recon.splatforge"
+               and gpu["runnable_today"] is True and gpu["blocked_by"] == [] and gpu["unverified_on_gpu"] == ["recon.splatforge"]
+               and gpu["cluster_submit"] == "stub: recon.splat_submit"
                and prop["effective_route"] == "photogrammetry" and prop["degraded_from"] is None
                and few["problems"] and few["eta"] == "no runnable route on the available devices"
-               and all(s["status"] == "stub" for p in (cpu, gpu) for s in p["stages"] if "blocked_by" in s)
-               and all(s["status"] == "real" for p in (cpu, gpu) for s in p["stages"] if "blocked_by" not in s))
+               and all(s["status"] == "real" for p in (cpu, gpu) for s in p["stages"] if "unverified" not in s))
     ok = (routes["backdrop"]["route"] == "splat" and routes["hero_prop"]["route"] == "photogrammetry"
           and routes["hero_prop"]["alternatives"] == ["meshweaver"] and unknown
           and m1["capture_set_sha256"] == m2["capture_set_sha256"] and same and m1["usable_views"] == 4
@@ -1029,7 +1050,8 @@ def _recon_core(root: Path, tmp: Path) -> dict[str, Any]:
     return {"ok": ok, "routes": {k: v["route"] for k, v in routes.items()}, "bundle_deterministic": same,
             "set_hash_order_independent": m1["capture_set_sha256"] == m2["capture_set_sha256"], "objects_stored": len(stored),
             "plan_cpu_only": {k: cpu[k] for k in ("effective_route", "degraded_from", "runnable_today", "blocked_by", "eta")},
-            "plan_with_rocm": {k: gpu[k] for k in ("effective_route", "blocked_by", "eta")}, "plan_too_few_views": few["problems"],
+            "plan_with_rocm": {k: gpu[k] for k in ("effective_route", "runnable_today", "blocked_by", "unverified_on_gpu", "cluster_submit", "eta")},
+            "plan_too_few_views": few["problems"],
             "plan_ok": plan_ok}
 
 
@@ -1075,19 +1097,104 @@ def _recon_cluster(root: Path, tmp: Path) -> dict[str, Any]:
             realityloom.submit(m, fl.urls["a"])
             r2 = "returned"
         except StubError as e:
-            r2 = "refused:stub" if is_stub_message(str(e)) and e.feature == "recon.splatforge" else f"wrong:{e}"
+            r2 = "refused:stub" if is_stub_message(str(e)) and e.feature == "recon.splat_submit" else f"wrong:{e}"
         try:
             realityloom.submit(mh, fl.urls["a"])
             r3 = "returned"
         except StubError as e:
-            r3 = "refused:stub" if e.feature == "recon.splatforge" else f"wrong:{e}"
+            r3 = "refused:stub" if e.feature == "recon.splat_submit" else f"wrong:{e}"
         sts = {n: lc._http(u + "/status") for n, u in fl.urls.items()}
         queued = sum(s["outstanding"] + s["results"] + s["queue"] + s["running"] for s in sts.values())
     ok = (not no_gpu["ok"] and r1 == "refused:no_gpu_node" and gpu["ok"] and gpu["capable"] == ["g"]
           and r2 == "refused:stub" and r3 == "refused:stub" and queued == 0)
     return {"ok": ok, "cpu_only_fleet": {"capable": no_gpu["capable"], "submit": r1},
             "fleet_with_rocm_node": {"capable": gpu["capable"], "splat_submit": r2, "photogrammetry_submit": r3},
-            "jobs_queued_anywhere": queued, "note": "placement check is real (C7 adverts); the trainer behind it is the C12 stub, so nothing is queued"}
+            "jobs_queued_anywhere": queued, "note": "placement check is real (C7 adverts); cluster submission (recon.splat_submit) is the C12 stub, so nothing is queued"}
+
+
+def _splat_gpu(root: Path, tmp: Path) -> dict[str, Any]:
+    """SplatForge full-scale runner contract (0.9.2, real_unverified_on_gpu) on CPU — no GPU, no OpenSplat here:
+    (1) refuses without a ROCm device and without a trainer (honest locale messages, nothing written);
+    (2) `forge recon train --stage splat --contract-probe` on a rendered 9-view capture: CPU SfM → nerfstudio project whose
+        cameras re-project the sparse cloud (checked by the probe trainer) → deterministic config → trainer → validated SH-3
+        .ply; the exported c2w matrices round-trip to the SfM poses; a second run yields the same config + project hashes;
+    (3) trainer failure modes are caught: non-zero exit, no output, garbage .ply, NaN positions, timeout."""
+    from forge import photogrammetry as pg
+    from forge import splatforge_gpu as sg
+    sc = pg.render_views(9)
+    imgs = [pg.png_bytes(im) for im in sc["images"]]
+    b = tmp / "gpu_bundle"
+    realityloom.write_bundle(b, imgs, "backdrop", "sweep", root)
+    focal = str(sc["K"][0, 0])
+    refusals = {}
+    saved = {k: os.environ.pop(k, None) for k in (sg.CMD_ENV, "PATH")}
+    os.environ["PATH"] = str(tmp / "empty-path")                           # no `opensplat` reachable, no FORGE_SPLAT_CMD
+    try:
+        for name, kw, needle in (("no_rocm", {"devices": ["cpu"]}, "ROCm"), ("no_trainer", {"devices": ["cpu", "rocm"]}, sg.CMD_ENV)):
+            try:
+                sg.GpuSplatRunner(iters=10, **kw).train(b)
+                refusals[name] = "returned"
+            except sg.SplatRunError as e:
+                refusals[name] = "refused" if needle in str(e) else f"wrong:{e}"
+    finally:
+        for k, v in saved.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
+    refusals["nothing_written"] = not (b / "splat_gpu").exists()
+    cmd = [sys.executable, "-m", "forge.cli", "recon", "train", str(b), "--stage", "splat", "--contract-probe",
+           "--iters", "100", "--focal-px", focal]
+    runs = []
+    for _ in range(2):
+        p = subprocess.run(cmd, cwd=root, capture_output=True, text=True, timeout=600)
+        try:
+            runs.append(json.loads(p.stdout) | {"exit": p.returncode})
+        except ValueError:
+            return {"ok": False, "exit": p.returncode, "stderr": (p.stderr or p.stdout)[-800:]}
+    d = runs[0]
+    tr = json.loads((b / "splat_gpu" / "data" / "transforms.json").read_text(encoding="utf-8"))
+    rec = pg.reconstruct([pg._decode(x) for x in [(b / "objects" / v["sha256"][:2] / v["sha256"]).read_bytes()
+                                                  for v in json.loads((b / "bundle.json").read_text())["views"]]], focal_px=float(focal))
+    rt = []
+    for f in tr["frames"]:
+        i = int(f["file_path"].split("_")[1].split(".")[0])
+        R, tv = sg.w2c_cv(np.asarray(f["transform_matrix"]))
+        rt.append(float(max(np.abs(R - rec["poses"][i][0]).max(), np.abs(tv - rec["poses"][i][1]).max())))
+    fails = {}
+    py = shlex.quote(sys.executable)
+    bad_cmds = {
+        "nonzero_exit": f"{py} -c \"import sys; sys.exit(7)\"",
+        "no_output": f"{py} -c \"pass\"",
+        "garbage_ply": f"{py} -c \"import sys; open(sys.argv[1],'wb').write(b'ply\\nnope')\" {{out}}",
+        "nan_positions": f"{py} -c \"import sys,numpy as n; from forge.realityloom import make_test_ply as m; d=m(4,45); "
+                         f"h=d.index(b'end_header')+11; a=n.frombuffer(d[h:],'<f4').copy(); a[0]=n.nan; open(sys.argv[1],'wb').write(d[:h]+a.tobytes())\" {{out}}",
+        "timeout": f"{py} -c \"import time; time.sleep(30)\"",
+    }
+    for name, c in bad_cmds.items():
+        try:
+            sg.GpuSplatRunner(iters=10, trainer_cmd=c, contract_probe=True, focal_px=float(focal),
+                              timeout_s=3 if name == "timeout" else 120).train(b)
+            fails[name] = "accepted"
+        except sg.SplatRunError as e:
+            fails[name] = "rejected"
+            fails[name + "_msg"] = str(e)[:120]
+        except ValueError as e:                    # check_splat_ply
+            fails[name] = "rejected"
+            fails[name + "_msg"] = str(e)[:120]
+    det = (runs[0].get("config_sha256") == runs[1].get("config_sha256")
+           and runs[0].get("project", {}).get("transforms_sha256") == runs[1].get("project", {}).get("transforms_sha256"))
+    ok = (refusals["no_rocm"] == "refused" and refusals["no_trainer"] == "refused" and refusals["nothing_written"] is True
+          and all(r["exit"] == 0 for r in runs)
+          and d.get("status") == "real_unverified_on_gpu" and d.get("verified_on_gpu") is False and d.get("contract_probe") is True
+          and d.get("ply", {}).get("sh_degree") == 3 and d.get("ply", {}).get("vertices", 0) >= 20
+          and d.get("project", {}).get("frames", 0) >= 6 and det and max(rt) < 1e-6
+          and all(fails[k] == "rejected" for k in bad_cmds))
+    return {"ok": bool(ok), "refusals": refusals, "frames": d.get("project", {}).get("frames"), "sparse_points": d.get("project", {}).get("points"),
+            "ply": d.get("ply"), "config_sha256": d.get("config_sha256"), "deterministic_config_and_project": det,
+            "c2w_roundtrip_max_err": max(rt) if rt else None, "trainer_failures": fails, "status": d.get("status"),
+            "verified_on_gpu": False, "export_s": d.get("export_s"),
+            "not_proven": "no real trainer ran: OpenSplat is not installed and this box has no GPU — the probe trainer checks "
+                          "the project and writes a .ply from the sparse points; it learns nothing (C-102)"}
 
 
 PHOTO_FLOORS = {"rot_err_deg_max": 2.0, "center_err_rel_max": 0.05, "reproj_rmse_px_max": 2.0}   # INFERENCES C-74
@@ -1220,7 +1327,7 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["core"] = _recon_core(root, tmp)
         r["splat_ply"] = _recon_ply()
         r["cluster"] = _recon_cluster(root, tmp)
-        r["cli_stubs"] = _cli_stubs(root, [["recon", "train", "--stage", "splat"]])
+        r["splat_gpu"] = _splat_gpu(root, tmp)
         r["photogrammetry"] = _photogrammetry(root, tmp)
         r["splat_cpu"] = _splat_cpu(root, tmp)
         r["meshweaver"] = _meshweaver(root, tmp)
@@ -1230,8 +1337,12 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
         sp = gw.select("recon.splat", ["cpu"], root)
         r["groundweave"]["recon_splat"] = {"gpu_required": ladder["recon.splat"].get("gpu_required"), "route": sp.get("route"),
                                            "rungs_real": [x["id"] for x in ladder["recon.splat"]["ladder"] if x["impl"] == "real"]}
+        sp_gpu = gw.select("recon.splat", ["cpu", "rocm"], root)
+        r["groundweave"]["recon_splat"]["select_with_rocm"] = {k: sp_gpu.get(k) for k in ("backend", "device", "verified")}
         r["groundweave"]["ok"] = bool(r["groundweave"]["ok"] and ladder["recon.splat"].get("gpu_required") and sp.get("route") == "loomcluster"
-                                      and not r["groundweave"]["recon_splat"]["rungs_real"])
+                                      and sp.get("backend") is None
+                                      and r["groundweave"]["recon_splat"]["rungs_real"] == ["opensplat-rocm"]
+                                      and sp_gpu.get("backend") == "opensplat-rocm" and sp_gpu.get("verified") is False)
         r["cpu_2core"] = _verify(root, "recon.plan", "recon.mesh", "shuttle.gdgs", "recon.sfm", "recon.splat_cpu")
         if full:
             b = gradle_build(root)
@@ -1249,8 +1360,8 @@ def c12_run(root: Path) -> tuple[int, dict[str, Any]]:
 KEYS = {
     "C9": ["register", "contract", "loomlink", "video", "ws_transport", "desktop_capture", "studio", "cli", "groundweave", "cpu_2core"],
     "C10": ["register", "quality", "sets", "telemetry", "offload", "video", "arcore", "groundweave", "cpu_2core"],
-    "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "groundweave", "cpu_2core"],
-    "C12": ["register", "core", "splat_ply", "cluster", "cli_stubs", "photogrammetry", "splat_cpu", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
+    "C11": ["register", "distance", "align", "dense", "arcore", "offload", "cli", "model_licences", "girt_onnx", "onnx_ep", "groundweave", "cpu_2core"],
+    "C12": ["register", "core", "splat_ply", "cluster", "splat_gpu", "photogrammetry", "splat_cpu", "meshweaver", "gdgs", "groundweave", "cpu_2core"],
 }
 FULL_KEYS = {"C9": ["kotlin_interop", "apk"], "C10": ["kotlin_parity", "kotlin_video", "apk"], "C11": ["kotlin_parity", "kotlin_depth"], "C12": ["kotlin_parity"]}
 
