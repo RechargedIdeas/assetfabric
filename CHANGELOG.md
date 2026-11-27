@@ -31,6 +31,10 @@ INFERENCES C-101…C-104. **Nothing here ran on a GPU.**
   1 stub · 3 deferred. `realityloom.plan()["cluster_submit"]` now names the real command.
 - Version `0.9.2+f9` (Fabric). Game Zero stays `0.9.1+f9` — no game code changed.
 
+### Verified
+- `pytest -q` 321 passed (6 min 56 s, local); `forge accept all` F0–F9 + C1–C12 all 22 green, re-recorded (14 min 57 s
+  wall, local box, CPU only); `forge status` healthy; STATUS regenerated. No GPU claim anywhere.
+
 ### Investigated, not built
 - **Q3 native GDExtension step** (C-104): C++ toolchain + godot-cpp 4.3 build proven (1 min 41 s, 8 vCPU), but a native
   movement kernel can save only ≈ 5–15 % of a forward sim; closing the 2-core-runner gap needs a full native forward sim

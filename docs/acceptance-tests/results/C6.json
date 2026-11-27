@@ -5,21 +5,21 @@
   "milestone": "C6",
   "passed": true,
   "perf": {
-    "apk_bytes": 1944299,
-    "apk_sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746",
+    "apk_bytes": 2042862,
+    "apk_sha256": "6c5f68193acdb86a43cc6947a44d6e431260d34e533d3225fa68b22ab7f90933",
     "mode": "full"
   },
   "result": {
     "build": {
       "apk": {
-        "bytes": 1944299,
+        "bytes": 2042862,
         "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
-        "sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746"
+        "sha256": "6c5f68193acdb86a43cc6947a44d6e431260d34e533d3225fa68b22ab7f90933"
       },
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 7.6
+      "seconds": 7.3
     },
     "c6": {
       "capture_arrived_identical": true,
@@ -62,7 +62,7 @@
           },
           {
             "id": "shared",
-            "phone_copy": "shared~pl-e0bfbe0b",
+            "phone_copy": "shared~pl-0c33d29c",
             "resolution": "keep_both"
           }
         ],

@@ -7,19 +7,19 @@
   "perf": {
     "consent_ui_steps": 9,
     "device_boots": 22,
-    "device_wall_s": 8.1,
+    "device_wall_s": 8.2,
     "flags": 4,
     "forge_bad_bundles": 10,
     "forge_bad_bundles_refused": 10,
     "knobs": 26,
-    "liveops_boot_ms_max": 1.38,
-    "liveops_boot_ms_mean": 0.74,
+    "liveops_boot_ms_max": 1.23,
+    "liveops_boot_ms_mean": 0.78,
     "user_gated": [
       "production_public_key",
       "privacy_text_legal_review",
       "live_service"
     ],
-    "wall_s": 13.4
+    "wall_s": 13.7
   },
   "result": {
     "combat": {
@@ -86,11 +86,11 @@
       "device_status": {
         "active": 4,
         "boot_sentinel": null,
-        "dir": "/tmp/f9-u1jy91k6/device",
+        "dir": "/tmp/f9-hjgfh2e4/device",
         "inbox": false,
         "last_status": {
           "active_invalid": [],
-          "boot_ms": 0.62,
+          "boot_ms": 0.6,
           "errors": [],
           "flags": {
             "adaptive_music": true,
@@ -113,12 +113,12 @@
           "5.json"
         ],
         "rejected": [
-          "1-188636.json",
-          "3-179218.json",
-          "3-188141.json",
-          "3-190750.json",
-          "3-200423.json",
-          "3-207937.json"
+          "1-182509.json",
+          "3-166655.json",
+          "3-177665.json",
+          "3-188183.json",
+          "3-188741.json",
+          "3-198234.json"
         ],
         "state": {
           "active_serial": 4,
@@ -130,7 +130,7 @@
           "active_invalid": [
             "active serial 1 is not the promoted serial 4 (swapped on disk)"
           ],
-          "boot_ms": 0.62,
+          "boot_ms": 0.93,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -159,7 +159,7 @@
           "active_invalid": [
             "signature invalid"
           ],
-          "boot_ms": 0.4,
+          "boot_ms": 0.45,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -186,7 +186,7 @@
         },
         "after_crash_loop": {
           "active_invalid": [],
-          "boot_ms": 0.97,
+          "boot_ms": 0.95,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -213,7 +213,7 @@
         },
         "boot_again_1": {
           "active_invalid": [],
-          "boot_ms": 0.88,
+          "boot_ms": 1.23,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -240,7 +240,7 @@
         },
         "crash_boot_1": {
           "active_invalid": [],
-          "boot_ms": 1.21,
+          "boot_ms": 1.16,
           "diag_written": false,
           "exit": -6,
           "flags": {
@@ -267,7 +267,7 @@
         },
         "crash_boot_2": {
           "active_invalid": [],
-          "boot_ms": 0.74,
+          "boot_ms": 0.78,
           "diag_written": false,
           "exit": -6,
           "flags": {
@@ -321,7 +321,7 @@
         },
         "diag_on": {
           "active_invalid": [],
-          "boot_ms": 0.15,
+          "boot_ms": 0.12,
           "diag_written": true,
           "exit": 0,
           "flags": {
@@ -349,7 +349,7 @@
         },
         "fresh": {
           "active_invalid": [],
-          "boot_ms": 0.15,
+          "boot_ms": 0.14,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -376,7 +376,7 @@
         },
         "net_off_boot": {
           "active_invalid": [],
-          "boot_ms": 0.62,
+          "boot_ms": 0.6,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -404,7 +404,7 @@
         },
         "no_key": {
           "active_invalid": [],
-          "boot_ms": 0.07,
+          "boot_ms": 0.09,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -432,7 +432,7 @@
         },
         "promote_1": {
           "active_invalid": [],
-          "boot_ms": 1.19,
+          "boot_ms": 1.23,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -459,7 +459,7 @@
         },
         "promote_2_balance_off": {
           "active_invalid": [],
-          "boot_ms": 1.16,
+          "boot_ms": 1.22,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -486,7 +486,7 @@
         },
         "reject_consent": {
           "active_invalid": [],
-          "boot_ms": 1,
+          "boot_ms": 1.17,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -515,7 +515,7 @@
         },
         "reject_content": {
           "active_invalid": [],
-          "boot_ms": 1.05,
+          "boot_ms": 1.03,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -544,7 +544,7 @@
         },
         "reject_out_of_range": {
           "active_invalid": [],
-          "boot_ms": 1.16,
+          "boot_ms": 0.99,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -573,7 +573,7 @@
         },
         "reject_replay_1": {
           "active_invalid": [],
-          "boot_ms": 1.03,
+          "boot_ms": 1.07,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -602,7 +602,7 @@
         },
         "reject_tampered": {
           "active_invalid": [],
-          "boot_ms": 1.38,
+          "boot_ms": 1.21,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -631,7 +631,7 @@
         },
         "reject_wrong_key": {
           "active_invalid": [],
-          "boot_ms": 0.71,
+          "boot_ms": 0.79,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -650,7 +650,7 @@
           },
           "quarantined": 0,
           "rejected": [
-            "key_id 058b6baef3e089cb does not match the pinned key c23e0706f46f82e4"
+            "key_id b5c2081288144274 does not match the pinned key 9712c085eb38d3b0"
           ],
           "retro_request_nes": "nes-style",
           "save_guard": null,
@@ -660,7 +660,7 @@
         },
         "restored": {
           "active_invalid": [],
-          "boot_ms": 0.53,
+          "boot_ms": 0.6,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -687,7 +687,7 @@
         },
         "rollback_4_defaults": {
           "active_invalid": [],
-          "boot_ms": 1.11,
+          "boot_ms": 1.06,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -714,7 +714,7 @@
         },
         "save_guard": {
           "active_invalid": [],
-          "boot_ms": 0.13,
+          "boot_ms": 0.12,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -747,7 +747,7 @@
           "source": "defaults"
         }
       },
-      "wall_s": 8.1
+      "wall_s": 8.2
     },
     "diagnostics": {
       "files": [
@@ -829,7 +829,7 @@
       },
       "wrong_key": {
         "errors": [
-          "key_id 058b6baef3e089cb does not match the pinned key c23e0706f46f82e4"
+          "key_id b5c2081288144274 does not match the pinned key 9712c085eb38d3b0"
         ],
         "ok": false
       }
@@ -928,6 +928,6 @@
         "live_service"
       ]
     },
-    "wall_s": 13.4
+    "wall_s": 13.7
   }
 }

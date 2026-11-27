@@ -10,10 +10,10 @@
       "android": {
         "artifact": {
           "path": "dist/android/GameZero-debug.apk",
-          "sha256": "7db84e9fa1d40171f31ae739b994988e6839a8682828d73fd9554c8047365433",
+          "sha256": "1945036695e61740da08e56bdbd60f9b0cabb770c991e87526441300a6719b38",
           "size": 25723347
         },
-        "export_wall_s": 8.8,
+        "export_wall_s": 9.0,
         "total_size": 25959094
       },
       "desktop-linux": {
@@ -22,8 +22,8 @@
           "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
           "size": 66074584
         },
-        "export_wall_s": 4.3,
-        "total_size": 67810718
+        "export_wall_s": 4.6,
+        "total_size": 67810734
       },
       "desktop-windows": {
         "artifact": {
@@ -31,34 +31,34 @@
           "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
           "size": 84214784
         },
-        "export_wall_s": 4.1,
-        "total_size": 86136792
+        "export_wall_s": 4.0,
+        "total_size": 86136872
       },
       "web": {
         "artifact": {
           "path": "dist/web/index.html",
-          "sha256": "11f13275618e915c87328ab1621f77fed89119b97e0721d038dd983db0e68a81",
+          "sha256": "4c6fe0c6eaa670f992f438d5d14ca3074615ee5f1e215e11b0b3184973355568",
           "size": 5158
         },
         "export_wall_s": 4.1,
-        "total_size": 35998289
+        "total_size": 35998305
       },
       "web-nothreads": {
         "artifact": {
           "path": "dist/web-nothreads/index.html",
-          "sha256": "618b2bc43978c27de25e7772f82800dbfd66c69628b66bae598a10420f3ebbe0",
+          "sha256": "9cc43830aaa736fc8e215d28ba9edca66c2aec4a0e495ea2b18339bd8db6d09a",
           "size": 5160
         },
         "export_wall_s": 4.1,
-        "total_size": 37490687
+        "total_size": 37490719
       }
     },
     "desktop_slice_game_minutes": 7.56,
     "mode": "full",
-    "web_budget_headroom_bytes": 35596418,
-    "web_gzip9_bytes": 9403582,
-    "web_nothreads_gzip9_bytes": 9448674,
-    "web_nothreads_swap_p95_ms": 76.3
+    "web_budget_headroom_bytes": 35596425,
+    "web_gzip9_bytes": 9403575,
+    "web_nothreads_gzip9_bytes": 9448612,
+    "web_nothreads_swap_p95_ms": 68.2
   },
   "result": {
     "a11y": {
@@ -476,13 +476,13 @@
         "android": {
           "artifact": {
             "path": "dist/android/GameZero-debug.apk",
-            "sha256": "7db84e9fa1d40171f31ae739b994988e6839a8682828d73fd9554c8047365433",
+            "sha256": "1945036695e61740da08e56bdbd60f9b0cabb770c991e87526441300a6719b38",
             "size": 25723347
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.9.1+f9-android.fabricbolt",
-            "bolt_sha256": "524592ca4d4e29f4ffb59400a95866a182094429f610f8ea35da8f7424bbf90b",
-            "bolt_size": 25421550,
+            "bolt_sha256": "669bd94de55033201c1fcd97f70993c3b1275b66f86dfb04af1a6a24169efc35",
+            "bolt_size": 25421673,
             "components": 85,
             "copyleft": {},
             "licenses": {
@@ -512,11 +512,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T14:08:27-0500",
+          "built_at": "2026-11-27T15:07:32-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 8.8,
+          "export_wall_s": 9.0,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-android",
           "mode": "debug",
@@ -542,7 +542,7 @@
           "total_size": 25959094,
           "verify": {
             "apk_size": 25723347,
-            "apkanalyzer_download_size": 25177547,
+            "apkanalyzer_download_size": 25177665,
             "internet_permission": false,
             "launchable": true,
             "min_sdk": 21,
@@ -577,8 +577,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.9.1+f9-desktop-linux.fabricbolt",
-            "bolt_sha256": "021f34fe3602aeb2c0ea79624c5f6f9879f2aa9e41f0e02d0ffb2504a7514491",
-            "bolt_size": 25572272,
+            "bolt_sha256": "79e09535c8f7ccffe20f622a0136a54f8f1b5648cdcbaa9009cfe76640f4d9cf",
+            "bolt_size": 25572297,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -607,11 +607,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T14:08:08-0500",
+          "built_at": "2026-11-27T15:07:13-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.3,
+          "export_wall_s": 4.6,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -634,7 +634,7 @@
           "target": "desktop-linux",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 67810718,
+          "total_size": 67810734,
           "verify": {
             "boots": true,
             "how": "exported binary run headless (--net-report)",
@@ -657,8 +657,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.9.1+f9-desktop-windows.fabricbolt",
-            "bolt_sha256": "9189f1b427e923972ee46a13511ecfbd278f31aaad6add4b2f135ad3d33324bd",
-            "bolt_size": 31699390,
+            "bolt_sha256": "5c9f93ecf113bf1f7f79d36bfcb0aab090bd2f1aa065bc40e243c223a642ae43",
+            "bolt_size": 31699378,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -687,11 +687,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T14:08:15-0500",
+          "built_at": "2026-11-27T15:07:20-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.1,
+          "export_wall_s": 4.0,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -714,7 +714,7 @@
           "target": "desktop-windows",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 86136792,
+          "total_size": 86136872,
           "verify": {
             "console_wrapper": {
               "machine": "0x8664",
@@ -747,13 +747,13 @@
         "web": {
           "artifact": {
             "path": "dist/web/index.html",
-            "sha256": "11f13275618e915c87328ab1621f77fed89119b97e0721d038dd983db0e68a81",
+            "sha256": "4c6fe0c6eaa670f992f438d5d14ca3074615ee5f1e215e11b0b3184973355568",
             "size": 5158
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.9.1+f9-web.fabricbolt",
-            "bolt_sha256": "037177873d9db170b1c2984ef2da655834a2fb09ed31caa1d00cc694209d7b09",
-            "bolt_size": 9489929,
+            "bolt_sha256": "b0d8e93ea7ea1a6aa1b63ae8362e29341e4a28abf1e71eb732bde33e34474244",
+            "bolt_size": 9489902,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -783,7 +783,7 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T14:08:49-0500",
+          "built_at": "2026-11-27T15:07:54-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
           "errors": [],
           "exit_code": 0,
@@ -843,8 +843,8 @@
                   "gzip9": 581
                 },
                 "index.pck": {
-                  "bytes": 1710768,
-                  "gzip9": 1360070
+                  "bytes": 1710784,
+                  "gzip9": 1360063
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -863,10 +863,10 @@
                   "gzip9": 217
                 }
               },
-              "headroom_bytes": 35596418,
+              "headroom_bytes": 35596425,
               "ok": true,
-              "total_bytes": 35972901,
-              "total_gzip9": 9403582
+              "total_bytes": 35972917,
+              "total_gzip9": 9403575
             },
             "hook": true,
             "ok": true,
@@ -979,7 +979,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:35597/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44887/index.js:9:234048"
                 ],
                 "marker_lines": [],
                 "offline": true,
@@ -1010,7 +1010,7 @@
                   "version": "0.9.1+f9"
                 },
                 "script_errors": 0,
-                "wall_s": 2.3
+                "wall_s": 2.1
               },
               "ok": true,
               "online": {
@@ -1020,7 +1020,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:35597/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44887/index.js:9:234048"
                 ],
                 "marker_lines": [],
                 "offline": false,
@@ -1087,19 +1087,19 @@
           "target": "web",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 35998289,
+          "total_size": 35998305,
           "version": "0.9.1+f9"
         },
         "web-nothreads": {
           "artifact": {
             "path": "dist/web-nothreads/index.html",
-            "sha256": "618b2bc43978c27de25e7772f82800dbfd66c69628b66bae598a10420f3ebbe0",
+            "sha256": "9cc43830aaa736fc8e215d28ba9edca66c2aec4a0e495ea2b18339bd8db6d09a",
             "size": 5160
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.9.1+f9-web-nothreads.fabricbolt",
-            "bolt_sha256": "f626329b69f2e889c4480c6c8a8c7b7c0d361a8a1f12ac470f820e6d61d0f675",
-            "bolt_size": 9537175,
+            "bolt_sha256": "2646295b8af5e84008fc647f1f6722180fb5e83db9e65187a0891c0769fd7c43",
+            "bolt_size": 9537117,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -1129,7 +1129,7 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T14:09:14-0500",
+          "built_at": "2026-11-27T15:08:19-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web-nothreads dist/web-nothreads/index.html",
           "errors": [],
           "exit_code": 0,
@@ -1189,8 +1189,8 @@
                   "gzip9": 581
                 },
                 "index.pck": {
-                  "bytes": 1710784,
-                  "gzip9": 1360105
+                  "bytes": 1710816,
+                  "gzip9": 1360044
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -1198,17 +1198,17 @@
                 },
                 "index.service.worker.js": {
                   "bytes": 5782,
-                  "gzip9": 2102
+                  "gzip9": 2101
                 },
                 "index.wasm": {
                   "bytes": 35376909,
                   "gzip9": 7975981
                 }
               },
-              "headroom_bytes": 35551326,
+              "headroom_bytes": 35551388,
               "ok": true,
-              "total_bytes": 37465289,
-              "total_gzip9": 9448674
+              "total_bytes": 37465321,
+              "total_gzip9": 9448612
             },
             "hook": true,
             "ok": true,
@@ -1298,7 +1298,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44999/index.js:9:201882"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:34797/index.js:9:201882"
                 ],
                 "marker_lines": [],
                 "offline": false,
@@ -1372,7 +1372,7 @@
                       ],
                       "threaded": false,
                       "tick": 300,
-                      "wall_ms_median": 76.3
+                      "wall_ms_median": 68.2
                     },
                     {
                       "candidates": 4,
@@ -1391,7 +1391,7 @@
                       ],
                       "threaded": false,
                       "tick": 360,
-                      "wall_ms_median": 55
+                      "wall_ms_median": 52
                     },
                     {
                       "candidates": 4,
@@ -1410,7 +1410,7 @@
                       ],
                       "threaded": false,
                       "tick": 420,
-                      "wall_ms_median": 40.4
+                      "wall_ms_median": 41.2
                     },
                     {
                       "candidates": 4,
@@ -1429,7 +1429,7 @@
                       ],
                       "threaded": false,
                       "tick": 480,
-                      "wall_ms_median": 35.9
+                      "wall_ms_median": 35.6
                     },
                     {
                       "candidates": 4,
@@ -1448,7 +1448,7 @@
                       ],
                       "threaded": false,
                       "tick": 540,
-                      "wall_ms_median": 19.8
+                      "wall_ms_median": 26.9
                     },
                     {
                       "candidates": 4,
@@ -1467,7 +1467,7 @@
                       ],
                       "threaded": false,
                       "tick": 600,
-                      "wall_ms_median": 7.7
+                      "wall_ms_median": 9.2
                     },
                     {
                       "candidates": 4,
@@ -1486,7 +1486,7 @@
                       ],
                       "threaded": false,
                       "tick": 240,
-                      "wall_ms_median": 43.4
+                      "wall_ms_median": 43.7
                     },
                     {
                       "candidates": 4,
@@ -1505,7 +1505,7 @@
                       ],
                       "threaded": false,
                       "tick": 300,
-                      "wall_ms_median": 33.4
+                      "wall_ms_median": 36
                     },
                     {
                       "candidates": 4,
@@ -1524,7 +1524,7 @@
                       ],
                       "threaded": false,
                       "tick": 360,
-                      "wall_ms_median": 39.1
+                      "wall_ms_median": 36.8
                     },
                     {
                       "candidates": 4,
@@ -1543,7 +1543,7 @@
                       ],
                       "threaded": false,
                       "tick": 420,
-                      "wall_ms_median": 41.8
+                      "wall_ms_median": 42.1
                     },
                     {
                       "candidates": 4,
@@ -1562,7 +1562,7 @@
                       ],
                       "threaded": false,
                       "tick": 480,
-                      "wall_ms_median": 35.8
+                      "wall_ms_median": 35
                     },
                     {
                       "candidates": 4,
@@ -1581,7 +1581,7 @@
                       ],
                       "threaded": false,
                       "tick": 540,
-                      "wall_ms_median": 37.9
+                      "wall_ms_median": 37
                     },
                     {
                       "candidates": 4,
@@ -1600,7 +1600,7 @@
                       ],
                       "threaded": false,
                       "tick": 600,
-                      "wall_ms_median": 37.8
+                      "wall_ms_median": 37.4
                     },
                     {
                       "candidates": 4,
@@ -1619,7 +1619,7 @@
                       ],
                       "threaded": false,
                       "tick": 660,
-                      "wall_ms_median": 28.9
+                      "wall_ms_median": 59.3
                     },
                     {
                       "candidates": 4,
@@ -1638,7 +1638,7 @@
                       ],
                       "threaded": false,
                       "tick": 720,
-                      "wall_ms_median": 23.7
+                      "wall_ms_median": 23.1
                     },
                     {
                       "candidates": 4,
@@ -1657,7 +1657,7 @@
                       ],
                       "threaded": false,
                       "tick": 780,
-                      "wall_ms_median": 20.6
+                      "wall_ms_median": 19.9
                     },
                     {
                       "candidates": 3,
@@ -1674,16 +1674,16 @@
                       ],
                       "threaded": false,
                       "tick": 840,
-                      "wall_ms_median": 7.6
+                      "wall_ms_median": 7.5
                     }
                   ],
                   "processor_count": 2,
                   "reps": 1,
                   "samples": 17,
                   "states": 17,
-                  "wall_ms_max": 76.3,
-                  "wall_ms_p50": 35.9,
-                  "wall_ms_p95": 76.3
+                  "wall_ms_max": 68.2,
+                  "wall_ms_p50": 36.8,
+                  "wall_ms_p95": 68.2
                 },
                 "script_errors": 0,
                 "wall_s": 5.3
@@ -1710,7 +1710,7 @@
           "target": "web-nothreads",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 37490687,
+          "total_size": 37490719,
           "version": "0.9.1+f9"
         }
       },
@@ -1746,7 +1746,7 @@
       },
       "network_namespace": "bwrap --unshare-net",
       "script_errors": 0,
-      "wall_ms": 5460
+      "wall_ms": 5324.5
     },
     "editor_roundtrip": {
       "checksum_equal": true,

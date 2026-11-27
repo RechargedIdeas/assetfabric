@@ -8,10 +8,10 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.mesh": 0.537,
-      "recon.plan": 0.014,
-      "recon.sfm": 1.179,
-      "recon.splat_cpu": 2.826,
+      "recon.mesh": 0.55,
+      "recon.plan": 0.013,
+      "recon.sfm": 1.28,
+      "recon.splat_cpu": 2.633,
       "shuttle.gdgs": 0.021
     },
     "planned_ops": [],
@@ -95,7 +95,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.splat_cpu",
           "status": "ok",
-          "wall_s": 2.826
+          "wall_s": 2.633
         },
         {
           "backend": "opencv-sift-sfm-cpu",
@@ -106,7 +106,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.sfm",
           "status": "ok",
-          "wall_s": 1.179
+          "wall_s": 1.28
         },
         {
           "backend": "realityloom-plan-cpu",
@@ -117,7 +117,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.014
+          "wall_s": 0.013
         },
         {
           "backend": "meshweaver-density-surfacenets-cpu",
@@ -128,7 +128,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.mesh",
           "status": "ok",
-          "wall_s": 0.537
+          "wall_s": 0.55
         },
         {
           "backend": "gdgs-multimesh-billboard-cpu",
@@ -299,7 +299,7 @@
         64,
         48
       ],
-      "seconds": 51.556,
+      "seconds": 54.464,
       "splats": 600,
       "views_registered": 8,
       "views_train": 7
@@ -308,7 +308,7 @@
       "c2w_roundtrip_max_err": 2.938660870199783e-09,
       "config_sha256": "f2fc177c035a7d972adfe6a03f30e00ccfe24d862b7cb796e148c82aad8ec247",
       "deterministic_config_and_project": true,
-      "export_s": 0.407,
+      "export_s": 0.456,
       "frames": 8,
       "not_proven": "no real trainer ran: OpenSplat is not installed and this box has no GPU \u2014 the probe trainer checks the project and writes a .ply from the sparse points; it learns nothing (C-102)",
       "ok": true,
