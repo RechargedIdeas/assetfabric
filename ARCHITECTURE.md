@@ -83,6 +83,8 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/boltpack.py` | BoltPack: CycloneDX SBOM (engine copyright info + platform extras + content), license audit, `LICENSES/`, `.fabricbolt` | F7 |
 | `content/retro/profiles.yaml`, `forge/retro/` (`profiles`, `colour`, `transcode`, `asm6502`, `rom`, `emulator`, `readiness`, `validate`), `forge/generators/retro.py`, `forge/cli_retro.py`, `forge/accept_f8.py` | F8 ForgeConsole: Console Profile Registry, C1 palette + sub-palette + a11y signal solver, R1 LUT generator, ConsoleReadiness, own 6502 assembler + cycle predictor, iNES ROMBuilder, cynes EmulatorHarness, V1 frame gates + R2 discriminator, F8 acceptance | F8 |
 | `games/game-zero/autoload/retro.gd`, `ui/retro_post.gdshader`, `tools/retrocheck.gd` | F8 R1 pass (CanvasLayer 1 between world and HUD), Q1 camera/sprite policy, settings, acceptance flows | F8 |
+| `content/liveops/flags.yaml`, `forge/liveops.py`, `forge/generators/liveops.py`, `forge/cli_liveops.py`, `forge/accept_f9.py`, `forge/schemas/diag_bundle.schema.json` | F9 LiveOps readiness: flag manifest, payload rules, RSA sign/verify, roll-forward rollback, device status, PII scrubber, readiness checklist (ADR-0022) |
+| `games/game-zero/autoload/liveops.gd`, `tools/liveopscheck.gd` | F9 game side: local bundle state machine (inbox → verify → promote/reject, crash-loop quarantine, tamper → defaults), kill switches, balance overlay via LiveChannel; QA scene |
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
 | `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
@@ -124,6 +126,16 @@ games/game-zero ─► dist/.stage (no .gdignore; PNG/WAV importer="keep") ─�
 profiles.yaml + PatternVault ─► gen retro (C1 LUT, a11y signal solver, Q1 table) ─► assets/generated/retro/*_lut.png + retro.json
    ─► Godot: world (canvas 0) ─► Retro CanvasLayer 1: sample cell centre → a11y remap → LUT → scanlines ─► HUD CanvasLayer 2
 sprites + tilemaps ─► AssetTranscoder (C1 sub-palettes, 8×8 CHR) ─► ROMBuilder (6502 asm + cycle predictor) ─► .nes ─► cynes EmulatorHarness ─► V1 match
+```
+
+### LiveOps readiness flow (F9, ADR-0022)
+
+```
+flags.yaml + tune limits ─► gen liveops ─► assets/generated/liveops/liveops.json (flags, safe defaults, knob ranges)
+forge liveops bundle (validate → RSA sign) ─► bundle.json ─► [platform update | forge liveops install] ─► user://liveops/inbox.json
+Godot LiveOps (boot, local files only): crash guard (boot.json) ─► inbox verify (pinned key, rules, serial > max) ─► active / rejected
+   ─► active re-verify (tamper/downgrade → defaults) ─► kill switches (Retro, MusicDirector) + balance overlay (LiveChannel)
+no bundle / any failure ─► manifest defaults == shipped behaviour (F2 state hash identical); never touches saves; no network
 ```
 
 ### PocketLoom flow (C1–C6)

@@ -28,6 +28,7 @@ AssetFabric is proprietary (see [LICENSE](LICENSE)). It depends on third-party s
 | ARCore SDK `com.google.ar:core` 1.47.0 (Google Maven) | PocketLoom `ArCoreCapture` (C10/C11) — optional at runtime | **Google APIs Terms of Service + ARCore Additional Terms** (proprietary; commercial use allowed; app must disclose ARCore + Google ToS/Privacy Policy — in-app `arcore_notice`; INFERENCES C-68) |
 | `androidx.annotation` 1.3.0 (transitive via ARCore) | annotations only, inside the APK | Apache-2.0 |
 | cynes (optional extra `retro`, in `dev`) | F8 EmulatorHarness: headless NES emulator that boots the generated ROM (acceptance/dev tooling; not in game builds) | MIT |
+| cryptography (optional extra `liveops`, in `dev`) | F9 LiveOps: RSA signing/verification of config bundles (forge tooling; not in game builds — the game verifies with Godot's built-in mbedTLS `Crypto`) | Apache-2.0 OR BSD-3-Clause |
 | Generated NES ROM (`forge retro rom`, `dist/retro/`) | own 6502 code + Fabric art; no Nintendo code or BIOS, no third-party ROM content | proprietary (ours) |
 | vosk (optional extra `voice`, in `dev`) | VoiceBridge offline STT (desktop tooling; not in game builds or the APK) | Apache-2.0 |
 | **Model** vosk-model-small-en-us-0.15 (alphacephei.com, pinned file name + SHA-256) | VoiceBridge acoustic/lexicon model; fetched by `forge models fetch`, never committed or shipped. AGPL (daanzu) / LGPL (zamia) Vosk models are **never** used | Apache-2.0 |

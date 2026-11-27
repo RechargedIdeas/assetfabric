@@ -51,6 +51,8 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **R1 Retro Render Compiler** | — | Console-style post-process | F8 | **real**: generator kind `retro` → 64³ LUTs + `retro.json`; `ui/retro_post.gdshader` + `autoload/retro.gd` |
 | **Q1 Pixel Stability Solver** | — | Integer camera / sprite policy, shimmer | F8 | **real** (policy + shimmer predictor, `forge retro shimmer`) |
 | **V1 Retro Validation Harness / R2** | — | Frame gates, fidelity delta, discriminator | F8 | **real** (`forge/retro/validate.py`; R2 = NumPy logistic regression, not a learned image model) |
+| **LiveOps readiness (remote config / feature flags)** | — | SPEC §12 "LiveOps readiness: remote config / feature flags (launch content deferred)"; GAME_SPEC §8 remote config hooks for balance knobs | F9 | **real, readiness only**: `content/liveops/flags.yaml` → generator kind `liveops`; `forge liveops manifest|keygen|bundle|verify|install|rollback|status|diag-export|readiness`; game `autoload/liveops.gd` (signed local bundles, crash-loop quarantine, tamper → defaults). No service / endpoint (ADR-0022) |
+| **Diagnostics export** | — | SPEC §12 compliance / privacy; SECURITY §6 "telemetry stays on-device unless the user opts in to export" | F9 | **real, local**: consent flag default off, `forge liveops diag-export --consent` PII scrub + `diag_bundle.schema.json`; never uploads |
 
 ### CLI acceptance
 

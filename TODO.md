@@ -7,7 +7,14 @@ Last updated: 2026-11-27 America/New_York
 > Paused 2026-11-20, resumed 2026-11-26 (Producer t61u). Q1–Q2 done, Q3 partial, ✅ (a) row 5 slice length (0.7.12) → ✅ (b) row 4
 > D-005 tables + ✅ (c) row 6 balance (0.7.13, Q5) → ✅ (d) row 8 cluster auth/blobs + ✅ (e) row 9 D-001 + ✅ (f) row 10 doc nits
 > (0.7.14, Q6) → ✅ (c′) row 7 world fights (0.7.15, P7). **Every software quality-gap row is closed** except the
-> hardware-gated row 3 follow-up (native step). **F8 landed in `0.8.0+f8`** (docs/acceptance-tests/F8.md). **Next: F9 LiveOps readiness only** (HANDOVER.md §Next steps).
+> hardware-gated row 3 follow-up (native step). **F8 landed in `0.8.0+f8`**, **F9 landed in `0.9.0+f9`** (docs/acceptance-tests/F8.md, F9.md). **All spec milestones F0–F9 + C1–C12 are complete**; what remains is hardware-/Producer-gated (HANDOVER.md §Next steps).
+
+## F9 follow-ups (user-gated; see docs/acceptance-tests/F9.md §Still user-gated)
+
+- [ ] Producer key ceremony: production RSA key offline, pin `games/game-zero/data/liveops/pubkey.pem`, add `data/liveops/*` to export include filters (docs/liveops-runbook.md).
+- [ ] LiveOps delivery/service (CDN, staged rollout) — out of F9 scope; needs a Producer decision + network-policy ADR (G-NET-01).
+- [ ] In-game diagnostics consent toggle in Settings + privacy/legal text (INFERENCES F9-8); in-game message for a read-only newer save (`save.read_only_newer`).
+- [ ] Exercise the bundle path on real Windows / Android / public Web hosts.
 
 ## F8 follow-ups (not scheduled; see docs/acceptance-tests/F8.md §Not proven)
 
@@ -79,7 +86,7 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 - [ ] C8 follow-ups: first real GPU rung (ROCm/DirectML/Vulkan ONNX for G1-Sprite/Tile) wired through `groundweave.execute`; re-time the full 2400-fight balance on a 2-core node
 - [x] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs — accepted 2026-11-19 (`forge accept C9-C12`, 0.7.3+f7)
 - [ ] C9–C12 follow-ups (each replaces a labelled stub; see `content/companions/c9_c12.yaml`): MediaProjection screen capture + H.264/WebRTC (C9); overlap/parallax measurement and validating the capture thresholds against a real reconstruction (C10, C-38/C-40); DepthAnything V2 CPU/ROCm estimator — verify its licence first, ARCore depth (C11, C-42); SplatForge/OpenSplat on a ROCm LoomCluster node, CPU photogrammetry (COLMAP), MeshWeaver, GDGS Godot import, `.splat` validation (C12)
-- [ ] **F8 (retro/console-style) is optional — confirm scope with the Producer before starting.** F9 is post / LiveOps readiness only
+- [x] F8 retro/console-style (scope confirmed t59u; accepted `0.8.0+f8`) and F9 LiveOps readiness only (accepted `0.9.0+f9`)
 - [ ] **Human GUI playtest of the vertical slice** (F6 carry-over): measure real length vs 15–20 min; HUD/quest/overlay readability; controls (E interact, H salve, Tab freeze, `/` command); music mix and fades; art legibility of plots/bench/nodes. Checklist: docs/acceptance-tests/F6.md §Human playtest
 - [ ] Slice length: the 15–20 min gate is a model (ADR-0017); if humans finish well under 15 min, add content rather than slowing the bot or retuning `content/tune/pace.yaml`
 
@@ -130,7 +137,9 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 - [x] PocketLoom C1–C6 (accepted 2026-11-12): FabricCore, LocalForge, standalone UI, capture, LoomLink pairing, offload + sync; debug APK; CI `pocketloom` job
 - [x] Private repo + proprietary license (D-003, D-004)
 - [x] Stub replacement sprint 0.7.4–0.7.8 (C9–C12: 25 real · 8 real_unverified_on_device · 1 stub · 3 deferred)
-- [x] Quality gaps Q1 CI shards (0.7.9), Q2 G-A11Y-01 full (0.7.10); Q3 swap advisor partial (0.7.11)
+- [x] Quality gaps Q1 CI shards (0.7.9), Q2 G-A11Y-01 full (0.7.10); Q3 swap advisor partial (0.7.11); Q4–Q6 + P7 (0.7.12–0.7.15)
+- [x] F8 Retro / console-style (accepted 2026-11-27, `0.8.0+f8`)
+- [x] F9 LiveOps foundation, readiness only (accepted 2026-11-27, `0.9.0+f9`): flag manifest, signed local config bundles, device state machine, rollback/quarantine, newer-save guard, opt-in diagnostics, runbook
 
 ## Backlog (later milestones)
 

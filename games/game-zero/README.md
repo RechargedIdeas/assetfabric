@@ -34,6 +34,7 @@ Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interac
 | `data/generated/world.json` | **Codegen-World output** (economy, loot, quests + quest chart, music rules, areas) — do not hand-edit |
 | `locale/` | Locale tables (`tr()` keys only in code) |
 | `autoload/retro.gd`, `ui/retro_post.gdshader` | F8 R1 retro pass: profile registry from `assets/generated/retro/retro.json`, LUT post-process on CanvasLayer 1 (HUD on 2), Q1 camera/sprite policy, settings in `profile.settings.retro_*` |
+| `autoload/liveops.gd`, `tools/liveopscheck.gd` | F9 LiveOps readiness: reads `assets/generated/liveops/liveops.json`; local bundle state machine in `user://liveops` (or `--liveops-dir=`): inbox → verify (pinned `res://data/liveops/pubkey.pem`; `--liveops-pubkey=` in debug builds only) → active/previous/rejected/quarantine; kill switches `retro_styles`, `adaptive_music`, `remote_balance`; balance overlay via LiveChannel; consent `diagnostics` (off; `--diagnostics=on` debug). No network. `--scene=liveopscheck [--probe=<path,…>] [--save-guard] [--liveops-simulate-crash]` |
 | `export_presets.cfg` | F7 export presets: `desktop-linux`, `desktop-windows`, `android` (debug, arm64, no INTERNET), `web` (threads + PWA). Build with `forge build --target …` — see [docs/packaging.md](../../docs/packaging.md) |
 
 ## Increments
@@ -49,5 +50,6 @@ Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interac
 | F6 | vertical-slice (GAME_SPEC §6.1: select → farm → tunnels → cave → craft → Cave Warden → open world → save/quit/reload) — `--scene=slice` | ✅ |
 | F7 | launch-candidates (Linux + Windows desktop, debug APK, Web PWA; save travels desktop → Android → Web → desktop; networking dormant) — `forge build --target all` | ✅ |
 | F8 | retro-console (Settings → Display style: off / gz-native / nes-style / gb-style + scanlines, live, gamepad-navigable, saved in the profile; sim unchanged) — `--retro=<profile>`, `--scene=retrocheck`; NES field-demo ROM via `forge retro rom` | ✅ |
+| F9 | liveops-readiness (signed local config bundles: kill switches + balance knobs; promote/reject/rollback/crash-loop quarantine; tamper → shipped defaults; newer saves read-only; opt-in local diagnostics; no network) — `--scene=liveopscheck`, `forge accept F9` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).

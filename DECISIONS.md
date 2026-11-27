@@ -30,6 +30,8 @@ Full ADR text lives in `docs/adr/NNNN-<slug>.md`. ADRs are never deleted — the
 | [0018](docs/adr/0018-economy-design-model.md) | Economy, loot and XP numbers come from a design model, gated in Codegen-World and F6; per-pair balance gated on unseen seeds | accepted |
 | [0019](docs/adr/0019-web-single-thread-fallback.md) | Ship a single-thread `web-nothreads` Web fallback beside the threads build (closes D-001) | accepted |
 | [0020](docs/adr/0020-world-fight-bands.md) | World fights gated on wipe-rate / clear-time bands from a Monte Carlo replay of the slice (closes P7) | accepted |
+| [0021](docs/adr/0021-retro-presentation-profiles-and-rom-path.md) | Retro = presentation-only profile pass in Godot + a real-ROM proof path from Fabric content (F8) | accepted |
+| [0022](docs/adr/0022-liveops-signed-local-config-bundles.md) | LiveOps readiness = signed, local-only config bundles (kill switches + balance knobs), never content, never network (F9) | accepted |
 
 ## Open decisions (not ADRs yet)
 

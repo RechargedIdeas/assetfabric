@@ -4,6 +4,37 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.9.0+f9] — 2026-11-27 — F9 LiveOps foundation, readiness only (`liveops-readiness`)
+
+SPEC §13 F9 ("readiness only"), §12 "remote config / feature flags (launch content deferred)"; GAME_SPEC §5, §8, G-NET-01.
+ADR-0022, INFERENCES §F9 (F9-1…F9-11), docs/acceptance-tests/F9.md, docs/liveops-runbook.md. **No live service, no
+delivery endpoint, no launch.** With every spec milestone (F0–F9, C1–C12) accepted, the project is spec-complete.
+
+### Added
+- **Flag manifest** `content/liveops/flags.yaml` (kill switches `retro_styles`, `adaptive_music`, `remote_balance` default
+  on; consent `diagnostics` default off; locale keys `liveops.flag.*`) → generator kind `liveops`
+  (`forge/generators/liveops.py`, gates flags_manifest · knobs_live · budget) → `assets/generated/liveops/liveops.json`;
+  brief `content/briefs/f9/liveops.yaml`; GroundWeave op `gen.liveops` (CPU).
+- **Signed config bundles** (`forge/liveops.py`): payload = serial + build range + kill-switch flags + balance patches
+  (knobs = F4 tune limits minus `sim.*`); RSA-2048 PKCS#1 v1.5/SHA-256 over the exact payload bytes; strict key set
+  (no content, no consent flags); roll-forward rollback; local install; device status.
+- **Game LiveOps autoload** `autoload/liveops.gd`: local inbox → verify → promote/reject, active re-verified each boot
+  (tamper / downgrade swap → shipped defaults), boot-sentinel crash-loop quarantine (2 crashed boots → previous bundle),
+  overlay via the F4 LiveChannel validator, re-applied after Fabric data reloads; pinned key
+  `res://data/liveops/pubkey.pem` (test keys only in debug builds); opt-in local session record.
+- Kill-switch hooks in `Retro.set_profile` and `MusicDirector.set_state`.
+- **Diagnostics**: `forge liveops diag-export --consent` (PII scrubber, `forge/schemas/diag_bundle.schema.json`, never uploads).
+- `forge liveops manifest|keygen|bundle|verify|install|rollback|status|diag-export|readiness` (`forge/cli_liveops.py`).
+- `forge accept F9` (`forge/accept_f9.py`, 22 device boots + 4 combat runs, ≈ 11 s), `--scene=liveopscheck`,
+  `tests/test_f9_liveops.py` (25 tests), `docs/liveops-runbook.md`, ADR-0022.
+
+### Changed
+- **Saves from a newer build are read-only** (`save.gd`: no `.bak` fallback behind a newer primary, write refused;
+  `forge/save.py classify / safe_to_overwrite`) — build rollback cannot destroy progress.
+- Autoload order: `Fabric, Live, LiveOps, A11y, Retro, …` (LiveOps needs Live's validator; Retro reads LiveOps flags).
+- `cryptography` added to the `dev` extra and a new `liveops` extra (forge tooling only; the game uses Godot's mbedTLS).
+- `.gitignore`: `/.fabric/liveops/` (signing keys). Version `0.9.0+f9` (pyproject, forge, forge.yaml, project.godot).
+
 ## [0.8.0+f8] — 2026-11-27 — F8 Retro / console-style (`retro-console`)
 
 SPEC §13 F8 (optional, scope confirmed t59u), §6.1 ForgeConsole, §3 ConsoleReadiness + R1/Q1/V1, §5.1 C1/R2;

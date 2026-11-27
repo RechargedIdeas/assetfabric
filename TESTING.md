@@ -24,6 +24,8 @@ pytest -q                         # unit + component, whole suite (≈ 6 min on 
 pytest -q --ci-group=game         # one CI shard (game | recon | core); the shards partition the suite
 forge accept F7                   # F7 full: exports + platform proofs (local; see docs/packaging.md)
 forge accept F8                   # F8 retro: profiles, ROM + emulator, Godot flows, Xvfb V1/R2 (≈ 40 s)
+forge accept F9                   # F9 LiveOps readiness: forge bundle rules, 22 device boots, combat-hash proof, saves, privacy (≈ 11 s)
+forge liveops readiness           # LiveOps checklist (fails on `fail`, lists user-gated items)
 forge accept C9-C12               # MirrorWeave (video PSNR, WS signing, Xvfb capture, Studio Qt events, APK impls) / LensForge / depth / SplatForge-path; needs ffmpeg(libvpx) + Xvfb; fast mode skips Gradle
 forge accept C7-C8                # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (Godot for the GIRT/balance probes; JDK+SDK adds the Kotlin LoomLink hop)
 forge groundweave verify          # every op's CPU path: 2 cores pinned, GPUs hidden, budget + byte-identity vs unpinned / simulated-GPU runs
@@ -70,6 +72,7 @@ Each milestone has a checklist in `docs/acceptance-tests/F<n>.md` and an executa
 | C1–C6 | [C1-C6.md](docs/acceptance-tests/C1-C6.md) | pocketloom (companion track, not an F-gate: Gradle build once → JUnit + aapt/apksigner/lint + `fabriccore-all.jar` driven against the Python LoomLink server; ≈ 75 s with warm Gradle caches; fast mode = Python half + static scans) |
 | F7 | [F7.md](docs/acceptance-tests/F7.md) | launch-candidates (custom runner: `forge build --target all` + desktop slice in a network-less namespace + Android content slice + G-SAVE-01 ring desktop → Android → Web → desktop + PWA smoke + remap; ≈ 2.5 min full, ≈ 3 s fast) |
 | F8 | [F8.md](docs/acceptance-tests/F8.md) | retro-console (custom runner: retro generator gates + ROM build/budgets + cynes boot/d-pad + ConsoleReadiness + gamepad settings flow + restore + Xvfb captures per profile × palette with V1/R2 + sim invariance; ≈ 40 s; needs Godot, Xvfb, cynes) |
+| F9 | [F9.md](docs/acceptance-tests/F9.md) | liveops-readiness (custom runner, ≈ 11 s: manifest + generated table, forge refuses 10 bad bundles, 22 headless `liveopscheck` boots with an ephemeral key — promote / reject / replay / roll-forward rollback / real `OS.crash` crash-loop quarantine / on-disk tamper + downgrade → defaults / no key → ignored, kill switches, F2 combat state-hash proof, newer-save guard, diagnostics consent + scrub, `bwrap --unshare-net` boot, readiness checklist); unit tests `tests/test_f9_liveops.py` (25) |
 
 ## 4. CI gates
 

@@ -24,7 +24,7 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 | **F6** | 30–33 | Quest SM, farming, loot, adaptive music | **Vertical slice 15–20 min** | ✅ |
 | **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | ✅ |
 | **F8** | optional | Retro/console-style: Console Profile Registry, R1/Q1/V1, C1/R2, ConsoleReadiness, ForgeConsole ROM path | `retro-console`: live display-style profiles + a real NES ROM in an emulator | ✅ |
-| **F9** | post | LiveOps foundation | Readiness only | |
+| **F9** | post | LiveOps foundation: flag/kill-switch manifest, signed local config bundles for balance knobs, rollback + crash-loop quarantine, save forward-compat, opt-in local diagnostics, runbook + readiness checklist | `liveops-readiness`: readiness only — no service, no launch | ✅ |
 
 ### Progress
 
@@ -44,7 +44,8 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 Q1 CI shards `0.7.9` ✅ · Q2 G-A11Y-01 full `0.7.10` ✅ · Q3 swap advisor `0.7.11` ◐ partial (reference node < 50 ms gated; GitHub 2-core runners ≈ 63–66 ms) · Q4 `0.7.12` ✅ · Q5 `0.7.13` ✅ · Q6 `0.7.14` ✅ · P7 `0.7.15` ✅ — every software gap closed (TODO.md §Current sprint).
 
 - **F8** ✅ accepted 2026-11-27 (`0.8.0+f8`) — Console Profile Registry (`content/retro/profiles.yaml`), R1 LUT generator (kind `retro`, 5 gates), Q1 pixel-stability policy, V1 frame harness + R2 discriminator, ConsoleReadiness, C1 palette/sub-palette/signal solver, ROMBuilder (own 6502 assembler + cycle predictor, iNES NROM field demo) and EmulatorHarness (cynes). Game: `retro-console` — live display-style profiles with gamepad, a11y palettes kept, sim byte-identical. Fantasy consoles + CertPack deferred. See [docs/acceptance-tests/F8.md](docs/acceptance-tests/F8.md).
-- **F9** next — LiveOps readiness only (no launch, no Releases).
+- **F9** ✅ accepted 2026-11-27 (`0.9.0+f9`) — LiveOps readiness only (spec §13): `content/liveops/flags.yaml` + generator kind `liveops`, `forge liveops …` (keygen/bundle/verify/install/rollback/status/diag-export/readiness), game `autoload/liveops.gd` (inbox → verify → promote/reject, crash-loop quarantine, tamper → defaults), kill switches `retro_styles`/`adaptive_music`/`remote_balance`, balance knobs = F4 tune limits, newer saves read-only, G-NET-01 strict. No live service, no delivery endpoint, no launch. ADR-0022, INFERENCES §F9 — [docs/acceptance-tests/F9.md](docs/acceptance-tests/F9.md).
+- **All spec milestones are complete:** F0–F9 + C1–C12. What remains is hardware- or Producer-gated (HANDOVER.md §Next steps).
 
 ### Entry criteria for any F(n+1)
 
@@ -74,7 +75,7 @@ C1–C6 acceptance: `forge accept C1-C6` → `docs/acceptance-tests/results/C*.j
 | C11 | Metric depth | ✅ accepted (interfaces + stubs) — pinhole distance + inverse-depth alignment real; since 0.7.5–0.7.6 DepthAnything V2 Small (CPU) real, ARCore DEPTH16 ingest real / phone capture `real_unverified_on_device` |
 | C12 | SplatForge path | ✅ accepted (interfaces + stubs) — RealityLoom routing/bundle/plan, placement check, `.ply` validator real; since 0.7.7 CPU photogrammetry (OpenCV SfM), MeshWeaver, GDGS Godot import and a bounded tiny-scene CPU SplatForge trainer real; full-scale SplatForge training stays a stub (GPU) |
 | F8 | Retro/console-style | optional per SPEC §13 — **confirmed by the Producer (t59u)**, starts after the quality-gap phase (paused 2026-11-20) |
-| F9 | Post | LiveOps readiness only |
+| F9 | Post | LiveOps readiness only — ✅ accepted `0.9.0+f9` (no service, no launch) |
 
 ---
 

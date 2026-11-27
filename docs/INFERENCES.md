@@ -676,3 +676,42 @@ ConsoleReadiness, Layer D R1/Q1/V1, §5.1 C1/R2; GAME_SPEC §1, §3, §4.6. Acce
     one black kept).
 15. **F8-15 Versions.** Fabric `0.8.0+f8`; the game's `config/version` also moves to `0.8.0+f8` (it carries the new
     increment `retro-console`); Android versionCode stays the F7 derivation.
+
+## F9 — LiveOps foundation, readiness only (0.9.0+f9)
+
+The spec gives F9 one line (§13 "LiveOps foundation · Readiness only") plus §12 "LiveOps readiness: remote config /
+feature flags (launch content deferred)", GAME_SPEC §5 "Live seasonal content (remote config readiness OK)" and §8
+"Remote config hooks for balance knobs". Everything below that is not those words is ours. ADR-0022.
+
+1. **F9-1 Scope.** Readiness = the client half of remote config + feature flags, the tooling to produce and verify
+   it, and the operational safety (rollback, crash-loop quarantine, save compatibility, privacy defaults), all proven
+   locally. Not built: a service, CDN, staged rollout, analytics, A/B tests, seasonal content, store listings.
+2. **F9-2 Signature scheme.** RSA-2048 PKCS#1 v1.5 / SHA-256 because Godot 4.3's `Crypto.verify` supports RSA only;
+   Ed25519 would need a GDExtension. Signature over the exact payload string (no re-canonicalisation). `key_id` =
+   first 16 hex of sha256(SPKI DER).
+3. **F9-3 Delivery.** "Remote" config arrives as a local file inside a platform update or via `forge liveops install`
+   (QA). The game never downloads — G-NET-01 ("networking stack dormant") is read strictly, so a fetch would need a
+   Producer decision + ADR.
+4. **F9-4 Consent flags.** A flag of kind `consent` (only `diagnostics`) can never be set by a bundle — consent is the
+   player's decision (privacy by default; EU/COPPA awareness per SPEC §12 "Compliance").
+5. **F9-5 Knob table.** Remote-config balance knobs = the F4 live-tune rules (`content/tune/limits.yaml`) minus `sim.*`
+   (dev-only sim parameters): 26 path patterns over fighters/pets/enemies/abilities/pet_rules. Same ranges, validated
+   by forge and again by the game's LiveChannel code.
+6. **F9-6 Newer saves read-only.** A save with `version > CURRENT` is not migrated down, not replaced by an older
+   `.bak`, and never overwritten (before F9 the loader fell back to `.bak` and a later write could replace the newer
+   save). There is no in-game message yet beyond the locale key `save.read_only_newer`.
+7. **F9-7 Crash-loop guard.** Boot sentinel `boot.json`, cleared on clean exit; quarantine after **2** crashed boots
+   with the same bundle (`max_boot_fails`), restore `previous.json`. 2 is ours. Proven with a real `OS.crash` (debug QA
+   flag `--liveops-simulate-crash`).
+8. **F9-8 Diagnostics.** Opt-in local session record (build, platform, LiveOps state, previous-boot-crashed, flags) +
+   `forge liveops diag-export --consent` with regex scrubbing (home paths, e-mail, IPv4/IPv6, MAC, ≥32-hex / ≥40-char
+   tokens, local user/host names). No upload path exists. The in-game consent toggle and privacy text are
+   Producer/legal-gated; consent is set via `consent.json` (or `--diagnostics=on` in debug builds) for now.
+9. **F9-9 Kill switches chosen.** `retro_styles` (F8 profiles), `adaptive_music` (F6 music states), `remote_balance`
+   (master switch for patches) — the features that can be switched off without touching determinism or saves. All
+   default on, so 0.9.0 with no bundle behaves exactly like 0.8.0 (F2 state hash identical — gated).
+10. **F9-10 Anti-downgrade on disk.** `state.json` records `max_serial` and `active_serial`; an `active.json` whose
+    serial differs from the promoted one is treated as tampered (defaults). Deleting `state.json` resets the replay
+    floor to the active serial — acceptable for a local-only, readiness design.
+11. **F9-11 Versions.** Fabric and game `0.9.0+f9`; increment `liveops-readiness`. Android versionCode/name and the
+    Windows file version stay at the F7 values (no new store build).
