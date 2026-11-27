@@ -51,6 +51,8 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/voice.py`, `forge/cli_voice.py` | VoiceBridge: Vosk STT constrained to the intent grammar (`VERBS` read from `intent_grammar.gd`), confidence gate, `forge voice` | F3 / 0.7.8 |
 | `forge/microlm.py` | Persona micro-LM: Qwen2.5-0.5B int8 ONNX (onnxruntime CPU), persona cards, review-gated drafts (`forge persona author`) merged into the callout cache | F3 / 0.7.8 |
 | `forge/splattrain.py` | SplatForge CPU rung: tiny-scene isotropic 3DGS trainer (NumPy, analytic gradients) | C12 / 0.7.7 |
+| `forge/splatforge_gpu.py` | SplatForge full-scale runner: bundle → CPU SfM → nerfstudio project → deterministic config → external OpenSplat-class trainer (ROCm) → validated `.ply`; LoomCluster job `recon.splat` (pack/unpack, `submit_to_cluster`); contract-probe trainer. `real_unverified_on_gpu` | C12 / 0.9.2 |
+| `forge/onnx_ep.py` | ONNX Runtime execution-provider selection, AMD-first (MIGraphX/ROCm → DirectML → CPU), CPU fallback + demotion, fake-ort contract self-test. `rocm_ready_unverified` | C8/C11 / 0.9.2 |
 | `forge/milestones.py` | Milestone ↔ increment registry, headless acceptance, offset guard | F1 |
 | `forge/report.py` | STATUS.md generator | F1 |
 | `games/game-zero/autoload/fabric.gd` | Runtime binding: registry, runtime asset loading, input schema, locales, watchdog | F1 |
@@ -221,7 +223,9 @@ PocketLoom ──signed LoomLink──▶ /mirror/frame (stills · telemetry; se
                   ├─ Photogrammetry: OpenCV SIFT SfM (CPU, sparse) ─▶ sfm/sparse.ply + cameras.json        real
                   ├─ splat .ply ─▶ MeshWeaver (density → surface nets → OBJ) · GDGS (Godot MultiMesh)      real
                   ├─ SplatForgeCPU: SfM poses ─▶ tiny isotropic 3DGS (NumPy, ≤2k splats/96 px) ─▶ splat/*.ply real
-                  └─ submit: cluster placement check (rocm node?) ─▶ SplatForge full-scale [STUB, GPU] — nothing is queued
+                  ├─ SplatForge full-scale (0.9.2): SfM ─▶ nerfstudio project ─▶ external OpenSplat (ROCm) ─▶ .ply check  real_unverified_on_gpu
+                  └─ submit --bundle: placement (rocm node?) ─▶ LoomCluster op recon.splat ─▶ verified blobs   real_unverified_on_gpu
+                     (phone-initiated submit: SplatForgeClient ─▶ [STUB recon.splat_submit], nothing queued)
 ```
 
 Rules: a stub raises `StubError`/`StubException` (`[STUB <id> <Cn>]`, locale key), never returns data; every capability is

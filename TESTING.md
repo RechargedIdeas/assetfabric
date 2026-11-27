@@ -27,6 +27,8 @@ forge accept F8                   # F8 retro: profiles, ROM + emulator, Godot fl
 forge accept F9                   # F9 LiveOps readiness: forge bundle rules, 22 device boots, combat-hash proof, saves, privacy (≈ 11 s)
 forge liveops readiness           # LiveOps checklist (fails on `fail`, lists user-gated items)
 forge accept C9-C12               # MirrorWeave (video PSNR, WS signing, Xvfb capture, Studio Qt events, APK impls) / LensForge / depth / SplatForge-path; needs ffmpeg(libvpx) + Xvfb; fast mode skips Gradle
+forge groundweave onnx-ep --selftest   # ONNX EP selection: what this host would use + fallback/demotion contract (fake ort)
+forge recon train BUNDLE --stage splat --contract-probe   # full-scale SplatForge runner contract on CPU (trains nothing)
 forge accept C7-C8                # LoomCluster loopback fleet + GroundWeave 2-core/no-GPU proofs (Godot for the GIRT/balance probes; JDK+SDK adds the Kotlin LoomLink hop)
 forge groundweave verify          # every op's CPU path: 2 cores pinned, GPUs hidden, budget + byte-identity vs unpinned / simulated-GPU runs
 forge cluster demo                # 3 local nodes, work stealing + SIGKILL failover

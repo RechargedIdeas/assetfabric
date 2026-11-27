@@ -4,6 +4,38 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.9.2+f9] — 2026-11-27 — Post-F9 operations batch 2: AMD-first ONNX EPs, full-scale SplatForge runner + cluster job
+
+HANDOVER §Next steps 5 (GPU) and 7 (Q3 native step) — everything that can be built and proven on a CPU-only box.
+INFERENCES C-101…C-104. **Nothing here ran on a GPU.**
+
+### Added
+- **`forge/onnx_ep.py`** (C-101): AMD-first ONNX Runtime EP selection (MIGraphX/ROCm → DirectML → CPU) with CPU fallback
+  at session creation and demotion on a failing GPU run; used by DepthAnything (`forge/depth.py`), GIRT parity
+  (`forge/girt_onnx.py`) and the persona micro-LM (`forge/microlm.py`); `forge groundweave onnx-ep [--selftest]`;
+  C11 acceptance `onnx_ep` (8-case contract vs a fake onnxruntime + the real CPU wheel). Status `rocm_ready_unverified`.
+- **`forge/splatforge_gpu.py`** (C-102): full-scale SplatForge runner — bundle → CPU SfM → nerfstudio project →
+  deterministic config → external OpenSplat-class trainer (`--trainer-cmd` / `FORGE_SPLAT_CMD` / `opensplat`) →
+  `check_splat_ply` + scene-bounds check → `BUNDLE/splat_gpu/{point_cloud.ply,train.json,config.json,trainer.log}`;
+  `forge recon train BUNDLE --stage splat [--contract-probe]`; contract-probe trainer (`python -m forge.splatforge_gpu
+  probe-trainer`, trains nothing). `realityloom.SplatForge` is now a thin alias. Status `real_unverified_on_gpu`.
+- **LoomCluster op `recon.splat`** (C-103): `requires: rocm`, hash-verified inline bundle, node-local trainer only,
+  artifacts as verified blobs; `forge recon submit --bundle DIR | FILES --out DIR --cluster URL`; C12 acceptance
+  `cluster.cluster_splat_job` (loopback fleet, simulated-rocm node, contract probe). Register row `recon.splat_cluster`.
+- GroundWeave ladder rule: a real non-CPU rung must declare `verified: true|false` (`true` needs `evidence:`);
+  `depth.estimate` ROCm/DirectML and `recon.splat` `opensplat-rocm` rungs are real with `verified: false`.
+
+### Changed
+- Register: `recon.splatforge` stub → `real_unverified_on_gpu`; the remaining stub is `recon.splat_submit`
+  (phone-initiated submit, Kotlin `SplatForgeClient`). 25 real · 8 real_unverified_on_device · 2 real_unverified_on_gpu ·
+  1 stub · 3 deferred. `realityloom.plan()["cluster_submit"]` now names the real command.
+- Version `0.9.2+f9` (Fabric). Game Zero stays `0.9.1+f9` — no game code changed.
+
+### Investigated, not built
+- **Q3 native GDExtension step** (C-104): C++ toolchain + godot-cpp 4.3 build proven (1 min 41 s, 8 vCPU), but a native
+  movement kernel can save only ≈ 5–15 % of a forward sim; closing the 2-core-runner gap needs a full native forward sim
+  with a bit-parity gate and per-platform builds — scoped as its own milestone (docs/perf/gdscript-thread-scaling/).
+
 ## [0.9.1+f9] — 2026-11-27 — Post-F9 operations batch 1: consent toggle, LoomCluster TLS, hardware kit
 
 Software-completable items from HANDOVER §Next steps (2, 4, 5 partially). INFERENCES F9-12, C-99, C-100.
