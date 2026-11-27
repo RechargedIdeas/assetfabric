@@ -107,5 +107,8 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
     arts.append(Artifact("retro.json", data, "application/json"))
     elapsed = (time.perf_counter() - t0) * 1000
     gates.append(budget_gate(elapsed, sum(len(a.data) for a in arts), float(brief.get("max_ms", 20000)), 4_000_000))
-    return GeneratorOutput(arts, gates, {"kind": "retro", "profiles": list(profs), "signals": sig["rows"],
+    return GeneratorOutput(arts, gates, {"kind": "retro", "profiles": list(profs),
+                                         "signal_pairs_checked": len(sig["rows"]),
+                                         "collapsed_with_shape_cue": sorted({f"{r['profile']}: {r['what']}" for r in sig["rows"]
+                                                                             if not r["distinct"]}),
                                          "c1_overrides": {k: dict(sorted(v.items())) for k, v in sorted(overrides.items())}})
