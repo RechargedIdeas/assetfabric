@@ -1,0 +1,21 @@
+# AssetFabric parametric template — Copyright © 2026 Recharged Ideas. All Rights Reserved.
+id: barrel
+version: 1
+title_key: universal.parametric.barrel.title
+units: m
+unit_m: 1.0
+tri_budget: 80000
+params:
+  radius:   {type: float, min: 0.15, max: 1.0, default: 0.35}
+  height:   {type: float, min: 0.3, max: 2.0, default: 0.9}
+  bulge:    {type: float, min: 1.0, max: 1.3, default: 1.12}
+  hoop:     {type: float, min: 0.008, max: 0.05, default: 0.02}
+  segments: {type: int, min: 12, max: 96, default: 40}
+fn: segments
+tree:
+  op: union
+  children:
+    - {op: cylinder, h: "height/2", r1: radius, r2: "radius*bulge"}
+    - {op: translate, v: [0, 0, "height/2"], children: [{op: cylinder, h: "height/2", r1: "radius*bulge", r2: radius}]}
+    - {op: translate, v: [0, 0, "height*0.18"], children: [{op: torus, R: "radius*(1 + (bulge - 1)*0.36)", r: hoop}]}
+    - {op: translate, v: [0, 0, "height*0.82"], children: [{op: torus, R: "radius*(1 + (bulge - 1)*0.36)", r: hoop}]}

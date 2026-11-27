@@ -1,0 +1,25 @@
+# AssetFabric parametric template — Copyright © 2026 Recharged Ideas. All Rights Reserved.
+id: crate
+version: 1
+title_key: universal.parametric.crate.title
+units: m
+unit_m: 1.0
+tri_budget: 60000
+params:
+  width:  {type: float, min: 0.3, max: 3.0, default: 1.0}
+  depth:  {type: float, min: 0.3, max: 3.0, default: 1.0}
+  height: {type: float, min: 0.3, max: 3.0, default: 1.0}
+  frame:  {type: float, min: 0.04, max: 0.3, default: 0.1}
+  inset:  {type: float, min: 0.01, max: 0.08, default: 0.03}
+  segments: {type: int, min: 8, max: 96, default: 32}
+fn: segments
+tree:
+  op: difference
+  children:
+    - {op: cube, size: [width, depth, height], center: true}
+    # recessed panels on ±X, ±Y, ±Z faces (frame stays proud)
+    - {op: translate, v: ["width/2", 0, 0], children: [{op: cube, size: ["2*inset", "depth - 2*frame", "height - 2*frame"], center: true}]}
+    - {op: translate, v: ["-width/2", 0, 0], children: [{op: cube, size: ["2*inset", "depth - 2*frame", "height - 2*frame"], center: true}]}
+    - {op: translate, v: [0, "depth/2", 0], children: [{op: cube, size: ["width - 2*frame", "2*inset", "height - 2*frame"], center: true}]}
+    - {op: translate, v: [0, "-depth/2", 0], children: [{op: cube, size: ["width - 2*frame", "2*inset", "height - 2*frame"], center: true}]}
+    - {op: translate, v: [0, 0, "height/2"], children: [{op: cube, size: ["width - 2*frame", "depth - 2*frame", "2*inset"], center: true}]}
