@@ -1,0 +1,73 @@
+# Console Profile Registry (ForgeConsole, ASSETFABRIC_SPEC §6.1) — F8 retro / console-style (0.8.0+f8).
+#
+# Two of the spec's three paths are built (§6.1 "Three paths unified"):
+#   (2) console-style Godot authenticity profiles/shaders — every profile below: a full-screen R1 post-process at
+#       the profile's logical resolution (integer pixel scale), palette quantisation through a forge-built LUT,
+#       Q1 camera policy (texel = logical pixel, integer-snapped camera) — presentation only, the sim is untouched;
+#   (1) real ROMs in emulators — profiles with a `rom:` block: forge builds an iNES ROM from Fabric content
+#       (AssetTranscoder + C1 constraint solver → CHR/palettes/nametable, ROMBuilder → 6502 PRG) and the
+#       EmulatorHarness boots it in a real NES emulator (cynes, MIT) headless.
+#   (3) fantasy consoles (PICO-8/TIC-80) stay deferred (SPEC §1 v1 hard deferrals), as does CertPack.
+#
+# [INFERENCE F8-2] The spec names the families ("NES→PS1, GBA, Genesis…", "console constraint solvers / palette /
+# cycle predictors") but not the profiles; we ship one Fabric-native profile + the two 8-bit families that match
+# Game Zero's "8-bit" look (GAME_SPEC §1). Logical resolutions keep the families' width (NES 256, DMG 160) in the
+# game's 16:9 frame so the block size is an integer at the 1280×720 base viewport (gz ×4, nes ×5, gb ×8).
+# Numbers in `constraints` / `memory` / `timing` are the published hardware limits of those consoles.
+schema_version: "1.0"
+base_viewport: [1280, 720]
+default: "off"                  # [INFERENCE F8-3] modern presentation stays the default; retro is a player setting
+order: ["off", "gz-native", "nes-style", "gb-style"]
+# Signal pairs (PatternVault a11y_checks) that may share a colour in a profile because the game also shows them with a
+# non-colour cue. V1 accepts a colour collapse only for these. "crop growing vs ready": ready plots get a frame
+# (scenes/slice.gd _draw). [INFERENCE F8-5]
+a11y_shape_cues: ["crop growing vs ready"]
+profiles:
+  gz-native:
+    family: fabric
+    label_key: retro.profile.gz-native
+    logical: [320, 180]
+    palette: {source: patternvault}          # union of every PatternVault palette + colour-blind variant colour
+    scanlines: 0.0                           # 0 = off; the Settings screen toggles a 0.35 darkening per logical row
+    constraints: {tile: 16, max_colours_per_tile: 8}
+  nes-style:
+    family: nes
+    label_key: retro.profile.nes-style
+    logical: [256, 144]
+    palette: {source: nes-ntsc}              # computed 2C02 NTSC composite decode (forge/retro/profiles.py), not copied
+    scanlines: 0.0
+    constraints:
+      tile: 8                                # 8×8 CHR tiles
+      attribute_block: 16                    # one BG sub-palette per 16×16 area
+      sprite_colours: 3                      # + transparent
+      bg_colours: 3                          # + the shared universal background colour
+      sprite_palettes: 4
+      bg_palettes: 4
+      sprites_per_line: 8
+      sprites_total: 64
+      chr_tiles_per_table: 256
+    memory: {prg_rom: 32768, chr_rom: 8192, ram: 2048, vram: 2048, oam: 256}
+    timing: {cpu_hz: 1789773, vblank_cycles: 2273, frame_cycles: 29780}
+    rom:
+      format: ines
+      mapper: 0                              # NROM-256: 32 KiB PRG + 8 KiB CHR, no bank switching
+      mirroring: horizontal
+      area: field_01                         # Fabric tilemap shown (16×15 metatile window = 256×240 NES pixels)
+      party: [spr_kael, spr_nyra, spr_bram, spr_sola]   # the four base fighters (GAME_SPEC §4.1)
+      pet: spr_ember_fox
+  gb-style:
+    family: gb
+    label_key: retro.profile.gb-style
+    logical: [160, 90]
+    palette: {source: list, match: lightness, colours: ["#0f380f", "#306230", "#8bac0f", "#9bbc0f"]}   # DMG four-shade green;
+    # match: lightness = contrast-stretched L* (a 4-shade LCD keeps luminance order, not hue) [INFERENCE F8-4]
+    scanlines: 0.0
+    constraints:
+      tile: 8
+      sprite_colours: 3
+      bg_colours: 4
+      sprites_per_line: 10
+      sprites_total: 40
+      tiles_vram: 384
+    memory: {vram: 8192, wram: 8192, oam: 160}
+    timing: {cpu_hz: 4194304, vblank_cycles: 4560, frame_cycles: 70224}
