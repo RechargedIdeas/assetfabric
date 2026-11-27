@@ -13,7 +13,9 @@ cross-machine transport (LAN / Tailscale), a Kotlin cluster peer and real GPU ru
   results from peers complete the batch; (6) device negotiation: a job that needs a device is placed on the node that
   advertises it and refused when none does; (7) `forge cluster gen --out` lands artifact bytes identical to a local
   build; (8) PocketLoom LoomLink: a paired client's offloaded jobs run on the fleet (Python client always; the
-  Kotlin FabricCore client too when the JDK/SDK build is available), and fall back to the desktop when the fleet is gone.
+  Kotlin FabricCore client too when the JDK/SDK build is available), and fall back to the desktop when the fleet is gone;
+  (9) node auth + blobs (Q6): unsigned / wrongly keyed / tampered / stale / replayed requests get 401, unsigned
+  responses are refused, and a 4 MiB artifact made on one node reaches the origin over signed `/blob/<sha256>`.
 * **C8 GroundWeave** — ladder rules (every generator kind declared; a real CPU rung last, or `gpu_required` + route);
   selection never picks a planned backend; runtime fallback demotes a failing GPU rung to the CPU rung; every op's
   CPU path runs pinned to 2 cores with GPUs hidden inside its budget and produces output **byte-identical** to the
@@ -343,6 +345,91 @@ def _loomlink(root: Path, tmp: Path, fast: bool) -> dict[str, Any]:
     return out
 
 
+def _auth_and_blobs(tmp: Path) -> dict[str, Any]:
+    """Q6 (C-95/C-96): nodes refuse unsigned / wrongly keyed / tampered / stale / replayed requests and unsigned
+    responses; a 4 MiB artifact made on node b travels to the origin a over signed /blob/<sha256>, not in JSON."""
+    import urllib.request
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    from forge import loomcluster as lc
+
+    def code(fn: Any) -> Any:
+        try:
+            fn()
+            return 200
+        except urllib.error.HTTPError as e:
+            return e.code
+        except lc.ClusterAuthError:
+            return "refused_response"
+
+    def raw_req(url: str, body: bytes, ts: str, nonce: str, sig_body: bytes | None = None) -> Any:
+        key = lc.cluster_key()
+        path = "/" + url.split("/", 3)[3]
+        sig = lc._mac(key, "POST", path, ts, nonce, lc._sha(body if sig_body is None else sig_body))
+        req = urllib.request.Request(url, data=body, method="POST", headers={
+            "Content-Type": "application/json", "X-Loom-Ts": ts, "X-Loom-Nonce": nonce, "X-Loom-Sig": sig})
+        return lambda: urllib.request.urlopen(req, timeout=3).read()
+
+    out: dict[str, Any] = {}
+    with lc.Fleet(tmp / "auth") as fl:
+        fl.add("a", 1)
+        fl.add("b", 1, devices="cpu,directml")
+        _mesh_ok(fl)
+        a = fl.urls["a"]
+        now = str(int(time.time() * 1000))
+        body = json.dumps({"op": "hashchain", "id": "ok1", "payload": {"seed": 1, "rounds": 10}}).encode()
+        rej = {
+            "unsigned_get": code(lambda: lc._http(a + "/status", sign=False)),
+            "unsigned_submit": code(lambda: lc._http(a + "/submit", {"op": "hashchain", "payload": {}}, sign=False)),
+            "wrong_key": code(lambda: lc._http(a + "/status", key=b"\x01" * 32)),
+            "tampered_body": code(raw_req(a + "/submit", body, now, "n-tamper",
+                                          sig_body=json.dumps({"op": "hashchain", "id": "other", "payload": {}}).encode())),
+            "stale_timestamp": code(raw_req(a + "/submit", body, str(int(time.time() * 1000) - 600_000), "n-stale")),
+        }
+        first = raw_req(a + "/submit", body, now, "n-replay")
+        replay = {"first": code(first), "second": code(first)}
+
+        class Rogue(BaseHTTPRequestHandler):          # answers 200 without a response signature
+            def log_message(self, *x: Any) -> None:
+                pass
+
+            def do_GET(self) -> None:
+                b = b'{"stats": {}}'
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(b)))
+                self.end_headers()
+                self.wfile.write(b)
+
+        rogue = ThreadingHTTPServer(("127.0.0.1", 0), Rogue)
+        threading.Thread(target=rogue.serve_forever, daemon=True).start()
+        unsigned_resp = code(lambda: lc._http(f"http://127.0.0.1:{rogue.server_address[1]}/status"))
+        rogue.shutdown()
+        st = lc._http(a + "/status")
+        # blob: the job needs `directml`, which only b advertises → runs on b, origin a pulls the blob
+        size = 4 << 20
+        lc._http(a + "/submit", {"id": "blob1", "op": "bytes", "payload": {"seed": "q6", "size": size},
+                                 "requires": {"device": "directml"}}, 5.0)
+        res = lc.collect(a, ["blob1"], 60).get("blob1", {})
+        blob = (res.get("value") or {}).get("blobs", {}).get("blob.bin", {})
+        data = lc.fetch_blob(a, blob["sha256"]) if blob else b""
+        sa, sb = fl.status("a")["stats"], fl.status("b")["stats"]
+        out["blob"] = {"ok": bool(blob) and res.get("node") == "b" and "data_b64" not in res.get("value", {})
+                       and len(json.dumps(res)) < 2048 and data == lc.bytes_stream("q6", size) and blob["size"] == size
+                       and sa["blobs_in"] >= 1 and sb["blobs_out"] >= 1,
+                       "executed_on": res.get("node"), "result_json_bytes": len(json.dumps(res)), "blob_bytes": len(data),
+                       "sha256": blob.get("sha256"), "origin_blobs_in": sa["blobs_in"], "executor_blobs_out": sb["blobs_out"],
+                       "unknown_blob": code(lambda: lc._http(a + "/blob/" + "0" * 64, raw=True)),
+                       "bad_blob_name": code(lambda: lc._http(a + "/blob/..%2Fjournal.jsonl", raw=True))}
+        out["blob"]["ok"] = out["blob"]["ok"] and out["blob"]["unknown_blob"] == 404 and out["blob"]["bad_blob_name"] == 404
+    out["rejected"] = rej
+    out["replay"] = replay
+    out["unsigned_response"] = unsigned_resp
+    out["auth_rejected_counter"] = st["stats"]["auth_rejected"]
+    out["ok"] = (all(v == 401 for v in rej.values()) and replay == {"first": 200, "second": 401}
+                 and unsigned_resp == "refused_response" and st["stats"]["auth_rejected"] >= len(rej) + 1 and out["blob"]["ok"])
+    return out
+
+
 def c7_run(root: Path) -> tuple[int, dict[str, Any]]:
     fast = fast_mode()
     tmp = Path(tempfile.mkdtemp(prefix="fabric-c7-"))
@@ -353,7 +440,9 @@ def c7_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["failures"] = _failures(tmp, fast)
         r["cli_gen"] = _cli_gen(root, tmp)
         r["loomlink"] = _loomlink(root, tmp, fast)
-        r["not_proven"] = ["cross-machine transport (LAN/Tailscale) and cluster auth", "Kotlin/PocketLoom as a cluster peer node",
+        r["auth_blobs"] = _auth_and_blobs(tmp)
+        r["not_proven"] = ["cross-machine transport (LAN/Tailscale); node auth is integrity + authentication, not encryption",
+                           "Kotlin/PocketLoom as a cluster peer node",
                            "real GPU devices (device placement uses simulated adverts)", "origin loss without restart"]
         return 0, r
     finally:
@@ -482,7 +571,7 @@ def c8_run(root: Path) -> tuple[int, dict[str, Any]]:
 # ----------------------------------------------------------------------------------- hooks
 
 def check(ms: str):  # noqa: ANN201
-    keys = {"C7": ["negotiation", "determinism", "failures", "cli_gen", "loomlink"],
+    keys = {"C7": ["negotiation", "determinism", "failures", "cli_gen", "loomlink", "auth_blobs"],
             "C8": ["static", "selection", "runtime_fallback", "pipeline_enforcement", "pocketloom_ladder",
                    "verify", "gpu_required_routing"]}[ms]
 

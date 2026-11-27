@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import base64
 import json
 import sys
 from pathlib import Path
@@ -62,14 +61,27 @@ def cluster_grp() -> None:
 @click.option("--peer", "peers", multiple=True, help="Seed peer URL (gossip discovers the rest).")
 def cluster_node(node_id: str, cores: int | None, devices: str | None, cap: int, state_dir: Path,
                  port: int, pin: int, peers: tuple[str, ...]) -> None:
-    """Run one node in the foreground (prints LOOM_READY <url>)."""
+    """Run one node in the foreground (prints LOOM_READY <url>). Needs the fleet secret (`forge cluster keygen`)."""
     from forge import loomcluster as lc
 
+    try:
+        lc.cluster_key()
+    except lc.ClusterAuthError as e:
+        raise click.ClickException(str(e)) from e
     if pin:
         lc.pin_cpus(pin)
     caps = lc.local_caps(node_id, cores, devices.split(",") if devices else None, cap)
     node = lc.Node(caps, state_dir, list(peers), lc.protocol_config(), port)
     node.serve(ready=lambda nd: click.echo(f"LOOM_READY {nd.url}"))
+
+
+@cluster_grp.command("keygen")
+def cluster_keygen() -> None:
+    """Create the fleet secret `.fabric/cluster.key` (0600) if missing. Copy it to every node (or export
+    FORGE_CLUSTER_SECRET); nodes refuse requests not signed with it."""
+    from forge import loomcluster as lc
+
+    click.echo(str(lc.keygen()))
 
 
 @cluster_grp.command("submit")
@@ -119,13 +131,13 @@ def cluster_gen(url: str, brief_ids: tuple[str, ...], out: Path | None, timeout:
     by_node: dict[str, int] = {}
     for r in res.values():
         by_node[r["node"]] = by_node.get(r["node"], 0) + 1
-    if out:
+    if out:     # artifact bytes come over signed /blob/<sha256> from the origin (it verified them on accept)
         for jid, r in res.items():
-            for name, b64 in (r.get("value", {}).get("data_b64") or {}).items():
+            for name, b in ((r.get("value") or {}).get("blobs") or {}).items():
                 dest = out / jid.split(":", 1)[1] / name
                 dest.parent.mkdir(parents=True, exist_ok=True)
-                dest.write_bytes(base64.b64decode(b64))
-    slim = {j: {**r, "value": {k: v for k, v in (r.get("value") or {}).items() if k != "data_b64"}}
+                dest.write_bytes(lc.fetch_blob(url, b["sha256"]))
+    slim = {j: {**r, "value": {k: v for k, v in (r.get("value") or {}).items() if k not in ("data_b64", "blobs")}}
             for j, r in res.items()}
     ok = not bad and not missing
     click.echo(json.dumps({"ok": ok, "jobs": len(jobs), "executed_by_node": dict(sorted(by_node.items())),

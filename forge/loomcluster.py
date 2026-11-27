@@ -16,7 +16,19 @@ Every node is the same program (no master/slave; PocketLoom would join as a peer
 
 A coordinator is elected (lowest live node id) purely for reporting; any node can submit
 and every node schedules for itself. Transport is HTTP/JSON on `cluster.protocol.bind`
-(loopback by default — LAN/Tailscale exposure is a LoomLink (C5) concern).
+(loopback by default).
+
+**Node auth (Q6, 0.7.14; INFERENCE C-95):** every request between nodes (and from `forge cluster` clients) carries
+``X-Loom-Ts / X-Loom-Nonce / X-Loom-Sig`` = HMAC-SHA256(fleet secret, METHOD|PATH|ts|nonce|sha256(body)); a node
+answers 401 to unsigned, wrongly keyed, stale (± 120 s) or replayed (nonce seen) requests, and signs every response
+(``X-Loom-RSig`` = HMAC(secret, "resp"|nonce|status|sha256(body))), which the caller verifies — so a node only talks to
+holders of the fleet secret, in both directions. The secret comes from ``FORGE_CLUSTER_SECRET`` (hex) or
+``.fabric/cluster.key`` (`forge cluster keygen`). Integrity + authentication, **not** confidentiality: use Tailscale/
+WireGuard off loopback.
+
+**Blobs (Q6, C-96):** artifact bytes never ride in result JSON. The executing node moves ``data_b64`` into its
+content-addressed blob store and the result carries ``blobs: {name: {sha256, size}}``; the origin pulls each blob over
+signed ``GET /blob/<sha256>``, verifies the digest and only then accepts the result (else the executor redelivers).
 
 Job ops (`OPS`) are deterministic: `hashchain` (CPU work, verifiable) and `gen` (one forge
 brief through the GroundWeave-selected backend, returns artifact digests).
@@ -24,13 +36,17 @@ brief through the GroundWeave-selected backend, returns artifact digests).
 
 from __future__ import annotations
 
+import base64
 import hashlib
+import hmac
 import json
 import os
 import random
+import secrets
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 from collections import deque
@@ -102,7 +118,26 @@ def op_flaky(payload: dict[str, Any]) -> dict[str, Any]:
     return {"digest": op_hashchain({"seed": payload.get("seed", "flaky"), "rounds": 1000})["digest"], "attempt_seen": n + 1}
 
 
-OPS: dict[str, Callable[..., dict[str, Any]]] = {"hashchain": op_hashchain, "gen": op_gen, "flaky": op_flaky}
+def bytes_stream(seed: str, size: int) -> bytes:
+    """Deterministic pseudo-random bytes (sha256 counter mode) — the `bytes` diagnostic's artifact."""
+    out = bytearray()
+    i = 0
+    while len(out) < size:
+        out += hashlib.sha256(f"{seed}:{i}".encode()).digest()
+        i += 1
+    return bytes(out[:size])
+
+
+def op_bytes(payload: dict[str, Any]) -> dict[str, Any]:
+    """Diagnostic (Q6): one large artifact of `size` bytes (≤ 64 MiB) — proves the blob path."""
+    size = min(int(payload.get("size", 1 << 20)), 64 << 20)
+    data = bytes_stream(str(payload.get("seed", "")), size)
+    return {"artifacts": {"blob.bin": hashlib.sha256(data).hexdigest()},
+            "data_b64": {"blob.bin": base64.b64encode(data).decode()}}
+
+
+OPS: dict[str, Callable[..., dict[str, Any]]] = {"hashchain": op_hashchain, "gen": op_gen, "flaky": op_flaky,
+                                                 "bytes": op_bytes}
 NEEDS_DEVICES = {"gen"}      # ops whose implementation takes the node's advertised device list
 
 
@@ -134,12 +169,108 @@ class Caps:
         return max(1, (self.cores * self.allocation_cap_pct) // 100)
 
 
-def _http(url: str, body: dict[str, Any] | None = None, timeout: float = 2.0) -> dict[str, Any]:
-    data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(url, data=data, method="POST" if body is not None else "GET",
-                                 headers={"Content-Type": "application/json"})
+# ------------------------------------------------------------------------------ node auth (Q6)
+
+KEY_ENV = "FORGE_CLUSTER_SECRET"
+KEY_REL = ".fabric/cluster.key"
+AUTH_WINDOW_S = 120.0
+
+
+class ClusterAuthError(RuntimeError):
+    pass
+
+
+def _mac(key: bytes, *parts: str) -> str:
+    return hmac.new(key, "|".join(parts).encode(), hashlib.sha256).hexdigest()
+
+
+def _sha(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+
+def keygen(root: Path | None = None) -> Path:
+    """Create `.fabric/cluster.key` (32 random bytes, hex, mode 0600) if missing; copy it to every node of the fleet."""
+    from forge.paths import find_repo_root
+
+    path = (root or find_repo_root()) / KEY_REL
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write(secrets.token_hex(32) + "\n")
+    return path
+
+
+def cluster_key(root: Path | None = None) -> bytes:
+    """The fleet secret: `FORGE_CLUSTER_SECRET` (hex) or `.fabric/cluster.key`. No secret → no cluster traffic."""
+    v = os.environ.get(KEY_ENV, "").strip()
+    if not v:
+        try:
+            from forge.paths import find_repo_root
+
+            path = (root or find_repo_root()) / KEY_REL
+            v = path.read_text(encoding="utf-8").strip() if path.exists() else ""
+        except (OSError, FileNotFoundError):
+            v = ""
+    if len(v) < 32:
+        raise ClusterAuthError(f"no cluster secret: set {KEY_ENV} (hex, ≥ 16 bytes) or run `forge cluster keygen`")
+    return bytes.fromhex(v)
+
+
+def ensure_process_key() -> None:
+    """Loopback fleets started by this process (acceptance, demo) share a fresh per-process secret; children inherit it."""
+    if not os.environ.get(KEY_ENV):
+        try:
+            cluster_key()
+        except ClusterAuthError:
+            os.environ[KEY_ENV] = secrets.token_hex(32)
+
+
+def _http(url: str, body: dict[str, Any] | None = None, timeout: float = 2.0, key: bytes | None = None,
+          raw: bool = False, sign: bool = True) -> Any:
+    """Signed request; the response signature is verified (raises ClusterAuthError on mismatch).
+    ``sign=False`` exists only so the acceptance run can prove that unsigned requests are refused."""
+    data = json.dumps(body).encode() if body is not None else b""
+    method = "POST" if body is not None else "GET"
+    sp = urllib.parse.urlsplit(url)
+    path = sp.path + (f"?{sp.query}" if sp.query else "")
+    headers = {"Content-Type": "application/json"}
+    k = key if key is not None else (cluster_key() if sign else b"")
+    nonce = secrets.token_hex(12)
+    if sign:
+        ts = str(int(time.time() * 1000))
+        headers.update({"X-Loom-Ts": ts, "X-Loom-Nonce": nonce, "X-Loom-Sig": _mac(k, method, path, ts, nonce, _sha(data))})
+    req = urllib.request.Request(url, data=data if body is not None else None, method=method, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode() or "{}")
+        rb = r.read()
+        if sign and not hmac.compare_digest(r.headers.get("X-Loom-RSig", ""), _mac(k, "resp", nonce, str(r.status), _sha(rb))):
+            raise ClusterAuthError(f"unsigned or forged response from {sp.netloc}{path}")
+        return rb if raw else json.loads(rb.decode() or "{}")
+
+
+def fetch_blob(url: str, sha: str, timeout: float = 30.0) -> bytes:
+    """Pull one content-addressed blob from a node and verify its digest."""
+    data = _http(f"{url.rstrip('/')}/blob/{sha}", timeout=timeout, raw=True)
+    if _sha(data) != sha:
+        raise ClusterAuthError(f"blob {sha[:12]} digest mismatch")
+    return data
+
+
+class ReplayGuard:
+    """Nonces seen inside the ± window; a repeated nonce is a replay."""
+
+    def __init__(self, window_s: float = AUTH_WINDOW_S) -> None:
+        self.window_s, self.seen, self.lock = window_s, {}, threading.Lock()
+
+    def fresh(self, nonce: str, ts_ms: int) -> bool:
+        now = time.time()
+        with self.lock:
+            if len(self.seen) > 4096:
+                self.seen = {n: t for n, t in self.seen.items() if now - t <= 2 * self.window_s}
+            if not nonce or nonce in self.seen:
+                return False
+            self.seen[nonce] = now
+        return abs(now - ts_ms / 1000.0) <= self.window_s
 
 
 def can_run(job: dict[str, Any], devices: list[str]) -> bool:
@@ -164,7 +295,10 @@ class Node:
         self.running: dict[str, dict[str, Any]] = {}
         self.undelivered: list[tuple[str, dict[str, Any]]] = []
         self.stats = {"executed": 0, "stolen_in": 0, "stolen_out": 0, "forwarded": 0, "requeued": 0,
-                      "recovered": 0, "retried": 0, "redelivered": 0}
+                      "recovered": 0, "retried": 0, "redelivered": 0, "auth_rejected": 0, "blobs_out": 0, "blobs_in": 0}
+        self.key = cluster_key()
+        self.replay = ReplayGuard()
+        self.blob_dir = self.state_dir / "blobs"
         self.stop = threading.Event()
         self.state_dir.mkdir(parents=True, exist_ok=True)
         self.journal = self.state_dir / "journal.jsonl"
@@ -335,11 +469,13 @@ class Node:
                 value = fn(payload, devices=self.caps.devices, timeout_s=float(self.cfg["job_timeout_s"]))
             else:
                 value = fn(payload)
-            res = {"ok": True, "value": value}
+            res = {"ok": True, "value": self._externalize(value)}
         except Exception as e:  # noqa: BLE001 — job failure is data, not a node crash
             res = {"ok": False, "error": f"{type(e).__name__}: {e}"}
         res.update(job_id=job["id"], node=self.caps.node_id, attempts=attempts,
                    wall_s=round(time.perf_counter() - t0, 4))
+        if res["ok"] and isinstance(res["value"], dict) and res["value"].get("blobs"):
+            res["blob_src"] = self.url
         with self.lock:
             self.running.pop(job["id"], None)
             self.stats["executed"] += 1
@@ -353,6 +489,47 @@ class Node:
             return
         self._log("done", job_id=job["id"])
         self._deliver(job, res)
+
+    # -- blobs (content-addressed; Q6)
+    def put_blob(self, data: bytes) -> str:
+        sha = _sha(data)
+        path = self.blob_dir / sha[:2] / sha
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(f".tmp{threading.get_ident()}")
+            tmp.write_bytes(data)
+            os.replace(tmp, path)
+        return sha
+
+    def read_blob(self, sha: str) -> bytes | None:
+        if len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
+            return None
+        path = self.blob_dir / sha[:2] / sha
+        return path.read_bytes() if path.exists() else None
+
+    def _externalize(self, value: Any) -> Any:
+        """Artifact bytes (`data_b64`) → blob store; the result keeps only {name: {sha256, size}}."""
+        if not isinstance(value, dict) or not value.get("data_b64"):
+            return value
+        blobs = {}
+        for name, b64 in sorted(value["data_b64"].items()):
+            data = base64.b64decode(b64)
+            blobs[name] = {"sha256": self.put_blob(data), "size": len(data)}
+            self.stats["blobs_out"] += 1
+        return {**{k: v for k, v in value.items() if k != "data_b64"}, "blobs": blobs}
+
+    def _pull_blobs(self, res: dict[str, Any]) -> None:
+        """Origin side: fetch + verify every blob of a result before accepting it (raises if one is missing)."""
+        src = res.get("blob_src")
+        for b in ((res.get("value") or {}).get("blobs") or {}).values():
+            if self.read_blob(b["sha256"]) is None:
+                if not src or src == self.url:
+                    raise ClusterAuthError(f"blob {b['sha256'][:12]} missing and no source")
+                data = fetch_blob(src, b["sha256"], float(self.cfg.get("http_timeout_s", 2.0)) * 10)
+                if len(data) != int(b["size"]):
+                    raise ClusterAuthError(f"blob {b['sha256'][:12]} size mismatch")
+                self.put_blob(data)
+                self.stats["blobs_in"] += 1
 
     def _deliver(self, job: dict[str, Any], res: dict[str, Any]) -> None:
         if job["origin"] == self.url:
@@ -380,6 +557,7 @@ class Node:
                     self.undelivered.append((origin, res))
 
     def accept_result(self, res: dict[str, Any]) -> None:
+        self._pull_blobs(res)          # raises → the executor keeps the result and redelivers later
         with self.lock:
             first = res["job_id"] not in self.results
             self.results.setdefault(res["job_id"], res)
@@ -433,19 +611,37 @@ class Node:
             def log_message(self, *a: Any) -> None:
                 pass
 
-            def _send(self, obj: Any, code: int = 200) -> None:
-                b = json.dumps(obj).encode()
+            def _send(self, obj: Any, code: int = 200, raw: bytes | None = None) -> None:
+                b = raw if raw is not None else json.dumps(obj).encode()
                 self.send_response(code)
-                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Type", "application/octet-stream" if raw is not None else "application/json")
                 self.send_header("Content-Length", str(len(b)))
+                nonce = getattr(self, "_nonce", "")
+                if nonce:      # signed response, bound to the request nonce
+                    self.send_header("X-Loom-RSig", _mac(node.key, "resp", nonce, str(code), _sha(b)))
                 self.end_headers()
                 self.wfile.write(b)
 
-            def _body(self) -> dict[str, Any]:
-                n = int(self.headers.get("Content-Length") or 0)
-                return json.loads(self.rfile.read(n).decode() or "{}") if n else {}
+            def _authed(self, method: str, raw: bytes) -> bool:
+                self._nonce = ""
+                ts, nonce, sig = (self.headers.get(h, "") for h in ("X-Loom-Ts", "X-Loom-Nonce", "X-Loom-Sig"))
+                try:
+                    ts_ms = int(ts)
+                except ValueError:
+                    ts_ms = 0
+                want = _mac(node.key, method, self.path, ts, nonce, _sha(raw))
+                ok = bool(sig) and hmac.compare_digest(want, sig) and node.replay.fresh(nonce, ts_ms)
+                if not ok:
+                    with node.lock:
+                        node.stats["auth_rejected"] += 1
+                    self._send({"error": "unauthorized"}, 401)
+                    return False
+                self._nonce = nonce
+                return True
 
             def do_GET(self) -> None:
+                if not self._authed("GET", b""):
+                    return
                 if self.path == "/advert":
                     self._send(node.advert())
                 elif self.path == "/status":
@@ -457,12 +653,22 @@ class Node:
                 elif self.path == "/results":
                     with node.lock:
                         self._send({"results": list(node.results.values())})
+                elif self.path.startswith("/blob/"):
+                    data = node.read_blob(self.path.rsplit("/", 1)[1])
+                    if data is None:
+                        self._send({"error": "no such blob"}, 404)
+                    else:
+                        self._send(None, raw=data)
                 else:
                     self._send({"error": "not found"}, 404)
 
             def do_POST(self) -> None:
+                n = int(self.headers.get("Content-Length") or 0)
+                raw = self.rfile.read(n) if n else b""
+                if not self._authed("POST", raw):
+                    return
                 try:
-                    body = self._body()
+                    body = json.loads(raw.decode() or "{}")
                     if self.path == "/hello":
                         with node.lock:
                             if body.get("url"):
@@ -473,7 +679,11 @@ class Node:
                     elif self.path == "/steal":
                         self._send({"jobs": node.give(body["thief"], body.get("devices", ["cpu"]), int(body.get("n", 1)))})
                     elif self.path == "/result":
-                        node.accept_result(body)
+                        try:
+                            node.accept_result(body)
+                        except (ClusterAuthError, urllib.error.URLError, OSError) as e:
+                            self._send({"error": f"blob pull failed: {e}"}, 503)
+                            return
                         self._send({"ok": True})
                     elif self.path == "/owner":
                         with node.lock:
@@ -566,6 +776,7 @@ class Fleet:
     """A set of local loopback nodes (separate processes) — how C7 is proven without a LAN."""
 
     def __init__(self, state_root: Path) -> None:
+        ensure_process_key()           # nodes (children) and this process share the fleet secret via the environment
         self.state_root = Path(state_root)
         self.procs: dict[str, Any] = {}
         self.urls: dict[str, str] = {}
@@ -684,6 +895,11 @@ class ClusterBridge:
         while time.time() < deadline:
             r = _http(url + f"/result/{jid}", timeout=3.0)
             if not r.get("pending"):
+                v = r.get("value")
+                if isinstance(v, dict) and v.get("blobs"):    # the phone's LoomLink contract carries bytes inline
+                    r = {**r, "value": {**{k: x for k, x in v.items() if k != "blobs"},
+                                        "data_b64": {n: base64.b64encode(fetch_blob(url, b["sha256"])).decode()
+                                                     for n, b in v["blobs"].items()}}}
                 return r
             time.sleep(0.05)
         raise TimeoutError(f"cluster job {jid} not finished in {self.timeout_s}s")
