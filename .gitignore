@@ -52,3 +52,4 @@ store/models/**
 
 # U1 universal engine local state (evolution telemetry/history, active plugins, export scratch)
 /.fabric/universal/
+godot-bin

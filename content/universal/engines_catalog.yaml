@@ -1,0 +1,5090 @@
+# GENERATED — do not edit by hand. Rebuild: python -m forge.universal.catalog_build fetch && python -m forge.universal.catalog_build build
+# Copyright © 2026 Recharged Ideas (catalog structure); engine facts from Wikipedia (CC BY-SA 4.0).
+schema_version: '1.0'
+generated_by: python -m forge.universal.catalog_build build
+attribution: Engine rows derived from Wikipedia, 'List of game engines' (CC BY-SA 4.0, Wikipedia contributors); factual fields only, prose columns
+  dropped.
+source:
+  wikipedia:
+    title: List of game engines
+    revid: 1388112807
+    timestamp: '2026-11-26T17:27:32Z'
+    url: https://en.wikipedia.org/w/index.php?title=List_of_game_engines&oldid=1388112807
+  named_tools: content/universal/named_tools.yaml
+counts:
+  wikipedia_rows: 178
+  wikipedia_unique: 178
+  wikipedia_duplicates: 0
+  named_tools: 28
+  wikipedia_by_tier:
+    descriptor_only: 75
+    interchange_pack: 95
+    named: 8
+  named_by_tier:
+    native_verified: 2
+    cli_bridge: 1
+    interchange_pack: 24
+    descriptor_only: 1
+engines:
+- id: 4a-engine
+  name: 4A Engine
+  alternate_names: []
+  language: C++
+  release_year: '2010'
+  scripting: None (native C++ development)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, PlayStation 3, PlayStation 4, Xbox 360, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: a-frame-vr
+  name: A-Frame (VR)
+  alternate_names: []
+  language: JavaScript
+  release_year: '2015'
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: adventure-game-interpreter
+  name: Adventure Game Interpreter
+  alternate_names: []
+  language: C
+  release_year: '1984'
+  scripting: C style
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: DOS, Apple SOS, ProDOS, Classic Mac OS, Atari TOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: adventure-game-studio
+  name: Adventure Game Studio
+  alternate_names: []
+  language: C++
+  release_year: '1997'
+  scripting: AGSScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, Linux
+  license: Artistic 2.0 (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: aleph-one
+  name: Aleph One
+  alternate_names: []
+  language: C++
+  release_year: '1999'
+  scripting: Lua, Marathon markup language
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS
+  license: GPL-3.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: amazon-lumberyard
+  name: Amazon Lumberyard
+  alternate_names: []
+  language: C++
+  release_year: '2015'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 4, Xbox One, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: zup-rh-yfwd
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: anvil-scimitar-anvilnext
+  name: Anvil (Scimitar) (AnvilNext)
+  alternate_names: []
+  language: C++, C#
+  release_year: '2009'
+  scripting: Proprietary
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform except Linux
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: appgamekit
+  name: AppGameKit
+  alternate_names: []
+  language: C++, BASIC
+  release_year: '2016'
+  scripting: C#, C++, AGK BASIC
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, macOS, iOS, Android, HTML5, Raspberry Pi
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: appgamekit
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: ardor3d
+  name: Ardor3D
+  alternate_names: []
+  language: Java
+  release_year: '2008'
+  scripting: None (native Java development)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: aurora-toolset
+  name: Aurora toolset
+  alternate_names: []
+  language: C++
+  release_year: '2002'
+  scripting: NWScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: autodesk-stingray-bitsquid
+  name: Autodesk Stingray (Bitsquid)
+  alternate_names: []
+  language: Lua
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, iOS, Android, PlayStation 4, PlayStation 3, Xbox 360
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: babylon-js
+  name: Babylon.js
+  alternate_names: []
+  language: JavaScript, TypeScript
+  release_year: '2013'
+  scripting: JavaScript, TypeScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-Platform
+  license: Apache License 2.0 (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: directx-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: blend4web
+  name: Blend4Web
+  alternate_names: []
+  language: JavaScript, Python, C, C++
+  release_year: '2018'
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: WebGL, Windows, Linux, macOS, iOS, Android
+  license: GPLv3 or commercial
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: blender-game-engine
+  name: Blender Game Engine
+  alternate_names: []
+  language: C, C++
+  release_year: '2000'
+  scripting: Python
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, Linux, macOS, Solaris
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: blender
+    convention_source: curated
+    named_tool: blender
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: build-engine
+  name: Build engine
+  alternate_names: []
+  language: C
+  release_year: '1995'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS, DOS
+  license: Proprietary (Custom, free non-commercial use)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: buildbox
+  name: Buildbox
+  alternate_names: []
+  language: C++
+  release_year: '2014'
+  scripting: Optional (JavaScript)
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, macOS, iOS, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: c4-engine
+  name: C4 Engine
+  alternate_names: []
+  language: C++
+  release_year: '2015'
+  scripting: C++, Visual Script
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 5, PlayStation 4, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: chrome-engine
+  name: Chrome Engine
+  alternate_names: []
+  language: C++
+  release_year: '2002'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, PlayStation 4, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: clanlib
+  name: ClanLib
+  alternate_names: []
+  language: C
+  release_year: '1999'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: clausewitz
+  name: Clausewitz
+  alternate_names: []
+  language: C++
+  release_year: '2007'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: clickteam-fusion
+  name: Clickteam Fusion
+  alternate_names: []
+  language: (Event-based Scripting w/ C++Support)
+  release_year: '1994'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, iOS, Android, HTML5, Adobe Flash
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: clickteam-fusion
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: cobra-engine
+  name: Cobra Engine
+  alternate_names: []
+  language: C++, C#
+  release_year: '1988'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox One, PlayStation 4, iOS, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: cocos2d-cocos2d-x-cocos2d-html5
+  name: Cocos2d, Cocos2d-x, Cocos2d-html5
+  alternate_names: []
+  language: C++, Python, Objective-C, JavaScript
+  release_year: '2010'
+  scripting: C++, JavaScript, Java, Lua
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, Linux, macOS, iOS, Android, BlackBerry, Tizen
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: codea
+  name: Codea
+  alternate_names: []
+  language: Lua
+  release_year: '2011'
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 2D, 3D
+  platforms: iOS
+  license: Apache 2.0 (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: construct
+  name: Construct
+  alternate_names: []
+  language: C++
+  release_year: '2007'
+  scripting: JavaScript, Event System
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, macOS, Wii U, HTML5 capable web browsers
+  license: Proprietary, GPL Classic version
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: mixed
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: construct-2
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: coretech
+  name: Coretech
+  alternate_names: []
+  language: C++
+  release_year: '2009'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: craftstudio
+  name: CraftStudio
+  alternate_names: []
+  language: C#
+  release_year: '2015'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, macOS, Linux
+  license: Freeware (Free use)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: creation-engine
+  name: Creation Engine
+  alternate_names: []
+  language: C++
+  release_year: '2011'
+  scripting: Papyrus
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3, Xbox 360, Xbox One, PlayStation 4
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: cryengine
+  name: CryEngine
+  alternate_names: []
+  language: C++
+  release_year: '2002'
+  scripting: C++, C#
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, PlayStation 3, PlayStation 4, Wii U, Xbox 360, Xbox One, iOS, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: zup-rh-yfwd
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: crystal-space
+  name: Crystal Space
+  alternate_names: []
+  language: C++
+  release_year: '1997'
+  scripting: Java, Perl, Python
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: LGPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: crystal-tools
+  name: Crystal Tools
+  alternate_names: []
+  language: C++
+  release_year: '2007'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 3, Xbox 360, Windows, Wii
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: cube-2-engine
+  name: Cube 2 Engine
+  alternate_names: []
+  language: C++
+  release_year: '2004'
+  scripting: CubeScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: cube-engine
+  name: Cube Engine
+  alternate_names: []
+  language: C++
+  release_year: '2001'
+  scripting: CubeScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: dagor-engine
+  name: Dagor Engine
+  alternate_names: []
+  language: C++
+  release_year: '2017'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 4, PlayStation 3, Xbox 360, Linux, macOS
+  license: BSD (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: dark-engine
+  name: Dark Engine
+  alternate_names: []
+  language: C++
+  release_year: '1995'
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: decima
+  name: Decima
+  alternate_names: []
+  language: C++
+  release_year: '2013'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 4, PlayStation 5, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: defold
+  name: Defold
+  alternate_names: []
+  language: C++
+  release_year: '2016'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: iOS, Android, HTML5, Windows, macOS, Linux, Nintendo Switch, PlayStation 4
+  license: Defold License 1.0
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: unknown
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: delta3d
+  name: Delta3D
+  alternate_names: []
+  language: C++
+  release_year: '2004'
+  scripting: Python
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Cross-platform
+  license: LGPL-2.1-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: dim3
+  name: Dim3
+  alternate_names: []
+  language: C++
+  release_year: '2014'
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: dimensionex-multiplayer-engine
+  name: DimensioneX Multiplayer Engine
+  alternate_names: []
+  language: Java
+  release_year: '2001'
+  scripting: Java, VBScript
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Cross-platform
+  license: GPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: divinity-engine
+  name: Divinity Engine
+  alternate_names: []
+  language: C++, C#
+  release_year: '2014'
+  scripting: Proprietary
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, PlayStation 5, Xbox
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: doom-engine
+  name: Doom engine
+  alternate_names: []
+  language: C
+  release_year: '1993'
+  scripting: ACS
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: dunia-engine
+  name: Dunia Engine
+  alternate_names: []
+  language: C++
+  release_year: '2007'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3 and onwards, Xbox 360 and onwards
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: dx-studio
+  name: DX Studio
+  alternate_names: []
+  language: C++
+  release_year: '2008'
+  scripting: JavaScript
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary, Freeware
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: ego
+  name: EGO
+  alternate_names: []
+  language: C++
+  release_year: '2008'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 3, Windows, Xbox 360, macOS, Wii, Wii U, Xbox One, PlayStation 4
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: electron-toolset
+  name: Electron toolset
+  alternate_names: []
+  language: C#
+  release_year: '2013'
+  scripting: NWScript
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: enforce
+  name: Enforce
+  alternate_names: []
+  language: C#
+  release_year: '1999'
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: enigma-engine
+  name: Enigma Engine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: essence-engine
+  name: Essence Engine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: exult
+  name: Exult
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, Linux, macOS, BSD
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: flare3d
+  name: Flare3D
+  alternate_names: []
+  language: ActionScript 3
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Web, Windows, iOS, Android, BlackBerry
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: flixel
+  name: Flixel
+  alternate_names: []
+  language: ActionScript
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: ''
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: forgelight
+  name: ForgeLight
+  alternate_names: []
+  language: C++
+  release_year: '2009'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 4, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: fox-engine
+  name: Fox Engine
+  alternate_names: []
+  language: C++
+  release_year: '2013'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3, PlayStation 4, Xbox 360, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: freescape
+  name: Freescape
+  alternate_names: []
+  language: C
+  release_year: '1987'
+  scripting: Freescape Command Language
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Amstrad CPC, ZX Spectrum, IBM PC, Commodore 64, Amiga, Atari ST
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: freespace-2-source-code-project
+  name: FreeSpace 2 Source Code Project
+  alternate_names: []
+  language: C++
+  release_year: '2002'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, FreeBSD
+  license: Freeware for non-commercial use
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: frostbite
+  name: Frostbite
+  alternate_names: []
+  language: C++
+  release_year: '2008'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3, PlayStation 4, Xbox 360, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: future-pinball
+  name: Future Pinball
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Freeware
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: game-editor
+  name: Game Editor
+  alternate_names: []
+  language: C++
+  release_year: '2003'
+  scripting: Custom (C styled)
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iPhone, iPad, macOS, Windows (95-Windows 7), Linux, Windows-based smartphones, GP2X, Pocket PCs, Handheld PCs
+  license: GPL (open source), Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: mixed
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: gamebryo
+  name: Gamebryo
+  alternate_names: []
+  language: C++
+  release_year: '1997'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3, PlayStation 4, Xbox 360, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: gamemaker
+  name: GameMaker
+  alternate_names: []
+  language: GameMaker Language
+  release_year: '1999'
+  scripting: GameMaker Language, JavaScript, C++, GLSL, HLSL
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, UWP, Xbox 360, Xbox One, Xbox Series X/S, PlayStation 3, PlayStation 4, PlayStation 5, PlayStation Vita, macOS, Ubuntu,
+    HTML5, Android, iOS, Windows Phone, Tizen, Amazon Fire TV, Nintendo Switch, Nintendo Switch 2, Raspberry Pi
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: gamesalad
+  name: GameSalad
+  alternate_names: []
+  language: Lang
+  release_year: ''
+  scripting: Script
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iOS, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: gamestudio
+  name: Gamestudio
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: CScript, Lite-C
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: gdevelop
+  name: GDevelop
+  alternate_names: []
+  language: C++, JavaScript
+  release_year: '2008'
+  scripting: Events editor, JavaScript (Optional)
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, Linux, macOS, HTML5, Android, iOS, Facebook Instant Games
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: genie-engine
+  name: Genie Engine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, PlayStation 2, Xbox One, Xbox Series X/S
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: godot
+  name: Godot
+  alternate_names: []
+  language: GDScript
+  release_year: '2014'
+  scripting: GDScript (like Python), C#, Visual Script, GDNative
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, macOS, Linux, UWP, iOS, Android, HTML and Web Assembly
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: godot
+    convention_source: curated
+    named_tool: godot
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: gold-box
+  name: Gold Box
+  alternate_names: []
+  language: Assembly, Pascal, C, C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Amiga, Apple II, Atari ST, Commodore 64/128, DOS, Macintosh, Nintendo Entertainment System, PC-9801, Sega Genesis
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: goldsrc
+  name: GoldSrc
+  alternate_names: []
+  language: C, C++, Assembly
+  release_year: '1998'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, PlayStation 2, Xbox, Dreamcast
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: heroengine
+  name: HeroEngine
+  alternate_names: []
+  language: C++, C#
+  release_year: ''
+  scripting: HeroScript Language
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: horde3d
+  name: Horde3D
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux
+  license: EPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: hpl-engine
+  name: HPL Engine
+  alternate_names: []
+  language: C++
+  release_year: '2007'
+  scripting: AngelScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: Proprietary, GPL-3.0-or-later (version 1 and 2)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: mixed
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: id-tech-2
+  name: id Tech 2
+  alternate_names: []
+  language: C
+  release_year: '1997'
+  scripting: C
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: id-tech-3
+  name: id Tech 3
+  alternate_names: []
+  language: C
+  release_year: '1999'
+  scripting: C
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: id-tech-4
+  name: id Tech 4
+  alternate_names: []
+  language: C++
+  release_year: '2004'
+  scripting: C++ via DLLs
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-3.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: id-tech-5
+  name: id Tech 5
+  alternate_names: []
+  language: C++, AMPL, Clipper, Python
+  release_year: '2011'
+  scripting: Script
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Xbox 360, Xbox One, PlayStation 3, PlayStation 4
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: id-tech-6
+  name: id Tech 6
+  alternate_names: []
+  language: C++
+  release_year: '2016'
+  scripting: None (native C++ only)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox One, PlayStation 4, Nintendo Switch
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: id-tech-7
+  name: id Tech 7
+  alternate_names: []
+  language: C++
+  release_year: '2020'
+  scripting: None
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 4, Xbox One, Nintendo Switch
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: id-tech-8
+  name: id Tech 8
+  alternate_names: []
+  language: C++
+  release_year: '2025'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 5, Xbox Series X/S
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: imuse
+  name: iMUSE
+  alternate_names: []
+  language: C++
+  release_year: '1991'
+  scripting: N/a
+  cross_platform: ''
+  orientation: ''
+  platforms: Integrated with other engines
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - unknown
+    license_class: proprietary
+    public_toolchain: false
+    packs: []
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: null
+    tier: descriptor_only
+    tier_reason: no 2D/3D orientation listed
+- id: infinity-engine
+  name: Infinity Engine
+  alternate_names: []
+  language: C++
+  release_year: '1992'
+  scripting: None (custom scripting not publicly disclosed.)
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, Mac OS, macOS, AmigaOS 4
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: ioquake3
+  name: ioquake3
+  alternate_names: []
+  language: C
+  release_year: '2005'
+  scripting: None
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: iron-engine
+  name: Iron Engine
+  alternate_names: []
+  language: C++
+  release_year: '2008'
+  scripting: None (native C++ integration)
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: irrlicht
+  name: Irrlicht
+  alternate_names: []
+  language: C++
+  release_year: '2003'
+  scripting: C++
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Mac OS, Linux, Windows CE
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: directx-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: iw-engine
+  name: IW engine
+  alternate_names: []
+  language: C++
+  release_year: '2003'
+  scripting: Custom (C styled) (derived from QuakeC)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, PlayStation 4, PlayStation 3, Xbox One, Xbox 360, Wii U, Wii
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: jade
+  name: Jade
+  alternate_names: []
+  language: C++
+  release_year: '2003'
+  scripting: Custom proprietary scripting
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: jake2
+  name: Jake2
+  alternate_names: []
+  language: Java
+  release_year: '2006'
+  scripting: None
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: GPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: java-3d
+  name: Java 3D
+  alternate_names: []
+  language: Java
+  release_year: '1998'
+  scripting: Java
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: BSD (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: jedi
+  name: Jedi
+  alternate_names: []
+  language: C
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: DOS, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: jmonkeyengine
+  name: jMonkeyEngine
+  alternate_names: []
+  language: Java
+  release_year: '2004'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: BSD (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: kinetica
+  name: Kinetica
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: PlayStation 2
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: kivy-framework
+  name: Kivy (framework)
+  alternate_names: []
+  language: Python
+  release_year: '2011'
+  scripting: Kv
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS, iOS, Android
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: l-ve
+  name: LÖVE
+  alternate_names: []
+  language: C++
+  release_year: '2008'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iOS, Android, Windows, Linux, macOS, NetBSD, FreeBSD, OpenBSD, Solaris, and all platforms supported by pkgsrc
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: layaair
+  name: LayaAir
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ActionScript 3, JavaScript, TypeScript
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: WebGL, Windows, Linux, macOS, iOS, Android
+  license: GPL or commercial
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: leadwerks
+  name: Leadwerks
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: libgdx
+  name: LibGDX
+  alternate_names: []
+  language: Java, Kotlin
+  release_year: '2014'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Linux, Windows, macOS, iOS, Android, Java applet, WebGL
+  license: Apache 2.0 (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: lithtech
+  name: LithTech
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: luminous-engine
+  name: Luminous Engine
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 4, Xbox One, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: lyn
+  name: LyN
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: m-u-g-e-n
+  name: M.U.G.E.N
+  alternate_names: []
+  language: C
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Linux, DOS, Windows, macOS
+  license: Freeware
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: marmalade
+  name: Marmalade
+  alternate_names: []
+  language: C++, Lua, Objective-C, HTML5
+  release_year: ''
+  scripting: Lua, 2DKit
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: iOS, Android, BlackBerry, Windows 10, Fire OS, macOS, Windows, Tizen, Roku, Chromecast
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: messiah
+  name: Messiah
+  alternate_names: []
+  language: C++
+  release_year: '2013'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 5, Windows, iOS, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: moai-sdk
+  name: Moai SDK
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, iOS, Android, Linux
+  license: CPAL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: monkey-x
+  name: Monkey X
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: Monkey, C++, C#, Java, JavaScript, ActionScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: monogame-xna
+  name: MonoGame / XNA
+  alternate_names: []
+  language: C#
+  release_year: '2009'
+  scripting: C#
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, macOS, Xbox One, PlayStation 4, PlayStation Vita, Windows Phone, iOS, Android, Windows Store, Ouya, BSD
+  license: Microsoft Public (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: mt-framework
+  name: MT Framework
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 3, Xbox 360, Windows, Wii, Wii U, Nintendo 3DS, PlayStation Vita
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: northlight
+  name: Northlight
+  alternate_names: []
+  language: C++, D
+  release_year: ''
+  scripting: D
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox One, PlayStation 4, PlayStation 5, Xbox Series X and Series S
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: nscripter
+  name: NScripter
+  alternate_names: []
+  language: C++
+  release_year: '1999'
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 2D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: o3de
+  name: O3DE
+  alternate_names: []
+  language: C++, Python
+  release_year: '2021'
+  scripting: Lua, Script Canvas
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, iOS, Linux, Android
+  license: Apache 2.0 MIT License (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: zup-rh-yfwd
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: odyssey-engine
+  name: Odyssey Engine
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: ogre
+  name: OGRE
+  alternate_names: []
+  language: C++
+  release_year: '2005'
+  scripting: C++
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Linux, Windows (all major versions), macOS, NaCl, WinRT, Windows Phone 8, iOS and Android
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: ohrrpgce
+  name: OHRRPGCE
+  alternate_names: []
+  language: FreeBASIC
+  release_year: ''
+  scripting: HamsterSpeak
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux, Android
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: openclonk
+  name: OpenClonk
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: C4Script
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS
+  license: ISC (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: openmw
+  name: OpenMW
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: mwscript, Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-3.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: opensimulator
+  name: OpenSimulator
+  alternate_names: []
+  language: C#
+  release_year: ''
+  scripting: LSL
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS, FreeBSD
+  license: BSD (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: orx
+  name: ORX
+  alternate_names: []
+  language: C/C++
+  release_year: '2009'
+  scripting: Custom
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS, iOS, Android
+  license: zlib (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: panda3d
+  name: Panda3D
+  alternate_names: []
+  language: C++, Python
+  release_year: '2002'
+  scripting: Python
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS, iOS, Android
+  license: BSD (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: zup-rh-yfwd
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: panta-rhei
+  name: Panta Rhei
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PlayStation 4, Xbox One, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: phaser
+  name: Phaser
+  alternate_names: []
+  language: JavaScript
+  release_year: ''
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Cross-platform
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: phyreengine
+  name: PhyreEngine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: PC, PlayStation Portable, PlayStation Vita, PlayStation 3, PlayStation 4
+  license: Proprietary, Freeware
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: pico-8
+  name: Pico-8
+  alternate_names: []
+  language: Lua
+  release_year: '2015'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux, HTML5
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: pie-in-the-sky
+  name: Pie in the Sky
+  alternate_names: []
+  language: C
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: DOS, Windows, macOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: pixel-game-maker-mv
+  name: Pixel Game Maker MV
+  alternate_names: []
+  language: JavaScript
+  release_year: ''
+  scripting: JavaScript, CoffeeScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, Nintendo Switch
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: playcanvas
+  name: PlayCanvas
+  alternate_names: []
+  language: JavaScript
+  release_year: ''
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS, iOS, HTML5, Android
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: playn
+  name: PlayN
+  alternate_names: []
+  language: Java
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iOS, Android, HTML5, Windows, Linux
+  license: Apache 2.0 (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: pygame
+  name: Pygame
+  alternate_names: []
+  language: Python
+  release_year: '2000'
+  scripting: Python
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS (OS X), BeOS, FreeBSD, IRIX, Linux
+  license: LGPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: pyrogenesis
+  name: Pyrogenesis
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: LGPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: q
+  name: Q
+  alternate_names: []
+  language: ''
+  release_year: '2008'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, PS2, PS3, Wii
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: qfusion
+  name: Qfusion
+  alternate_names: []
+  language: C/C++
+  release_year: ''
+  scripting: AngelScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS, Android
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: quake-engine
+  name: Quake engine
+  alternate_names: []
+  language: C
+  release_year: '1996'
+  scripting: QuakeC
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: redengine
+  name: REDengine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Xbox 360, Xbox One, Xbox Series X/S, PlayStation 4, PlayStation 5
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: ren-py
+  name: Ren'Py
+  alternate_names: []
+  language: Python
+  release_year: ''
+  scripting: Pygame
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux, Android, OpenBSD
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: renderware
+  name: RenderWare
+  alternate_names: []
+  language: C++
+  release_year: '1993'
+  scripting: RWX
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Mac OS, GameCube, Wii, Xbox, Xbox 360, PlayStation 2, PlayStation 3, PlayStation Portable
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: roblox
+  name: Roblox
+  alternate_names: []
+  language: Lua
+  release_year: '2006'
+  scripting: Luau
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, iOS, Android, Xbox One, Meta Quest 2, Meta Quest Pro, PlayStation 4, PlayStation 5
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: rockstar-advanced-game-engine-rage
+  name: Rockstar Advanced Game Engine (RAGE)
+  alternate_names: []
+  language: C++
+  release_year: '2006'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 3, PlayStation 4, Wii, Xbox 360, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: rpg-maker
+  name: RPG Maker
+  alternate_names: []
+  language: ''
+  release_year: 1992 (As RPG Tsukūru Dante 98)
+  scripting: Ruby, JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: PC-8801, MSX2, PC-9801, Super Famicom, Windows, PlayStation, Game Boy Color, PlayStation 2, Game Boy Advance, Nintendo DS, macOS,
+    Linux, iOS, Android, PlayStation 4, Nintendo Switch
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: rpg-maker
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: s-box
+  name: S&box
+  alternate_names: []
+  language: C++
+  release_year: '2026'
+  scripting: C#
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, Linux
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: sage
+  name: SAGE
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Macintosh, Xbox 360, PlayStation 3
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: scratch
+  name: Scratch
+  alternate_names: []
+  language: ''
+  release_year: '2007'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Cross-platform
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: scumm
+  name: SCUMM
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: 3DO, Amiga, Apple II, Atari ST, CDTV, Commodore 64, FM Towns & Marty, Macintosh, Nintendo Entertainment System, DOS, Windows, Sega
+    Mega-CD, TurboGrafx-16/PC Engine
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: serious-engine
+  name: Serious Engine
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: ''
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: shark-3d
+  name: Shark 3D
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: Python
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox, Xbox 360
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: silent-storm-engine
+  name: Silent Storm engine
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: snowdrop
+  name: Snowdrop
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform except Linux and mobile
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: solar2d
+  name: Solar2D
+  alternate_names: []
+  language: Lua
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iOS, Android, Kindle, Windows Phone 8, Apple TV, Android TV, macOS, Windows, Linux
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: source
+  name: Source
+  alternate_names: []
+  language: C++
+  release_year: '2004'
+  scripting: Squirrel, Lua, Python
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, PlayStation 3, Xbox, Xbox 360, Android
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: source-2
+  name: Source 2
+  alternate_names: []
+  language: C++
+  release_year: '2015'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, Linux, Android, iOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: source
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: starling-framework
+  name: Starling Framework
+  alternate_names: []
+  language: ActionScript
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux, iOS, Android
+  license: BSD Simplified (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: stencyl
+  name: Stencyl
+  alternate_names: []
+  language: Haxe
+  release_year: ''
+  scripting: Haxe, VPL
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Flash, HTML5, iOS, Android, Linux, macOS, Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: stepmania
+  name: StepMania
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: stratagus
+  name: Stratagus
+  alternate_names: []
+  language: C++
+  release_year: '1998'
+  scripting: Lua
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Linux
+  license: GPL-2.0-only (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: stride
+  name: Stride
+  alternate_names: []
+  language: C#
+  release_year: ''
+  scripting: C#
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: Windows, Linux, Xbox One, iOS, Android, UWP
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: telltale-engine-and-toolset
+  name: Telltale Engine and Toolset
+  alternate_names: []
+  language: Lua
+  release_year: '2004'
+  scripting: Lua
+  cross_platform: Partial
+  orientation: 3D, 2D
+  platforms: Windows, Xbox 360, Playstation 3,Xbox One, Playstation 4, Smartphones
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: three-js
+  name: Three.js
+  alternate_names: []
+  language: JavaScript
+  release_year: '2010'
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: HTML5, Windows, Linux, macOS, iOS, Android
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: opengl-yup
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: tic-80
+  name: TIC-80
+  alternate_names: []
+  language: Lua, JavaScript, Ruby, others
+  release_year: '2017'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: HTML5, Windows, Linux, macOS, Raspberry Pi, Nintendo 3DS
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: torque3d
+  name: Torque3D
+  alternate_names: []
+  language: C++
+  release_year: '2012'
+  scripting: TorqueScript
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: zup-rh-yfwd
+    convention_source: curated
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: toshi
+  name: TOSHI
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, GameCube, Wii, PlayStation 2, Xbox
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: treyarch-ngl
+  name: Treyarch NGL
+  alternate_names: []
+  language: ''
+  release_year: '2002'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, PlayStation 2, PlayStation 3, Xbox, Xbox 360, GameCube, Wii
+  license: ''
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: unknown
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: turbulenz
+  name: Turbulenz
+  alternate_names: []
+  language: TypeScript
+  release_year: ''
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D, 3D
+  platforms: HTML5, iOS, Android
+  license: MIT (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: twine
+  name: Twine
+  alternate_names: []
+  language: CSS/JavaScript
+  release_year: '2009'
+  scripting: JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: Windows, macOS, Linux, Web application
+  license: GPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: ubiart-framework
+  name: UbiArt Framework
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: unigine
+  name: Unigine
+  alternate_names: []
+  language: C++
+  release_year: '2005'
+  scripting: C#, UnigineScript, GLSL, HLSL, UUSL
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Linux, macOS, PlayStation 3, Android, iOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: unity
+  name: Unity
+  alternate_names: []
+  language: C++
+  release_year: '2005'
+  scripting: C#, Visual scripting (Bolt)
+  cross_platform: 'Yes'
+  orientation: 2D, 2.5D, 3D
+  platforms: Windows, macOS, Linux, Xbox 360, Xbox One, Wii U, New 3DS, Nintendo Switch, PlayStation 4, PlayStation Vita, Windows Phone, iOS,
+    Android, BlackBerry 10, Tizen, Unity Web Player, Windows Store, WebGL, Oculus Rift, Gear VR, Android TV, Samsung Smart TV
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    - 2.5d
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    - layer-manifest
+    - glb-cards
+    - glb
+    - obj-mtl
+    convention: unity
+    convention_source: curated
+    named_tool: unity
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: unreal-engine
+  name: Unreal Engine
+  alternate_names: []
+  language: C++
+  release_year: '1998'
+  scripting: C++, Visual Scripting (Blueprint)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: unreal
+    convention_source: curated
+    named_tool: unreal-engine
+    adapter: null
+    tier: null
+    tier_reason: named tool — see named_tools
+- id: v-play-game-engine
+  name: V-Play Game Engine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: QML, JavaScript
+  cross_platform: 'Yes'
+  orientation: 2D
+  platforms: iOS, Android, Windows, macOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: vengeance-engine
+  name: Vengeance Engine
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: vicarious-visions-alchemy
+  name: Vicarious Visions Alchemy
+  alternate_names: []
+  language: Lang
+  release_year: '2002'
+  scripting: Script
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: GameCube, Wii, WiiWare, WiiU, Nintendo Switch, Xbox, Xbox 360, Xbox Live Arcade, Xbox One, PlayStation 2, PlayStation Portable, PlayStation
+    Network, PlayStation 3, PlayStation 4, Microsoft Windows, Android, iOS, tvOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: virtools
+  name: Virtools
+  alternate_names: []
+  language: C++
+  release_year: '1999'
+  scripting: VSL, Visual Scripting
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox, PlayStation 2, Xbox 360, PlayStation 3, PSP, Wii, IE6, Google Chrome
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: vision
+  name: Vision
+  alternate_names: []
+  language: Lang
+  release_year: ''
+  scripting: Script
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox 360, PlayStation 3, Wii, Wii U, iOS, Android, PlayStation Vita, IE6 and up, Firefox 2.0 and up, Google Chrome, Opera
+    9 and up
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: visual-pinball
+  name: Visual Pinball
+  alternate_names: []
+  language: C++
+  release_year: ''
+  scripting: VBScript
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: Windows
+  license: MAME-like pre-0.172, then BSD, GPL
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: visual3d-game-engine
+  name: Visual3D Game Engine
+  alternate_names: []
+  language: C#/.NET
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox 360
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: vrage
+  name: VRAGE
+  alternate_names: []
+  language: C#
+  release_year: ''
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, Xbox One
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: wintermute-engine
+  name: Wintermute Engine
+  alternate_names: []
+  language: C++
+  release_year: '2010'
+  scripting: C-like syntax
+  cross_platform: 'No'
+  orientation: 2.5D
+  platforms: Windows
+  license: Donationware, MIT, LGPL
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: wolfenstein-3d-engine
+  name: Wolfenstein 3D engine
+  alternate_names: []
+  language: C
+  release_year: '1992'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 2.5D
+  platforms: Windows, Linux, macOS
+  license: GPL-2.0-or-later (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 2.5d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - layer-manifest
+    - glb-cards
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: world-builder
+  name: World Builder
+  alternate_names: []
+  language: ''
+  release_year: '1986'
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 2D
+  platforms: System 3
+  license: Freeware
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: freeware
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+- id: worldforge
+  name: WorldForge
+  alternate_names: []
+  language: C++
+  release_year: '1998'
+  scripting: Lua (client), Python (server)
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Cross-platform
+  license: GPL (open source)
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: open_source
+    public_toolchain: true
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
+- id: xngine
+  name: XnGine
+  alternate_names: []
+  language: ''
+  release_year: ''
+  scripting: ''
+  cross_platform: 'No'
+  orientation: 3D
+  platforms: DOS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: zero
+  name: Zero
+  alternate_names: []
+  language: ''
+  release_year: '1999'
+  scripting: ''
+  cross_platform: 'Yes'
+  orientation: 3D
+  platforms: Windows, macOS, PlayStation 3, PlayStation 2, Xbox 360, Xbox, GameCube, Nintendo DS
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 3d
+    license_class: proprietary
+    public_toolchain: false
+    packs:
+    - glb
+    - obj-mtl
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'in-house / non-public engine: no public import pipeline'
+- id: zillions-of-games
+  name: Zillions of Games
+  alternate_names: []
+  language: ''
+  release_year: '1998'
+  scripting: Zillions Rules
+  cross_platform: 'No'
+  orientation: 2D
+  platforms: Windows
+  license: Proprietary
+  source: wikipedia
+  profile:
+    dims:
+    - 2d
+    license_class: proprietary
+    public_toolchain: true
+    packs:
+    - png-atlas
+    - texturepacker-json
+    - png-frames
+    convention: gltf
+    convention_source: inference:U1-1 (glTF; engine importer converts)
+    named_tool: null
+    adapter: catalog-generic
+    tier: descriptor_only
+    tier_reason: 'legacy engine: native formats predate PNG/OBJ/glTF import'
+named_tools:
+- id: unreal-engine
+  name: Unreal Engine
+  kind: engine
+  vendor: Epic Games
+  dims:
+  - 2d
+  - 3d
+  adapter: unreal
+  tier: interchange_pack
+  direction: export
+  convention: unreal
+  linux_editor: true
+  formats:
+  - glb
+  - png
+  - texturepacker-json
+  - unreal-python-import-script
+  - json-manifest
+  note: UE5 Interchange imports glTF/GLB; Paper2D imports TexturePacker JSON sheets; normal maps converted to DirectX green-down. FBX is NOT written
+    (no verified writer).
+- id: unity
+  name: Unity
+  kind: engine
+  vendor: Unity Technologies
+  dims:
+  - 2d
+  - 2.5d
+  - 3d
+  adapter: unity
+  tier: interchange_pack
+  direction: export
+  convention: unity
+  linux_editor: true
+  formats:
+  - upm-package
+  - unitypackage
+  - meta-yaml
+  - obj
+  - glb
+  - png
+  note: OBJ imports natively; GLB via the com.unity.cloud.gltfast package dependency; Sprite .meta files carry Multiple-mode rects (bottom-left
+    origin).
+- id: godot
+  name: Godot
+  kind: engine
+  vendor: Godot Foundation
+  dims:
+  - 2d
+  - 2.5d
+  - 3d
+  adapter: godot
+  tier: native_verified
+  direction: both
+  convention: godot
+  linux_editor: true
+  native_binary: godot
+  formats:
+  - glb
+  - png
+  - tres-spriteframes
+  note: Godot 4.3 headless loads every GLB through GLTFDocument in CI.
+- id: blender
+  name: Blender
+  kind: tool
+  vendor: Blender Foundation
+  dims:
+  - 3d
+  adapter: blender
+  tier: native_verified
+  direction: both
+  convention: blender
+  linux_editor: true
+  native_binary: blender
+  formats:
+  - glb
+  - obj
+  - stl
+  - bpy-import-script
+  note: Bridge script runs in `blender --background`; CI has no Blender, so CI checks the script's AST/contract and the box run is recorded.
+- id: openscad
+  name: OpenSCAD
+  kind: tool
+  vendor: OpenSCAD project
+  dims:
+  - 3d
+  adapter: openscad
+  tier: cli_bridge
+  direction: both
+  convention: zup-rh
+  linux_editor: true
+  native_binary: openscad
+  formats:
+  - scad
+  - stl
+  - false
+  - obj
+  - glb
+  note: Parametric templates compile through the real OpenSCAD CLI; the NumPy CSG fallback runs when it is absent.
+- id: rpg-maker
+  name: RPG Maker (MV / MZ / VX Ace)
+  kind: engine
+  vendor: Gotcha Gotcha Games / Kadokawa
+  dims:
+  - 2d
+  adapter: rpgmaker
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  linux_editor: false
+  formats:
+  - png-character-sheet
+  - png-tileset
+  note: 'MV/MZ: 48 px frames, 3×4 block per character ($-prefixed single sheet 144×192; 8-character sheet 576×384), B–E tilesets 768×768 (16×16
+    tiles). VX Ace: 32 px.'
+- id: sprite-lamp
+  name: Sprite Lamp
+  kind: tool
+  vendor: Snake Hill Games
+  dims:
+  - 2d
+  - 2.5d
+  adapter: spritelamp
+  tier: interchange_pack
+  direction: both
+  convention: gltf
+  formats:
+  - png-diffuse
+  - png-normal
+  - png-depth
+  - png-ambient-occlusion
+  - png-lighting-profiles
+  note: Writes the five lighting profiles Sprite Lamp takes as input plus the normal/depth/AO maps it produces; profiles ↔ normals consistency
+    is checked by photometric recovery.
+- id: sprite-pro
+  name: Sprite Pro
+  kind: tool
+  vendor: unknown
+  dims:
+  - 2d
+  adapter: spritelamp
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  inference: true
+  formats:
+  - png-diffuse
+  - png-normal
+  - png-depth
+  note: '[INFERENCE U1-2] identity ambiguous (no single product of this name could be confirmed); served by the same normal/depth/diffuse sheet
+    pack.'
+- id: gameguru
+  name: GameGuru (Classic / MAX)
+  kind: engine
+  vendor: TheGameCreators
+  dims:
+  - 3d
+  adapter: meshpack-gameguru
+  tier: interchange_pack
+  direction: export
+  convention: directx-yup
+  inference: true
+  formats:
+  - directx-x
+  - obj
+  - png
+  - fpe
+  note: '[INFERENCE U1-3] DirectX .x model + .fpe entity descriptor (keys desc/model/textured/scale) — field set taken from public examples, not
+    verified in the editor.'
+- id: clickteam-fusion
+  name: Clickteam Fusion 2.5
+  kind: engine
+  vendor: Clickteam
+  dims:
+  - 2d
+  adapter: clickteam
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  formats:
+  - png-frame-sequence
+  - json-hotspots
+  note: Per-animation, per-direction numbered PNG frames for the animation editor's import, plus hot spot / action point manifest.
+- id: construct-2
+  name: Construct 2
+  kind: engine
+  vendor: Scirra
+  dims:
+  - 2d
+  adapter: construct
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  formats:
+  - png-sprite-strip
+  - json-strip-descriptor
+  note: Sprite strips for 'Import sprite strip' (columns × rows) + animation speeds; Construct 2 is retired (Construct 3 reads the same strips).
+- id: coppercube-6
+  name: CopperCube 6
+  kind: engine
+  vendor: Ambiera
+  dims:
+  - 3d
+  adapter: meshpack-coppercube
+  tier: interchange_pack
+  direction: export
+  convention: directx-yup
+  formats:
+  - obj
+  - mtl
+  - directx-x
+  - png
+  note: Imports Wavefront OBJ and DirectX .x (among others).
+- id: esenthel
+  name: Esenthel Engine
+  kind: engine
+  vendor: Esenthel
+  dims:
+  - 3d
+  adapter: meshpack-esenthel
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  inference: true
+  formats:
+  - obj
+  - mtl
+  - glb
+  - png
+  note: '[INFERENCE U1-4] OBJ + glTF import assumed from public docs/changelogs; not verified in the editor.'
+- id: epic-character-generator
+  name: ePic Character Generator
+  kind: tool
+  vendor: Quadarts
+  dims:
+  - 2d
+  adapter: epic-chargen
+  tier: interchange_pack
+  direction: import
+  convention: gltf
+  formats:
+  - png
+  note: 'Producer tool: its exported PNG characters are ingested into IR sprites and receive generated normal/depth/AO maps.'
+- id: agfpro-3
+  name: Axis Game Factory AGFPRO 3
+  kind: engine
+  vendor: Axis Game Factory
+  dims:
+  - 3d
+  adapter: meshpack-agfpro
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  inference: true
+  formats:
+  - obj
+  - mtl
+  - png
+  note: '[INFERENCE U1-5] custom-asset import via OBJ assumed (Unity-based tool); not verified.'
+- id: appgamekit
+  name: AppGameKit
+  kind: engine
+  vendor: TheGameCreators
+  dims:
+  - 2d
+  - 3d
+  adapter: appgamekit
+  tier: interchange_pack
+  direction: export
+  convention: directx-yup
+  formats:
+  - png-atlas
+  - agk-subimages-txt
+  - obj
+  - directx-x
+  note: Atlas + subimages.txt (name:x:y:w:h per line, LoadSubImage); 3D via LoadObject (.obj / .x).
+- id: raysupreme-3d
+  name: RaySupreme 3D
+  kind: tool
+  vendor: RaySupreme
+  dims:
+  - 3d
+  adapter: meshpack-raysupreme
+  tier: interchange_pack
+  direction: export
+  convention: gltf
+  inference: true
+  formats:
+  - obj
+  - stl
+  note: '[INFERENCE U1-6] OBJ/STL import assumed; Windows-only, not verified.'
+- id: fuse
+  name: Adobe Fuse CC
+  kind: tool
+  vendor: Adobe (discontinued 2020)
+  dims:
+  - 3d
+  adapter: fuse
+  tier: interchange_pack
+  direction: import
+  convention: gltf
+  formats:
+  - obj
+  note: 'Producer tool (character creator): exported OBJ characters are ingested, validated and re-exported to every 3D target.'
+- id: flipside-studio
+  name: Flipside Studio
+  kind: tool
+  vendor: Flipside XR
+  dims:
+  - 3d
+  adapter: unity
+  tier: interchange_pack
+  direction: export
+  convention: unity
+  inference: true
+  formats:
+  - upm-package
+  - glb
+  note: '[INFERENCE U1-7] custom avatars/sets are authored through Flipside''s Unity-based creator tools, so the Unity pack is the path.'
+- id: creative-engine
+  name: Creative Engine
+  kind: engine
+  vendor: unknown
+  dims:
+  - 2d
+  - 3d
+  adapter: catalog-generic
+  tier: descriptor_only
+  direction: export
+  convention: gltf
+  inference: true
+  formats:
+  - glb
+  - png-atlas
+  note: '[INFERENCE U1-8] identity ambiguous; generic glTF + PNG atlas pack offered, import path unconfirmed.'
+- id: colmap
+  name: COLMAP
+  kind: photogrammetry
+  vendor: open source (BSD)
+  dims:
+  - 3d
+  adapter: colmap
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - colmap-text-model
+  note: cameras.txt / images.txt / points3D.txt (world-to-camera, OpenCV camera frame) written and re-read; becomes cli_bridge when `colmap` is
+    installed.
+- id: meshroom
+  name: Meshroom / AliceVision
+  kind: photogrammetry
+  vendor: AliceVision (MPL-2.0)
+  dims:
+  - 3d
+  adapter: recon-import
+  tier: interchange_pack
+  direction: import
+  convention: opengl-yup
+  formats:
+  - obj
+  - ply
+  note: Textured OBJ / PLY outputs ingested into IR.
+- id: realitycapture
+  name: RealityCapture (RealityScan)
+  kind: photogrammetry
+  vendor: Epic Games
+  dims:
+  - 3d
+  adapter: recon-import
+  tier: interchange_pack
+  direction: import
+  convention: opengl-yup
+  formats:
+  - obj
+  - ply
+  note: Windows-only; exported OBJ/PLY ingested.
+- id: openmvs
+  name: OpenMVS
+  kind: photogrammetry
+  vendor: open source (AGPL-3.0)
+  dims:
+  - 3d
+  adapter: colmap
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - colmap-text-model
+  - ply
+  note: Consumes a COLMAP model via InterfaceCOLMAP; its PLY meshes are ingested.
+- id: opensplat
+  name: OpenSplat
+  kind: splats
+  vendor: open source (AGPL-3.0)
+  dims:
+  - 3d
+  adapter: splats
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - 3dgs-ply
+  - colmap-text-model
+  - nerfstudio-transforms
+- id: nerfstudio
+  name: Nerfstudio / gsplat
+  kind: splats
+  vendor: open source (Apache-2.0)
+  dims:
+  - 3d
+  adapter: splats
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - nerfstudio-transforms
+  - 3dgs-ply
+- id: postshot
+  name: Jawset Postshot
+  kind: splats
+  vendor: Jawset
+  dims:
+  - 3d
+  adapter: splats
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - colmap-text-model
+  - 3dgs-ply
+  note: Windows-only.
+- id: supersplat
+  name: PlayCanvas SuperSplat
+  kind: splats
+  vendor: PlayCanvas (MIT)
+  dims:
+  - 3d
+  adapter: splats
+  tier: interchange_pack
+  direction: both
+  convention: opengl-yup
+  formats:
+  - 3dgs-ply

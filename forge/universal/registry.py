@@ -36,7 +36,7 @@ CURATED_CONVENTION = {
     "torque3d": "zup-rh-yfwd", "source": "source", "source-2": "source", "goldsrc": "source", "quake-engine": "source",
     "id-tech-2": "source", "id-tech-3": "source", "id-tech-4": "source", "ioquake3": "source", "qfusion": "source",
     "babylon-js": "directx-yup", "irrlicht": "directx-yup", "three-js": "opengl-yup", "playcanvas": "opengl-yup",
-    "a-frame": "opengl-yup", "ogre": "opengl-yup", "jmonkeyengine": "opengl-yup", "libgdx": "opengl-yup",
+    "a-frame-vr": "opengl-yup", "ogre": "opengl-yup", "jmonkeyengine": "opengl-yup", "libgdx": "opengl-yup",
     "monogame-xna": "opengl-yup", "stride": "opengl-yup", "defold": "opengl-yup", "s-box": "source",
 }
 # Publicly obtainable proprietary editors/SDKs (a user can install them and import files).

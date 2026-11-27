@@ -1,0 +1,26 @@
+{
+  "barrel": {
+    "key": "5ac97bb68f6ce3cf",
+    "source": "openscad $fn=128",
+    "tool": "OpenSCAD version 2021.01",
+    "volume": 0.39237581683837136
+  },
+  "cog": {
+    "key": "4cdfaf4e9e4909e0",
+    "source": "openscad $fn=128",
+    "tool": "OpenSCAD version 2021.01",
+    "volume": 42920.376410708704
+  },
+  "crate": {
+    "key": "b127d46a95a153df",
+    "source": "openscad $fn=128",
+    "tool": "OpenSCAD version 2021.01",
+    "volume": 0.9039979858439477
+  },
+  "pillar": {
+    "key": "ebae33767ead154f",
+    "source": "openscad $fn=128",
+    "tool": "OpenSCAD version 2021.01",
+    "volume": 0.7157011271262753
+  }
+}

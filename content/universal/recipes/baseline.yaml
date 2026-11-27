@@ -1,0 +1,28 @@
+# AssetFabric self-improvement — committed baseline recipes (version 1 of each family).
+# Copyright © 2026 Recharged Ideas. All Rights Reserved.
+# Promotions happen locally (.fabric/universal/evolution/state.json, git-ignored) and only when a candidate strictly
+# improves the family objective while passing every gate; `forge universal evolve --rollback` restores any version.
+schema_version: "1.0"
+families:
+  parametric.csg:
+    description: "CSG fallback polygonisation (cell size as a fraction of the model extent + Newton projection steps)"
+    objective: "minimise mean |V_mesh - V_ref| / V_ref + 0.02 · mean(triangles / tri_budget) over the template suite"
+    params:
+      cell_frac:    {value: 0.04, min: 0.008, max: 0.05, step_mul: 1.25}
+      newton_steps: {value: 0, min: 0, max: 3, step: 1, int: true}
+    gates:
+      manifold_watertight: "every suite mesh is a closed, consistently oriented 2-manifold"
+      tri_budget_first_pass: "the recipe itself stays inside every template's triangle budget (no budget re-polygonisation)"
+      max_rel_volume_error: 0.05
+      suite_wall_s: 60
+  maps2d.normal:
+    description: "Silhouette → height → tangent-space normal recipe (blur radius, relief relative to the inscribed radius, dome profile)"
+    objective: "minimise mean angular error (deg) against analytic hemisphere / ellipsoid normals"
+    params:
+      blur:   {value: 1, min: 0, max: 3, step: 1, int: true}
+      relief: {value: 0.25, min: 0.1, max: 2.0, step_mul: 1.5}
+      dome:   {value: 1.0, min: 0.0, max: 1.0, step: 0.25}
+    gates:
+      finite: "no NaN/Inf normals"
+      unit_length: "|n| = 1 ± 1e-6"
+      max_mean_error_deg: 45

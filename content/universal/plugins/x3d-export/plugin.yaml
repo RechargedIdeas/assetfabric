@@ -1,0 +1,19 @@
+# Example AssetFabric plugin (U1). Closes the `x3d` format gap reported by `forge universal gaps`.
+# Lifecycle: forge universal plugin-verify content/universal/plugins/x3d-export
+#            forge universal plugin-register content/universal/plugins/x3d-export
+id: x3d-export
+name: X3D (ISO/IEC 19776-1 XML encoding) exporter
+version: 1.0.0
+api_version: "1.0"
+kind: adapter
+entrypoint: adapter.py:X3DAdapter
+tier: interchange_pack
+direction: export
+dims: [3d]
+formats: [x3d]
+convention: gltf
+permissions: {network: false, subprocess: false, filesystem: pack}
+description: >
+  Bakes every mesh node to world space (glTF/X3D share +Y up, right-handed, metres) and writes one X3D 3.3 document
+  with an IndexedTriangleSet per mesh plus a Material from the IR base colour. verify() re-parses the XML and checks
+  triangle/vertex counts against the manifest.

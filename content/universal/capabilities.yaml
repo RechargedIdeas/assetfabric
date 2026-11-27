@@ -1,0 +1,27 @@
+# Capabilities AssetFabric's universal engine is expected to grow into. `forge universal gaps` diffs this list against
+# what the built-in adapters + registered plugins actually advertise (their `formats`), the engines catalog
+# (descriptor_only entries, inference-flagged named tools), adapters without a native check, and GroundWeave rungs
+# that are still `impl: planned`. Add an entry here when a new format/tool emerges; the gap report then tells you
+# what to build (`forge universal plugin-scaffold …`). Nothing here is claimed as supported.
+schema_version: "1.0"
+formats:
+  glb:          {dims: [3d, 2.5d, 2d], why: "Khronos glTF 2.0 binary — the universal 3D interchange hub"}
+  obj:          {dims: [3d], why: "Wavefront OBJ — lowest-common-denominator mesh format"}
+  stl:          {dims: [3d], why: "STL — CAD / 3D printing / OpenSCAD"}
+  x:            {dims: [3d], why: "DirectX .x — GameGuru, CopperCube, AppGameKit legacy pipelines"}
+  png-atlas:    {dims: [2d, 2.5d], why: "Sprite atlas + frame data for every 2D engine"}
+  texturepacker-json: {dims: [2d], why: "De-facto atlas descriptor (Paper2D, Phaser, PixiJS, Cocos …)"}
+  png-normal:   {dims: [2d, 2.5d], why: "Dynamic-lighting maps (Sprite Lamp / Sprite Pro style)"}
+  3dgs-ply:     {dims: [3d], why: "3D Gaussian Splatting point/splat PLY"}
+  colmap-text-model: {dims: [3d], why: "COLMAP sparse model — photogrammetry/NeRF/3DGS training input"}
+  x3d:          {dims: [3d], why: "ISO/IEC 19775 X3D — web3d / archival interchange"}
+  fbx:          {dims: [3d], why: "Autodesk FBX — legacy default for Unreal/Unity/Mixamo; writing needs the proprietary FBX SDK"}
+  usd:          {dims: [3d], why: "OpenUSD (.usda/.usdc/.usdz) — Omniverse, Apple, Unreal/Unity USD importers"}
+  dae:          {dims: [3d], why: "COLLADA — older engines (CopperCube, Esenthel, SketchUp) still import it"}
+  3mf:          {dims: [3d], why: "3MF — modern CAD / 3D printing successor to STL"}
+  vrm:          {dims: [3d], why: "VRM — humanoid avatar extension of glTF (VRoid, VTuber tools)"}
+  spz:          {dims: [3d], why: "Compressed Gaussian splats (Niantic SPZ)"}
+features:
+  lod-chain:        {why: "Automatic LOD generation (mesh decimation per level)"}
+  uv-unwrap:        {why: "Seam-aware UV unwrapping beyond box projection"}
+  animation-retarget: {why: "Retarget skeletal animation between rigs (Mixamo/Fuse → engine skeletons)"}
