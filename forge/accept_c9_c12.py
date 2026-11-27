@@ -1033,13 +1033,14 @@ def _recon_core(root: Path, tmp: Path) -> dict[str, Any]:
     few = realityloom.plan(realityloom.bundle_manifest(imgs[:1], "backdrop", "burst", root), ["cpu"], tools={})
     train = next(s for s in gpu["stages"] if s["id"] == "train_splat")
     # 0.7.7: the CPU photogrammetry route is runnable end to end. 0.9.2: the GPU splat route has no stub stage any more — its
-    # training stage is real_unverified_on_gpu (external trainer on the ROCm node) and is labelled as such; submit stays a stub.
+    # training stage is real_unverified_on_gpu (external trainer on the ROCm node) and is labelled as such; desktop cluster submit is
+    # real too (LoomCluster op recon.splat); only the phone-initiated submit stays a stub.
     plan_ok = (cpu["degraded_from"] == "splat" and cpu["effective_route"] == "photogrammetry" and cpu["runnable_today"] is True
                and cpu["blocked_by"] == [] and cpu["eta_measured"] is False and cpu["unverified_on_gpu"] == []
                and gpu["effective_route"] == "splat" and train["requires"] == {"device": "rocm"}
                and train["status"] == "real_unverified_on_gpu" and train.get("unverified") == "recon.splatforge"
                and gpu["runnable_today"] is True and gpu["blocked_by"] == [] and gpu["unverified_on_gpu"] == ["recon.splatforge"]
-               and gpu["cluster_submit"] == "stub: recon.splat_submit"
+               and gpu["cluster_submit"].startswith("forge recon submit --bundle") and cpu["cluster_submit"] is None
                and prop["effective_route"] == "photogrammetry" and prop["degraded_from"] is None
                and few["problems"] and few["eta"] == "no runnable route on the available devices"
                and all(s["status"] == "real" for p in (cpu, gpu) for s in p["stages"] if "unverified" not in s))
@@ -1105,11 +1106,33 @@ def _recon_cluster(root: Path, tmp: Path) -> dict[str, Any]:
             r3 = "refused:stub" if e.feature == "recon.splat_submit" else f"wrong:{e}"
         sts = {n: lc._http(u + "/status") for n, u in fl.urls.items()}
         queued = sum(s["outstanding"] + s["results"] + s["queue"] + s["running"] for s in sts.values())
+        # 0.9.2 (C-103): the desktop path with bytes is real — LoomCluster op recon.splat, placed on the rocm node `g`,
+        # contract-probe trainer standing in for OpenSplat (no GPU here), artifacts back as hash-verified blobs.
+        from forge import photogrammetry as pg
+        sc = pg.render_views(9)
+        bdir = tmp / "cluster-bundle"
+        realityloom.write_bundle(bdir, [pg.png_bytes(im) for im in sc["images"]], "backdrop", "sweep", root)
+        try:
+            job = realityloom.submit_bundle(bdir, fl.urls["a"], iters=10, focal_px=float(sc["K"][0, 0]),
+                                            contract_probe=True, timeout_s=300, poll_s=0.2)
+            ply = (bdir / "splat_gpu" / "point_cloud.ply").read_bytes()
+            real = {"ok": job["cluster"]["node"] == "g" and job["status"] == "real_unverified_on_gpu"
+                    and job["verified_on_gpu"] is False and job["contract_probe"] is True
+                    and realityloom.check_splat_ply(ply)["sh_degree"] == 3
+                    and hashlib.sha256(ply).hexdigest() == job["ply_sha256"],
+                    "placed_on": job["cluster"]["node"], "capable": job["cluster"]["capable_nodes"],
+                    "attempts": job["cluster"]["attempts"], "splats": job["ply"]["vertices"],
+                    "ply_sha256": job["ply_sha256"], "config_sha256": job["config_sha256"]}
+        except Exception as e:  # noqa: BLE001
+            real = {"ok": False, "error": f"{type(e).__name__}: {e}"}
     ok = (not no_gpu["ok"] and r1 == "refused:no_gpu_node" and gpu["ok"] and gpu["capable"] == ["g"]
-          and r2 == "refused:stub" and r3 == "refused:stub" and queued == 0)
+          and r2 == "refused:stub" and r3 == "refused:stub" and queued == 0 and real["ok"])
     return {"ok": ok, "cpu_only_fleet": {"capable": no_gpu["capable"], "submit": r1},
-            "fleet_with_rocm_node": {"capable": gpu["capable"], "splat_submit": r2, "photogrammetry_submit": r3},
-            "jobs_queued_anywhere": queued, "note": "placement check is real (C7 adverts); cluster submission (recon.splat_submit) is the C12 stub, so nothing is queued"}
+            "fleet_with_rocm_node": {"capable": gpu["capable"], "phone_splat_submit": r2, "phone_photogrammetry_submit": r3},
+            "jobs_queued_by_stub_path": queued, "cluster_splat_job": real,
+            "note": "placement check is real (C7 adverts); the phone/manifest path (recon.splat_submit) is the C12 stub and "
+                    "queues nothing; the desktop bundle path (recon.splat_cluster, LoomCluster op recon.splat) ran on the "
+                    "simulated-rocm node with the CPU contract-probe trainer — nothing ran on a GPU"}
 
 
 def _splat_gpu(root: Path, tmp: Path) -> dict[str, Any]:
