@@ -26,6 +26,11 @@ holders of the fleet secret, in both directions. The secret comes from ``FORGE_C
 ``.fabric/cluster.key`` (`forge cluster keygen`). Integrity + authentication, **not** confidentiality: use Tailscale/
 WireGuard off loopback.
 
+**TLS / mTLS (post-F9, 0.9.1; C-99):** optional. With ``FORGE_CLUSTER_TLS_DIR`` set (certs from
+``forge cluster tls-keygen``, a private fleet CA under ``.fabric/cluster-tls/``) every node serves ``https://`` only
+(TLS 1.3), requires a client certificate from the fleet CA, and every client verifies the node's certificate +
+hostname against that CA and refuses plaintext ``http://`` peers. HMAC auth stays on top (forge/cluster_tls.py).
+
 **Blobs (Q6, C-96):** artifact bytes never ride in result JSON. The executing node moves ``data_b64`` into its
 content-addressed blob store and the result carries ``blobs: {name: {sha256, size}}``; the origin pulls each blob over
 signed ``GET /blob/<sha256>``, verifies the digest and only then accepts the result (else the executor redelivers).
@@ -226,10 +231,41 @@ def ensure_process_key() -> None:
             os.environ[KEY_ENV] = secrets.token_hex(32)
 
 
+_TLS_IDENTITY: dict[str, Any] = {"name": None, "ctx": {}}
+
+
+def set_tls_identity(name: str | None) -> None:
+    """Which certificate this process presents as a TLS client (a node uses its own id; CLI clients `operator`)."""
+    _TLS_IDENTITY["name"] = name
+    _TLS_IDENTITY["ctx"] = {}
+
+
+def _client_ctx(override: Any = None) -> Any:
+    from forge import cluster_tls
+
+    if override is not None:
+        return override
+    name = _TLS_IDENTITY["name"]
+    key = (os.environ.get(cluster_tls.DIR_ENV, ""), os.environ.get(cluster_tls.NAME_ENV, ""), name)
+    ctx = _TLS_IDENTITY["ctx"].get(key)
+    if ctx is None:
+        ctx = _TLS_IDENTITY["ctx"][key] = cluster_tls.client_context(name)
+    return ctx
+
+
 def _http(url: str, body: dict[str, Any] | None = None, timeout: float = 2.0, key: bytes | None = None,
-          raw: bool = False, sign: bool = True) -> Any:
+          raw: bool = False, sign: bool = True, tls_context: Any = None) -> Any:
     """Signed request; the response signature is verified (raises ClusterAuthError on mismatch).
-    ``sign=False`` exists only so the acceptance run can prove that unsigned requests are refused."""
+    ``sign=False`` exists only so the acceptance run can prove that unsigned requests are refused.
+    ``https://`` URLs use the fleet-CA mTLS client context; with TLS enabled, ``http://`` peers are refused (no downgrade).
+    ``tls_context`` lets the acceptance run present a foreign / no certificate on purpose."""
+    from forge import cluster_tls
+
+    ctx = None
+    if url.startswith("https://"):
+        ctx = _client_ctx(tls_context)
+    elif cluster_tls.enabled() and tls_context is None:
+        raise ClusterAuthError(f"plaintext peer refused while cluster TLS is on: {url}")
     data = json.dumps(body).encode() if body is not None else b""
     method = "POST" if body is not None else "GET"
     sp = urllib.parse.urlsplit(url)
@@ -241,7 +277,7 @@ def _http(url: str, body: dict[str, Any] | None = None, timeout: float = 2.0, ke
         ts = str(int(time.time() * 1000))
         headers.update({"X-Loom-Ts": ts, "X-Loom-Nonce": nonce, "X-Loom-Sig": _mac(k, method, path, ts, nonce, _sha(data))})
     req = urllib.request.Request(url, data=data if body is not None else None, method=method, headers=headers)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
         rb = r.read()
         if sign and not hmac.compare_digest(r.headers.get("X-Loom-RSig", ""), _mac(k, "resp", nonce, str(r.status), _sha(rb))):
             raise ClusterAuthError(f"unsigned or forged response from {sp.netloc}{path}")
@@ -295,7 +331,8 @@ class Node:
         self.running: dict[str, dict[str, Any]] = {}
         self.undelivered: list[tuple[str, dict[str, Any]]] = []
         self.stats = {"executed": 0, "stolen_in": 0, "stolen_out": 0, "forwarded": 0, "requeued": 0,
-                      "recovered": 0, "retried": 0, "redelivered": 0, "auth_rejected": 0, "blobs_out": 0, "blobs_in": 0}
+                      "recovered": 0, "retried": 0, "redelivered": 0, "auth_rejected": 0, "blobs_out": 0, "blobs_in": 0,
+                      "tls_rejected": 0}
         self.key = cluster_key()
         self.replay = ReplayGuard()
         self.blob_dir = self.state_dir / "blobs"
@@ -601,6 +638,7 @@ class Node:
     def status(self) -> dict[str, Any]:
         with self.lock:
             return {**self.advert(), "coordinator": self.coordinator(), "peers": sorted(self.adverts),
+                    "transport": "https+mtls" if getattr(self, "tls", False) else "http",
                     "stats": dict(self.stats), "results": len(self.results),
                     "outstanding": len(self.outstanding)}
 
@@ -699,9 +737,47 @@ class Node:
                 except Exception as e:  # noqa: BLE001
                     self._send({"error": f"{type(e).__name__}: {e}"}, 400)
 
-        srv = ThreadingHTTPServer((self.cfg["bind"], self.port), H)
+        import ssl as ssl_mod
+
+        from forge import cluster_tls
+
+        tls = cluster_tls.enabled(self.cfg)
+        if tls:
+            set_tls_identity(self.caps.node_id)
+            sctx = cluster_tls.server_context(self.caps.node_id, self.cfg)
+            _client_ctx()                       # fail fast if this node's client material is missing too
+            H.timeout = 15                      # a stalled TLS handshake cannot pin a handler thread
+
+            class Srv(ThreadingHTTPServer):
+                daemon_threads = True
+
+                def get_request(self):          # handshake runs in the handler thread, not the accept loop
+                    sock, addr = self.socket.accept()
+                    return sctx.wrap_socket(sock, server_side=True, do_handshake_on_connect=False), addr
+
+                def handle_error(self, request: Any, client_address: Any) -> None:
+                    import sys
+
+                    e = sys.exc_info()[1]
+                    if isinstance(e, (ssl_mod.SSLError, ConnectionError, TimeoutError, OSError)):
+                        with node.lock:
+                            node.stats["tls_rejected"] += 1
+                        return
+                    super().handle_error(request, client_address)
+
+            srv = Srv((self.cfg["bind"], self.port), H)
+        else:
+            srv = ThreadingHTTPServer((self.cfg["bind"], self.port), H)
         self.port = srv.server_address[1]
-        self.url = f"http://{self.cfg['bind']}:{self.port}"
+        host = str(self.cfg.get("advertise") or "") or self.cfg["bind"]
+        if host in ("0.0.0.0", "::", ""):
+            import socket
+
+            host = socket.gethostname()
+        if ":" in host and not host.startswith("["):
+            host = f"[{host}]"
+        self.url = f"{'https' if tls else 'http'}://{host}:{self.port}"
+        self.tls = tls
         self.recover()
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         self.heartbeat()
@@ -959,6 +1035,8 @@ def _main(argv: list[str] | None = None) -> int:
     n.add_argument("--port", type=int, default=0)
     n.add_argument("--peer", action="append", default=[])
     n.add_argument("--pin", type=int, default=0, help="Pin this node (and its job children) to N CPUs.")
+    n.add_argument("--bind", default=None, help="Listen address (default cluster.protocol.bind, loopback).")
+    n.add_argument("--advertise", default=None, help="Host peers use to reach this node (LAN IP / Tailscale name).")
     o = sub.add_parser("_op")        # child entry: run one op in isolation
     o.add_argument("name")
     o.add_argument("payload")
@@ -971,7 +1049,12 @@ def _main(argv: list[str] | None = None) -> int:
     if a.pin:
         pin_cpus(a.pin)
     caps = local_caps(a.id, a.cores, a.devices.split(",") if a.devices else None, a.cap)
-    node = Node(caps, Path(a.state_dir), list(a.peer), protocol_config(), a.port)
+    cfg = protocol_config()
+    if a.bind:
+        cfg["bind"] = a.bind
+    if a.advertise:
+        cfg["advertise"] = a.advertise
+    node = Node(caps, Path(a.state_dir), list(a.peer), cfg, a.port)
     node.serve(ready=lambda nd: print(f"LOOM_READY {nd.url}", flush=True))
     return 0
 

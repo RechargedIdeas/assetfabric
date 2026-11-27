@@ -430,6 +430,128 @@ def _auth_and_blobs(tmp: Path) -> dict[str, Any]:
     return out
 
 
+def _tls_transport(tmp: Path) -> dict[str, Any]:
+    """Post-F9 (0.9.1, C-99): optional TLS 1.3 + mTLS from a private fleet CA, on top of the HMAC fleet auth. Real
+    loopback HTTPS: a 2-node fleet meshes, runs, steals and moves a blob over https://; plaintext, no client cert, a
+    foreign-CA client cert, an untrusted server CA, a wrong hostname and an http:// downgrade are all refused; HMAC is
+    still required inside TLS (unsigned → 401)."""
+    import os
+    import socket
+    import ssl
+    import urllib.request
+
+    from forge import cluster_tls as T
+    from forge import loomcluster as lc
+
+    tdir, rogue = tmp / "tls", tmp / "tls-rogue"
+    issued = T.keygen(tdir, ["a", "b", "operator"])
+    T.keygen(rogue, ["operator"])
+    out: dict[str, Any] = {"issued": [i["name"] for i in issued["issued"]],
+                           "key_modes": sorted({oct(Path(i["key"]).stat().st_mode & 0o777) for i in issued["issued"]}
+                                               | {oct((tdir / "ca.key.pem").stat().st_mode & 0o777)})}
+    old = {k: os.environ.get(k) for k in (T.DIR_ENV, T.NAME_ENV)}
+    os.environ[T.DIR_ENV] = str(tdir)
+    os.environ.pop(T.NAME_ENV, None)
+    lc.set_tls_identity("operator")
+
+    def attempt(fn: Any) -> Any:
+        try:
+            fn()
+            return 200
+        except urllib.error.HTTPError as e:
+            return e.code
+        except lc.ClusterAuthError:
+            return "refused_client_side"
+        except (urllib.error.URLError, ssl.SSLError, ConnectionError, OSError, http_client_errors()) as e:
+            why = getattr(e, "reason", e)
+            return f"refused:{type(why).__name__ if not isinstance(why, str) else type(e).__name__}:{str(why)[:60]}"
+
+    def ctx_with(ca: Path, cert: tuple[Path, Path] | None) -> ssl.SSLContext:
+        c = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        c.load_verify_locations(cafile=str(ca))
+        if cert:
+            c.load_cert_chain(*cert)
+        return c
+
+    try:
+        with lc.Fleet(tmp / "tlsfleet") as fl:
+            fl.add("a", 1)
+            fl.add("b", 1, devices="cpu,directml")
+            mesh = _mesh_ok(fl)
+            a, b = fl.urls["a"], fl.urls["b"]
+            jobs = [{"id": f"t{i}", "op": "hashchain", "payload": {"seed": i, "rounds": 20000}} for i in range(8)]
+            res = lc.run_batch(a, jobs, 60)
+            wrong = [j for j, x in res.items() if (x.get("value") or {}).get("digest")
+                     != lc.expected_hashchain(int(j[1:]), 20000)]
+            size = 1 << 20
+            lc._http(a + "/submit", {"id": "tblob", "op": "bytes", "payload": {"seed": "tls", "size": size},
+                                     "requires": {"device": "directml"}}, 5.0)
+            br = lc.collect(a, ["tblob"], 60).get("tblob", {})
+            blob = (br.get("value") or {}).get("blobs", {}).get("blob.bin", {})
+            data = lc.fetch_blob(a, blob["sha256"]) if blob else b""
+            port = int(a.rsplit(":", 1)[1])
+            own = (tdir / "nodes" / "operator.pem", tdir / "nodes" / "operator.key.pem")
+            foreign = (rogue / "nodes" / "operator.pem", rogue / "nodes" / "operator.key.pem")
+            plain = a.replace("https://", "http://")
+
+            def plain_raw() -> None:
+                urllib.request.urlopen(urllib.request.Request(plain + "/status"), timeout=3).read()
+
+            def hostname_mismatch() -> None:
+                c = ctx_with(tdir / "ca.pem", own)
+                with socket.create_connection(("127.0.0.1", port), timeout=3) as sk, \
+                        c.wrap_socket(sk, server_hostname="evil.example") as ss:
+                    ss.recv(1)
+
+            refused = {
+                "plaintext_to_tls_port": attempt(plain_raw),
+                "no_client_cert": attempt(lambda: lc._http(a + "/status", tls_context=ctx_with(tdir / "ca.pem", None))),
+                "foreign_ca_client_cert": attempt(lambda: lc._http(a + "/status",
+                                                                   tls_context=ctx_with(tdir / "ca.pem", foreign))),
+                "untrusted_server_ca": attempt(lambda: lc._http(a + "/status", tls_context=ctx_with(rogue / "ca.pem", own))),
+                "hostname_mismatch": attempt(hostname_mismatch),
+                "http_downgrade": attempt(lambda: lc._http(plain + "/status")),
+            }
+            unsigned_in_tls = attempt(lambda: lc._http(a + "/status", sign=False))
+            c = ctx_with(tdir / "ca.pem", own)
+            with socket.create_connection(("127.0.0.1", port), timeout=3) as sk, \
+                    c.wrap_socket(sk, server_hostname="127.0.0.1") as ss:
+                hs = {"version": ss.version(), "cipher": ss.cipher()[0], "server_cn": T.peer_name(ss)}
+            time.sleep(0.3)
+            sa, sb = fl.status("a"), fl.status("b")
+            out.update({
+                "urls": {"a": a, "b": b}, "mesh": bool(mesh), "transport": [sa.get("transport"), sb.get("transport")],
+                "batch": {"jobs": len(jobs), "completed": len(res), "wrong": wrong,
+                          "by_node": sorted({x.get("node") for x in res.values()})},
+                "blob": {"executed_on": br.get("node"), "bytes": len(data), "ok": data == lc.bytes_stream("tls", size)},
+                "refused": refused, "unsigned_inside_tls": unsigned_in_tls, "handshake": hs,
+                "tls_rejected_counter": sa["stats"]["tls_rejected"], "auth_rejected_counter": sa["stats"]["auth_rejected"],
+            })
+    finally:
+        for k, v in old.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+        lc.set_tls_identity(None)
+    rf = out.get("refused", {})
+    out["ok"] = bool(
+        out.get("mesh") and str(out.get("urls", {}).get("a", "")).startswith("https://") and out["transport"] == ["https+mtls", "https+mtls"]
+        and out["batch"]["completed"] == len(jobs) and not out["batch"]["wrong"]
+        and out["blob"]["ok"] and out["blob"]["executed_on"] == "b"
+        and rf and all(v != 200 for v in rf.values()) and rf["http_downgrade"] == "refused_client_side"
+        and out["unsigned_inside_tls"] == 401 and out["handshake"]["version"] == "TLSv1.3"
+        and out["handshake"]["server_cn"] == "a" and out["tls_rejected_counter"] >= 3
+        and out["key_modes"] == ["0o600"])
+    return out
+
+
+def http_client_errors() -> type:
+    import http.client
+
+    return http.client.HTTPException
+
+
 def c7_run(root: Path) -> tuple[int, dict[str, Any]]:
     fast = fast_mode()
     tmp = Path(tempfile.mkdtemp(prefix="fabric-c7-"))
@@ -441,7 +563,9 @@ def c7_run(root: Path) -> tuple[int, dict[str, Any]]:
         r["cli_gen"] = _cli_gen(root, tmp)
         r["loomlink"] = _loomlink(root, tmp, fast)
         r["auth_blobs"] = _auth_and_blobs(tmp)
-        r["not_proven"] = ["cross-machine transport (LAN/Tailscale); node auth is integrity + authentication, not encryption",
+        r["tls"] = _tls_transport(tmp)
+        r["not_proven"] = ["cross-machine transport (LAN/Tailscale) — TLS/mTLS proven on loopback only "
+                           "(docs/cluster-lan-runbook.md); plain http mode stays integrity + authentication only",
                            "Kotlin/PocketLoom as a cluster peer node",
                            "real GPU devices (device placement uses simulated adverts)", "origin loss without restart"]
         return 0, r
@@ -571,7 +695,7 @@ def c8_run(root: Path) -> tuple[int, dict[str, Any]]:
 # ----------------------------------------------------------------------------------- hooks
 
 def check(ms: str):  # noqa: ANN201
-    keys = {"C7": ["negotiation", "determinism", "failures", "cli_gen", "loomlink", "auth_blobs"],
+    keys = {"C7": ["negotiation", "determinism", "failures", "cli_gen", "loomlink", "auth_blobs", "tls"],
             "C8": ["static", "selection", "runtime_fallback", "pipeline_enforcement", "pocketloom_ladder",
                    "verify", "gpu_required_routing"]}[ms]
 

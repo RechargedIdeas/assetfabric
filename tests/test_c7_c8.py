@@ -201,3 +201,59 @@ def test_large_artifact_travels_as_blob(fleet: lc.Fleet) -> None:
 def test_acceptance_registered_with_results_schema(root: Path) -> None:
     for m in ("C7", "C8"):
         assert m in INCREMENTS and INCREMENTS[m].runner is not None
+
+
+# ----------------------------------------------------------------------------- LoomCluster TLS / mTLS (0.9.1, C-99)
+
+def test_tls_keygen_ca_once_leaf_sans_and_modes(tmp_path: Path) -> None:
+    pytest.importorskip("cryptography")
+    from forge import cluster_tls as T
+
+    r = T.keygen(tmp_path, ["n1"], ["100.64.0.7", "shivati.tailnet.ts.net"])
+    ca_bytes = (tmp_path / "ca.pem").read_bytes()
+    T.keygen(tmp_path, ["n2"])                                   # the CA is created once, never replaced
+    assert (tmp_path / "ca.pem").read_bytes() == ca_bytes
+    hosts = r["issued"][0]["hosts"]
+    assert {"localhost", "127.0.0.1", "::1", "100.64.0.7", "shivati.tailnet.ts.net"} <= set(hosts)
+    for p in (tmp_path / "ca.key.pem", tmp_path / "nodes" / "n1.key.pem", tmp_path / "nodes" / "n2.key.pem"):
+        assert p.stat().st_mode & 0o777 == 0o600
+    d = T.describe(tmp_path)
+    assert set(d["nodes"]) == {"n1", "n2"} and d["ca"]["key_present"]
+    assert "PRIVATE" not in json.dumps(d)
+    with pytest.raises(T.ClusterTLSError):
+        T.issue(tmp_path, "../evil")
+
+
+def test_tls_contexts_are_strict(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    pytest.importorskip("cryptography")
+    import ssl
+
+    from forge import cluster_tls as T
+
+    T.keygen(tmp_path, ["a", "operator"])
+    monkeypatch.setenv(T.DIR_ENV, str(tmp_path))
+    s = T.server_context("a")
+    c = T.client_context("operator")
+    assert s.verify_mode == ssl.CERT_REQUIRED and s.minimum_version == ssl.TLSVersion.TLSv1_3
+    assert c.check_hostname and c.verify_mode == ssl.CERT_REQUIRED
+    with pytest.raises(T.ClusterTLSError):
+        T.client_context("missing-node")
+    lc.set_tls_identity("operator")
+    try:
+        with pytest.raises(lc.ClusterAuthError):                  # no plaintext downgrade while TLS is on
+            lc._http("http://127.0.0.1:9/status")
+    finally:
+        lc.set_tls_identity(None)
+
+
+def test_tls_loopback_fleet_and_refusals(tmp_path: Path) -> None:
+    pytest.importorskip("cryptography")
+    from forge.accept_cluster import _tls_transport
+
+    r = _tls_transport(tmp_path)
+    assert r["ok"], json.dumps(r, default=str)[:2000]
+    assert r["handshake"]["version"] == "TLSv1.3"
+
+
+def test_cluster_tls_dir_is_gitignored(root: Path) -> None:
+    assert "/.fabric/cluster-tls/" in (root / ".gitignore").read_text(encoding="utf-8").splitlines()
