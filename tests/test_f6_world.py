@@ -163,3 +163,56 @@ def test_pace_constants_are_the_documented_heuristics(root: Path) -> None:
     p = load_pace(root)   # changing any of these needs a DECISIONS entry (pace.yaml header)
     assert (p["nav_factor"], p["combat_factor"], p["wait_factor"], p["first_visit_s"], p["select_s"]) == (1.6, 1.5, 1.0, 30, 45)
     assert p["target_min"] == [15.0, 20.0]
+
+
+# --------------------------------------------------------------------- Q5 (0.7.13): economy design model (ADR-0018)
+
+def test_q5_item_values_are_derived_and_exported(world: dict, root: Path) -> None:
+    from forge.economy import item_values, load_design
+
+    d = load_design(root)
+    v = item_values(world, d)
+    assert all(world["items"][k]["value"] == v[k] for k in world["items"])     # Codegen-World wrote them
+    assert v["sunroot_seed"] == world["shop"]["sunroot_seed"]
+    r = world["recipes"]["flint_edge"]["in"]
+    assert v["flint_edge"] == round(sum(v[i] * q for i, q in r.items()) * d["craft_markup"], 2)
+    assert not any("sell" in it for it in world["items"].values())             # placeholder sell prices removed
+
+
+def test_q5_static_targets_hold_and_dead_drops_are_caught(world: dict, root: Path) -> None:
+    import copy as _copy
+
+    from forge.economy import load_design, static_report
+    from forge.generators.codegen import load_roster
+
+    enemies = {e["id"]: e for e in load_roster(root, "content/roster")["enemies"]["enemies"]}
+    d = load_design(root)
+    rep = static_report(world, d, enemies)
+    assert rep["ok"], rep["checks"]
+    w2 = _copy.deepcopy(world)
+    w2["items"]["junk"] = {"id": "junk", "kind": "material"}
+    d2 = _copy.deepcopy(d)
+    d2["base_value"]["junk"] = 1
+    bad = static_report(w2, d2, enemies)
+    assert not bad["checks"]["no_dead_materials"] and bad["sinks"]["junk"] == []
+
+
+def test_q5_xp_timeline_levels(world: dict) -> None:
+    from forge.economy import level_at, xp_timeline
+
+    s = {"loot": {"drops": [["emberling", 1, [], 100], ["rock_brute", 2, [], 200]]},
+         "stage_ticks": {"q_warden.clear_cave": 300}}
+    tl = xp_timeline(world, s)
+    start = world["xp"]["level_at"][world["xp"]["start_level"] - 1]
+    assert tl[0] == (0, start) and tl[-1][1] == start + 10 + 20 + 40
+    assert level_at(world, tl, 0) == world["xp"]["start_level"]
+
+
+def test_q5_holdout_is_out_of_sample() -> None:
+    from forge.balance import AFFINITY_SPACE, HOLDOUT_LIMIT, HOLDOUT_SEED_BASE, HOLDOUT_SEEDS, BalanceConfig
+
+    assert HOLDOUT_SEED_BASE == 20_000 and HOLDOUT_SEEDS >= 800 and HOLDOUT_LIMIT == 0.035
+    assert HOLDOUT_SEED_BASE + HOLDOUT_SEEDS <= 50_000                              # fits (tune-affinity) use 50 000+
+    gate = BalanceConfig()
+    assert not (gate.seed_base <= HOLDOUT_SEED_BASE < gate.seed_base + gate.seeds)   # CRN gate seeds ≠ hold-out
+    assert all(lo == 0.0 and hi == 3.0 for lo, hi in AFFINITY_SPACE.values())

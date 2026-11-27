@@ -8,7 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.01
+      "depth.distance": 0.011
     },
     "planned_ops": [],
     "real": 4,
@@ -65,7 +65,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.distance",
           "status": "ok",
-          "wall_s": 0.01
+          "wall_s": 0.011
         },
         {
           "backend": null,

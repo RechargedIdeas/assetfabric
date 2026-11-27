@@ -5,11 +5,13 @@
   "milestone": "F5",
   "passed": true,
   "perf": {
-    "balance_wall_s": 49.1,
+    "balance_wall_s": 53.38,
     "balance_workers": 8,
-    "boss_sim_ms": 148.73,
+    "boss_sim_ms": 273.44,
     "boss_ticks": 880,
-    "ms_per_encounter_per_worker": 163.7
+    "holdout_combo_deviation": 0.0271,
+    "holdout_wall_s": 243.34,
+    "ms_per_encounter_per_worker": 177.9
   },
   "result": {
     "abilities_loaded": 17,
@@ -111,7 +113,7 @@
         "rule": 1052
       },
       "dialogue": [],
-      "field_warm_ms": 102.41,
+      "field_warm_ms": 159.58,
       "girt": {
         "callouts_served": 11,
         "lm_calls": 0,
@@ -121,7 +123,7 @@
         "policy_calls": 200,
         "policy_fallbacks": 0,
         "policy_over_budget": 0,
-        "policy_p95_us": 8,
+        "policy_p95_us": 11,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -204,8 +206,8 @@
       "spr_emberling"
     ],
     "balance": {
-      "choice_deviation": 0.0104,
-      "combo_deviation": 0.0321,
+      "choice_deviation": 0.0167,
+      "combo_deviation": 0.0583,
       "config": {
         "crit": 0.1,
         "encounter": "boss_warden",
@@ -221,13 +223,13 @@
         "leader": {
           "bram": 0.71,
           "kael": 0.725,
-          "nyra": 0.715,
-          "sola": 0.7217
+          "nyra": 0.6933,
+          "sola": 0.705
         },
         "pet": {
           "ember_fox": 0.7075,
-          "lumen_wisp": 0.72,
-          "stone_tortle": 0.7262
+          "lumen_wisp": 0.7012,
+          "stone_tortle": 0.7163
         }
       },
       "matchups": {
@@ -320,15 +322,15 @@
           "wins": 145
         },
         "nyra+stone_tortle": {
-          "avg_ticks": 1161.5,
+          "avg_ticks": 1157.3,
           "boss_phase3_rate": 1.0,
           "ci95": [
-            0.6646,
-            0.7868
+            0.597,
+            0.7268
           ],
           "n": 200,
-          "win_rate": 0.73,
-          "wins": 146
+          "win_rate": 0.665,
+          "wins": 133
         },
         "sola+ember_fox": {
           "avg_ticks": 1071.0,
@@ -342,52 +344,54 @@
           "wins": 144
         },
         "sola+lumen_wisp": {
-          "avg_ticks": 1193.9,
+          "avg_ticks": 1192.8,
           "boss_phase3_rate": 1.0,
           "ci95": [
-            0.6593,
-            0.7822
+            0.5816,
+            0.7127
           ],
           "n": 200,
-          "win_rate": 0.725,
-          "wins": 145
+          "win_rate": 0.65,
+          "wins": 130
         },
         "sola+stone_tortle": {
-          "avg_ticks": 1155.2,
+          "avg_ticks": 1159.9,
           "boss_phase3_rate": 1.0,
           "ci95": [
-            0.6541,
-            0.7776
+            0.6804,
+            0.8004
           ],
           "n": 200,
-          "win_rate": 0.72,
-          "wins": 144
+          "win_rate": 0.745,
+          "wins": 149
         }
       },
-      "max_deviation": 0.0321,
-      "mean_win_rate": 0.7179,
+      "max_deviation": 0.0583,
+      "mean_win_rate": 0.7083,
       "outcomes": {
-        "defeat": 677,
-        "victory": 1723
+        "defeat": 700,
+        "victory": 1700
       },
       "softlocks": 0,
       "verdict": {
         "G-BAL-01": true,
         "checks": {
+          "combo_ci_within_5pp": true,
           "encounters_ge_1000": true,
           "max_choice_deviation_lt_5pp": true,
-          "max_combo_deviation_lt_5pp": true,
           "mean_in_target_band": true,
           "no_softlocks": true
         },
         "dev_limit": 0.05,
-        "soft": {},
+        "soft": {
+          "max_combo_deviation_lt_5pp": false
+        },
         "target_band": [
           0.55,
           0.9
         ]
       },
-      "wall_s": 49.1,
+      "wall_s": 53.38,
       "workers": 8
     },
     "boss": {
@@ -552,13 +556,52 @@
       }
     },
     "hits": 156,
+    "holdout": {
+      "combo_deviation": 0.0271,
+      "errors": [],
+      "limit": 0.035,
+      "marginals": {
+        "leader": {
+          "bram": 0.696,
+          "kael": 0.6993,
+          "nyra": 0.6967,
+          "sola": 0.7037
+        },
+        "pet": {
+          "ember_fox": 0.7012,
+          "lumen_wisp": 0.6963,
+          "stone_tortle": 0.6992
+        }
+      },
+      "mean_win_rate": 0.6989,
+      "mode": "full",
+      "ok": true,
+      "seed_base": 20000,
+      "seeds_per_cell": 1000,
+      "softlocks": 0,
+      "wall_s": 243.34,
+      "win_rates": {
+        "bram+ember_fox": 0.681,
+        "bram+lumen_wisp": 0.726,
+        "bram+stone_tortle": 0.681,
+        "kael+ember_fox": 0.694,
+        "kael+lumen_wisp": 0.694,
+        "kael+stone_tortle": 0.71,
+        "nyra+ember_fox": 0.715,
+        "nyra+lumen_wisp": 0.685,
+        "nyra+stone_tortle": 0.69,
+        "sola+ember_fox": 0.715,
+        "sola+lumen_wisp": 0.68,
+        "sola+stone_tortle": 0.716
+      }
+    },
     "increment": "first-boss",
     "music_loaded": true,
     "music_stem": "boss",
     "outcome": "victory",
     "save": {
       "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
-      "path": "/tmp/fabric-f5-_f9zztcn/saves/slot0.json",
+      "path": "/tmp/fabric-f5-7me71cnr/saves/slot0.json",
       "state": {
         "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
         "format": "gamezero-save",
@@ -712,7 +755,7 @@
         "loaded_equal_first": true
       }
     },
-    "sim_ms": 148.73,
+    "sim_ms": 273.44,
     "softlock_probe": {
       "encounters": 24,
       "outcomes": {

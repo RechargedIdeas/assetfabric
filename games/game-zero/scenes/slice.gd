@@ -602,7 +602,7 @@ func _slice_report(final: Dictionary, wall_ms: float) -> Dictionary:
 	for n in ws.log_:
 		match n["kind"]:
 			"stage": stage_ticks["%s.%s" % [n["quest"], n["stage"]]] = n["tick"]
-			"drop": drops.append([n["ref"], n["tier"], n["drops"]])
+			"drop": drops.append([n["ref"], n["tier"], n["drops"], n["tick"]])
 			"craft": crafts.append(n["recipe"])
 			"plant": plants.append(n["crop"])
 			"harvest": harvests.append([n["crop"], n["qty"]])
@@ -626,6 +626,7 @@ func _slice_report(final: Dictionary, wall_ms: float) -> Dictionary:
 		"boss": rep["boss"], "buff_at_boss": rep["buff_at_boss"],
 		"music": {"trace": director.trace, "stems_loaded": rep["music_stems_loaded"]},
 		"wait_ticks": int(rep["wait_ticks"]), "wait_segments": rep["wait_segments"], "buys": ws.log_.filter(func(n): return n["kind"] == "buy").size(),
+		"bought": ws.log_.filter(func(n): return n["kind"] == "buy").map(func(n): return n["item"]),
 		"callouts_total": callout_log.size(), "intents": intents_handled.size(),
 		"softlocks": rep["softlocks"], "checkpoints": rep["checkpoints"],
 		"resumed_from": rep.get("resumed_from", {}),

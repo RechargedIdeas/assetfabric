@@ -8,6 +8,8 @@ Gates:
 - `cross_refs` — every item, crop, recipe, enemy, fighter, tilemap and music track referenced exists;
   loot tables cover every enemy tier in the roster.
 - `quest_chart` — static soft-lock analysis of the compiled quest statechart (forge/statechart.py).
+- `economy_design` — Q5 (ADR-0018): item values derived from content/world/economy_design.yaml; crop ROI, loot value
+  per kill by tier, no dead materials, crafted ≥ inputs (forge/economy.py).
 - `economy_solvable` — main-quest guards are satisfiable from deterministic sources only
   (forge/world.py `solvability`), so a bad loot roll can never soft-lock the slice.
 - `loot_tables` — positive weights, valid qty ranges.
@@ -152,6 +154,14 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
 
     qa = analyze(world["quest_chart"])
     gates.append(GateResult("quest_chart", bool(qa["ok"]), {"regions": {k: v for k, v in qa["regions"].items()}}))
+    # Q5 economy design model (ADR-0018): derived item values + static targets
+    from forge.economy import load_design, static_report as economy_static
+
+    eco_rep = economy_static(world, load_design(ctx.root), enemies)
+    for k, it in world["items"].items():
+        it["value"] = eco_rep["values"].get(k)
+    gates.append(GateResult("economy_design", bool(eco_rep["ok"]), {k: eco_rep[k] for k in ("checks", "crop_roi", "loot_value_per_kill", "missing_value")}
+                            | {"dead_materials": sorted(m for m, v in eco_rep["sinks"].items() if not v)}))
     sol = solvability(world, node_counts)
     gates.append(GateResult("economy_solvable", sol["ok"], {"missing": sol["missing"], "node_counts": node_counts}))
     bad_loot = []
@@ -187,4 +197,5 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
     gates.append(budget_gate(elapsed, len(data), float(brief.get("budget_ms", 2000)), 256 * 1024))
     return GeneratorOutput([Artifact("world.json", data, "application/json")], gates,
                            {"kind": "world", "loot_ev": loot_ev(world), "supply": sol["supply"], "node_counts": node_counts,
+                            "economy": {k: eco_rep[k] for k in ("crop_roi", "loot_value_per_kill")},
                             "quests": [q["id"] for q in world["quests"]], "model_id": "Codegen-World", "model_version": "1"})

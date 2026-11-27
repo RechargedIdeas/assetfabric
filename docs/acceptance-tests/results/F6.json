@@ -7,44 +7,44 @@
   "perf": {
     "bot_length_within_target": false,
     "human_estimate_components_s": {
-      "combat": 85.2,
+      "combat": 91.6,
       "crop_wait": 0.0,
       "explore_new_areas": 180.0,
       "interactions": 171.0,
       "reading": 53.2,
       "select": 45.0,
       "swap_overlays": 20.0,
-      "travel": 481.2
+      "travel": 481.4
     },
-    "human_estimate_min": 17.26,
-    "human_wait_slack_s": 68.3,
+    "human_estimate_min": 17.37,
+    "human_wait_slack_s": 65.9,
     "length_note": "gate = human-pace estimate (forge/pace.py, INFERENCE C-92; a model, not a playtest); bot game time is the machine-efficiency floor, reported as-is; a human GUI playtest replaces the model",
     "length_within_target": true,
     "matrix_game_minutes": [
-      7.1,
-      7.12,
-      7.1,
-      7.1,
+      7.13,
+      7.14,
+      7.13,
       7.15,
-      7.31,
-      7.31,
-      7.35,
+      7.18,
       7.34,
-      7.2,
-      7.23,
-      7.2
+      7.34,
+      7.41,
+      7.35,
+      7.22,
+      7.25,
+      7.21
     ],
     "matrix_human_estimate_min": [
-      17.03,
-      18.51
+      17.14,
+      18.69
     ],
     "matrix_wipes": 0,
-    "slice_game_minutes": 7.1,
-    "slice_ticks": 25550,
-    "slice_wall_ms": 6733.9,
+    "slice_game_minutes": 7.13,
+    "slice_ticks": 25670,
+    "slice_wall_ms": 6707.1,
     "swap_wall_ms": [
-      21.05,
-      13.63
+      20.83,
+      14.36
     ],
     "target_minutes": [
       15.0,
@@ -52,6 +52,75 @@
     ]
   },
   "result": {
+    "economy": {
+      "checks": {
+        "coin_end_p50_in_band": true,
+        "p_flint_edge_before_boss": true,
+        "p_warden_charm_by_end": true,
+        "xp_pacing": true,
+        "xp_twin_matches_game": true
+      },
+      "coin_end": {
+        "p5": 111,
+        "p50": 131.0,
+        "p95": 155
+      },
+      "end_tick": 25670,
+      "kills": 62,
+      "level_ups": [
+        [
+          3,
+          3560
+        ],
+        [
+          4,
+          12770
+        ],
+        [
+          5,
+          23885
+        ]
+      ],
+      "levels": {
+        "boss_start": {
+          "band": [
+            4,
+            4
+          ],
+          "level": 4,
+          "ok": true
+        },
+        "q_warden.clear_cave": {
+          "band": [
+            3,
+            3
+          ],
+          "level": 3,
+          "ok": true
+        },
+        "q_warden.craft": {
+          "band": [
+            4,
+            4
+          ],
+          "level": 4,
+          "ok": true
+        },
+        "q_warden.rest": {
+          "band": [
+            5,
+            5
+          ],
+          "level": 5,
+          "ok": true
+        }
+      },
+      "mc_seeds": 2000,
+      "ok": true,
+      "p_flint_edge_before_boss": 1.0,
+      "p_warden_charm_by_end": 0.9995,
+      "xp_end": 900
+    },
     "locale": {
       "keys_checked": 132,
       "missing": [],
@@ -62,192 +131,276 @@
       "runs": [
         {
           "boss_attempt": 1,
-          "boss_ticks": 766,
+          "boss_ticks": 778,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.1,
-          "human_estimate_min": 17.26,
+          "game_minutes": 7.13,
+          "human_estimate_min": 17.37,
           "leader": "kael",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "ember_fox",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25550,
-          "wall_ms": 6916,
+          "ticks": 25670,
+          "wall_ms": 6965,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 772,
+          "boss_ticks": 778,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.12,
-          "human_estimate_min": 17.55,
+          "game_minutes": 7.14,
+          "human_estimate_min": 17.63,
           "leader": "kael",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "stone_tortle",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25617,
-          "wall_ms": 7031.6,
+          "ticks": 25713,
+          "wall_ms": 7171.4,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 767,
+          "boss_ticks": 778,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.1,
-          "human_estimate_min": 17.33,
+          "game_minutes": 7.13,
+          "human_estimate_min": 17.41,
           "leader": "kael",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "lumen_wisp",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25568,
-          "wall_ms": 7004.7,
+          "ticks": 25671,
+          "wall_ms": 7071.4,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 770,
+          "boss_ticks": 799,
           "completed": true,
-          "exit": 0,
-          "game_minutes": 7.1,
-          "human_estimate_min": 17.03,
-          "leader": "nyra",
-          "pet": "ember_fox",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25562,
-          "wall_ms": 6920.3,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 780,
-          "completed": true,
+          "economy_ok": true,
           "exit": 0,
           "game_minutes": 7.15,
-          "human_estimate_min": 17.17,
+          "human_estimate_min": 17.14,
           "leader": "nyra",
-          "pet": "stone_tortle",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25734,
-          "wall_ms": 6933.5,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 767,
-          "completed": true,
-          "exit": 0,
-          "game_minutes": 7.31,
-          "human_estimate_min": 17.39,
-          "leader": "nyra",
-          "pet": "lumen_wisp",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 26310,
-          "wall_ms": 7020.9,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 730,
-          "completed": true,
-          "exit": 0,
-          "game_minutes": 7.31,
-          "human_estimate_min": 18.37,
-          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "ember_fox",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 26325,
-          "wall_ms": 6890.7,
+          "ticks": 25725,
+          "wall_ms": 7258.6,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 775,
+          "boss_ticks": 820,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.35,
-          "human_estimate_min": 18.51,
-          "leader": "bram",
+          "game_minutes": 7.18,
+          "human_estimate_min": 17.25,
+          "leader": "nyra",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "stone_tortle",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 26456,
-          "wall_ms": 6939.2,
+          "ticks": 25841,
+          "wall_ms": 6595.9,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 800,
+          "boss_ticks": 802,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
           "game_minutes": 7.34,
-          "human_estimate_min": 18.48,
-          "leader": "bram",
+          "human_estimate_min": 17.43,
+          "leader": "nyra",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "lumen_wisp",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 26415,
-          "wall_ms": 7126.3,
+          "ticks": 26433,
+          "wall_ms": 6732,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 797,
+          "boss_ticks": 792,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.2,
-          "human_estimate_min": 17.47,
-          "leader": "sola",
+          "game_minutes": 7.34,
+          "human_estimate_min": 18.51,
+          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "ember_fox",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25909,
-          "wall_ms": 6857.9,
+          "ticks": 26436,
+          "wall_ms": 6633.7,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 801,
+          "boss_ticks": 922,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.23,
-          "human_estimate_min": 17.68,
-          "leader": "sola",
+          "game_minutes": 7.41,
+          "human_estimate_min": 18.69,
+          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "stone_tortle",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 26026,
-          "wall_ms": 7142.1,
+          "ticks": 26683,
+          "wall_ms": 6772.7,
           "wipes": 0
         },
         {
           "boss_attempt": 1,
-          "boss_ticks": 780,
+          "boss_ticks": 795,
           "completed": true,
+          "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.2,
-          "human_estimate_min": 17.48,
-          "leader": "sola",
+          "game_minutes": 7.35,
+          "human_estimate_min": 18.57,
+          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
           "pet": "lumen_wisp",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25917,
-          "wall_ms": 7104.8,
+          "ticks": 26460,
+          "wall_ms": 6466.1,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 826,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.22,
+          "human_estimate_min": 17.56,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25999,
+          "wall_ms": 6416.9,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 831,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.25,
+          "human_estimate_min": 17.76,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 26115,
+          "wall_ms": 6481,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 805,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.21,
+          "human_estimate_min": 17.41,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25959,
+          "wall_ms": 6408.1,
           "wipes": 0
         }
       ]
     },
     "pace": {
       "bot": {
-        "combat_s": 56.8,
-        "crop_wait_s": 68.3,
+        "combat_s": 61.0,
+        "crop_wait_s": 65.9,
         "first_visits": 6,
-        "game_min": 7.1,
+        "game_min": 7.13,
         "interactions": {
           "buy": 0,
           "craft": 6,
@@ -258,25 +411,25 @@
           "use": 0
         },
         "objectives_shown": 20,
-        "travel_s": 300.8
+        "travel_s": 300.9
       },
       "components_s": {
-        "combat": 85.2,
+        "combat": 91.6,
         "crop_wait": 0.0,
         "explore_new_areas": 180.0,
         "interactions": 171.0,
         "reading": 53.2,
         "select": 45.0,
         "swap_overlays": 20.0,
-        "travel": 481.2
+        "travel": 481.4
       },
-      "human_estimate_min": 17.26,
+      "human_estimate_min": 17.37,
       "model": "content/tune/pace.yaml (INFERENCE C-92; not a playtest)",
       "target_min": [
         15.0,
         20.0
       ],
-      "wait_slack_s": 68.3,
+      "wait_slack_s": 65.9,
       "within_target": true
     },
     "parity": {
@@ -289,7 +442,7 @@
         0,
         0
       ],
-      "final_checksum": "a1898b55953c8fde9e5d3305a76746795432dbf0fa6a3d3d82301560cee4ced2",
+      "final_checksum": "249f4b0f2e3d2df0874a214e99790eacd58bcc8ab8b62e22725f0c0c23aaa043",
       "final_equal_uninterrupted": true,
       "loaded_equal_saved": true,
       "migration_parity": {
@@ -333,9 +486,9 @@
       "python_validates_save": true,
       "quit_area": "hollow",
       "quit_checkpoint": 5,
-      "quit_tick": 6300,
+      "quit_tick": 6347,
       "resumed_completed": true,
-      "resumed_ticks": 25550,
+      "resumed_ticks": 25670,
       "script_errors": 0
     },
     "script_errors": 0,
@@ -371,7 +524,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 9,
-          "tick": 4053
+          "tick": 4096
         },
         {
           "area": "hollow",
@@ -379,7 +532,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 6300
+          "tick": 6347
         },
         {
           "area": "tunnels",
@@ -387,7 +540,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 7227
+          "tick": 7274
         },
         {
           "area": "field",
@@ -395,7 +548,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 7909
+          "tick": 7956
         },
         {
           "area": "tunnels",
@@ -411,7 +564,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 7,
-          "tick": 12528
+          "tick": 12547
         },
         {
           "area": "tunnels",
@@ -419,7 +572,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 14369
+          "tick": 14466
         },
         {
           "area": "field",
@@ -427,7 +580,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 15051
+          "tick": 15148
         },
         {
           "area": "tunnels",
@@ -443,7 +596,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 3,
-          "tick": 19826
+          "tick": 19859
         },
         {
           "area": "cave_deep",
@@ -451,7 +604,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 6,
-          "tick": 20947
+          "tick": 20996
         },
         {
           "area": "warden_lair",
@@ -459,7 +612,7 @@
           "boss": true,
           "buffs": 1,
           "hostiles": 3,
-          "tick": 22122
+          "tick": 22212
         },
         {
           "area": "ridge",
@@ -467,7 +620,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 10,
-          "tick": 22963
+          "tick": 23065
         },
         {
           "area": "field",
@@ -475,7 +628,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 24569
+          "tick": 24689
         }
       ],
       "boss": {
@@ -485,11 +638,12 @@
         "phases_reached": 3,
         "ref": "cave_warden",
         "summons": 2,
-        "ticks": 766,
+        "ticks": 778,
         "tier": 3
       },
+      "bought": [],
       "buff_at_boss": {
-        "atk": 12.85,
+        "atk": 11.8,
         "bonus": {
           "atk_pct": 0.2399,
           "def_flat": 0.6839,
@@ -513,7 +667,7 @@
         "leader": "kael"
       },
       "buys": 0,
-      "callouts_total": 17,
+      "callouts_total": 20,
       "checkpoints": [
         {
           "area": "field",
@@ -529,99 +683,99 @@
         },
         {
           "area": "hollow",
-          "checksum": "be3b04372343f9a9ad25f3e7c9ffa33c672934710168f89c823695aae453711e",
+          "checksum": "24a508f06ecdd330a60590ca106ae4bce7ef651c0278228c14b4b7e23275cb8f",
           "n": 3,
           "tick": 2431
         },
         {
           "area": "cave_deep",
-          "checksum": "d5fe55b047641fad563d1f9bd484bc41738410efd383cc72769a64034103cb1d",
+          "checksum": "8dde1a00a5784af00703b40a0b5b1252f046e4605fe3b5a78b282e6517dd9bfa",
           "n": 4,
-          "tick": 4053
+          "tick": 4096
         },
         {
           "area": "hollow",
-          "checksum": "31bc2821d944a92123e11919f4dcf4a4e087775f7001d1fb43fa9d71ff3fb0d6",
+          "checksum": "bebbbabe644e1043c82a1f6362cec4559f46bc47d6f3dca18af3f09c2f36f431",
           "n": 5,
-          "tick": 6300
+          "tick": 6347
         },
         {
           "area": "tunnels",
-          "checksum": "1c85f90e7b6d6a8b6039899e4a20b2abdfb237b1f6cf0f4fffb45a7deed5bf78",
+          "checksum": "ed46f00a4811421a974aa09dc36170dad169e46c565c15ffe4390acbfa3059e5",
           "n": 6,
-          "tick": 7227
+          "tick": 7274
         },
         {
           "area": "field",
-          "checksum": "6c23312fc6e3c9f123f5ffdb74654205f03c5949cff162922bbbde151f759613",
+          "checksum": "aed23ab0343305d98b57e1f59852966abce26d9b9a13c035ce6dc81f6d9f66dd",
           "n": 7,
-          "tick": 7909
+          "tick": 7956
         },
         {
           "area": "tunnels",
-          "checksum": "7952391dbc93af078358dce321d6bef252d910a44957819fac198dd32d254b98",
+          "checksum": "bdbd614a9eac7dfff6b4330e61760fa4db8a919ec6172c0f173ec078b4e3093c",
           "n": 8,
           "tick": 11657
         },
         {
           "area": "hollow",
-          "checksum": "72c47c607bd8a1fd19fdf589484d64773065e16fd683762febd2fa1eb98210f3",
+          "checksum": "55a0d0b9ce80007124b1a922596a5ede5476807a6e42fb7c44b20f1ceec81ccb",
           "n": 9,
-          "tick": 12528
+          "tick": 12547
         },
         {
           "area": "tunnels",
-          "checksum": "ddea296b258459dfb255ccb44b99bdbf762cb728f95da202c627e023819fc7fb",
+          "checksum": "3fbc5a5bbfddd9b756e87f40a7aef919939658b7a024e7fd0d9b04dcda33ccf1",
           "n": 10,
-          "tick": 14369
+          "tick": 14466
         },
         {
           "area": "field",
-          "checksum": "f0841fd85be0693892152bbec7385956111e530b8d8e344b792d1f8933afe6bb",
+          "checksum": "444876d542a5ba383d29a34dccf877e81e0cd372c3e49d4585046ae78925991c",
           "n": 11,
-          "tick": 15051
+          "tick": 15148
         },
         {
           "area": "tunnels",
-          "checksum": "5ca594a145cb9c2f2d505d9704943da08d3b5d3012a5c733127ca0db3b383e4f",
+          "checksum": "32ca2a1e6229f1dea16030f747717e92f953a015558d6065b018980e8d8a7696",
           "n": 12,
           "tick": 18914
         },
         {
           "area": "hollow",
-          "checksum": "19a27d3a5682e7669703aa2304e6ea257fa2b8eb1fd15aa19f0f247ebb81b5e9",
+          "checksum": "0edd184ab12eb14a89d692bbd1d97be0081db7cace7c7a26060feaf38ad7a9d1",
           "n": 13,
-          "tick": 19826
+          "tick": 19859
         },
         {
           "area": "cave_deep",
-          "checksum": "74e2ba0cdd6b3f7822de126633ada67cc8ed858094df48657a5e96aee703bf07",
+          "checksum": "98e11aca7bbad722335468da8748cd6739d90009619558b4c4aa4ed4a60cf4a2",
           "n": 14,
-          "tick": 20947
+          "tick": 20996
         },
         {
           "area": "warden_lair",
-          "checksum": "b571995fd4feda2c0f6c1ad2cff90e34424f2a95c673f5ad1d5261ef6fe05e2b",
+          "checksum": "6fe32d52afd0983dbd3c562108cd18b94f289f580108071d1c6a43d79464d501",
           "n": 15,
-          "tick": 22122
+          "tick": 22212
         },
         {
           "area": "ridge",
-          "checksum": "47fdc30280b271faa598db63481612585a54e204ac68ba0ffdd2d2b1bd2df49b",
+          "checksum": "4ea5927989adfac049e6c2280820329a389157c45c7bc0a7396b1b609775e11c",
           "n": 16,
-          "tick": 22963
+          "tick": 23065
         },
         {
           "area": "field",
-          "checksum": "12203376ebfb00c1db7996b4408b33fb444fa492f63198cc4de28be55c7d1e4f",
+          "checksum": "28ae771e1aaa8d694fc8f689f756f9aa1c272d8b480f7e12d9bc4aa8718ae55b",
           "n": 17,
-          "tick": 24569
+          "tick": 24689
         },
         {
           "area": "field",
-          "checksum": "afd07f3f2f0420ac81d34a061e2fa6b0ee2e01cbc43a39fbfe6a43a4ec5b033a",
+          "checksum": "63eb77174c6796fad4472891e6cbfc0d53a34962d2b08b6d4cf6e55fe8922c50",
           "n": 18,
-          "tick": 25550
+          "tick": 25670
         }
       ],
       "completed": true,
@@ -709,14 +863,14 @@
           ]
         ],
         "inventory": {
-          "brute_hide": 8,
+          "brute_hide": 6,
           "cave_moss": 11,
-          "coin": 113,
+          "coin": 112,
           "ember_ore": 1,
-          "ember_shard": 25,
+          "ember_shard": 26,
           "flint": 6,
           "glowcap": 5,
-          "glowcap_spore": 1,
+          "glowcap_spore": 2,
           "moss_salve": 2,
           "sunroot": 6,
           "sunroot_seed": 2
@@ -787,7 +941,7 @@
         {
           "area": "hollow",
           "boss": false,
-          "end": 2689,
+          "end": 2719,
           "kills": 3,
           "start": 2548,
           "swap": false
@@ -795,39 +949,39 @@
         {
           "area": "hollow",
           "boss": false,
-          "end": 3548,
+          "end": 3591,
           "kills": 3,
-          "start": 3352,
+          "start": 3395,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 4331,
+          "end": 4376,
           "kills": 3,
-          "start": 4193,
+          "start": 4236,
           "swap": true
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 5194,
+          "end": 5232,
           "kills": 3,
-          "start": 5001,
+          "start": 5039,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 5733,
+          "end": 5780,
           "kills": 3,
-          "start": 5593,
+          "start": 5631,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 12217,
+          "end": 12236,
           "kills": 3,
           "start": 12064,
           "swap": false
@@ -835,23 +989,23 @@
         {
           "area": "hollow",
           "boss": false,
-          "end": 12797,
+          "end": 12850,
           "kills": 4,
-          "start": 12621,
+          "start": 12640,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 13505,
+          "end": 13602,
           "kills": 3,
-          "start": 13325,
+          "start": 13390,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 19157,
+          "end": 19160,
           "kills": 4,
           "start": 18986,
           "swap": false
@@ -859,138 +1013,138 @@
         {
           "area": "tunnels",
           "boss": false,
-          "end": 19500,
+          "end": 19533,
           "kills": 2,
-          "start": 19340,
+          "start": 19349,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 20414,
+          "end": 20463,
           "kills": 3,
-          "start": 20284,
+          "start": 20317,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 21484,
+          "end": 21535,
           "kills": 4,
-          "start": 21340,
+          "start": 21389,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 21868,
+          "end": 21957,
           "kills": 2,
-          "start": 21723,
+          "start": 21774,
           "swap": false
         },
         {
           "area": "warden_lair",
           "boss": false,
-          "end": 22426,
+          "end": 22530,
           "kills": 2,
-          "start": 22352,
+          "start": 22442,
           "swap": false
         },
         {
           "area": "warden_lair",
           "boss": true,
-          "end": 22888,
+          "end": 22990,
           "kills": 3,
-          "start": 22546,
+          "start": 22636,
           "swap": true
         },
         {
           "area": "ridge",
           "boss": false,
-          "end": 23406,
+          "end": 23514,
           "kills": 3,
-          "start": 23293,
+          "start": 23395,
           "swap": false
         },
         {
           "area": "ridge",
           "boss": false,
-          "end": 23800,
+          "end": 23911,
           "kills": 3,
-          "start": 23624,
+          "start": 23732,
           "swap": false
         },
         {
           "area": "ridge",
           "boss": false,
-          "end": 24223,
+          "end": 24344,
           "kills": 4,
-          "start": 24037,
+          "start": 24147,
           "swap": false
         }
       ],
-      "game_minutes": 7.1,
+      "game_minutes": 7.13,
       "intents": 1,
       "level_ups": [
         [
           "bram",
           3,
-          1986
+          3560
         ],
         [
           "kael",
           3,
-          1986
+          3560
         ],
         [
           "nyra",
           3,
-          1986
+          3560
         ],
         [
           "sola",
           3,
-          1986
+          3560
         ],
         [
           "bram",
           4,
-          4276
+          12770
         ],
         [
           "kael",
           4,
-          4276
+          12770
         ],
         [
           "nyra",
           4,
-          4276
+          12770
         ],
         [
           "sola",
           4,
-          4276
+          12770
         ],
         [
           "bram",
           5,
-          12178
+          23885
         ],
         [
           "kael",
           5,
-          12178
+          23885
         ],
         [
           "nyra",
           5,
-          12178
+          23885
         ],
         [
           "sola",
           5,
-          12178
+          23885
         ]
       ],
       "loot": {
@@ -998,12 +1152,14 @@
           [
             "emberling",
             1,
-            []
+            [],
+            703
           ],
           [
             "emberling",
             1,
-            []
+            [],
+            765
           ],
           [
             "cave_mite",
@@ -1013,7 +1169,8 @@
                 "sunroot_seed",
                 1
               ]
-            ]
+            ],
+            1314
           ],
           [
             "emberling",
@@ -1023,12 +1180,14 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            1344
           ],
           [
             "cave_mite",
             1,
-            []
+            [],
+            1351
           ],
           [
             "emberling",
@@ -1038,7 +1197,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            1986
           ],
           [
             "rock_brute",
@@ -1048,7 +1208,8 @@
                 "brute_hide",
                 1
               ]
-            ]
+            ],
+            2106
           ],
           [
             "cave_mite",
@@ -1058,7 +1219,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            2631
           ],
           [
             "emberling",
@@ -1068,7 +1230,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            2686
           ],
           [
             "cave_mite",
@@ -1078,7 +1241,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            2720
           ],
           [
             "rock_brute",
@@ -1092,12 +1256,14 @@
                 "brute_hide",
                 1
               ]
-            ]
+            ],
+            3560
           ],
           [
             "cave_mite",
             1,
-            []
+            [],
+            3574
           ],
           [
             "cave_mite",
@@ -1107,7 +1273,8 @@
                 "sunroot_seed",
                 1
               ]
-            ]
+            ],
+            3592
           ],
           [
             "cave_mite",
@@ -1121,7 +1288,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            4319
           ],
           [
             "cave_mite",
@@ -1131,7 +1299,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            4347
           ],
           [
             "cave_mite",
@@ -1141,7 +1310,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            4377
           ],
           [
             "cave_mite",
@@ -1155,7 +1325,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            5103
           ],
           [
             "rock_brute",
@@ -1169,7 +1340,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            5206
           ],
           [
             "cave_mite",
@@ -1179,7 +1351,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            5233
           ],
           [
             "cave_mite",
@@ -1189,7 +1362,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            5712
           ],
           [
             "emberling",
@@ -1199,12 +1373,14 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            5744
           ],
           [
             "emberling",
             1,
-            []
+            [],
+            5781
           ],
           [
             "rock_brute",
@@ -1218,7 +1394,8 @@
                 "ember_shard",
                 2
               ]
-            ]
+            ],
+            12191
           ],
           [
             "emberling",
@@ -1228,7 +1405,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            12221
           ],
           [
             "emberling",
@@ -1238,7 +1416,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            12237
           ],
           [
             "cave_mite",
@@ -1248,7 +1427,8 @@
                 "sunroot_seed",
                 1
               ]
-            ]
+            ],
+            12736
           ],
           [
             "emberling",
@@ -1258,7 +1438,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            12770
           ],
           [
             "cave_mite",
@@ -1272,7 +1453,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            12830
           ],
           [
             "emberling",
@@ -1282,7 +1464,8 @@
                 "coin",
                 1
               ]
-            ]
+            ],
+            12851
           ],
           [
             "rock_brute",
@@ -1296,7 +1479,8 @@
                 "glowcap_spore",
                 1
               ]
-            ]
+            ],
+            13533
           ],
           [
             "emberling",
@@ -1306,7 +1490,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            13547
           ],
           [
             "rock_brute",
@@ -1320,7 +1505,8 @@
                 "glowcap_spore",
                 1
               ]
-            ]
+            ],
+            13603
           ],
           [
             "cave_mite",
@@ -1330,12 +1516,14 @@
                 "coin",
                 1
               ]
-            ]
+            ],
+            19099
           ],
           [
             "emberling",
             1,
-            []
+            [],
+            19109
           ],
           [
             "emberling",
@@ -1345,7 +1533,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            19143
           ],
           [
             "cave_mite",
@@ -1355,7 +1544,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            19161
           ],
           [
             "cave_mite",
@@ -1369,7 +1559,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            19429
           ],
           [
             "rock_brute",
@@ -1379,7 +1570,8 @@
                 "coin",
                 6
               ]
-            ]
+            ],
+            19534
           ],
           [
             "rock_brute",
@@ -1389,7 +1581,8 @@
                 "coin",
                 5
               ]
-            ]
+            ],
+            20424
           ],
           [
             "emberling",
@@ -1399,12 +1592,14 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            20441
           ],
           [
             "emberling",
             1,
-            []
+            [],
+            20464
           ],
           [
             "cave_mite",
@@ -1414,7 +1609,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            21458
           ],
           [
             "emberling",
@@ -1424,7 +1620,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            21488
           ],
           [
             "emberling",
@@ -1434,7 +1631,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            21512
           ],
           [
             "cave_mite",
@@ -1444,7 +1642,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            21536
           ],
           [
             "emberling",
@@ -1454,7 +1653,8 @@
                 "coin",
                 2
               ]
-            ]
+            ],
+            21834
           ],
           [
             "rock_brute",
@@ -1468,7 +1668,8 @@
                 "coin",
                 3
               ]
-            ]
+            ],
+            21958
           ],
           [
             "cave_mite",
@@ -1482,7 +1683,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            22504
           ],
           [
             "cave_mite",
@@ -1492,7 +1694,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            22531
           ],
           [
             "cave_warden",
@@ -1514,7 +1717,8 @@
                 "ember_shard",
                 3
               ]
-            ]
+            ],
+            22979
           ],
           [
             "emberling",
@@ -1524,7 +1728,8 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            22985
           ],
           [
             "emberling",
@@ -1534,7 +1739,8 @@
                 "coin",
                 2
               ]
-            ]
+            ],
+            22990
           ],
           [
             "emberling",
@@ -1544,7 +1750,8 @@
                 "coin",
                 2
               ]
-            ]
+            ],
+            23453
           ],
           [
             "emberling",
@@ -1554,7 +1761,8 @@
                 "coin",
                 1
               ]
-            ]
+            ],
+            23501
           ],
           [
             "emberling",
@@ -1564,31 +1772,23 @@
                 "sunroot_seed",
                 1
               ]
-            ]
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                1
-              ]
-            ]
+            ],
+            23515
           ],
           [
             "rock_brute",
             2,
             [
               [
-                "brute_hide",
+                "glowcap_spore",
                 1
               ],
               [
                 "brute_hide",
                 1
               ]
-            ]
+            ],
+            23861
           ],
           [
             "emberling",
@@ -1598,7 +1798,19 @@
                 "ember_shard",
                 1
               ]
-            ]
+            ],
+            23885
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            23912
           ],
           [
             "rock_brute",
@@ -1612,7 +1824,8 @@
                 "coin",
                 4
               ]
-            ]
+            ],
+            24257
           ],
           [
             "cave_mite",
@@ -1626,7 +1839,8 @@
                 "cave_moss",
                 1
               ]
-            ]
+            ],
+            24279
           ],
           [
             "rock_brute",
@@ -1640,12 +1854,14 @@
                 "coin",
                 4
               ]
-            ]
+            ],
+            24324
           ],
           [
             "cave_mite",
             1,
-            []
+            [],
+            24345
           ]
         ],
         "probe_rolls": [
@@ -1844,7 +2060,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 2779
+            "tick": 2809
           },
           {
             "biome": "cave",
@@ -1853,7 +2069,24 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 3153
+            "tick": 2875
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient"
+            ],
+            "state": "explore",
+            "tick": 2950
+          },
+          {
+            "biome": "cave",
+            "layers": [
+              "ambient",
+              "tension"
+            ],
+            "state": "tension",
+            "tick": 3196
           },
           {
             "biome": "cave",
@@ -1862,7 +2095,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 3352
+            "tick": 3395
           },
           {
             "biome": "cave",
@@ -1870,7 +2103,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 3638
+            "tick": 3681
           },
           {
             "biome": "cave",
@@ -1879,7 +2112,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4054
+            "tick": 4097
           },
           {
             "biome": "cave",
@@ -1887,7 +2120,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4130
+            "tick": 4173
           },
           {
             "biome": "cave",
@@ -1896,7 +2129,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4131
+            "tick": 4174
           },
           {
             "biome": "cave",
@@ -1905,7 +2138,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 4193
+            "tick": 4236
           },
           {
             "biome": "cave",
@@ -1913,7 +2146,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4421
+            "tick": 4466
           },
           {
             "biome": "cave",
@@ -1922,7 +2155,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4680
+            "tick": 4718
           },
           {
             "biome": "cave",
@@ -1930,7 +2163,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4754
+            "tick": 4792
           },
           {
             "biome": "cave",
@@ -1939,7 +2172,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4847
+            "tick": 4885
           },
           {
             "biome": "cave",
@@ -1947,7 +2180,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4921
+            "tick": 4959
           },
           {
             "biome": "cave",
@@ -1956,7 +2189,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4958
+            "tick": 4996
           },
           {
             "biome": "cave",
@@ -1965,7 +2198,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 5001
+            "tick": 5039
           },
           {
             "biome": "cave",
@@ -1973,7 +2206,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 5284
+            "tick": 5322
           },
           {
             "biome": "cave",
@@ -1982,7 +2215,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 5547
+            "tick": 5585
           },
           {
             "biome": "cave",
@@ -1991,7 +2224,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 5593
+            "tick": 5631
           },
           {
             "biome": "cave",
@@ -1999,7 +2232,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 5823
+            "tick": 5870
           },
           {
             "biome": "field",
@@ -2007,7 +2240,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 7909
+            "tick": 7956
           },
           {
             "biome": "cave",
@@ -2041,7 +2274,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 12307
+            "tick": 12326
           },
           {
             "biome": "cave",
@@ -2050,7 +2283,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 12565
+            "tick": 12584
           },
           {
             "biome": "cave",
@@ -2059,7 +2292,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 12621
+            "tick": 12640
           },
           {
             "biome": "cave",
@@ -2067,7 +2300,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 12887
+            "tick": 12940
           },
           {
             "biome": "cave",
@@ -2076,7 +2309,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 13001
+            "tick": 13067
           },
           {
             "biome": "cave",
@@ -2085,7 +2318,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 13325
+            "tick": 13390
           },
           {
             "biome": "cave",
@@ -2093,7 +2326,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 13595
+            "tick": 13692
           },
           {
             "biome": "field",
@@ -2101,7 +2334,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 15051
+            "tick": 15148
           },
           {
             "biome": "cave",
@@ -2135,7 +2368,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 19247
+            "tick": 19250
           },
           {
             "biome": "cave",
@@ -2144,7 +2377,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 19254
+            "tick": 19262
           },
           {
             "biome": "cave",
@@ -2153,7 +2386,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 19340
+            "tick": 19349
           },
           {
             "biome": "cave",
@@ -2161,7 +2394,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 19590
+            "tick": 19623
           },
           {
             "biome": "cave",
@@ -2170,7 +2403,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 20187
+            "tick": 20220
           },
           {
             "biome": "cave",
@@ -2179,7 +2412,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 20284
+            "tick": 20317
           },
           {
             "biome": "cave",
@@ -2187,7 +2420,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 20504
+            "tick": 20553
           },
           {
             "biome": "cave",
@@ -2196,7 +2429,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 21287
+            "tick": 21336
           },
           {
             "biome": "cave",
@@ -2205,7 +2438,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 21340
+            "tick": 21389
           },
           {
             "biome": "cave",
@@ -2213,7 +2446,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 21574
+            "tick": 21625
           },
           {
             "biome": "cave",
@@ -2222,7 +2455,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 21674
+            "tick": 21725
           },
           {
             "biome": "cave",
@@ -2231,7 +2464,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 21723
+            "tick": 21774
           },
           {
             "biome": "cave",
@@ -2239,7 +2472,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 21958
+            "tick": 22047
           },
           {
             "biome": "cave",
@@ -2248,7 +2481,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 22308
+            "tick": 22398
           },
           {
             "biome": "cave",
@@ -2257,7 +2490,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 22352
+            "tick": 22442
           },
           {
             "biome": "cave",
@@ -2265,7 +2498,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22516
+            "tick": 22620
           },
           {
             "biome": "cave",
@@ -2274,7 +2507,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 22530
+            "tick": 22622
           },
           {
             "biome": "cave",
@@ -2283,7 +2516,7 @@
               "combat"
             ],
             "state": "boss",
-            "tick": 22546
+            "tick": 22636
           },
           {
             "biome": "cave",
@@ -2292,7 +2525,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 22864
+            "tick": 22979
           },
           {
             "biome": "cave",
@@ -2300,7 +2533,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22889
+            "tick": 22991
           },
           {
             "biome": "field",
@@ -2308,7 +2541,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22963
+            "tick": 23065
           },
           {
             "biome": "field",
@@ -2317,7 +2550,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23124
+            "tick": 23226
           },
           {
             "biome": "field",
@@ -2326,7 +2559,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 23293
+            "tick": 23395
           },
           {
             "biome": "field",
@@ -2335,7 +2568,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23496
+            "tick": 23604
           },
           {
             "biome": "field",
@@ -2343,7 +2576,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 23543
+            "tick": 23651
           },
           {
             "biome": "field",
@@ -2352,7 +2585,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23556
+            "tick": 23664
           },
           {
             "biome": "field",
@@ -2361,7 +2594,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 23624
+            "tick": 23732
           },
           {
             "biome": "field",
@@ -2369,7 +2602,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 23890
+            "tick": 24001
           },
           {
             "biome": "field",
@@ -2378,7 +2611,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23976
+            "tick": 24086
           },
           {
             "biome": "field",
@@ -2387,7 +2620,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 24037
+            "tick": 24147
           },
           {
             "biome": "field",
@@ -2395,7 +2628,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 24313
+            "tick": 24434
           }
         ]
       },
@@ -2406,41 +2639,41 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (13.6 ms)",
-        "1. Kael  HP 71/89  score 203.5  target cave_warden_1  cd Shield Bash 0.9s, Slash 0.3s  @9,3",
-        "2. Bram  HP 107/115  score 169.1  target cave_warden_1  cd Taunt 4.5s  @9,4",
-        "3. Nyra  HP 59/59  score 168.5  target cave_warden_1  cd Volley 1.4s, Arrow 0.2s  @9,7",
-        "4. Sola  HP 56/56  score 138.5  target cave_warden_1  cd Mend 1.0s, Spark 0.3s  @9,6",
-        "Threats: cave_warden 202 (110.1)",
-        "Pets: ember_fox\u2192Kael 6/22",
+        "TIME FROZEN \u2014 ranked swaps (14.4 ms)",
+        "1. Kael  HP 47/82  score 146.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
+        "2. Bram  HP 106/106  score 122.2  target cave_warden_1  cd Taunt 4.5s  @9,5",
+        "3. Nyra  HP 54/54  score 114.0  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
+        "4. Sola  HP 52/52  score 82.0  target cave_warden_1  cd Mend 0.1s, Spark 0.1s  @9,6",
+        "Threats: cave_warden 225 (110.1)",
+        "Pets: ember_fox\u2192Kael 0/22",
         "1/2/3/4 swap \u00b7 Tab resume"
       ],
       "party_stats": {
         "bram": {
-          "damage": 126,
+          "damage": 171,
           "healing": 0,
-          "kills": 1
+          "kills": 5
         },
         "kael": {
-          "damage": 1239,
+          "damage": 1191,
           "healing": 0,
           "kills": 31
         },
         "kael_ember_fox": {
-          "damage": 73,
+          "damage": 104,
           "healing": 0,
           "kills": 0,
           "pet": true
         },
         "nyra": {
-          "damage": 699,
+          "damage": 706,
           "healing": 0,
           "kills": 16
         },
         "sola": {
-          "damage": 219,
-          "healing": 373,
-          "kills": 9
+          "damage": 191,
+          "healing": 441,
+          "kills": 5
         }
       },
       "quests": {
@@ -2457,25 +2690,25 @@
       "softlocks": [],
       "stage_ticks": {
         "q_forager.gather_any": 1677,
-        "q_smith.mail": 8889,
-        "q_smith.ore": 3699,
+        "q_smith.mail": 8936,
+        "q_smith.ore": 3743,
         "q_warden.choose": 0,
-        "q_warden.clear_cave": 5734,
+        "q_warden.clear_cave": 5781,
         "q_warden.craft": 18098,
-        "q_warden.enter_cave": 4053,
+        "q_warden.enter_cave": 4096,
         "q_warden.forage": 562,
         "q_warden.harvest": 10839,
-        "q_warden.home": 24569,
-        "q_warden.moss": 4496,
-        "q_warden.open_world": 22963,
-        "q_warden.patrol": 13506,
+        "q_warden.home": 24689,
+        "q_warden.moss": 4534,
+        "q_warden.open_world": 23065,
+        "q_warden.patrol": 13603,
         "q_warden.plant": 20,
         "q_warden.replant": 10840,
-        "q_warden.rest": 25550,
-        "q_warden.return_farm": 7909,
-        "q_warden.ridge": 24224,
+        "q_warden.rest": 25670,
+        "q_warden.return_farm": 7956,
+        "q_warden.ridge": 24345,
         "q_warden.second_harvest": 18057,
-        "q_warden.warden": 22864
+        "q_warden.warden": 22979
       },
       "swap_parity": [
         true,
@@ -2500,11 +2733,11 @@
             ],
             [
               "kael",
-              15.41
+              13.78
             ]
           ],
-          "tick": 4343,
-          "wall_ms": 21.05
+          "tick": 4386,
+          "wall_ms": 20.83
         },
         {
           "area": "warden_lair",
@@ -2512,34 +2745,34 @@
           "recs": [
             [
               "kael",
-              203.53
+              146.73
             ],
             [
               "bram",
-              169.11
+              122.23
             ],
             [
               "nyra",
-              168.5
+              114
             ],
             [
               "sola",
-              138.5
+              82
             ]
           ],
-          "tick": 22696,
-          "wall_ms": 13.63
+          "tick": 22786,
+          "wall_ms": 14.36
         }
       ],
-      "ticks": 25550,
+      "ticks": 25670,
       "unlocked": [
         "vex"
       ],
       "wait_segments": [
         {
           "planted": 7,
-          "start": 8907,
-          "ticks": 1900
+          "start": 8954,
+          "ticks": 1853
         },
         {
           "planted": 20,
@@ -2548,8 +2781,8 @@
         },
         {
           "planted": 10808,
-          "start": 15852,
-          "ticks": 2156
+          "start": 15949,
+          "ticks": 2059
         },
         {
           "planted": 10840,
@@ -2557,8 +2790,8 @@
           "ticks": 30
         }
       ],
-      "wait_ticks": 4097,
-      "wall_ms": 6733.9,
+      "wait_ticks": 3953,
+      "wall_ms": 6707.1,
       "wipes": 0
     },
     "tilemaps": {
@@ -2597,6 +2830,7 @@
       "a11y_palettes": true,
       "budget": true,
       "cross_refs": true,
+      "economy_design": true,
       "economy_solvable": true,
       "loot_tables": true,
       "music_rules": true,
@@ -2647,7 +2881,7 @@
         "moss_salve": 4,
         "sunroot": 4.0,
         "sunroot_seed": 2.0,
-        "warden_charm": 1,
+        "warden_charm": 0,
         "warden_core": 1
       }
     }

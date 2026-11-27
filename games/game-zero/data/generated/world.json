@@ -440,18 +440,19 @@
    "id": "brute_hide",
    "kind": "material",
    "name_key": "item.brute_hide",
-   "sell": 6
+   "value": 5.0
   },
   "cave_moss": {
    "id": "cave_moss",
    "kind": "material",
    "name_key": "item.cave_moss",
-   "sell": 1
+   "value": 1.0
   },
   "coin": {
    "id": "coin",
    "kind": "currency",
-   "name_key": "item.coin"
+   "name_key": "item.coin",
+   "value": 1.0
   },
   "ember_mail": {
    "bonus": {
@@ -460,19 +461,20 @@
    "id": "ember_mail",
    "kind": "gear",
    "name_key": "item.ember_mail",
-   "slot": "shared"
+   "slot": "shared",
+   "value": 10.0
   },
   "ember_ore": {
    "id": "ember_ore",
    "kind": "material",
    "name_key": "item.ember_ore",
-   "sell": 2
+   "value": 2.0
   },
   "ember_shard": {
    "id": "ember_shard",
    "kind": "material",
    "name_key": "item.ember_shard",
-   "sell": 4
+   "value": 3.0
   },
   "ember_tonic": {
    "id": "ember_tonic",
@@ -482,13 +484,14 @@
     "buff": {
      "atk_pct": 0.15
     }
-   }
+   },
+   "value": 8.75
   },
   "flint": {
    "id": "flint",
    "kind": "material",
    "name_key": "item.flint",
-   "sell": 1
+   "value": 1.0
   },
   "flint_edge": {
    "bonus": {
@@ -497,19 +500,21 @@
    "id": "flint_edge",
    "kind": "gear",
    "name_key": "item.flint_edge",
-   "slot": "shared"
+   "slot": "shared",
+   "value": 10.0
   },
   "glowcap": {
    "id": "glowcap",
    "kind": "crop",
    "name_key": "item.glowcap",
-   "sell": 3
+   "value": 3.0
   },
   "glowcap_spore": {
    "crop": "glowcap",
    "id": "glowcap_spore",
    "kind": "seed",
-   "name_key": "item.glowcap_spore"
+   "name_key": "item.glowcap_spore",
+   "value": 4.0
   },
   "moss_salve": {
    "id": "moss_salve",
@@ -517,19 +522,21 @@
    "name_key": "item.moss_salve",
    "use": {
     "heal_pct": 0.5
-   }
+   },
+   "value": 3.75
   },
   "sunroot": {
    "id": "sunroot",
    "kind": "crop",
    "name_key": "item.sunroot",
-   "sell": 2
+   "value": 2.0
   },
   "sunroot_seed": {
    "crop": "sunroot",
    "id": "sunroot_seed",
    "kind": "seed",
-   "name_key": "item.sunroot_seed"
+   "name_key": "item.sunroot_seed",
+   "value": 3.0
   },
   "warden_charm": {
    "bonus": {
@@ -538,12 +545,14 @@
    "id": "warden_charm",
    "kind": "gear",
    "name_key": "item.warden_charm",
-   "slot": "unique"
+   "slot": "unique",
+   "value": 41.25
   },
   "warden_core": {
    "id": "warden_core",
    "kind": "material",
-   "name_key": "item.warden_core"
+   "name_key": "item.warden_core",
+   "value": 25.0
   }
  },
  "loot": {
@@ -1070,6 +1079,7 @@
   "warden_charm": {
    "id": "warden_charm",
    "in": {
+    "brute_hide": 1,
     "glowcap": 1,
     "warden_core": 1
    },
@@ -1093,9 +1103,9 @@
   "level_at": [
    0,
    30,
-   90,
-   200,
-   360
+   150,
+   400,
+   800
   ],
   "per_tier": 10,
   "start_level": 2

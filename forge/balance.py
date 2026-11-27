@@ -139,11 +139,15 @@ def verdict(agg: dict[str, Any]) -> dict[str, Any]:
     checks = {
         "encounters_ge_1000": agg["encounters"] >= 1000,
         "max_choice_deviation_lt_5pp": agg["choice_deviation"] < DEV_LIMIT,
-        "max_combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT,     # F6: per-pair is gated
+        # F6 gated the per-pair point spread < 5 pp; at 200 seeds/cell (SE ≈ 3.2 pp) that is below the noise floor.
+        # Q5 (C-94): every cell's Wilson 95 % CI must reach the ±5 pp band (no cell *significantly* off), and the
+        # powered per-pair gate is the hold-out (1000 unseen seeds/cell, ≤ 3.5 pp, `holdout`, full `forge accept F5`).
+        "combo_ci_within_5pp": all(m["ci95"][0] <= agg["mean_win_rate"] + DEV_LIMIT
+                                   and m["ci95"][1] >= agg["mean_win_rate"] - DEV_LIMIT for m in agg["matchups"].values()),
         "mean_in_target_band": TARGET_BAND[0] <= agg["mean_win_rate"] <= TARGET_BAND[1],
         "no_softlocks": agg["softlocks"] == 0,
     }
-    soft: dict[str, bool] = {}     # F5 reported combo spread here; gated since F6
+    soft = {"max_combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT}   # reported (gated F6–0.7.12)
     return {"G-BAL-01": all(checks.values()), "checks": checks, "soft": soft, "dev_limit": DEV_LIMIT,
             "target_band": list(TARGET_BAND)}
 
@@ -193,7 +197,7 @@ TUNE_SPACE = {   # knob path → (low, high); every path must be live-tunable (c
 }
 # F6: per-pair knobs (pet↔character affinity, 12 cells). Each cell only depends on its own knob in
 # the balance matrix (only the leader carries the starter pet), so `forge balance` fits are decoupled.
-AFFINITY_SPACE = {f"pets.{p}.affinity.{f}": (0.25, 3.0) for p in ("ember_fox", "lumen_wisp", "stone_tortle")
+AFFINITY_SPACE = {f"pets.{p}.affinity.{f}": (0.0, 3.0) for p in ("ember_fox", "lumen_wisp", "stone_tortle")
                   for f in ("bram", "kael", "nyra", "sola")}
 
 
@@ -230,3 +234,79 @@ def tune(trials: int = 20, seeds: int = 24, root: Path | None = None, space: dic
     best = [{"path": k, "value": round(v, 3)} for k, v in study.best_params.items()]
     return {"best_overrides": best, "best_score": round(study.best_value, 4), "trials": log, "seeds_per_matchup": seeds,
             "sampler": f"TPE(seed={sampler_seed})", "optuna": optuna.__version__}
+
+
+# ----------------------------------------------------------------------------- Q5: hold-out gate + per-cell study
+
+HOLDOUT_SEED_BASE = 20_000    # never used for fitting (fits use 50_000+; the CRN gate uses 1000). 9000 was the first
+                              # hold-out; it was spent calibrating three cells in 0.7.13, so the gate moved to fresh seeds [C-94]
+HOLDOUT_SEEDS = 1000          # per cell: SE ≈ 1.4 pp, so a 3.5 pp spread limit is above the noise floor [C-94]
+HOLDOUT_LIMIT = 0.035
+
+
+def holdout(root: Path | None = None, seeds: int = HOLDOUT_SEEDS, seed_base: int = HOLDOUT_SEED_BASE) -> dict[str, Any]:
+    """Out-of-sample per-pair spread: every leader × pet cell on seeds no fit has seen."""
+    agg = run(BalanceConfig(seeds=seeds, seed_base=seed_base), root)
+    agg["holdout"] = {"seed_base": seed_base, "seeds_per_cell": seeds, "limit": HOLDOUT_LIMIT,
+                      "combo_deviation": agg["combo_deviation"], "ok": agg["combo_deviation"] <= HOLDOUT_LIMIT
+                      and agg["softlocks"] == 0 and not agg["errors"]}
+    return agg
+
+
+def tune_affinity(trials: int = 30, seeds: int = 240, root: Path | None = None, sampler_seed: int = 11,
+                  seed_base: int = 50_000, warm: dict[str, float] | None = None) -> dict[str, Any]:
+    """Twelve independent Optuna TPE studies, one per leader × pet cell, sharing each balance run.
+
+    In the balance matrix only the leader carries the starter pet, so cell (f, p) depends only on the knob
+    ``pets.<p>.affinity.<f>`` — every run evaluates all 12 knobs at once and each study is told its own cell's
+    loss |win_rate − TARGET_MEAN|. Trial 0 of every study is the current shipped value (``warm``)."""
+    try:
+        import optuna
+    except ImportError as exc:
+        raise RuntimeError("optuna not installed: uv pip install -e '.[tune]'") from exc
+
+    root = root or find_repo_root()
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
+    data = game_data(root)
+    cells = {k: (k.split(".")[3], k.split(".")[1]) for k in AFFINITY_SPACE}   # path → (fighter, pet)
+    studies = {k: optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=sampler_seed + i))
+               for i, k in enumerate(sorted(cells))}
+    warm = warm or {k: float(data["pets"][p].get("affinity", {}).get(f, 1.0)) for k, (f, p) in cells.items()}
+    for k, st in studies.items():
+        st.enqueue_trial({"v": warm[k]})
+    log: list[dict[str, Any]] = []
+    t0 = time.perf_counter()
+    for n in range(trials):
+        asked = {k: st.ask() for k, st in studies.items()}
+        ov = [{"path": k, "value": round(tr.suggest_float("v", *AFFINITY_SPACE[k]), 3)} for k, tr in asked.items()]
+        agg = run(BalanceConfig(seeds=seeds, seed_base=seed_base + 1000 * n, overrides=ov), root)
+        row = {"trial": n, "seed_base": seed_base + 1000 * n, "mean": agg["mean_win_rate"], "combo_dev": agg["combo_deviation"],
+               "cells": {}}
+        for k, tr in asked.items():
+            f, p = cells[k]
+            wr = agg["matchups"][f"{f}+{p}"]["win_rate"]
+            loss = abs(wr - TARGET_MEAN)
+            studies[k].tell(tr, loss)
+            row["cells"][k] = {"value": round(tr.params["v"], 3), "win_rate": wr, "loss": round(loss, 4)}
+        log.append(row)
+    best = []
+    for k, st in studies.items():
+        # Pick: one trial is noisy (SE ≈ 2.6 pp at 300 seeds), so pool every trial of this cell: least-squares line
+        # win_rate ~ a + b·value over the trials near the target (|wr − target| < 8 pp; all trials if < 4), solved for
+        # the target and clipped to the space. Falls back to the TPE best if the slope is not positive.
+        pts = [(r["cells"][k]["value"], r["cells"][k]["win_rate"]) for r in log]
+        near = [q for q in pts if abs(q[1] - TARGET_MEAN) < 0.08]
+        use = near if len(near) >= 4 else pts
+        n_ = len(use)
+        mx, my = sum(x for x, _ in use) / n_, sum(y for _, y in use) / n_
+        sxx = sum((x - mx) ** 2 for x, _ in use)
+        slope = sum((x - mx) * (y - my) for x, y in use) / sxx if sxx > 1e-12 else 0.0
+        lo, hi = AFFINITY_SPACE[k]
+        tpe_best = st.best_params["v"]
+        val = min(hi, max(lo, mx + (TARGET_MEAN - my) / slope)) if slope > 1e-6 else tpe_best
+        best.append({"path": k, "value": round(val, 3), "fit": {"points": n_, "slope_per_unit": round(slope, 4),
+                     "intercept": round(my - slope * mx, 4), "tpe_best": round(tpe_best, 3), "tpe_best_loss": round(st.best_value, 4)}})
+    return {"best_overrides": best, "trials": log, "trials_n": trials, "seeds_per_cell_per_trial": seeds,
+            "fights": trials * seeds * len(cells), "wall_s": round(time.perf_counter() - t0, 1),
+            "sampler": f"12× TPE(seed={sampler_seed}+i), ask/tell on shared runs", "objective": "|cell win rate − 0.72|",
+            "optuna": optuna.__version__, "warm_start": warm}

@@ -6,6 +6,8 @@
    primary falls back to the backup; v1/v2 fixtures migrate identically in GDScript and Python.
 3. G-BAL-01 — Monte Carlo: 12 character-select matchups × 200 seeds (CRN) = 2400 boss fights.
 4. Soft-lock — static report ok; zero runtime soft-locks in (3); a mis-tuned probe run *is* flagged.
+5. Hold-out (Q5, full mode) — the 12 leader × pet cells on 1000 unseen seeds each (seed_base 20 000): per-pair spread
+   ≤ 3.5 pp (INFERENCE C-94). FAST mode (pytest/CI) records it as skipped.
 """
 
 from __future__ import annotations
@@ -70,6 +72,17 @@ def f5_run(root: Path) -> tuple[int, dict[str, Any]]:
         result["softlock_static"] = {k: v for k, v in static_report(root).items() if k != "chart_details"}
         bal = run(BalanceConfig(), root)
         result["balance"] = {k: v for k, v in bal.items() if k != "config"} | {"config": bal["config"]}
+        # Q5 (C-94): out-of-sample per-pair spread on unseen seeds (full mode; 12 000 fights ≈ 4 min on 8 vCPU)
+        from forge.accept_f6 import fast_mode
+        from forge.balance import holdout
+
+        if fast_mode():
+            result["holdout"] = {"mode": "fast", "skipped": "FORGE_ACCEPT_FAST=1 (pytest/CI): run `forge accept F5` for the gate"}
+        else:
+            ho = holdout(root)
+            result["holdout"] = ho["holdout"] | {"mode": "full", "mean_win_rate": ho["mean_win_rate"], "wall_s": ho["wall_s"],
+                                                 "win_rates": {k: v["win_rate"] for k, v in ho["matchups"].items()},
+                                                 "marginals": ho["marginals"], "softlocks": ho["softlocks"], "errors": ho["errors"]}
         probe = run(BalanceConfig(seeds=2, overrides=stall_probe_overrides(root)), root)
         result["softlock_probe"] = {"encounters": probe["encounters"], "softlocks": probe["softlocks"], "outcomes": probe["outcomes"]}
         return (code or code2), result
@@ -102,6 +115,9 @@ def f5_check(r: dict[str, Any]) -> list[str]:
     _need(v.get("G-BAL-01") is True, f"G-BAL-01 failed: {v.get('checks')} mean={bal.get('mean_win_rate')} "
           f"choice_dev={bal.get('choice_deviation')} combo_dev={bal.get('combo_deviation')} n={bal.get('encounters')}", errs)
     _need(not bal.get("errors"), f"balance worker errors: {bal.get('errors')}", errs)
+    ho = r.get("holdout", {})
+    _need(ho.get("mode") == "fast" or ho.get("ok") is True,
+          f"per-pair hold-out spread {ho.get('combo_deviation')} > {ho.get('limit')} on unseen seeds (seed_base {ho.get('seed_base')})", errs)
     _need(r.get("softlock_probe", {}).get("softlocks", 0) > 0, "soft-lock detector never fired on the mis-tuned probe", errs)
     return errs
 
@@ -110,5 +126,6 @@ def f5_perf(r: dict[str, Any]) -> dict[str, Any]:
     bal = r.get("balance", {})
     n = bal.get("encounters", 0) or 1
     return {"balance_wall_s": bal.get("wall_s"), "balance_workers": bal.get("workers"),
+            "holdout_wall_s": r.get("holdout", {}).get("wall_s"), "holdout_combo_deviation": r.get("holdout", {}).get("combo_deviation"),
             "ms_per_encounter_per_worker": round(1000 * bal.get("wall_s", 0) * bal.get("workers", 1) / n, 1),
             "boss_ticks": r.get("ticks"), "boss_sim_ms": r.get("sim_ms")}

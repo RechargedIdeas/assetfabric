@@ -19,7 +19,7 @@ pets:
     stats: {hp: 40, atk: 3, def: 3, speed: 0.9}
     abilities: [bite]
     bonus: {def_flat: 2.7}   # F5 tuned (was 2)
-    affinity: {bram: 1.03, kael: 1.03, nyra: 2.09, sola: 0.33}   # F6 balance (pet↔character, fitted on seed_base 5000, held out 9000)
+    affinity: {bram: 1.03, kael: 1.03, nyra: 1.0, sola: 0.77}   # F6 balance; Q5 nyra/sola recalibrated (C-94: paired CRN slope on seed_base 60000, confirmed on fresh seed_base 20000)
     sprite: {archetype: pet, palette: cave_moss, seed: 9}
   - id: lumen_wisp
     starter: true
@@ -27,7 +27,7 @@ pets:
     stats: {hp: 18, atk: 4, def: 0, speed: 1.4}
     abilities: [spark]
     bonus: {hp_pct: 0.30}   # F5 tuned (was 0.15)
-    affinity: {bram: 0.25, kael: 3.0, nyra: 0.76, sola: 0.25}   # F6 balance (pet↔character, fitted on seed_base 5000, held out 9000)
+    affinity: {bram: 0.25, kael: 3.0, nyra: 0.76, sola: 0.0}   # F6 balance; Q5 sola recalibrated (C-94: paired CRN slope on seed_base 60000, confirmed on fresh seed_base 20000)
     sprite: {archetype: pet, palette: hero_teal, seed: 13}
   - id: dusk_owl
     starter: false

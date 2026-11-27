@@ -1,18 +1,20 @@
 # F6 economy — items, crops, recipes, shop, starter kit, XP curve (GAME_SPEC §4.4 farming loop).
-# [INFERENCE F6-3] GAME_SPEC leaves crops/economy unspecified ("implement minimal gather/grow/craft
-# loop that feeds loot/economy schema"); every name and number here is a placeholder (like D-005).
+# GAME_SPEC leaves crops/economy unspecified ("implement minimal gather/grow/craft loop that feeds loot/economy
+# schema"). Q5 (ADR-0018, INFERENCE C-93): item values are derived from content/world/economy_design.yaml
+# (Codegen-World writes `items[*].value`; gate `economy_design`); the reliability / XP-pacing targets there are
+# checked against the recorded slice by `forge accept F6`. Names stay editable by Game Design.
 schema_version: "1.0"
 items:
   - {id: coin, kind: currency}
   - {id: sunroot_seed, kind: seed, crop: sunroot}
   - {id: glowcap_spore, kind: seed, crop: glowcap}
-  - {id: sunroot, kind: crop, sell: 2}
-  - {id: glowcap, kind: crop, sell: 3}
-  - {id: flint, kind: material, sell: 1}
-  - {id: cave_moss, kind: material, sell: 1}
-  - {id: ember_shard, kind: material, sell: 4}
-  - {id: brute_hide, kind: material, sell: 6}
-  - {id: ember_ore, kind: material, sell: 2}                          # Q4: hollow ore nodes
+  - {id: sunroot, kind: crop}
+  - {id: glowcap, kind: crop}
+  - {id: flint, kind: material}
+  - {id: cave_moss, kind: material}
+  - {id: ember_shard, kind: material}
+  - {id: brute_hide, kind: material}
+  - {id: ember_ore, kind: material}                          # Q4: hollow ore nodes
   - {id: warden_core, kind: material}
   # crafted — consumables apply out of combat or at the next fight; gear is permanent
   - {id: moss_salve, kind: consumable, use: {heal_pct: 0.5}}          # whole party, out of combat
@@ -29,7 +31,7 @@ recipes:
   - {id: moss_salve, out: {moss_salve: 1}, in: {cave_moss: 1, sunroot: 1}}
   - {id: ember_tonic, out: {ember_tonic: 1}, in: {glowcap: 2, flint: 1}}
   - {id: flint_edge, out: {flint_edge: 1}, in: {flint: 2, ember_shard: 2}}
-  - {id: warden_charm, out: {warden_charm: 1}, in: {warden_core: 1, glowcap: 1}}
+  - {id: warden_charm, out: {warden_charm: 1}, in: {warden_core: 1, glowcap: 1, brute_hide: 1}}   # Q5: hide sink
   - {id: ember_mail, out: {ember_mail: 1}, in: {ember_ore: 3, flint: 2}}
 shop:     # farm stall (bench tile): buy seeds with loot coins
   sunroot_seed: 3
@@ -39,5 +41,8 @@ farm:
   plots: 4
 xp:
   per_tier: 10                      # same rule as F5 save_progress (INFERENCE F5-5)
-  level_at: [0, 30, 90, 200, 360]   # cumulative xp for level 1..5 [INFERENCE F6-4]
+  # cumulative xp for level 1..5. Q5 (C-93): placed on the recorded 0.7.12 slice XP timeline so the party
+  # reaches L3 in the first cave run, L4 during the patrol, meets the Warden at L4 and hits the cap on the ridge
+  # (targets: economy_design.yaml level_at_stage; was [0, 30, 90, 200, 360] — L5 before the boss trip)
+  level_at: [0, 30, 150, 400, 800]
   start_level: 2

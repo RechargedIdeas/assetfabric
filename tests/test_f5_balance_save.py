@@ -72,7 +72,17 @@ def test_aggregate_and_verdict() -> None:
     assert agg["matchups"]["a+x"]["ci95"][0] < 0.7 < agg["matchups"]["a+x"]["ci95"][1]
     v = verdict(agg)
     assert not v["G-BAL-01"] and not v["checks"]["encounters_ge_1000"] and not v["checks"]["max_choice_deviation_lt_5pp"]
-    assert v["checks"]["max_combo_deviation_lt_5pp"] is False     # F6: per-pair spread is gated
+    assert v["soft"]["max_combo_deviation_lt_5pp"] is False       # point spread: reported since Q5
+    assert v["checks"]["combo_ci_within_5pp"] is True             # 10 fights/cell: not significantly off
+
+
+def test_verdict_per_pair_ci_check_catches_a_real_outlier() -> None:
+    rows = []   # Q5 (C-94): 400 fights/cell, one cell 20 pp below the rest → its CI misses the ±5 pp band
+    for mid, wins in (("a+x", 300), ("a+y", 300), ("b+x", 300), ("b+y", 220)):
+        rows += [{"id": mid, "seed": i, "outcome": "victory" if i < wins else "defeat", "ticks": 100, "boss_phase": 3}
+                 for i in range(400)]
+    v = verdict(aggregate(rows))
+    assert v["checks"]["combo_ci_within_5pp"] is False and not v["G-BAL-01"]
 
 
 def test_wilson_interval() -> None:

@@ -4,6 +4,34 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.13+f7] — 2026-11-27 — Quality gaps Q5: economy design model (D-005 tables) + per-pair balance on unseen seeds
+
+### Added
+- **Economy design model** (quality gap P4 / D-005, ADR-0018, INFERENCE C-93): `content/world/economy_design.yaml`
+  (base values, craft markup 1.25, targets) + `forge/economy.py`. Codegen-World derives every item value into
+  `world.json` (`items[*].value`; placeholder sell prices removed) and gates `economy_design`: crop ROI sunroot 1.33 /
+  glowcap 1.50 (band 1.25–2.25), loot value per kill T1 2.04 / T2 8.33 / T3 64.14, no dead materials, crafted > inputs.
+- `forge accept F6` checks the economy on the main run and all 12 selections: loot Monte Carlo over the recorded kill
+  sequence (2000 seeds, Python twin of `world/loot.gd`): P(Flint Edge before the boss) 1.000, P(Warden Charm by the end)
+  0.9995, end coin p5/p50/p95 111/131/155; XP pacing level 3/4/4/5 at clear-cave/craft/boss/rest; twin level-ups = game.
+- **`forge balance holdout`** (`--seeds`, `--seed-base`) and **`forge balance tune-affinity`** (12 per-cell Optuna TPE
+  studies, ask/tell on shared runs). Full `forge accept F5` gates the hold-out: per-pair spread ≤ 3.5 pp on 1000 unseen
+  seeds per cell (INFERENCE C-94); FAST/CI mode records it as skipped.
+- `results/F5-tune-affinity.json` (6 trials × 100 seeds/cell, 7200 fights, 140 s).
+
+### Changed
+- Pet affinities recalibrated (paired CRN probe on seed_base 60 000): `stone_tortle.nyra` 2.09 → 1.0,
+  `lumen_wisp.sola` 0.25 → 0.0, `stone_tortle.sola` 0.33 → 0.77; affinity range 0–3 (was 0.25–3).
+- Per-pair hold-out: **5.41 pp → 2.71 pp** (gate on fresh seed_base 20 000; 9000 was spent choosing the cells).
+- G-BAL-01 per-pair check at 200 seeds/cell is noise-aware (`combo_ci_within_5pp`: each cell's Wilson 95 % CI reaches
+  mean ± 5 pp); the point spread (5.83 pp, noise floor) moves to `verdict.soft`.
+- XP curve and Warden Charm recipe (brute hide) set by the model; slice level-ups follow the targets.
+
+### Not proven
+- The Optuna study was too noisy to apply (SE ≈ 4.5 pp per cell per trial); a study that resolves 1 pp needs ≥ 1000
+  fights per cell per trial. Hold-out runtime on the 2-core node not measured (≈ 15–20 min extrapolated).
+- World fights are still hand-tuned (TODO P7); numbers remain Game-Design sign-off (D-005); no coin sink beyond seeds.
+
 ## [0.7.12+f7] — 2026-11-26 — Quality gaps Q4: vertical slice reaches 15–20 min (human-pace estimate, gated)
 
 ### Added
