@@ -357,6 +357,34 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
         aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
         return {"brief": f"{name}-probe", "ok": len(out) > 0, "bytes": len(out), "wall_s": round(wall, 3), "cores": aff,
                 "device": sel["device"], "backend": sel["backend"], "digest": hashlib.sha256(out).hexdigest()}
+    if name == "parametric":   # U1: every parametric template through the NumPy CSG/SDF CPU rung (OpenSCAD is a cli_bridge)
+        from forge.universal import mesh as UM, openscad
+
+        sel = select("gen.parametric", root=root)
+        h = hashlib.sha256()
+        oks = []
+        for tid in sorted(openscad.load_templates(root)):
+            r = openscad.build(tid, backend="csg-sdf-cpu", cross_check=False, root=root)
+            oks.append(r["ok"])
+            h.update(tid.encode() + UM.write_stl(r["_mesh"], tid))
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "parametric-templates", "ok": all(oks), "templates": len(oks), "wall_s": round(wall, 3), "cores": aff,
+                "device": sel["device"], "backend": sel["backend"], "digest": h.hexdigest()}
+    if name == "universal-export":   # U1: every built-in exporter x every reference scene it accepts → manifest digests
+        import tempfile as _tf
+
+        from forge.universal import engine
+
+        sel = select("universal.export", root=root)
+        with _tf.TemporaryDirectory() as td:
+            d = engine.demo(Path(td), native=False, root=root)
+        man = sorted((r["adapter"], r["dimension"], r.get("files"), r.get("bytes")) for r in d["exports"])
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "universal-demo", "ok": d["ok"], "exports": d["counts"]["exports"], "wall_s": round(wall, 3),
+                "cores": aff, "device": sel["device"], "backend": sel["backend"],
+                "digest": hashlib.sha256(json.dumps(man).encode()).hexdigest()}
     raise GroundWeaveError(f"unknown runtime probe {name!r}")
 
 

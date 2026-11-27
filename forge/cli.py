@@ -755,6 +755,11 @@ from forge.cli_liveops import liveops_grp  # noqa: E402  (F9 LiveOps readiness)
 
 main.add_command(liveops_grp)
 
+from forge.cli_universal import parametric_grp, universal_grp  # noqa: E402  (U1 universal engine)
+
+main.add_command(universal_grp)
+main.add_command(parametric_grp)
+
 
 if __name__ == "__main__":
     main()

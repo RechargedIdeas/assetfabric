@@ -79,6 +79,7 @@ def contract(req: dict[str, Any]) -> dict[str, Any]:
                 errs.append(f"{dim}: verify failed {v.get('errors')}")
             detail[dim] = {"files": len(ha), "bytes": sum((oa / k).stat().st_size for k in ha), "export_s": ta}
     if a.direction in ("import", "both"):
+        Path("sample").mkdir(exist_ok=True)
         sample = a.sample_input(Path("sample"))
         s1, s2 = a.import_(sample), a.import_(sample)
         val = ir.validate(s1)

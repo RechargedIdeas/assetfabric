@@ -227,3 +227,22 @@ ops:
     ladder:
       - {id: gdgs-raster-import, device: vulkan, impl: planned}
       - {id: gdgs-multimesh-billboard-cpu, device: cpu, impl: real}
+  gen.parametric:
+    budget_s_2core: 30
+    probe_brief: "runtime:parametric"
+    note: >-
+      U1 parametric generation. CPU rung: own NumPy CSG/SDF evaluator + marching tetrahedra (budget-aware, recipe from the
+      benchmark-gated evolution store). OpenSCAD is a separate cli_bridge backend (`forge parametric build --backend
+      openscad-cli`), not a GroundWeave rung, because it is an optional external binary. A GPU (compute-shader) SDF
+      polygoniser is planned.
+    ladder:
+      - {id: csg-sdf-vulkan-compute, device: vulkan, impl: planned}
+      - {id: csg-sdf-cpu, device: cpu, impl: real}
+  universal.export:
+    budget_s_2core: 60
+    probe_brief: "runtime:universal-export"
+    note: >-
+      U1 universal adapters: every built-in exporter x every reference scene (2D/2.5D/3D) it accepts, packs re-verified by
+      AssetFabric's own readers. Pure CPU; the digest covers adapter/dimension/file counts/bytes.
+    ladder:
+      - {id: universal-adapters-cpu, device: cpu, impl: real}
