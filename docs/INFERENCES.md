@@ -114,7 +114,7 @@ Non-inferences (verbatim from specs): engine Compatibility, AMD fleet inventory,
 
 83. **F7-1 Targets and modes**: four targets — `desktop-linux` (x86_64, release), `desktop-windows` (x86_64, release, cross-exported from Linux), `android` (**debug** APK, `arm64-v8a` only for the Redmi Note 12 Pro 5G reference (D-002), Godot 4.3 defaults minSdk 21 / targetSdk 34, versionCode 7 = milestone, versionName 0.7.0), `web` (release, **threads** + PWA). GAME_SPEC §5 asks for "Desktop signed builds"; signing is deferred by brief (unsigned/debug is acceptable for F7) and tracked in docs/packaging.md §Signing.
 84. **F7-2 Staged keep-import**: Fabric output is runtime-loaded and hidden from the editor import by `.gdignore` (F1 design), and Godot never exports a `.gdignore`d directory. Rather than changing the game tree (and the determinism gate), packaging copies the project to `dist/.stage/`, removes the `.gdignore` there and writes `importer="keep"` stubs for PNG/WAV so they ship byte-for-byte; ShuttleLine proves it per target.
-85. **F7-3 Web threading (D-001)**: we ship the **threads** build (the swap advisor uses `WorkerThreadPool`) with COOP/COEP from the host and Godot's service-worker header shim for hosts that cannot set headers (one automatic reload on first visit). A single-threaded (`nothreads`) variant is not built in F7; its templates are fetched so it can be added if a target host breaks isolation. D-001 stays open for the Factory Lead with this as the proposed default.
+85. **F7-3 Web threading (D-001)**: we ship the **threads** build (the swap advisor uses `WorkerThreadPool`) with COOP/COEP from the host and Godot's service-worker header shim for hosts that cannot set headers (one automatic reload on first visit). A single-threaded (`nothreads`) variant is not built in F7; its templates are fetched so it can be added if a target host breaks isolation. D-001 stays open for the Factory Lead with this as the proposed default. **Closed in 0.7.14 (C-97, ADR-0019):** a `web-nothreads` fallback now ships beside the threads build.
 86. **F7-4 "45 MB compressed"**: measured as the sum of gzip-9 sizes of every file in `dist/web/` (what a gzip-serving host transfers; brotli would be smaller), against 45 000 000 bytes (decimal MB, the stricter reading).
 87. **F7-5 Web save persistence**: Godot persists `user://` to IndexedDB from the main loop after a written file is closed, so quitting in the same frame can drop the save. `Save.quit_after_persist()` / `Save.persist_wait()` wait 10 frames + 0.5 s on Web only before quitting (used by the slice's save-and-quit path and `savecheck`).
 88. **F7-6 ShuttleLine "multi"**: SPEC says "Multi-engine export (Godot first; Unity/Unreal adapters) — multi@F7". F7 delivers the engine-neutral **contract** (`shuttleline.contract/1`) verified against every shipped *platform* artifact, plus an engine-neutral `generic-folder` adapter. Unity/Unreal adapters are declared *not built* in the contract (GAME_SPEC ships Godot only; no consumer yet).
@@ -577,3 +577,25 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     been fitted on those seeds); G-BAL-01's per-pair check is therefore the noise-aware `combo_ci_within_5pp` (every
     cell's Wilson 95 % CI reaches mean ± 5 pp) and the point spread is reported in `verdict.soft`. Total balance compute
     for Q5 on the reference box: study 140 s + first hold-out 236 s + calibration 76 s + gate hold-out 227 s.
+
+### Q6 — LoomCluster node auth + blob transfer, Web single-thread fallback (0.7.14, gaps d + e + f / P8, P9, P10)
+
+95. **C-95 Cluster node auth = one fleet secret, HMAC both ways.** SPEC asks for equal nodes on a trusted fleet but names
+    no auth scheme; LoomLink's per-device pairing (C5) is phone↔desktop. For node↔node we use **one shared fleet secret**
+    (32 random bytes, `FORGE_CLUSTER_SECRET` hex or `.fabric/cluster.key` from `forge cluster keygen`, 0600,
+    git-ignored): request MAC = HMAC-SHA256(secret, method‖path‖ts‖nonce‖sha256(body)) in `X-Loom-Ts/Nonce/Sig`, window
+    ±120 s (same as LoomLink), nonces remembered inside the window → replay = 401; every response is signed
+    (`X-Loom-RSig` over nonce‖status‖sha256(body)) and the client refuses unsigned or wrong answers, so a rogue listener
+    cannot feed results. A node without a secret refuses to start (no unauthenticated mode). Not done: per-node keys,
+    revocation, encryption (payloads readable on a raw LAN — Tailscale/WireGuard before binding off loopback), quotas.
+96. **C-96 Content-addressed blob transfer.** Result JSON carries `{sha256,size}` only; bytes stay in the executor's blob
+    store and the origin pulls signed `GET /blob/<sha256>`, recomputes the digest and accepts the result only on match
+    (unknown digest or non-hex/traversal names → 404). Blobs live for the node's lifetime (no GC, no chunking/resume);
+    proven with a 4 MiB diagnostic `bytes` job on loopback — large-file throughput across machines is unmeasured.
+97. **C-97 Web single-thread fallback (D-001).** Godot 4.3's `web_nothreads_*` templates are the supported path; we ship
+    them as a second artifact (`dist/web-nothreads`) rather than replacing the threads build, because the swap advisor's
+    threaded ranking is faster where isolation is available. Which artifact a host serves is a deployment choice; no
+    automatic loader that picks by `crossOriginIsolated` is built (possible, untested). Measured in headless Chrome
+    (SwiftShader) on a header-less local host: gzip-9 9.37 MB, boots, SW + offline boot (after `patch_sw` removes 4.3's
+    stale `index.worker.js` cache entry), IndexedDB save round-trip, swap ranking p95 68.7 ms in the recorded 0.7.14 run
+    (132.6 ms in the first measurement — run-to-run noise under SwiftShader; above the 50 ms native budget, not gated). Real browsers on a public HTTPS host (Chrome/Firefox/Safari) remain untested.

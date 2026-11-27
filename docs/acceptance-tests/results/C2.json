@@ -9,12 +9,12 @@
     "apk_sha256": "dc6b6042638aa7d74e8cc0c310d937ea3666d969189696f02407f73858e840c9",
     "gen_ms": {
       "cave": {
-        "max": 19.36,
-        "mean": 5.1
+        "max": 20.18,
+        "mean": 3.63
       },
       "sprite": {
-        "max": 31.8,
-        "mean": 3.9
+        "max": 22.77,
+        "mean": 3.12
       }
     },
     "mode": "full"
@@ -29,7 +29,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 14.1
+      "seconds": 6.3
     },
     "c2": {
       "budget_ms": 250.0,
@@ -48,8 +48,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 19.36,
-          "ms_mean": 5.1,
+          "ms_max": 20.18,
+          "ms_mean": 3.63,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,
@@ -70,8 +70,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 31.8,
-          "ms_mean": 3.9,
+          "ms_max": 22.77,
+          "ms_mean": 3.12,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,
@@ -100,8 +100,8 @@
     },
     "mode": "full",
     "toolchain": {
-      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
-      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "aapt": "/workspace/android-sdk/build-tools/36.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/36.0.0/apksigner",
       "jdk": "/workspace/jdk/jdk-17.0.21+9",
       "sdk": "/workspace/android-sdk"
     }

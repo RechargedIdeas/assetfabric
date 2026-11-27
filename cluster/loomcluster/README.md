@@ -4,6 +4,7 @@ Implemented in `forge/loomcluster.py` (scheduler / node / fleet harness / LoomLi
 (+ `content/groundweave/ladder.yaml`). This directory only documents it.
 
 ```bash
+forge cluster keygen                              # fleet secret .fabric/cluster.key (0600); copy to every node or set FORGE_CLUSTER_SECRET
 forge cluster demo                                # 3 local processes (1/2/4 slots); stealing + SIGKILL failover; digests verified
 forge cluster node --id lemur --state-dir /tmp/l --pin 2 --devices cpu           # one node, pinned to 2 cores, GPU hidden
 forge cluster node --id main --state-dir /tmp/m --peer http://127.0.0.1:PORT     # join a mesh from any one seed
@@ -14,7 +15,11 @@ forge accept C7-C8                                # recorded in docs/acceptance-
 ```
 
 Design, semantics and limits: [ARCHITECTURE.md](../../ARCHITECTURE.md#loomcluster--groundweave-c7--c8),
-[docs/acceptance-tests/C7-C8.md](../../docs/acceptance-tests/C7-C8.md), [docs/INFERENCES.md](../../docs/INFERENCES.md) C-16…C-31.
+[docs/acceptance-tests/C7-C8.md](../../docs/acceptance-tests/C7-C8.md), [docs/INFERENCES.md](../../docs/INFERENCES.md) C-16…C-31, C-95 (node auth), C-96 (blob transfer).
 Fleet inventory: [docs/hardware-fleet.md](../../docs/hardware-fleet.md) (mirrored in `forge.yaml` `cluster.nodes`).
 
-**Not yet:** a multi-machine run, node↔node authentication, a Kotlin cluster peer, real GPU backends.
+**Security (0.7.14):** every request and response is HMAC-SHA256 signed with the fleet secret (401 on unsigned, wrong-key,
+tampered, stale > ±120 s or replayed requests); artifacts move as content-addressed blobs (`GET /blob/<sha256>`, verified
+by the origin). Traffic is **not encrypted** — keep nodes on loopback or a Tailscale/WireGuard network. See SECURITY.md.
+
+**Not yet:** a multi-machine run, per-node keys/revocation, encryption, a Kotlin cluster peer, real GPU backends.

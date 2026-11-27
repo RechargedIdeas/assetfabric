@@ -4,6 +4,37 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.14+f7] — 2026-11-27 — Quality gaps Q6: LoomCluster node auth + blob transfer, Web single-thread fallback (D-001), doc nits
+
+### Added
+- **LoomCluster node authentication** (quality gap P8, INFERENCE C-95): every node↔node and client↔node request carries
+  `X-Loom-Ts/Nonce/Sig` = HMAC-SHA256(fleet secret, method‖path‖ts‖nonce‖sha256(body)); nodes answer **401** to
+  unsigned, wrongly keyed, tampered, stale (> ±120 s) or replayed (nonce seen) requests and sign every response
+  (`X-Loom-RSig`), which clients verify. Fleet secret from `FORGE_CLUSTER_SECRET` or `.fabric/cluster.key`
+  (`forge cluster keygen`, 0600, git-ignored); a node without a secret refuses to start.
+- **Content-addressed blob transfer** (P8, INFERENCE C-96, supersedes C-28): executors keep artifact bytes in a blob store
+  and return `{sha256,size}`; the origin pulls signed `GET /blob/<sha256>`, verifies the digest and only then accepts the
+  result. New C7 check `auth_blobs` (6 forged/stale/replayed requests → 401, unsigned response refused, 4 MiB blob pulled
+  and verified, unknown digest / traversal → 404).
+- **`web-nothreads` single-thread Web fallback** (quality gap P9, **D-001 closed**, ADR-0019, INFERENCE C-97):
+  `forge build --target web-nothreads` (Godot 4.3 `web_nothreads_*` templates, PWA on, no COOP/COEP, no isolation shim).
+  Swap advisor uses its serial path under `nothreads`. Full `forge accept F7` builds and smoke-tests both Web variants:
+  gzip-9 **9 373 562 B ≈ 9.37 MB** (budget 45 MB); headless Chrome on a header-less host — not isolated, boots, SW + offline boot,
+  IndexedDB save round-trip, swap ranking parity (p95 68.7 ms in the recorded run, 132.6 ms in the first one — headless SwiftShader, not gated).
+
+### Fixed
+- PWAPipeline `patch_sw`: Godot 4.3-stable's nothreads export lists a non-existent `index.worker.js` in the SW cache list,
+  which made the SW install fail (no offline play); missing install-time entries are now dropped (no-op for threads).
+- Doc nits (P10): C7 description in `forge/milestones.py` / STATUS, C9–C12 register counts in `C9-C12.md`, stale
+  "no auth" / "threads only" claims in HANDOVER, README and the tool catalog; `.gitignore` now also ignores the
+  `.fabric/godot-home` *symlink* used by worktrees (it had been committed by mistake on the Q6 branch and is removed).
+
+### Not proven
+- No multi-machine cluster run; one shared fleet secret (no per-node keys/revocation); **no encryption** — keep nodes on
+  loopback or pin to Tailscale/WireGuard. Web fallback tested in headless Chrome on localhost only; no public HTTPS host,
+  no Firefox/Safari; the fallback's swap ranking (68.7–132.6 ms p95 under SwiftShader) is above the 50 ms native budget.
+- Quality gap **P7 world fights** (wipe-rate / clear-time bands by Monte Carlo) is still open.
+
 ## [0.7.13+f7] — 2026-11-27 — Quality gaps Q5: economy design model (D-005 tables) + per-pair balance on unseen seeds
 
 ### Added

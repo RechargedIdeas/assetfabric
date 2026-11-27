@@ -1,5 +1,5 @@
 {
-  "description": "LoomCluster: equal nodes advertise/negotiate, steal work, checkpoint, retry; node-count-independent results; PocketLoom LoomLink offload runs on the fleet",
+  "description": "LoomCluster: equal nodes advertise/negotiate, steal work, checkpoint, retry; node-count-independent results; PocketLoom LoomLink offload runs on the fleet; HMAC-signed node requests/responses (401 on unsigned/replayed), content-addressed /blob transfer",
   "errors": [],
   "increment": "loomcluster",
   "milestone": "C7",
@@ -7,15 +7,42 @@
   "perf": {
     "batch_digest": "c1984434e6f07e1187efb325cc8033cc1df32fc485ae4fbd110da12da08f51ff",
     "batch_wall_s": {
-      "n1_2core_nogpu": 3.07,
-      "n2": 2.58,
+      "n1_2core_nogpu": 2.93,
+      "n2": 2.12,
       "n3": 2.04
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.167,
+    "max_gen_job_s_2core": 1.122,
     "mode": "full"
   },
   "result": {
+    "auth_blobs": {
+      "auth_rejected_counter": 6,
+      "blob": {
+        "bad_blob_name": 404,
+        "blob_bytes": 4194304,
+        "executed_on": "b",
+        "executor_blobs_out": 1,
+        "ok": true,
+        "origin_blobs_in": 1,
+        "result_json_bytes": 341,
+        "sha256": "12535c8882d262c27d2eab9f371f4051da194a11626c4c283908770d388ec9cf",
+        "unknown_blob": 404
+      },
+      "ok": true,
+      "rejected": {
+        "stale_timestamp": 401,
+        "tampered_body": 401,
+        "unsigned_get": 401,
+        "unsigned_submit": 401,
+        "wrong_key": 401
+      },
+      "replay": {
+        "first": 200,
+        "second": 401
+      },
+      "unsigned_response": "refused_response"
+    },
     "cli_gen": {
       "batch_digest": "0b4dfa383cdf8853f7c7744b8a098275b98707fb34a1d22d7d14607be7c2799d",
       "executed_by_node": {
@@ -38,14 +65,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.167,
+          "max_gen_job_s": 1.122,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 3.07,
+          "wall_s": 2.93,
           "wrong": []
         },
         "n2": {
@@ -55,7 +82,7 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.306,
+          "max_gen_job_s": 1.068,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
@@ -63,7 +90,7 @@
             "a": 0,
             "b": 7
           },
-          "wall_s": 2.58,
+          "wall_s": 2.12,
           "wrong": []
         },
         "n3": {
@@ -71,17 +98,17 @@
           "complete": true,
           "executed_by_node": {
             "a": 26,
-            "b": 3,
-            "c": 7
+            "b": 4,
+            "c": 6
           },
-          "max_gen_job_s": 1.531,
+          "max_gen_job_s": 1.493,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
           "stolen_in": {
             "a": 0,
             "b": 4,
-            "c": 7
+            "c": 6
           },
           "wall_s": 2.04,
           "wrong": []
@@ -92,31 +119,31 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.49,
+        "elapsed_s": 7.48,
         "executed_by_node": {
-          "a": 31,
-          "b": 16,
-          "c": 1
+          "a": 26,
+          "b": 17,
+          "c": 5
         },
         "killed": {
-          "c_held": 4,
-          "results_at_kill": 12
+          "c_held": 2,
+          "results_at_kill": 21
         },
         "lease_s": 6.0,
         "ok": true,
-        "requeued_at_origin": 5,
+        "requeued_at_origin": 3,
         "wrong": []
       },
       "ok": true,
       "origin_restart": {
         "completed": 24,
         "executed_by_node": {
-          "a": 9,
-          "b": 15
+          "a": 10,
+          "b": 14
         },
         "ok": true,
-        "parked_results_redelivered_by_peer": 8,
-        "recovered_from_journal": 13,
+        "parked_results_redelivered_by_peer": 6,
+        "recovered_from_journal": 15,
         "wrong": []
       },
       "retry": {
@@ -218,7 +245,7 @@
       "unknown_op_status": 400
     },
     "not_proven": [
-      "cross-machine transport (LAN/Tailscale) and cluster auth",
+      "cross-machine transport (LAN/Tailscale); node auth is integrity + authentication, not encryption",
       "Kotlin/PocketLoom as a cluster peer node",
       "real GPU devices (device placement uses simulated adverts)",
       "origin loss without restart"

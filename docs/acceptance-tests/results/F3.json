@@ -5,15 +5,15 @@
   "milestone": "F3",
   "passed": true,
   "perf": {
-    "field_warm_ms": 79.92,
-    "lm_p95_us": 44,
+    "field_warm_ms": 74.08,
+    "lm_p95_us": 32,
     "policy_over_budget": 0,
-    "policy_p95_us": 11,
+    "policy_p95_us": 12,
     "swap_target_gated": true,
     "swap_target_met": true,
     "swap_target_ms": 50.0,
     "swap_threaded": true,
-    "swap_wall_ms": 29.33,
+    "swap_wall_ms": 28.06,
     "swapbench_cores": 2,
     "swapbench_fidelity": {
       "exact_order": 10,
@@ -21,9 +21,9 @@
       "top1_agree": 17,
       "top1_in_ref_top2": 17
     },
-    "swapbench_max_ms": 56.06,
-    "swapbench_p50_ms": 23.56,
-    "swapbench_p95_ms": 44.9,
+    "swapbench_max_ms": 50.4,
+    "swapbench_p50_ms": 21.96,
+    "swapbench_p95_ms": 36.4,
     "swapbench_states": 17
   },
   "result": {
@@ -120,27 +120,27 @@
       },
       "dialogue": [
         {
-          "e2e_ms": 0.08,
+          "e2e_ms": 0.05,
           "persona": "kael",
           "reply": "the old tunnels lead to the cave remembers every step we take"
         },
         {
-          "e2e_ms": 0.13,
+          "e2e_ms": 0.09,
           "persona": "sola",
           "reply": "the water"
         }
       ],
-      "field_warm_ms": 79.92,
+      "field_warm_ms": 74.08,
       "girt": {
         "callouts_served": 10,
         "lm_calls": 2,
-        "lm_p95_us": 44,
+        "lm_p95_us": 32,
         "lm_refused_in_tick": 0,
         "policy_budget_us": 500,
         "policy_calls": 121,
         "policy_fallbacks": 0,
         "policy_over_budget": 0,
-        "policy_p95_us": 11,
+        "policy_p95_us": 12,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -229,12 +229,12 @@
         ]
       ],
       "swap_threaded": true,
-      "swap_wall_ms": 29.33,
+      "swap_wall_ms": 28.06,
       "swaps": [
         {
           "tick": 260,
           "to": "nyra",
-          "wall_ms": 29.33
+          "wall_ms": 28.06
         }
       ]
     },
@@ -439,7 +439,7 @@
     "music_loaded": true,
     "music_stem": "combat",
     "outcome": "victory",
-    "sim_ms": 217.77,
+    "sim_ms": 210.17,
     "state_hash": "372a2a8c69155f02",
     "swapbench": {
       "exit_code": 0,
@@ -470,7 +470,7 @@
           ],
           "threaded": true,
           "tick": 300,
-          "wall_ms_median": 45.24
+          "wall_ms_median": 38.97
         },
         {
           "candidates": 4,
@@ -489,7 +489,7 @@
           ],
           "threaded": true,
           "tick": 360,
-          "wall_ms_median": 32.07
+          "wall_ms_median": 31.6
         },
         {
           "candidates": 4,
@@ -508,7 +508,7 @@
           ],
           "threaded": true,
           "tick": 420,
-          "wall_ms_median": 25.89
+          "wall_ms_median": 27.27
         },
         {
           "candidates": 4,
@@ -527,7 +527,7 @@
           ],
           "threaded": true,
           "tick": 480,
-          "wall_ms_median": 21.64
+          "wall_ms_median": 20.66
         },
         {
           "candidates": 4,
@@ -546,7 +546,7 @@
           ],
           "threaded": true,
           "tick": 540,
-          "wall_ms_median": 13.79
+          "wall_ms_median": 13.92
         },
         {
           "candidates": 4,
@@ -565,7 +565,7 @@
           ],
           "threaded": true,
           "tick": 600,
-          "wall_ms_median": 6.27
+          "wall_ms_median": 5.95
         },
         {
           "candidates": 4,
@@ -584,7 +584,7 @@
           ],
           "threaded": true,
           "tick": 240,
-          "wall_ms_median": 26.68
+          "wall_ms_median": 26.77
         },
         {
           "candidates": 4,
@@ -603,7 +603,7 @@
           ],
           "threaded": true,
           "tick": 300,
-          "wall_ms_median": 21.04
+          "wall_ms_median": 22.32
         },
         {
           "candidates": 4,
@@ -622,7 +622,7 @@
           ],
           "threaded": true,
           "tick": 360,
-          "wall_ms_median": 24.01
+          "wall_ms_median": 24.9
         },
         {
           "candidates": 4,
@@ -641,7 +641,7 @@
           ],
           "threaded": true,
           "tick": 420,
-          "wall_ms_median": 28.4
+          "wall_ms_median": 25.91
         },
         {
           "candidates": 4,
@@ -660,7 +660,7 @@
           ],
           "threaded": true,
           "tick": 480,
-          "wall_ms_median": 26.4
+          "wall_ms_median": 21.18
         },
         {
           "candidates": 4,
@@ -679,7 +679,7 @@
           ],
           "threaded": true,
           "tick": 540,
-          "wall_ms_median": 24.14
+          "wall_ms_median": 23.71
         },
         {
           "candidates": 4,
@@ -698,7 +698,7 @@
           ],
           "threaded": true,
           "tick": 600,
-          "wall_ms_median": 23.33
+          "wall_ms_median": 22.78
         },
         {
           "candidates": 4,
@@ -717,7 +717,7 @@
           ],
           "threaded": true,
           "tick": 660,
-          "wall_ms_median": 18.84
+          "wall_ms_median": 18.04
         },
         {
           "candidates": 4,
@@ -736,7 +736,7 @@
           ],
           "threaded": true,
           "tick": 720,
-          "wall_ms_median": 16.54
+          "wall_ms_median": 15.47
         },
         {
           "candidates": 4,
@@ -755,7 +755,7 @@
           ],
           "threaded": true,
           "tick": 780,
-          "wall_ms_median": 15.89
+          "wall_ms_median": 13.56
         },
         {
           "candidates": 3,
@@ -772,7 +772,7 @@
           ],
           "threaded": true,
           "tick": 840,
-          "wall_ms_median": 6.68
+          "wall_ms_median": 6.39
         }
       ],
       "pinned_cores": 2,
@@ -786,9 +786,9 @@
       "smt_siblings": false,
       "states": 17,
       "target_gated": true,
-      "wall_ms_max": 56.06,
-      "wall_ms_p50": 23.56,
-      "wall_ms_p95": 44.9
+      "wall_ms_max": 50.4,
+      "wall_ms_p50": 21.96,
+      "wall_ms_p95": 36.4
     },
     "ticks": 613,
     "tres_loaded": 17

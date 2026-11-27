@@ -19,7 +19,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 14.1
+      "seconds": 6.3
     },
     "c3": {
       "device_run": "not exercised \u2014 no Android device or KVM emulator on this box",
@@ -78,8 +78,8 @@
           "events": 2,
           "local_jobs": {
             "local.cave": {
-              "max_ms": 21.7,
-              "mean_ms": 12.9,
+              "max_ms": 18.7,
+              "mean_ms": 10.7,
               "n": 2
             }
           }
@@ -106,8 +106,8 @@
       "used": 88
     },
     "toolchain": {
-      "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
-      "apksigner": "/workspace/android-sdk/build-tools/35.0.0/apksigner",
+      "aapt": "/workspace/android-sdk/build-tools/36.0.0/aapt",
+      "apksigner": "/workspace/android-sdk/build-tools/36.0.0/apksigner",
       "jdk": "/workspace/jdk/jdk-17.0.21+9",
       "sdk": "/workspace/android-sdk"
     }

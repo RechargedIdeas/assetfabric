@@ -47,6 +47,6 @@ a no-op for the threads build. Without the patch the smoke shows `sw_registered:
 ## Consequences
 
 - D-001 is closed. Public HTTPS hosting on real Chrome/Firefox/Safari is still untested (TODO, user-gated hosting).
-- The fallback's swap ranking is ~2.6× slower than the native budget in headless SwiftShader; real GPUs/CPUs in a
-  browser are unmeasured.
+- The fallback's swap ranking is slower than the native budget in headless SwiftShader (p95 132.6 ms in the first
+  measurement, 68.7 ms in the recorded 0.7.14 `forge accept F7` run); real GPUs/CPUs in a browser are unmeasured.
 - The SW patch must be re-checked when the Godot version changes (the bug may be fixed upstream).

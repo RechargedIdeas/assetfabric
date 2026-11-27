@@ -33,7 +33,7 @@ godot-bin/
 companions/pocketloom/local.properties
 
 # F7 packaging toolchain (hermetic Godot home: export templates, editor settings, debug keystore; caches)
-/.fabric/godot-home/
+/.fabric/godot-home
 /.fabric/cache/
 /.fabric/jdk/
 /.fabric/cluster.key

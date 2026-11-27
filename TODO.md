@@ -4,9 +4,9 @@ Last updated: 2026-11-27 America/New_York
 
 ## Current sprint — quality gaps (Producer t59u, 2026-11-20; phase 2 of "replace stubs, fix quality gaps, then F8 and F9")
 
-> **PAUSED 2026-11-20 (Producer: "update all documentation, push everything, then pause").** Q1–Q2 done, Q3 landed partial.
-> Resume at row 5 (gap a) from the unmerged WIP branch `feat/q4-slice` — see HANDOVER.md §Resume point. Resume order:
-> ✅ (a) row 5 slice length (0.7.12) → ✅ (b) row 4 D-005 tables + ✅ (c) row 6 balance (0.7.13, Q5) → (c′) row 7 world fights → (d) row 8 cluster auth/blobs → (e) row 9 D-001 → (f) row 10 doc nits → F8 → F9.
+> Paused 2026-11-20, resumed 2026-11-26 (Producer t61u). Q1–Q2 done, Q3 partial, ✅ (a) row 5 slice length (0.7.12) → ✅ (b) row 4
+> D-005 tables + ✅ (c) row 6 balance (0.7.13, Q5) → ✅ (d) row 8 cluster auth/blobs + ✅ (e) row 9 D-001 + ✅ (f) row 10 doc nits
+> (0.7.14, Q6). **Open:** row 7 world fights (c′). **Next: F8 → F9** (HANDOVER.md §Next steps).
 
 Inventory 2026-11-20 from TODO / HANDOVER / STATUS / docs/INFERENCES.md / acceptance docs / DECISIONS (D-001, D-005).
 Rule: each row lands as its own patch release on `main` (tests + `forge accept` gate + docs) or is marked blocked with the
@@ -20,14 +20,14 @@ reason. Hardware / Producer-gated rows are listed at the end and are **not** wor
 | 4 | **D-005 / F6-3** economy, loot and quest content are placeholders | F6-3, D-005 | data-driven tables (crops, recipes, shop, loot, quest chain, XP) per GAME_SPEC §4.4/§5 shapes, generated + gated by Codegen-World, balanced with the existing sims; names/numbers stay Game-Design-owned (D-005 remains open for *sign-off*) | world gates + economy solvability + quest soft-lock | ✅ Q5 `0.7.13+f7` — economy design model `content/world/economy_design.yaml` + `forge/economy.py` (ADR-0018, C-93): derived item values, Codegen-World `economy_design` gate (ROI 1.33/1.50, loot/kill 2.04/8.33/64.14), F6 loot MC (2000 seeds: P(flint edge) 1.000, P(warden charm) 0.9995, coin p50 131) + XP pacing 3/4/4/5 on all 13 runs; D-005 open for sign-off only |
 | 5 | Vertical slice: bot 2.9 game-min vs 15–20 min | F6-12 | real content and pacing (second crop cycle, longer crop timers, quest chain steps, travel, boss gating) — not a slower bot; add a human-pace estimate model (reading, navigation, menu time) and gate it | F6 `length` hard check on the estimate (bot time reported as-is) | ✅ Q4 `0.7.12+f7` — human-pace estimate 17.03–18.51 min on all 12 selections (gated, ADR-0017, C-92); bot 7.10–7.35 game-min (was 2.9) from new content: Ore Hollow, patrol beat in the 2nd crop cycle, q_smith side quest, Windward Ridge open world (C-91); 0 wipes, 0 soft-locks. Human playtest still pending |
 | 6 | Per-pair balance spread on unseen seeds 5.25 pp (noise floor at 200 seeds/cell); thin Optuna evidence | F6-2, F6-14, F5-12 | faster balance worker (from Q3), more seeds per cell out-of-sample, longer Optuna study recorded | per-cell spread ≤ 3.5 pp on unseen seeds | ✅ Q5 `0.7.13+f7` — hold-out 1000 seeds/cell on fresh seed_base 20 000: **2.71 pp** (gated in full `forge accept F5`); first hold-out (9000) 5.41 pp → 3 affinities recalibrated by paired CRN probe; bounded Optuna study (6 × 100, 140 s) recorded, too noisy to apply; 200-seed check noise-aware (C-94) |
-| 7 | World fights tuned by hand | TODO Balance | Monte Carlo over the slice's area packs | wipe-rate / clear-time bands | open — not done in Q5 (the Q5 slice MC covers loot/XP, not wipe-rate/clear-time bands); next after Q6 |
-| 8 | LoomCluster node↔node HTTP unauthenticated (C-17); large blobs inside result JSON (C-28) | C-17, C-28 | HMAC-signed node requests with a pairing secret (LoomLink scheme), refuse unsigned/replayed; content-addressed blob transfer (`/blob/<sha256>`) for large artifacts | C7 auth + blob checks | resume (d) — not started |
-| 9 | **D-001** Web single-thread fallback | F7-3, D-001 | decide + implement if feasible (`nothreads` export variant, advisor serial path) | F7 web checks on both variants | resume (e) — not started |
-| 10 | Doc nits / stale claims | STATUS, milestones.py C10–C12 text, HANDOVER | regenerate STATUS (`forge report`), fix stale "labelled stubs" descriptions | review | Q1 + docs pass at the pause (2026-11-20); resume (f) for the rest |
+| 7 | World fights tuned by hand | TODO Balance | Monte Carlo over the slice's area packs | wipe-rate / clear-time bands | **open** — not done in Q5/Q6 (the Q5 slice MC covers loot/XP, not wipe-rate/clear-time bands); the slice has 0 wipes on all 12 selections, but no banded gate exists |
+| 8 | LoomCluster node↔node HTTP unauthenticated (C-17); large blobs inside result JSON (C-28) | C-17, C-28 | HMAC-signed node requests with a pairing secret (LoomLink scheme), refuse unsigned/replayed; content-addressed blob transfer (`/blob/<sha256>`) for large artifacts | C7 auth + blob checks | ✅ Q6 `0.7.14+f7` — HMAC-SHA256 signed requests + responses with a fleet secret (`FORGE_CLUSTER_SECRET` / `forge cluster keygen`), 401 on unsigned/wrong-key/tampered/stale/replayed; `{sha256,size}` results + signed `/blob/<sha256>` pull verified by the origin; C7 `auth_blobs` check (C-95, C-96). No encryption — Tailscale before leaving loopback |
+| 9 | **D-001** Web single-thread fallback | F7-3, D-001 | decide + implement if feasible (`nothreads` export variant, advisor serial path) | F7 web checks on both variants | ✅ Q6 `0.7.14+f7` — `web-nothreads` target (ADR-0019, C-97): 9.37 MB gzip, header-less host, SW + offline boot, IndexedDB save round-trip, advisor serial path; `patch_sw` fixes Godot 4.3's stale `index.worker.js` SW entry. D-001 closed |
+| 10 | Doc nits / stale claims | STATUS, milestones.py C10–C12 text, HANDOVER | regenerate STATUS (`forge report`), fix stale "labelled stubs" descriptions | review | ✅ Q1 + pause docs pass + Q6 `0.7.14+f7` — C7 description, C9–C12 register counts, stale auth / threads-only claims, `.fabric/godot-home` symlink ignore; STATUS regenerated |
 
 **Not worked here (hardware / Producer / Game-Design gated):** Windows runtime run; Android on a device (D-002); GPU rungs;
 signing + store listings (keys); human GUI playtest; final roster names/stats sign-off (D-005 owner); "hold"↔"go" voice
-grammar decision (C-79); F8 scope confirmation (now requested by the Producer: after this list).
+grammar decision (C-79). F8 scope was confirmed by the Producer (t59u, C-85).
 
 ## Previous sprint — stub replacement (Producer t59u, 2026-11-20: "replace stubs with real code, fix quality gaps, then F8 and F9")
 
@@ -88,7 +88,7 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 
 - [ ] Run `GameZero.console.exe --headless -- --net-report` + the slice on a real Windows host (or add wine to the build box) — Windows is statically verified only (INFERENCE F7-18)
 - [ ] On-device Android run on the Redmi Note 12 Pro 5G (D-002): install the debug APK, play the slice, G-SAVE-01 hop on hardware
-- [ ] Real-browser Web test on a public HTTPS host (Chrome, Firefox, Safari) with COOP/COEP; decide `nothreads` fallback (D-001)
+- [ ] Real-browser Web test on a public HTTPS host (Chrome, Firefox, Safari) with COOP/COEP, plus the `web-nothreads` fallback on a host without COOP/COEP (D-001 closed in 0.7.14, ADR-0019)
 - [ ] **Signing**: Windows Authenticode (+ rcedit icon/version), Linux AppImage/Flatpak signature, Android release keystore (env only, never committed) + AAB, BoltPack detached signature over `bolt.json`
 - [ ] **Store listings** (Producer): itch.io / own web host, Google Play (copy, screenshots, content rating, privacy), Steam later
 - [x] G-A11Y-01 full: in-game input rebinding UI + runtime colour-blind palette toggle (0.7.10)
@@ -151,7 +151,6 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 
 | ID | Question | Owner | By |
 |---|---|---|---|
-| D-001 | Web export single-threaded fallback strategy? (F7 ships threads + COOP/COEP + SW shim; `nothreads` templates fetched, not built — INFERENCE F7-3) | Factory Lead | before public Web hosting |
 | D-002 | Confirm Android reference = Redmi Note 12 Pro 5G (F7 APK is arm64-v8a only, untested on hardware) | Producer | before on-device test |
 | D-005 | Sign-off of final names/stats of 4 fighters + 3 starter pets (GAME_SPEC §10) and of the economy design numbers (content tables + gates landed in 0.7.13, ADR-0018) | Game Design | before content lock |
 

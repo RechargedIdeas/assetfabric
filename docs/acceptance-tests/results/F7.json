@@ -10,10 +10,10 @@
       "android": {
         "artifact": {
           "path": "dist/android/GameZero-debug.apk",
-          "sha256": "2f196036079db8396b56a436cb70cfdd7656a7ebb8247d0de9fdb659baabfd3b",
+          "sha256": "39b70cb6dc3032890c61723742e6c19a0bb9335b069c45c96d1536701081cb7e",
           "size": 25635766
         },
-        "export_wall_s": 9.0,
+        "export_wall_s": 11.6,
         "total_size": 25865880
       },
       "desktop-linux": {
@@ -37,17 +37,28 @@
       "web": {
         "artifact": {
           "path": "dist/web/index.html",
-          "sha256": "0406e31ac93d78949a645915fc5b171c9c36ff3da0938f3cd2e8d69bdbd7806f",
+          "sha256": "c154a9ad74cf843b706d938d73429047a80ff5bf24c09a0b9e3238fb4571e98c",
           "size": 5158
         },
-        "export_wall_s": 4.1,
-        "total_size": 35909344
+        "export_wall_s": 3.7,
+        "total_size": 35909376
+      },
+      "web-nothreads": {
+        "artifact": {
+          "path": "dist/web-nothreads/index.html",
+          "sha256": "2b604b7573c4dfac983886efbfcef6b50b3b92051984278a273f479b809ce98a",
+          "size": 5160
+        },
+        "export_wall_s": 3.9,
+        "total_size": 37401774
       }
     },
     "desktop_slice_game_minutes": 7.13,
     "mode": "full",
-    "web_budget_headroom_bytes": 35671517,
-    "web_gzip9_bytes": 9328483
+    "web_budget_headroom_bytes": 35671514,
+    "web_gzip9_bytes": 9328486,
+    "web_nothreads_gzip9_bytes": 9373562,
+    "web_nothreads_swap_p95_ms": 68.7
   },
   "result": {
     "a11y": {
@@ -443,6 +454,12 @@
           "licenses": 21,
           "ok": true,
           "unknown": {}
+        },
+        "web-nothreads": {
+          "copyleft": {},
+          "licenses": 21,
+          "ok": true,
+          "unknown": {}
         }
       }
     },
@@ -453,13 +470,13 @@
         "android": {
           "artifact": {
             "path": "dist/android/GameZero-debug.apk",
-            "sha256": "2f196036079db8396b56a436cb70cfdd7656a7ebb8247d0de9fdb659baabfd3b",
+            "sha256": "39b70cb6dc3032890c61723742e6c19a0bb9335b069c45c96d1536701081cb7e",
             "size": 25635766
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-android.fabricbolt",
-            "bolt_sha256": "3dcd5811819eb0094950d9d36767c4b742121f5658ef6a1a2a75344f339139dd",
-            "bolt_size": 25341597,
+            "bolt_sha256": "bf4056c087352072beae32d3ebd91b3f141ae2e31fecf8d04b61dd5e44cf2dbb",
+            "bolt_size": 25341452,
             "components": 85,
             "copyleft": {},
             "licenses": {
@@ -489,11 +506,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T01:01:28-0500",
+          "built_at": "2026-11-27T01:50:47-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 9.0,
+          "export_wall_s": 11.6,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-android",
           "mode": "debug",
@@ -512,14 +529,14 @@
             "shipped_files": 183,
             "target": "android"
           },
-          "source_digest": "d2e53a3889b7aebe8fe7552afa1b93b9e85ee0ea974754b70be631e3170e25f5",
+          "source_digest": "836d87172769ee79e20aa01b16595cd6f21f6128e52ea6462136110a96d8db47",
           "target": "android",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
           "total_size": 25865880,
           "verify": {
             "apk_size": 25635766,
-            "apkanalyzer_download_size": 25098893,
+            "apkanalyzer_download_size": 25098765,
             "internet_permission": false,
             "launchable": true,
             "min_sdk": 21,
@@ -554,8 +571,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-linux.fabricbolt",
-            "bolt_sha256": "518737a7b32dc2fe9fde36678be0abf82257bba99aa7ed454d86e309ea471e1d",
-            "bolt_size": 25496640,
+            "bolt_sha256": "76808d66863e721f46f1eb19a834b892f483033ee181709cb2dfae99997f5fbc",
+            "bolt_size": 25496686,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -584,7 +601,7 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T01:01:09-0500",
+          "built_at": "2026-11-27T01:50:25-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
           "errors": [],
           "exit_code": 0,
@@ -607,7 +624,7 @@
             "shipped_files": 182,
             "target": "desktop-linux"
           },
-          "source_digest": "d2e53a3889b7aebe8fe7552afa1b93b9e85ee0ea974754b70be631e3170e25f5",
+          "source_digest": "836d87172769ee79e20aa01b16595cd6f21f6128e52ea6462136110a96d8db47",
           "target": "desktop-linux",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
@@ -634,8 +651,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-windows.fabricbolt",
-            "bolt_sha256": "c8a267fce55c15fc4aba7c54541e4ae164a8346dd39c33afeb0bc4c886b7b204",
-            "bolt_size": 31623660,
+            "bolt_sha256": "0b03d0dbf7da0ec8eaabe41645e54090409203e4ec71e30d74f8b2d4e06dabc6",
+            "bolt_size": 31623787,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -664,7 +681,7 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T01:01:16-0500",
+          "built_at": "2026-11-27T01:50:33-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
           "errors": [],
           "exit_code": 0,
@@ -687,7 +704,7 @@
             "shipped_files": 182,
             "target": "desktop-windows"
           },
-          "source_digest": "d2e53a3889b7aebe8fe7552afa1b93b9e85ee0ea974754b70be631e3170e25f5",
+          "source_digest": "836d87172769ee79e20aa01b16595cd6f21f6128e52ea6462136110a96d8db47",
           "target": "desktop-windows",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
@@ -724,13 +741,13 @@
         "web": {
           "artifact": {
             "path": "dist/web/index.html",
-            "sha256": "0406e31ac93d78949a645915fc5b171c9c36ff3da0938f3cd2e8d69bdbd7806f",
+            "sha256": "c154a9ad74cf843b706d938d73429047a80ff5bf24c09a0b9e3238fb4571e98c",
             "size": 5158
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-web.fabricbolt",
-            "bolt_sha256": "7dbc09adf97fb6058d4372fe0b022255dc86dda7a436e0c599162e94cd4e246a",
-            "bolt_size": 9414323,
+            "bolt_sha256": "7edf4793c6e8b7df0273e76e0368ff6e9ffdc7d47e2ea18d2a93fbd1fefafb1f",
+            "bolt_size": 9414334,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -760,11 +777,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-27T01:01:51-0500",
+          "built_at": "2026-11-27T01:51:08-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.1,
+          "export_wall_s": 3.7,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-web",
           "mode": "release",
@@ -801,7 +818,7 @@
                 },
                 "index.html": {
                   "bytes": 5158,
-                  "gzip9": 2172
+                  "gzip9": 2171
                 },
                 "index.icon.png": {
                   "bytes": 437,
@@ -820,8 +837,8 @@
                   "gzip9": 581
                 },
                 "index.pck": {
-                  "bytes": 1623360,
-                  "gzip9": 1284972
+                  "bytes": 1623392,
+                  "gzip9": 1284977
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -829,7 +846,7 @@
                 },
                 "index.service.worker.js": {
                   "bytes": 5799,
-                  "gzip9": 2104
+                  "gzip9": 2103
                 },
                 "index.wasm": {
                   "bytes": 33829596,
@@ -840,10 +857,10 @@
                   "gzip9": 217
                 }
               },
-              "headroom_bytes": 35671517,
+              "headroom_bytes": 35671514,
               "ok": true,
-              "total_bytes": 35885493,
-              "total_gzip9": 9328483
+              "total_bytes": 35885525,
+              "total_gzip9": 9328486
             },
             "hook": true,
             "ok": true,
@@ -956,8 +973,9 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:45181/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44729/index.js:9:234048"
                 ],
+                "marker_lines": [],
                 "offline": true,
                 "page": {
                   "cached": [
@@ -986,7 +1004,7 @@
                   "version": "0.7.0+f7"
                 },
                 "script_errors": 0,
-                "wall_s": 2.1
+                "wall_s": 2.3
               },
               "ok": true,
               "online": {
@@ -996,8 +1014,9 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:45181/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:44729/index.js:9:234048"
                 ],
+                "marker_lines": [],
                 "offline": false,
                 "page": {
                   "cached": [
@@ -1026,7 +1045,7 @@
                   "version": "0.7.0+f7"
                 },
                 "script_errors": 0,
-                "wall_s": 2.5
+                "wall_s": 3.1
               },
               "response_headers": {
                 "index.html": {
@@ -1042,7 +1061,9 @@
                   "Cross-Origin-Opener-Policy": "same-origin"
                 }
               }
-            }
+            },
+            "sw_dropped_missing": [],
+            "variant": "web"
           },
           "shuttle": {
             "adapter": "godot",
@@ -1056,24 +1077,647 @@
             "shipped_files": 182,
             "target": "web"
           },
-          "source_digest": "d2e53a3889b7aebe8fe7552afa1b93b9e85ee0ea974754b70be631e3170e25f5",
+          "source_digest": "836d87172769ee79e20aa01b16595cd6f21f6128e52ea6462136110a96d8db47",
           "target": "web",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 35909344,
+          "total_size": 35909376,
+          "version": "0.7.0+f7"
+        },
+        "web-nothreads": {
+          "artifact": {
+            "path": "dist/web-nothreads/index.html",
+            "sha256": "2b604b7573c4dfac983886efbfcef6b50b3b92051984278a273f479b809ce98a",
+            "size": 5160
+          },
+          "bolt": {
+            "bolt": "dist/bolt/GameZero-0.7.0+f7-web-nothreads.fabricbolt",
+            "bolt_sha256": "35f43401ae626c6c0e1cbf4073e1353e7df6e34285129b5e2010be0010c9c7c2",
+            "bolt_size": 9461551,
+            "components": 84,
+            "copyleft": {},
+            "licenses": {
+              "Apache-2.0": 13,
+              "BSD-2-clause": 2,
+              "BSD-3-clause": 14,
+              "BSL-1.0": 1,
+              "CC0-1.0": 1,
+              "CC0-1.0 and Apache-2.0": 1,
+              "Expat": 32,
+              "Expat and Zlib": 1,
+              "FTL": 1,
+              "HarfBuzz": 1,
+              "LicenseRef-Proprietary": 1,
+              "MIT": 1,
+              "MIT OR NCSA": 1,
+              "MPL-2.0": 1,
+              "OFL-1.1": 2,
+              "Unicode": 1,
+              "Zlib": 5,
+              "glslang": 1,
+              "public-domain or Apache-2.0": 1,
+              "public-domain or Unlicense": 1,
+              "public-domain or Unlicense or Expat": 2
+            },
+            "ok": true,
+            "signed": false,
+            "unknown": {}
+          },
+          "built_at": "2026-11-27T01:51:33-0500",
+          "command": "godot --headless --path dist/.stage/game-zero --export-release web-nothreads dist/web-nothreads/index.html",
+          "errors": [],
+          "exit_code": 0,
+          "export_wall_s": 3.9,
+          "godot": "4.3.stable.official.77dcf97d8",
+          "kind": "godot-web",
+          "mode": "release",
+          "notes": "single-thread fallback (no SharedArrayBuffer, no COOP/COEP) + PWA (offline SW)",
+          "ok": true,
+          "preset": "web-nothreads",
+          "pwa": {
+            "budget": {
+              "budget_bytes": 45000000,
+              "files": {
+                "_headers": {
+                  "bytes": 261,
+                  "gzip9": 207
+                },
+                "index.144x144.png": {
+                  "bytes": 562,
+                  "gzip9": 291
+                },
+                "index.180x180.png": {
+                  "bytes": 650,
+                  "gzip9": 250
+                },
+                "index.512x512.png": {
+                  "bytes": 2557,
+                  "gzip9": 578
+                },
+                "index.apple-touch-icon.png": {
+                  "bytes": 650,
+                  "gzip9": 250
+                },
+                "index.audio.worklet.js": {
+                  "bytes": 7298,
+                  "gzip9": 2194
+                },
+                "index.html": {
+                  "bytes": 5160,
+                  "gzip9": 2174
+                },
+                "index.icon.png": {
+                  "bytes": 437,
+                  "gzip9": 190
+                },
+                "index.js": {
+                  "bytes": 331495,
+                  "gzip9": 84247
+                },
+                "index.manifest.json": {
+                  "bytes": 330,
+                  "gzip9": 196
+                },
+                "index.offline.html": {
+                  "bytes": 971,
+                  "gzip9": 581
+                },
+                "index.pck": {
+                  "bytes": 1623408,
+                  "gzip9": 1284995
+                },
+                "index.png": {
+                  "bytes": 21443,
+                  "gzip9": 19328
+                },
+                "index.service.worker.js": {
+                  "bytes": 5782,
+                  "gzip9": 2100
+                },
+                "index.wasm": {
+                  "bytes": 35376909,
+                  "gzip9": 7975981
+                }
+              },
+              "headroom_bytes": 35626438,
+              "ok": true,
+              "total_bytes": 37377913,
+              "total_gzip9": 9373562
+            },
+            "hook": true,
+            "ok": true,
+            "service_worker": {
+              "cached_on_first_use": [
+                "index.wasm",
+                "index.pck"
+              ],
+              "cached_on_install": [
+                "index.html",
+                "index.js",
+                "index.offline.html",
+                "index.icon.png",
+                "index.apple-touch-icon.png",
+                "index.audio.worklet.js"
+              ],
+              "ensure_isolation_shim": false,
+              "manifest": {
+                "display": "standalone",
+                "icons": 3,
+                "name": "Game Zero",
+                "orientation": "landscape",
+                "start_url": "./index.html"
+              },
+              "ok": true,
+              "runtime_missing_from_cache": []
+            },
+            "smoke": {
+              "checks": {
+                "boots": true,
+                "net_dormant": true,
+                "no_isolation_headers_sent": true,
+                "no_worker_js": true,
+                "not_cross_origin_isolated": true,
+                "offline_boot": true,
+                "offline_save_persisted": true,
+                "save_roundtrip": true,
+                "sw_cached_runtime": true,
+                "sw_registered": true,
+                "swap_advisor_runs": true
+              },
+              "first_visit": {
+                "boot_ok": true,
+                "error": null,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.audio.worklet.js"
+                  ],
+                  "isolated": false,
+                  "sab": false,
+                  "sw_controller": false,
+                  "sw_registered": true
+                },
+                "wall_s": 2.6
+              },
+              "offline_reload": {
+                "boot_ok": true,
+                "error": null,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.audio.worklet.js",
+                    "index.pck",
+                    "index.wasm"
+                  ],
+                  "isolated": false,
+                  "sab": false,
+                  "sw_controller": true,
+                  "sw_registered": true
+                },
+                "script_errors": 0
+              },
+              "ok": true,
+              "online": {
+                "boot_ok": true,
+                "error": null,
+                "log_tail": [
+                  "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
+                  "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
+                  "Game Zero F0 boot OK \u2014 AssetFabric env gate",
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:39089/index.js:9:201882"
+                ],
+                "marker_lines": [],
+                "offline": false,
+                "page": {
+                  "cached": [
+                    "index.html",
+                    "index.js",
+                    "index.offline.html",
+                    "index.icon.png",
+                    "index.apple-touch-icon.png",
+                    "index.audio.worklet.js",
+                    "index.pck",
+                    "index.wasm"
+                  ],
+                  "isolated": false,
+                  "sab": false,
+                  "sw_controller": true,
+                  "sw_registered": true
+                },
+                "result": {
+                  "net": {
+                    "has_multiplayer_peer": true,
+                    "offline_peer": true,
+                    "peer": "OfflineMultiplayerPeer",
+                    "platform": "web"
+                  },
+                  "version": "0.7.0+f7"
+                },
+                "script_errors": 0,
+                "wall_s": 2.3
+              },
+              "response_headers": {
+                "index.html": {},
+                "index.wasm": {}
+              },
+              "savecheck": {
+                "boot_ok": true,
+                "error": null,
+                "platform": "web",
+                "rewrite_checksum": "3e024df98bd8d572a6efcb01f7ba9826edd9d3ee593f60cbbd2f95099a5fadd0",
+                "script_errors": 0
+              },
+              "swapbench": {
+                "boot_ok": true,
+                "error": null,
+                "result": {
+                  "fidelity": {
+                    "exact_order": 10,
+                    "of": 17,
+                    "top1_agree": 17,
+                    "top1_in_ref_top2": 17
+                  },
+                  "horizon": 120,
+                  "lod": 4,
+                  "parity": true,
+                  "per_state": [
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 300,
+                      "wall_ms_median": 68.7
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 360,
+                      "wall_ms_median": 52.1
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 420,
+                      "wall_ms_median": 39.2
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "kael",
+                        "sola",
+                        "bram",
+                        "nyra"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "sola",
+                        "bram",
+                        "nyra"
+                      ],
+                      "threaded": false,
+                      "tick": 480,
+                      "wall_ms_median": 33.4
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "kael",
+                        "sola",
+                        "nyra",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "sola",
+                        "nyra",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 540,
+                      "wall_ms_median": 18.9
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "party_ai",
+                      "ranking": [
+                        "nyra",
+                        "sola",
+                        "kael",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "nyra",
+                        "sola",
+                        "kael",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 600,
+                      "wall_ms_median": 7.4
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "nyra",
+                        "sola",
+                        "kael",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "nyra",
+                        "kael",
+                        "sola",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 240,
+                      "wall_ms_median": 41.9
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 300,
+                      "wall_ms_median": 32.7
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "bram",
+                        "nyra",
+                        "sola",
+                        "kael"
+                      ],
+                      "reference_lod1": [
+                        "bram",
+                        "nyra",
+                        "kael",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 360,
+                      "wall_ms_median": 35.7
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "sola",
+                        "nyra",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 420,
+                      "wall_ms_median": 39.8
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 480,
+                      "wall_ms_median": 34.7
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 540,
+                      "wall_ms_median": 36.2
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "bram",
+                        "nyra",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 600,
+                      "wall_ms_median": 35.9
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "sola",
+                        "nyra",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 660,
+                      "wall_ms_median": 27.7
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "reference_lod1": [
+                        "kael",
+                        "nyra",
+                        "bram",
+                        "sola"
+                      ],
+                      "threaded": false,
+                      "tick": 720,
+                      "wall_ms_median": 22.9
+                    },
+                    {
+                      "candidates": 4,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "nyra",
+                        "bram",
+                        "sola",
+                        "kael"
+                      ],
+                      "reference_lod1": [
+                        "nyra",
+                        "bram",
+                        "sola",
+                        "kael"
+                      ],
+                      "threaded": false,
+                      "tick": 780,
+                      "wall_ms_median": 19.8
+                    },
+                    {
+                      "candidates": 3,
+                      "encounter": "boss_warden",
+                      "ranking": [
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "reference_lod1": [
+                        "nyra",
+                        "sola",
+                        "bram"
+                      ],
+                      "threaded": false,
+                      "tick": 840,
+                      "wall_ms_median": 7.5
+                    }
+                  ],
+                  "processor_count": 2,
+                  "reps": 1,
+                  "samples": 17,
+                  "states": 17,
+                  "wall_ms_max": 68.7,
+                  "wall_ms_p50": 34.7,
+                  "wall_ms_p95": 68.7
+                },
+                "script_errors": 0,
+                "wall_s": 5.1
+              }
+            },
+            "sw_dropped_missing": [
+              "index.worker.js"
+            ],
+            "variant": "web-nothreads"
+          },
+          "shuttle": {
+            "adapter": "godot",
+            "contract_files": 67,
+            "converted_resources": 17,
+            "identical": 50,
+            "missing": [],
+            "missing_runtime": [],
+            "ok": true,
+            "schema": "shuttleline.contract/1",
+            "shipped_files": 182,
+            "target": "web-nothreads"
+          },
+          "source_digest": "836d87172769ee79e20aa01b16595cd6f21f6128e52ea6462136110a96d8db47",
+          "target": "web-nothreads",
+          "templates": "4.3.stable",
+          "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
+          "total_size": 37401774,
           "version": "0.7.0+f7"
         }
       },
       "toolchain": {
-        "aapt": "/workspace/android-sdk/build-tools/35.0.0/aapt",
+        "aapt": "/workspace/android-sdk/build-tools/36.0.0/aapt",
         "android_sdk": "/workspace/android-sdk",
         "bwrap": "/usr/bin/bwrap",
         "chrome": "/usr/bin/google-chrome",
-        "godot": "/workspace/af-q5/godot-bin/godot",
+        "godot": "/workspace/af-q6/godot-bin/godot",
         "godot_version": "4.3.stable.official.77dcf97d8",
         "jdk": "/workspace/jdk/jdk-17.0.21+9",
         "templates": {
-          "dir": "/workspace/af-q5/.fabric/godot-home/data/godot/export_templates/4.3.stable",
+          "dir": "/workspace/af-q6/.fabric/godot-home/data/godot/export_templates/4.3.stable",
           "missing": [],
           "ok": true,
           "version": "4.3.stable"
@@ -1096,7 +1740,7 @@
       },
       "network_namespace": "bwrap --unshare-net",
       "script_errors": 0,
-      "wall_ms": 5498.9
+      "wall_ms": 5133.4
     },
     "editor_roundtrip": {
       "checksum_equal": true,
@@ -1162,6 +1806,7 @@
         "etc2_astc_import": true,
         "no_secrets_in_presets": true,
         "ships_fabric_output": true,
+        "web_nothreads_fallback": true,
         "web_pwa_isolation": true
       },
       "ok": true,
@@ -1169,7 +1814,8 @@
         "android",
         "desktop-linux",
         "desktop-windows",
-        "web"
+        "web",
+        "web-nothreads"
       ]
     },
     "save_roundtrip": {
@@ -1243,7 +1889,8 @@
         "desktop-windows": "godot-desktop",
         "godot-desktop": "godot-desktop",
         "studio-desktop": "studio",
-        "web": "godot-web"
+        "web": "godot-web",
+        "web-nothreads": "godot-web"
       },
       "missing": [],
       "ok": true
