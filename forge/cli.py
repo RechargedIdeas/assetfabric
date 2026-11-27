@@ -611,13 +611,16 @@ def balance_tune_affinity(trials: int, seeds: int, out: Path | None, root: Path 
 
 
 @balance_grp.command("holdout")
-@click.option("--seeds", default=1000, help="Seeds per cell (unseen seed_base 9000).")
+@click.option("--seeds", default=1000, help="Seeds per cell (unseen seed_base 20 000 by default).")
+@click.option("--seed-base", default=None, type=int, help="Override the hold-out seed base (must not overlap fit seeds 50 000+).")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
-def balance_holdout(seeds: int, root: Path | None) -> None:
+def balance_holdout(seeds: int, seed_base: int | None, root: Path | None) -> None:
     """Q5: out-of-sample per-pair spread on unseen seeds; exit 1 above 3.5 pp (INFERENCE C-94)."""
     from forge.balance import holdout
 
-    agg = holdout(root or find_repo_root(), seeds=seeds)
+    from forge.balance import HOLDOUT_SEED_BASE
+
+    agg = holdout(root or find_repo_root(), seeds=seeds, seed_base=HOLDOUT_SEED_BASE if seed_base is None else seed_base)
     click.echo(json.dumps({"holdout": agg["holdout"], "mean_win_rate": agg["mean_win_rate"], "wall_s": agg.get("wall_s"),
                            "win_rates": {k: v["win_rate"] for k, v in agg["matchups"].items()}}, indent=2))
     sys.exit(0 if agg["holdout"]["ok"] else 1)

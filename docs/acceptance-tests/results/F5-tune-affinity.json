@@ -1,0 +1,567 @@
+{
+  "best_overrides": [
+    {
+      "path": "pets.ember_fox.affinity.bram",
+      "value": 2.956,
+      "fit": {
+        "points": 4,
+        "slope_per_unit": 0.0232,
+        "intercept": 0.6513,
+        "tpe_best": 2.175,
+        "tpe_best_loss": 0.01
+      }
+    },
+    {
+      "path": "pets.ember_fox.affinity.kael",
+      "value": 1.064,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.2352,
+        "intercept": 0.4698,
+        "tpe_best": 0.84,
+        "tpe_best_loss": 0.02
+      }
+    },
+    {
+      "path": "pets.ember_fox.affinity.nyra",
+      "value": 0.684,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.1226,
+        "intercept": 0.6362,
+        "tpe_best": 0.6,
+        "tpe_best_loss": 0.03
+      }
+    },
+    {
+      "path": "pets.ember_fox.affinity.sola",
+      "value": 2.014,
+      "fit": {
+        "points": 5,
+        "slope_per_unit": 0.0584,
+        "intercept": 0.6024,
+        "tpe_best": 1.47,
+        "tpe_best_loss": 0.03
+      }
+    },
+    {
+      "path": "pets.lumen_wisp.affinity.bram",
+      "value": 0.0,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.0719,
+        "intercept": 0.7352,
+        "tpe_best": 0.25,
+        "tpe_best_loss": 0.03
+      }
+    },
+    {
+      "path": "pets.lumen_wisp.affinity.kael",
+      "value": 2.508,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.1038,
+        "intercept": 0.4597,
+        "tpe_best": 3.0,
+        "tpe_best_loss": 0.0
+      }
+    },
+    {
+      "path": "pets.lumen_wisp.affinity.nyra",
+      "value": 3.0,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.0176,
+        "intercept": 0.6629,
+        "tpe_best": 0.575,
+        "tpe_best_loss": 0.0
+      }
+    },
+    {
+      "path": "pets.lumen_wisp.affinity.sola",
+      "value": 0.25,
+      "fit": {
+        "points": 4,
+        "slope_per_unit": -0.0007,
+        "intercept": 0.7436,
+        "tpe_best": 0.25,
+        "tpe_best_loss": 0.0
+      }
+    },
+    {
+      "path": "pets.stone_tortle.affinity.bram",
+      "value": 1.417,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.1601,
+        "intercept": 0.4931,
+        "tpe_best": 1.03,
+        "tpe_best_loss": 0.02
+      }
+    },
+    {
+      "path": "pets.stone_tortle.affinity.kael",
+      "value": 1.411,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.1509,
+        "intercept": 0.5071,
+        "tpe_best": 1.03,
+        "tpe_best_loss": 0.03
+      }
+    },
+    {
+      "path": "pets.stone_tortle.affinity.nyra",
+      "value": 1.472,
+      "fit": {
+        "points": 6,
+        "slope_per_unit": 0.0625,
+        "intercept": 0.628,
+        "tpe_best": 0.867,
+        "tpe_best_loss": 0.04
+      }
+    },
+    {
+      "path": "pets.stone_tortle.affinity.sola",
+      "value": 0.835,
+      "fit": {
+        "points": 5,
+        "slope_per_unit": 0.052,
+        "intercept": 0.6766,
+        "tpe_best": 1.262,
+        "tpe_best_loss": 0.01
+      }
+    }
+  ],
+  "trials": [
+    {
+      "trial": 0,
+      "seed_base": 50000,
+      "mean": 0.7067,
+      "combo_dev": 0.0967,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 0.9,
+          "win_rate": 0.61,
+          "loss": 0.11
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 0.84,
+          "win_rate": 0.74,
+          "loss": 0.02
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 0.6,
+          "win_rate": 0.75,
+          "loss": 0.03
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 1.47,
+          "win_rate": 0.75,
+          "loss": 0.03
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 0.25,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 3.0,
+          "win_rate": 0.72,
+          "loss": 0.0
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 0.76,
+          "win_rate": 0.64,
+          "loss": 0.08
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 0.25,
+          "win_rate": 0.72,
+          "loss": 0.0
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 1.03,
+          "win_rate": 0.74,
+          "loss": 0.02
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 1.03,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 2.09,
+          "win_rate": 0.77,
+          "loss": 0.05
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 0.33,
+          "win_rate": 0.66,
+          "loss": 0.06
+        }
+      }
+    },
+    {
+      "trial": 1,
+      "seed_base": 51000,
+      "mean": 0.7125,
+      "combo_dev": 0.2525,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 0.541,
+          "win_rate": 0.67,
+          "loss": 0.05
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 0.462,
+          "win_rate": 0.64,
+          "loss": 0.08
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 2.333,
+          "win_rate": 0.95,
+          "loss": 0.23
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 1.542,
+          "win_rate": 0.65,
+          "loss": 0.07
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 2.546,
+          "win_rate": 0.88,
+          "loss": 0.16
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 0.67,
+          "win_rate": 0.5,
+          "loss": 0.22
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 0.884,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 1.951,
+          "win_rate": 0.9,
+          "loss": 0.18
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 0.293,
+          "win_rate": 0.46,
+          "loss": 0.26
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 1.764,
+          "win_rate": 0.82,
+          "loss": 0.1
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 0.146,
+          "win_rate": 0.64,
+          "loss": 0.08
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 0.625,
+          "win_rate": 0.75,
+          "loss": 0.03
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "seed_base": 52000,
+      "mean": 0.7508,
+      "combo_dev": 0.2408,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 0.058,
+          "win_rate": 0.51,
+          "loss": 0.21
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 2.22,
+          "win_rate": 0.89,
+          "loss": 0.17
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 0.713,
+          "win_rate": 0.67,
+          "loss": 0.05
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 2.319,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 0.537,
+          "win_rate": 0.85,
+          "loss": 0.13
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 1.569,
+          "win_rate": 0.66,
+          "loss": 0.06
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 1.592,
+          "win_rate": 0.71,
+          "loss": 0.01
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 1.516,
+          "win_rate": 0.86,
+          "loss": 0.14
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 2.284,
+          "win_rate": 0.8,
+          "loss": 0.08
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 2.693,
+          "win_rate": 0.94,
+          "loss": 0.22
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 0.867,
+          "win_rate": 0.68,
+          "loss": 0.04
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 1.445,
+          "win_rate": 0.75,
+          "loss": 0.03
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "seed_base": 53000,
+      "mean": 0.745,
+      "combo_dev": 0.215,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 1.39,
+          "win_rate": 0.66,
+          "loss": 0.06
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 0.79,
+          "win_rate": 0.75,
+          "loss": 0.03
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 2.473,
+          "win_rate": 0.96,
+          "loss": 0.24
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 2.611,
+          "win_rate": 0.79,
+          "loss": 0.07
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 0.163,
+          "win_rate": 0.68,
+          "loss": 0.04
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 1.652,
+          "win_rate": 0.71,
+          "loss": 0.01
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 0.575,
+          "win_rate": 0.72,
+          "loss": 0.0
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 2.636,
+          "win_rate": 0.74,
+          "loss": 0.02
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 0.741,
+          "win_rate": 0.59,
+          "loss": 0.13
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 2.675,
+          "win_rate": 0.85,
+          "loss": 0.13
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 2.163,
+          "win_rate": 0.76,
+          "loss": 0.04
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 1.262,
+          "win_rate": 0.73,
+          "loss": 0.01
+        }
+      }
+    },
+    {
+      "trial": 4,
+      "seed_base": 54000,
+      "mean": 0.705,
+      "combo_dev": 0.415,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 2.175,
+          "win_rate": 0.71,
+          "loss": 0.01
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 1.601,
+          "win_rate": 0.89,
+          "loss": 0.17
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 2.897,
+          "win_rate": 0.96,
+          "loss": 0.24
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 0.024,
+          "win_rate": 0.29,
+          "loss": 0.43
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 1.085,
+          "win_rate": 0.84,
+          "loss": 0.12
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 0.137,
+          "win_rate": 0.45,
+          "loss": 0.27
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 0.204,
+          "win_rate": 0.64,
+          "loss": 0.08
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 0.546,
+          "win_rate": 0.77,
+          "loss": 0.05
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 0.414,
+          "win_rate": 0.54,
+          "loss": 0.18
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 2.448,
+          "win_rate": 0.87,
+          "loss": 0.15
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 0.065,
+          "win_rate": 0.65,
+          "loss": 0.07
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 2.578,
+          "win_rate": 0.85,
+          "loss": 0.13
+        }
+      }
+    },
+    {
+      "trial": 5,
+      "seed_base": 55000,
+      "mean": 0.6733,
+      "combo_dev": 0.3633,
+      "cells": {
+        "pets.ember_fox.affinity.bram": {
+          "value": 1.261,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.ember_fox.affinity.kael": {
+          "value": 0.044,
+          "win_rate": 0.31,
+          "loss": 0.41
+        },
+        "pets.ember_fox.affinity.nyra": {
+          "value": 2.918,
+          "win_rate": 0.99,
+          "loss": 0.27
+        },
+        "pets.ember_fox.affinity.sola": {
+          "value": 0.929,
+          "win_rate": 0.65,
+          "loss": 0.07
+        },
+        "pets.lumen_wisp.affinity.bram": {
+          "value": 0.826,
+          "win_rate": 0.86,
+          "loss": 0.14
+        },
+        "pets.lumen_wisp.affinity.kael": {
+          "value": 1.082,
+          "win_rate": 0.56,
+          "loss": 0.16
+        },
+        "pets.lumen_wisp.affinity.nyra": {
+          "value": 2.361,
+          "win_rate": 0.69,
+          "loss": 0.03
+        },
+        "pets.lumen_wisp.affinity.sola": {
+          "value": 2.557,
+          "win_rate": 0.74,
+          "loss": 0.02
+        },
+        "pets.stone_tortle.affinity.bram": {
+          "value": 0.994,
+          "win_rate": 0.75,
+          "loss": 0.03
+        },
+        "pets.stone_tortle.affinity.kael": {
+          "value": 0.108,
+          "win_rate": 0.49,
+          "loss": 0.23
+        },
+        "pets.stone_tortle.affinity.nyra": {
+          "value": 0.618,
+          "win_rate": 0.64,
+          "loss": 0.08
+        },
+        "pets.stone_tortle.affinity.sola": {
+          "value": 0.513,
+          "win_rate": 0.71,
+          "loss": 0.01
+        }
+      }
+    }
+  ],
+  "trials_n": 6,
+  "seeds_per_cell_per_trial": 100,
+  "fights": 7200,
+  "wall_s": 140.4,
+  "sampler": "12\u00d7 TPE(seed=11+i), ask/tell on shared runs",
+  "objective": "|cell win rate \u2212 0.72|",
+  "optuna": "5.1.0",
+  "warm_start": {
+    "pets.ember_fox.affinity.bram": 0.9,
+    "pets.ember_fox.affinity.kael": 0.84,
+    "pets.ember_fox.affinity.nyra": 0.6,
+    "pets.ember_fox.affinity.sola": 1.47,
+    "pets.lumen_wisp.affinity.bram": 0.25,
+    "pets.lumen_wisp.affinity.kael": 3.0,
+    "pets.lumen_wisp.affinity.nyra": 0.76,
+    "pets.lumen_wisp.affinity.sola": 0.25,
+    "pets.stone_tortle.affinity.bram": 1.03,
+    "pets.stone_tortle.affinity.kael": 1.03,
+    "pets.stone_tortle.affinity.nyra": 2.09,
+    "pets.stone_tortle.affinity.sola": 0.33
+  }
+}

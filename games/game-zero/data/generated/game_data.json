@@ -856,7 +856,7 @@
     "bram": 0.25,
     "kael": 3.0,
     "nyra": 0.76,
-    "sola": 0.25
+    "sola": 0.0
    },
    "bonus": {
     "hp_pct": 0.3
@@ -878,8 +878,8 @@
    "affinity": {
     "bram": 1.03,
     "kael": 1.03,
-    "nyra": 2.09,
-    "sola": 0.33
+    "nyra": 1.0,
+    "sola": 0.77
    },
    "bonus": {
     "def_flat": 2.7

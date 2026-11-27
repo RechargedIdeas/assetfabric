@@ -234,7 +234,8 @@ def tune(trials: int = 20, seeds: int = 24, root: Path | None = None, space: dic
 
 # ----------------------------------------------------------------------------- Q5: hold-out gate + per-cell study
 
-HOLDOUT_SEED_BASE = 9000      # never used for fitting (fits use 50_000+; the CRN gate uses 1000)
+HOLDOUT_SEED_BASE = 20_000    # never used for fitting (fits use 50_000+; the CRN gate uses 1000). 9000 was the first
+                              # hold-out; it was spent calibrating three cells in 0.7.13, so the gate moved to fresh seeds [C-94]
 HOLDOUT_SEEDS = 1000          # per cell: SE ≈ 1.4 pp, so a 3.5 pp spread limit is above the noise floor [C-94]
 HOLDOUT_LIMIT = 0.035
 

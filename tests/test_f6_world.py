@@ -211,7 +211,8 @@ def test_q5_xp_timeline_levels(world: dict) -> None:
 def test_q5_holdout_is_out_of_sample() -> None:
     from forge.balance import AFFINITY_SPACE, HOLDOUT_LIMIT, HOLDOUT_SEED_BASE, HOLDOUT_SEEDS, BalanceConfig
 
-    assert HOLDOUT_SEED_BASE >= 9000 and HOLDOUT_SEEDS >= 800 and HOLDOUT_LIMIT == 0.035
+    assert HOLDOUT_SEED_BASE == 20_000 and HOLDOUT_SEEDS >= 800 and HOLDOUT_LIMIT == 0.035
+    assert HOLDOUT_SEED_BASE + HOLDOUT_SEEDS <= 50_000                              # fits (tune-affinity) use 50 000+
     gate = BalanceConfig()
     assert not (gate.seed_base <= HOLDOUT_SEED_BASE < gate.seed_base + gate.seeds)   # CRN gate seeds ≠ hold-out
     assert all(lo == 0.0 and hi == 3.0 for lo, hi in AFFINITY_SPACE.values())

@@ -6,7 +6,7 @@
    primary falls back to the backup; v1/v2 fixtures migrate identically in GDScript and Python.
 3. G-BAL-01 — Monte Carlo: 12 character-select matchups × 200 seeds (CRN) = 2400 boss fights.
 4. Soft-lock — static report ok; zero runtime soft-locks in (3); a mis-tuned probe run *is* flagged.
-5. Hold-out (Q5, full mode) — the 12 leader × pet cells on 1000 unseen seeds each (seed_base 9000): per-pair spread
+5. Hold-out (Q5, full mode) — the 12 leader × pet cells on 1000 unseen seeds each (seed_base 20 000): per-pair spread
    ≤ 3.5 pp (INFERENCE C-94). FAST mode (pytest/CI) records it as skipped.
 """
 
