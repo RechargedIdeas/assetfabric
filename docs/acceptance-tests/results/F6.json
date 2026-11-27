@@ -41,10 +41,10 @@
     "matrix_wipes": 0,
     "slice_game_minutes": 7.1,
     "slice_ticks": 25550,
-    "slice_wall_ms": 6801.8,
+    "slice_wall_ms": 6733.9,
     "swap_wall_ms": [
-      21.63,
-      13.46
+      21.05,
+      13.63
     ],
     "target_minutes": [
       15.0,
@@ -72,7 +72,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25550,
-          "wall_ms": 7216.6,
+          "wall_ms": 6916,
           "wipes": 0
         },
         {
@@ -87,7 +87,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25617,
-          "wall_ms": 7271.8,
+          "wall_ms": 7031.6,
           "wipes": 0
         },
         {
@@ -102,7 +102,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25568,
-          "wall_ms": 7160.9,
+          "wall_ms": 7004.7,
           "wipes": 0
         },
         {
@@ -117,7 +117,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25562,
-          "wall_ms": 7192.6,
+          "wall_ms": 6920.3,
           "wipes": 0
         },
         {
@@ -132,7 +132,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25734,
-          "wall_ms": 7022.6,
+          "wall_ms": 6933.5,
           "wipes": 0
         },
         {
@@ -147,7 +147,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26310,
-          "wall_ms": 7096.2,
+          "wall_ms": 7020.9,
           "wipes": 0
         },
         {
@@ -162,7 +162,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26325,
-          "wall_ms": 6955.3,
+          "wall_ms": 6890.7,
           "wipes": 0
         },
         {
@@ -177,7 +177,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26456,
-          "wall_ms": 7155.8,
+          "wall_ms": 6939.2,
           "wipes": 0
         },
         {
@@ -192,7 +192,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26415,
-          "wall_ms": 7182.1,
+          "wall_ms": 7126.3,
           "wipes": 0
         },
         {
@@ -207,7 +207,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25909,
-          "wall_ms": 6873.3,
+          "wall_ms": 6857.9,
           "wipes": 0
         },
         {
@@ -222,7 +222,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26026,
-          "wall_ms": 7006.5,
+          "wall_ms": 7142.1,
           "wipes": 0
         },
         {
@@ -237,7 +237,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25917,
-          "wall_ms": 6922.4,
+          "wall_ms": 7104.8,
           "wipes": 0
         }
       ]
@@ -2406,7 +2406,7 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (13.5 ms)",
+        "TIME FROZEN \u2014 ranked swaps (13.6 ms)",
         "1. Kael  HP 71/89  score 203.5  target cave_warden_1  cd Shield Bash 0.9s, Slash 0.3s  @9,3",
         "2. Bram  HP 107/115  score 169.1  target cave_warden_1  cd Taunt 4.5s  @9,4",
         "3. Nyra  HP 59/59  score 168.5  target cave_warden_1  cd Volley 1.4s, Arrow 0.2s  @9,7",
@@ -2504,7 +2504,7 @@
             ]
           ],
           "tick": 4343,
-          "wall_ms": 21.63
+          "wall_ms": 21.05
         },
         {
           "area": "warden_lair",
@@ -2528,7 +2528,7 @@
             ]
           ],
           "tick": 22696,
-          "wall_ms": 13.46
+          "wall_ms": 13.63
         }
       ],
       "ticks": 25550,
@@ -2558,7 +2558,7 @@
         }
       ],
       "wait_ticks": 4097,
-      "wall_ms": 6801.8,
+      "wall_ms": 6733.9,
       "wipes": 0
     },
     "tilemaps": {

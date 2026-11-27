@@ -19,7 +19,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 11.3
+      "seconds": 15.0
     },
     "c6": {
       "capture_arrived_identical": true,
@@ -62,7 +62,7 @@
           },
           {
             "id": "shared",
-            "phone_copy": "shared~pl-85b578a7",
+            "phone_copy": "shared~pl-662d7817",
             "resolution": "keep_both"
           }
         ],

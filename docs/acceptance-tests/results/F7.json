@@ -5,16 +5,16 @@
   "milestone": "F7",
   "passed": true,
   "perf": {
-    "apk_bytes": 25631294,
+    "apk_bytes": 25635766,
     "artifacts": {
       "android": {
         "artifact": {
           "path": "dist/android/GameZero-debug.apk",
-          "sha256": "1a87fff8d21401fa328d797b4380df9b5ca98fa2982a1116eec09e0c19023ca8",
-          "size": 25631294
+          "sha256": "dc21d59bfe6d024e8d0716f712d834181ffc45268d6b8a9b13fd6dc403bf36a4",
+          "size": 25635766
         },
-        "export_wall_s": 9.4,
-        "total_size": 25860072
+        "export_wall_s": 9.2,
+        "total_size": 25865880
       },
       "desktop-linux": {
         "artifact": {
@@ -22,8 +22,8 @@
           "sha256": "815e684e29581339daefab779b8c2b36d081fba58e4db8a2b66cdaeefcb80bbc",
           "size": 66074584
         },
-        "export_wall_s": 4.1,
-        "total_size": 67703413
+        "export_wall_s": 4.3,
+        "total_size": 67721133
       },
       "desktop-windows": {
         "artifact": {
@@ -31,23 +31,23 @@
           "sha256": "66b26ad96df7458ea917b632a73ac7c88bb058db24dbd11a457fd50435ab7b13",
           "size": 84214784
         },
-        "export_wall_s": 4.0,
-        "total_size": 86029567
+        "export_wall_s": 4.3,
+        "total_size": 86047255
       },
       "web": {
         "artifact": {
           "path": "dist/web/index.html",
-          "sha256": "2efad3f8e79f321f784e445e06715076faeacebd3ba70ba67e140c927aa26aa4",
+          "sha256": "c0966a8856585420e3aca8673c94bd0d7ede7995434d5a1d4e3010450db0d6c9",
           "size": 5158
         },
         "export_wall_s": 4.1,
-        "total_size": 35891032
+        "total_size": 35908736
       }
     },
-    "desktop_slice_game_minutes": 2.92,
+    "desktop_slice_game_minutes": 7.1,
     "mode": "full",
-    "web_budget_headroom_bytes": 35677234,
-    "web_gzip9_bytes": 9322766
+    "web_budget_headroom_bytes": 35671795,
+    "web_gzip9_bytes": 9328205
   },
   "result": {
     "a11y": {
@@ -453,13 +453,13 @@
         "android": {
           "artifact": {
             "path": "dist/android/GameZero-debug.apk",
-            "sha256": "1a87fff8d21401fa328d797b4380df9b5ca98fa2982a1116eec09e0c19023ca8",
-            "size": 25631294
+            "sha256": "dc21d59bfe6d024e8d0716f712d834181ffc45268d6b8a9b13fd6dc403bf36a4",
+            "size": 25635766
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-android.fabricbolt",
-            "bolt_sha256": "8da39d543f50a8c8f94a428c1c6b968f2c94c344e53b5f01f61f33f0160f7472",
-            "bolt_size": 25335675,
+            "bolt_sha256": "b4b9b9e621c8188efef606c02871918e9eceddc7efca12ba69f15c0a1f4fc6a4",
+            "bolt_size": 25341421,
             "components": 85,
             "copyleft": {},
             "licenses": {
@@ -489,11 +489,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:51:16-0500",
+          "built_at": "2026-11-26T23:18:26-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-debug android dist/android/GameZero-debug.apk",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 9.4,
+          "export_wall_s": 9.2,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-android",
           "mode": "debug",
@@ -502,24 +502,24 @@
           "preset": "android",
           "shuttle": {
             "adapter": "godot",
-            "contract_files": 63,
+            "contract_files": 67,
             "converted_resources": 17,
-            "identical": 46,
+            "identical": 50,
             "missing": [],
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 179,
+            "shipped_files": 183,
             "target": "android"
           },
-          "source_digest": "f96f462eb799f5813096d0ea30431c504b2741ba6c0fe53dcd0a27abce8006d0",
+          "source_digest": "6d89110f730b74266f4320615e36cc27450aaa5bc605062f4e036efd27d0f57c",
           "target": "android",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 25860072,
+          "total_size": 25865880,
           "verify": {
-            "apk_size": 25631294,
-            "apkanalyzer_download_size": 25093283,
+            "apk_size": 25635766,
+            "apkanalyzer_download_size": 25098731,
             "internet_permission": false,
             "launchable": true,
             "min_sdk": 21,
@@ -554,8 +554,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-linux.fabricbolt",
-            "bolt_sha256": "18f5668a6cb03e749b48e3540f0936299a7178d75f961e1714bedd073711d094",
-            "bolt_size": 25490674,
+            "bolt_sha256": "3073e77683d9b00ceb35ee203a3aea2e1ccb574baf25d03aaa534299abb0911a",
+            "bolt_size": 25496379,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -584,11 +584,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:50:57-0500",
+          "built_at": "2026-11-26T23:18:06-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-linux dist/desktop-linux/GameZero.x86_64",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.1,
+          "export_wall_s": 4.3,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -597,21 +597,21 @@
           "preset": "desktop-linux",
           "shuttle": {
             "adapter": "godot",
-            "contract_files": 63,
+            "contract_files": 67,
             "converted_resources": 17,
-            "identical": 46,
+            "identical": 50,
             "missing": [],
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 178,
+            "shipped_files": 182,
             "target": "desktop-linux"
           },
-          "source_digest": "f96f462eb799f5813096d0ea30431c504b2741ba6c0fe53dcd0a27abce8006d0",
+          "source_digest": "6d89110f730b74266f4320615e36cc27450aaa5bc605062f4e036efd27d0f57c",
           "target": "desktop-linux",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 67703413,
+          "total_size": 67721133,
           "verify": {
             "boots": true,
             "how": "exported binary run headless (--net-report)",
@@ -634,8 +634,8 @@
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-desktop-windows.fabricbolt",
-            "bolt_sha256": "cee01b723cdbc44ab5c615d28b33dbcd0e124493f579224f9b1df7e2ac39c9dc",
-            "bolt_size": 31617775,
+            "bolt_sha256": "cda3e29cead7f5f211067cd4fabfe9d4b281a658ca599e2663df3c44f1c7d003",
+            "bolt_size": 31623548,
             "components": 83,
             "copyleft": {},
             "licenses": {
@@ -664,11 +664,11 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:51:04-0500",
+          "built_at": "2026-11-26T23:18:14-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release desktop-windows dist/desktop-windows/GameZero.exe",
           "errors": [],
           "exit_code": 0,
-          "export_wall_s": 4.0,
+          "export_wall_s": 4.3,
           "godot": "4.3.stable.official.77dcf97d8",
           "kind": "godot-desktop",
           "mode": "release",
@@ -677,21 +677,21 @@
           "preset": "desktop-windows",
           "shuttle": {
             "adapter": "godot",
-            "contract_files": 63,
+            "contract_files": 67,
             "converted_resources": 17,
-            "identical": 46,
+            "identical": 50,
             "missing": [],
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 178,
+            "shipped_files": 182,
             "target": "desktop-windows"
           },
-          "source_digest": "f96f462eb799f5813096d0ea30431c504b2741ba6c0fe53dcd0a27abce8006d0",
+          "source_digest": "6d89110f730b74266f4320615e36cc27450aaa5bc605062f4e036efd27d0f57c",
           "target": "desktop-windows",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 86029567,
+          "total_size": 86047255,
           "verify": {
             "console_wrapper": {
               "machine": "0x8664",
@@ -724,13 +724,13 @@
         "web": {
           "artifact": {
             "path": "dist/web/index.html",
-            "sha256": "2efad3f8e79f321f784e445e06715076faeacebd3ba70ba67e140c927aa26aa4",
+            "sha256": "c0966a8856585420e3aca8673c94bd0d7ede7995434d5a1d4e3010450db0d6c9",
             "size": 5158
           },
           "bolt": {
             "bolt": "dist/bolt/GameZero-0.7.0+f7-web.fabricbolt",
-            "bolt_sha256": "20815bef7853e3873624985d645dd4252af14f5a786fcfb4e903404b435dc8d3",
-            "bolt_size": 9408334,
+            "bolt_sha256": "36ec18492ac62d2a0cf40cc1894f0f04774aee6b49e348dca41e072cf6784203",
+            "bolt_size": 9414028,
             "components": 84,
             "copyleft": {},
             "licenses": {
@@ -760,7 +760,7 @@
             "signed": false,
             "unknown": {}
           },
-          "built_at": "2026-11-20T14:51:39-0500",
+          "built_at": "2026-11-26T23:18:50-0500",
           "command": "godot --headless --path dist/.stage/game-zero --export-release web dist/web/index.html",
           "errors": [],
           "exit_code": 0,
@@ -801,7 +801,7 @@
                 },
                 "index.html": {
                   "bytes": 5158,
-                  "gzip9": 2173
+                  "gzip9": 2171
                 },
                 "index.icon.png": {
                   "bytes": 437,
@@ -820,8 +820,8 @@
                   "gzip9": 581
                 },
                 "index.pck": {
-                  "bytes": 1606384,
-                  "gzip9": 1279254
+                  "bytes": 1622752,
+                  "gzip9": 1284695
                 },
                 "index.png": {
                   "bytes": 21443,
@@ -840,10 +840,10 @@
                   "gzip9": 217
                 }
               },
-              "headroom_bytes": 35677234,
+              "headroom_bytes": 35671795,
               "ok": true,
-              "total_bytes": 35868517,
-              "total_gzip9": 9322766
+              "total_bytes": 35884885,
+              "total_gzip9": 9328205
             },
             "hook": true,
             "ok": true,
@@ -901,7 +901,7 @@
                   "sw_controller": false,
                   "sw_registered": true
                 },
-                "wall_s": 2.8
+                "wall_s": 3.0
               },
               "headerless_host": {
                 "first": {
@@ -956,7 +956,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:41875/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:43313/index.js:9:234048"
                 ],
                 "offline": true,
                 "page": {
@@ -986,7 +986,7 @@
                   "version": "0.7.0+f7"
                 },
                 "script_errors": 0,
-                "wall_s": 2.3
+                "wall_s": 2.1
               },
               "ok": true,
               "online": {
@@ -996,7 +996,7 @@
                   "Godot Engine v4.3.stable.official.77dcf97d8 - https://godotengine.org",
                   "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL",
                   "Game Zero F0 boot OK \u2014 AssetFabric env gate",
-                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:41875/index.js:9:234048"
+                  "TypeError: Failed to construct 'AudioWorkletNode': parameter 1 is not of type 'BaseAudioContext'.\n    at http://127.0.0.1:43313/index.js:9:234048"
                 ],
                 "offline": false,
                 "page": {
@@ -1046,21 +1046,21 @@
           },
           "shuttle": {
             "adapter": "godot",
-            "contract_files": 63,
+            "contract_files": 67,
             "converted_resources": 17,
-            "identical": 46,
+            "identical": 50,
             "missing": [],
             "missing_runtime": [],
             "ok": true,
             "schema": "shuttleline.contract/1",
-            "shipped_files": 178,
+            "shipped_files": 182,
             "target": "web"
           },
-          "source_digest": "f96f462eb799f5813096d0ea30431c504b2741ba6c0fe53dcd0a27abce8006d0",
+          "source_digest": "6d89110f730b74266f4320615e36cc27450aaa5bc605062f4e036efd27d0f57c",
           "target": "web",
           "templates": "4.3.stable",
           "templates_tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
-          "total_size": 35891032,
+          "total_size": 35908736,
           "version": "0.7.0+f7"
         }
       },
@@ -1069,13 +1069,16 @@
         "android_sdk": "/workspace/android-sdk",
         "bwrap": "/usr/bin/bwrap",
         "chrome": "/usr/bin/google-chrome",
-        "godot": "/workspace/af-q3/godot-bin/godot",
+        "godot": "/workspace/af-q4/godot-bin/godot",
         "godot_version": "4.3.stable.official.77dcf97d8",
         "jdk": "/workspace/jdk/jdk-17.0.21+9",
         "templates": {
-          "dir": "/workspace/af-q3/.fabric/godot-home/data/godot/export_templates/4.3.stable",
+          "dir": "/workspace/af-q4/.fabric/godot-home/data/godot/export_templates/4.3.stable",
+          "fetched": true,
           "missing": [],
           "ok": true,
+          "tpz": "/workspace/godot-templates/templates.tpz",
+          "tpz_sha256": "f5f10dbaf56a7908349e64b94ea8c2c93c2cc11fb1014c9565b68a2bb437b922",
           "version": "4.3.stable"
         },
         "wine": null
@@ -1085,9 +1088,9 @@
       "completed": true,
       "default_scene_is_slice": true,
       "exit": 0,
-      "final_checksum": "cfef517f0cf2f740bb49c3431c95035ab1ef53fd1c6a94c32a0e6b3bf38dd327",
+      "final_checksum": "a1898b55953c8fde9e5d3305a76746795432dbf0fa6a3d3d82301560cee4ced2",
       "final_equal_editor": true,
-      "game_minutes": 2.92,
+      "game_minutes": 7.1,
       "net": {
         "has_multiplayer_peer": true,
         "offline_peer": true,
@@ -1096,7 +1099,7 @@
       },
       "network_namespace": "bwrap --unshare-net",
       "script_errors": 0,
-      "wall_ms": 2029.4
+      "wall_ms": 5647.6
     },
     "editor_roundtrip": {
       "checksum_equal": true,
@@ -1175,7 +1178,7 @@
     "save_roundtrip": {
       "android_import_rewrite": {
         "bytes_equal_previous_hop": true,
-        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "checksum": "d5fe55b047641fad563d1f9bd484bc41738410efd383cc72769a64034103cb1d",
         "exit": 0,
         "loaded_equal": true,
         "loaded_ok": true,
@@ -1191,12 +1194,12 @@
         "completed": true,
         "exit": 0,
         "final_equal_uninterrupted": true,
-        "resumed_checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373"
+        "resumed_checksum": "d5fe55b047641fad563d1f9bd484bc41738410efd383cc72769a64034103cb1d"
       },
       "desktop_write": {
-        "bytes": 2809,
+        "bytes": 2852,
         "checkpoint": 4,
-        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "checksum": "d5fe55b047641fad563d1f9bd484bc41738410efd383cc72769a64034103cb1d",
         "exit": 0,
         "validates": true
       },
@@ -1210,7 +1213,7 @@
       "web_import_rewrite": {
         "boot_ok": true,
         "bytes_equal_previous_hop": true,
-        "checksum": "e9dfec450e2a7f4573685180e1a096941bf495077deb88830ea477d165d43373",
+        "checksum": "d5fe55b047641fad563d1f9bd484bc41738410efd383cc72769a64034103cb1d",
         "error": null,
         "loaded_equal": true,
         "loaded_ok": true,
@@ -1229,8 +1232,8 @@
     },
     "shuttle_sources": {
       "counts": {
-        "assets": 30,
-        "files": 63
+        "assets": 32,
+        "files": 67
       },
       "mismatched": [],
       "missing_runtime": [],
