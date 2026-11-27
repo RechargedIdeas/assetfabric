@@ -1,5 +1,8 @@
 # HANDOVER.md — Current State Snapshot
 
+**2026-11-27 cleanup:** main CI green on 0.10.0+u1 (866506c), merged feat/* branches deleted, STATUS.md C12 summary updated to real_unverified_on_gpu, pushed as 902a3b5. All software-completable work is done; remaining is hardware/Producer-gated.
+
+
 **Last updated:** 2026-11-27 America/New_York
 **Repository:** https://github.com/RechargedIdeas/assetfabric (**private**, branch `main`)
 **License:** proprietary, All Rights Reserved (ADR-0001)
