@@ -47,8 +47,14 @@ jobs:
       - name: System tools (ffmpeg/libvpx + Xvfb + Qt runtime libs; cached — game shard needs Xvfb for the G-A11Y-01 render check)
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 openscad
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
           version: "1"
+      - name: OpenSCAD (U1 parametric cli_bridge; core shard only, uncached so a mirror hiccup cannot poison the apt cache)
+        if: matrix.group == 'core'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends openscad \
+            || echo "::warning::openscad install failed — U1 tests use the CSG fallback and record openscad as absent"
+          openscad --version || true
       - name: Install
         run: |
           uv venv .venv
@@ -96,7 +102,7 @@ jobs:
       - name: System tools for C9 (ffmpeg/libvpx video + X11 capture under Xvfb; cached)
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3 openscad
+          packages: ffmpeg xvfb libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
           version: "1"
       - name: Install forge
         run: |
