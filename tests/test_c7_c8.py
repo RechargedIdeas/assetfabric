@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import copy
 import json
+import time
 import urllib.error
 from pathlib import Path
 
@@ -163,6 +164,38 @@ def test_loomlink_offload_runs_on_fleet_and_falls_back(fleet: lc.Fleet, tmp_path
         assert r["ok"] and r["node"] == "desktop" and "via" not in r
     finally:
         d.halt()
+
+
+def test_nodes_refuse_unsigned_and_wrong_key(fleet: lc.Fleet) -> None:
+    a = fleet.urls["a"]
+    for kw in ({"sign": False}, {"key": b"\x02" * 32}):
+        with pytest.raises(urllib.error.HTTPError) as e:
+            lc._http(a + "/status", **kw)
+        assert e.value.code == 401
+    assert fleet.status("a")["stats"]["auth_rejected"] >= 2
+
+
+def test_replay_guard_and_mac_binding() -> None:
+    g = lc.ReplayGuard()
+    assert g.fresh("n1", int(time.time() * 1000)) and not g.fresh("n1", int(time.time() * 1000))
+    assert not g.fresh("n2", int(time.time() * 1000) - (lc.AUTH_WINDOW_S + 5) * 1000)
+    k = b"k" * 32
+    base = lc._mac(k, "POST", "/submit", "1", "n", lc._sha(b"x"))
+    assert base != lc._mac(k, "POST", "/submit", "1", "n", lc._sha(b"y"))
+    assert base != lc._mac(k, "POST", "/steal", "1", "n", lc._sha(b"x"))
+    assert base != lc._mac(b"j" * 32, "POST", "/submit", "1", "n", lc._sha(b"x"))
+
+
+def test_large_artifact_travels_as_blob(fleet: lc.Fleet) -> None:
+    size = 1 << 20
+    res = lc.run_batch(fleet.urls["a"], [{"id": "big", "op": "bytes", "payload": {"seed": "t", "size": size},
+                                          "requires": {"device": "vulkan"}}], 30)["big"]
+    assert res["node"] == "b" and "data_b64" not in res["value"]
+    blob = res["value"]["blobs"]["blob.bin"]
+    assert blob["size"] == size and lc.fetch_blob(fleet.urls["a"], blob["sha256"]) == lc.bytes_stream("t", size)
+    with pytest.raises(urllib.error.HTTPError) as e:
+        lc.fetch_blob(fleet.urls["a"], "0" * 64)
+    assert e.value.code == 404
 
 
 def test_acceptance_registered_with_results_schema(root: Path) -> None:

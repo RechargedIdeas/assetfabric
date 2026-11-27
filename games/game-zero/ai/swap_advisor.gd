@@ -54,7 +54,7 @@ static func rank(sim, threaded: bool = true, lod: int = LOD) -> Dictionary:
 			c.isolate()   # private Strings/containers: no shared refcounts across worker threads
 		cands.append(cand)
 		clones.append(c)
-	var use_threads: bool = threaded and OS.get_processor_count() > 1 and clones.size() > 1
+	var use_threads: bool = threaded and OS.get_processor_count() > 1 and clones.size() > 1 and not OS.has_feature("nothreads")
 	if use_threads:
 		var gid := WorkerThreadPool.add_group_task(func(i: int): _run(clones[i]), clones.size(), clones.size(), true, "swap_advisor")
 		WorkerThreadPool.wait_for_group_task_completion(gid)

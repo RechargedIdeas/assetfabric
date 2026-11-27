@@ -36,6 +36,7 @@ companions/pocketloom/local.properties
 /.fabric/godot-home/
 /.fabric/cache/
 /.fabric/jdk/
+/.fabric/cluster.key
 games/game-zero/*.import
 
 # Gradle (PocketLoom)

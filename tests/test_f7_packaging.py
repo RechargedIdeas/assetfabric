@@ -9,7 +9,7 @@ from pathlib import Path
 from forge.accept_f7 import net_scan, presets_report, targets_report
 from forge.boltpack import audit
 from forge.packaging import TARGETS, pe_info, read_pck
-from forge.pwa import BUDGET_BYTES, HOOK_MARK, budget, patch_html, sw_report
+from forge.pwa import BUDGET_BYTES, HOOK_MARK, budget, patch_html, patch_sw, sw_report
 from forge.shuttleline import ADAPTERS, SCHEMA, check_sources, contract
 
 
@@ -66,6 +66,17 @@ def test_pwa_hook_budget_and_sw(tmp_path: Path) -> None:
     assert sw_report(tmp_path)["ok"]
     (tmp_path / "index.service.worker.js").write_text('const CACHED_FILES = ["index.html"];\nconst CACHABLE_FILES = [];', encoding="utf-8")
     assert not sw_report(tmp_path)["ok"]
+
+
+def test_patch_sw_drops_unexported_install_files(tmp_path: Path) -> None:
+    """Godot 4.3 web_nothreads lists index.worker.js in CACHED_FILES without exporting it (ADR-0019)."""
+    _fake_web(tmp_path)
+    for f in ("index.js", "index.offline.html", "index.audio.worklet.js"):
+        (tmp_path / f).write_text("x", encoding="utf-8")
+    assert patch_sw(tmp_path) == ["index.worker.js"]
+    sw = (tmp_path / "index.service.worker.js").read_text(encoding="utf-8")
+    assert "index.worker.js" not in sw and '"index.audio.worklet.js"' in sw
+    assert patch_sw(tmp_path) == []                                   # idempotent
 
 
 def test_pck_reader_roundtrip(tmp_path: Path) -> None:

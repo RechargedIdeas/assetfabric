@@ -172,7 +172,7 @@ def store_cmd(action: str, file_path: Path | None, root: Path | None) -> None:
 @click.option("--sandbox", "sandbox_tier", default=None, type=click.Choice(["auto", "bwrap", "process"]),
               help="Run every generator job inside a Substrate sandbox tier (F4).")
 @click.option("--target", "targets", multiple=True,
-              type=click.Choice(["desktop-linux", "desktop-windows", "android", "web", "all"]),
+              type=click.Choice(["desktop-linux", "desktop-windows", "android", "web", "web-nothreads", "all"]),
               help="F7: package Game Zero for a platform (repeatable; 'all' = every target) instead of a content build.")
 @click.option("--skip-smoke", is_flag=True, help="With --target: export + contract + BoltPack only, no smoke runs.")
 @click.option("--root", type=click.Path(path_type=Path), default=None)

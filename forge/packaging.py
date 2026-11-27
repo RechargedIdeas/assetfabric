@@ -70,7 +70,13 @@ TARGETS: dict[str, Target] = {
     "web": Target("web", "web", "godot-web", "release", "index.html",
                   ("web_release.zip", "web_debug.zip", "web_nothreads_release.zip", "web_nothreads_debug.zip"),
                   notes="threads build + PWA (offline SW, COOP/COEP)"),
+    # D-001 / ADR-0019: single-thread fallback for hosts that cannot send COOP/COEP and browsers without
+    # SharedArrayBuffer. Same content, Godot's `web_nothreads_*` templates, PWA on, no isolation shim.
+    "web-nothreads": Target("web-nothreads", "web-nothreads", "godot-web", "release", "index.html",
+                            ("web_nothreads_release.zip", "web_nothreads_debug.zip"),
+                            notes="single-thread fallback (no SharedArrayBuffer, no COOP/COEP) + PWA (offline SW)"),
 }
+WEB_TARGETS = ("web", "web-nothreads")
 ORDER = list(TARGETS)
 
 
@@ -368,7 +374,7 @@ def shipped_files(root: Path, target: str) -> dict[str, bytes]:
     d = dist_dir(root) / target
     if target == "android":
         return read_apk_assets(d / TARGETS[target].artifact)
-    if target == "web":
+    if target in WEB_TARGETS:
         return read_pck(d / "index.pck")
     return read_pck(d / "GameZero.pck")
 
@@ -502,8 +508,8 @@ def build_targets(root: Path, targets: list[str], *, skip_smoke: bool = False, l
     for t in targets:
         rep = export(root, t, st, log=log)
         if rep["ok"]:
-            if t == "web":
-                rep["pwa"] = pwa_pipeline(root, smoke=not skip_smoke, log=log)
+            if t in WEB_TARGETS:
+                rep["pwa"] = pwa_pipeline(root, smoke=not skip_smoke, log=log, variant=t)
             elif not skip_smoke:
                 rep["verify"] = {"desktop-linux": verify_desktop_linux, "desktop-windows": verify_desktop_windows,
                                  "android": verify_android}[t](root)

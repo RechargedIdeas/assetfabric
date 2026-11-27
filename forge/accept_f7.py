@@ -66,6 +66,7 @@ def presets_report(root: Path) -> dict[str, Any]:
     inc_ok = all(all(x in b for x in ("assets/generated/*", "data/generated/*", "locale/*.json")) for b in presets.values())
     proj = (project_dir(root) / "project.godot").read_text(encoding="utf-8")
     a, w = presets.get("android", ""), presets.get("web", "")
+    wn = presets.get("web-nothreads", "")
     checks = {
         "all_targets": want <= set(presets),
         "ships_fabric_output": inc_ok,
@@ -73,6 +74,8 @@ def presets_report(root: Path) -> dict[str, Any]:
         "android_no_internet": "permissions/internet=false" in a,
         "android_arm64": "architectures/arm64-v8a=true" in a and "gradle_build/use_gradle_build=false" in a,
         "web_pwa_isolation": "progressive_web_app/enabled=true" in w and "progressive_web_app/ensure_cross_origin_isolation_headers=true" in w,
+        "web_nothreads_fallback": "variant/thread_support=false" in wn and "progressive_web_app/enabled=true" in wn
+                                  and "progressive_web_app/ensure_cross_origin_isolation_headers=false" in wn,
         "compatibility_renderer": 'renderer/rendering_method="gl_compatibility"' in proj and 'rendering_method.mobile="gl_compatibility"' in proj,
         "etc2_astc_import": "import_etc2_astc=true" in proj,
     }
@@ -263,7 +266,7 @@ def full_part(root: Path, tmp: Path) -> dict[str, Any]:
     r: dict[str, Any] = {}
     import sys
 
-    build = build_targets(root, ["desktop-linux", "desktop-windows", "android", "web"], log=lambda m: print(m, file=sys.stderr))
+    build = build_targets(root, ["desktop-linux", "desktop-windows", "android", "web", "web-nothreads"], log=lambda m: print(m, file=sys.stderr))
     r["build"] = {"ok": build["ok"], "error": build.get("error"), "toolchain": build.get("toolchain"),
                   "targets": {t: {k: v for k, v in rep.items() if k not in ("files",)} for t, rep in build.get("targets", {}).items()}}
     if not all(t.get("ok") for t in build.get("targets", {}).values()) or not build.get("targets"):
@@ -402,7 +405,7 @@ def f7_check(r: dict[str, Any]) -> list[str]:
         return errs
     b = r.get("build", {})
     ts = b.get("targets", {})
-    _need(set(ts) == {"desktop-linux", "desktop-windows", "android", "web"}, f"targets built: {sorted(ts)} {b.get('error')}", errs)
+    _need(set(ts) == {"desktop-linux", "desktop-windows", "android", "web", "web-nothreads"}, f"targets built: {sorted(ts)} {b.get('error')}", errs)
     for t, rep in ts.items():
         _need(rep.get("ok") is True, f"{t}: export failed {rep.get('errors') or rep.get('error')}", errs)
         _need((rep.get("shuttle") or {}).get("ok") is True, f"{t}: ShuttleLine contract {rep.get('shuttle')}", errs)
@@ -414,6 +417,10 @@ def f7_check(r: dict[str, Any]) -> list[str]:
     _need((pwa.get("budget") or {}).get("ok") is True, f"G-WEB-01 budget: {(pwa.get('budget') or {}).get('total_gzip9')}", errs)
     _need((pwa.get("service_worker") or {}).get("ok") is True, "G-WEB-01 service worker cache list", errs)
     _need((pwa.get("smoke") or {}).get("ok") is True, f"G-WEB-01 smoke: {(pwa.get('smoke') or {}).get('checks')}", errs)
+    nt = ts.get("web-nothreads", {}).get("pwa") or {}       # D-001 single-thread fallback (ADR-0019)
+    _need((nt.get("budget") or {}).get("ok") is True, f"web-nothreads budget: {(nt.get('budget') or {}).get('total_gzip9')}", errs)
+    _need((nt.get("service_worker") or {}).get("ok") is True, "web-nothreads service worker cache list", errs)
+    _need((nt.get("smoke") or {}).get("ok") is True, f"web-nothreads smoke: {(nt.get('smoke') or {}).get('checks')}", errs)
     dl = r.get("desktop_launch", {})
     _need(dl.get("exit") == 0 and dl.get("completed") is True and dl.get("script_errors") == 0, f"desktop slice: {dl}", errs)
     _need(dl.get("final_equal_editor") is True, "exported desktop slice differs from the editor runtime", errs)
@@ -439,7 +446,11 @@ def f7_check(r: dict[str, Any]) -> list[str]:
 def f7_perf(r: dict[str, Any]) -> dict[str, Any]:
     ts = (r.get("build") or {}).get("targets", {})
     pwa = (ts.get("web") or {}).get("pwa") or {}
+    nt = (ts.get("web-nothreads") or {}).get("pwa") or {}
+    nsb = ((nt.get("smoke") or {}).get("swapbench") or {}).get("result") or {}
     return {"mode": r.get("mode"),
+            "web_nothreads_gzip9_bytes": (nt.get("budget") or {}).get("total_gzip9"),
+            "web_nothreads_swap_p95_ms": nsb.get("wall_ms_p95"),
             "artifacts": {t: {"artifact": rep.get("artifact"), "total_size": rep.get("total_size"),
                               "export_wall_s": rep.get("export_wall_s")} for t, rep in ts.items()},
             "web_gzip9_bytes": (pwa.get("budget") or {}).get("total_gzip9"),

@@ -34,6 +34,10 @@ targets:
     kind: godot-web
     renderer: compatibility
     enabled: true
+  - id: web-nothreads       # D-001 single-thread fallback (no SharedArrayBuffer / COOP/COEP), ADR-0019
+    kind: godot-web
+    renderer: compatibility
+    enabled: true
   - id: studio-desktop
     kind: studio
     renderer: n/a

@@ -38,7 +38,8 @@ ALLOWED = {"Expat", "MIT", "BSD-2-Clause", "BSD-3-Clause", "BSD-3-clause", "BSD-
 WEAK_COPYLEFT = {"MPL-2.0"}        # file-level copyleft: allowed for unmodified engine code, reported
 COPYLEFT = ("GPL", "LGPL", "AGPL", "SSPL", "EUPL")
 TEMPLATE_FOR = {"desktop-linux": "linux_release.x86_64", "desktop-windows": "windows_release_x86_64.exe",
-                "android": "android_debug.apk", "web": "web_release.zip"}
+                "android": "android_debug.apk", "web": "web_release.zip",
+                "web-nothreads": "web_nothreads_release.zip"}
 
 ENGINE_INFO_GD = """extends SceneTree
 func _init():
@@ -100,10 +101,10 @@ def sbom(root: Path, target: str, version: str) -> dict[str, Any]:
                       "properties": [{"name": "fabric:origin", "value": "bundled in android_debug.apk template (lib/arm64-v8a)"}]})
         comps.append({"type": "library", "name": "godot-android-lib", "version": "4.3-stable", "scope": "required",
                       "licenses": [{"license": {"id": "MIT"}}]})
-    if target == "web":
+    if target in ("web", "web-nothreads"):
         comps.append({"type": "library", "name": "emscripten-runtime", "scope": "required",
                       "licenses": [{"expression": "MIT OR NCSA"}],
-                      "properties": [{"name": "fabric:origin", "value": "generated JS/wasm glue in web_release.zip"}]})
+                      "properties": [{"name": "fabric:origin", "value": f"generated JS/wasm glue in {TEMPLATE_FOR[target]}"}]})
     reg = registry(root)
     gens = sorted({(a.get("meta") or {}).get("model_id", "?") for a in reg["assets"].values()})
     comps.append({"type": "application", "name": "game-zero", "version": version, "scope": "required",
