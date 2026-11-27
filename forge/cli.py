@@ -594,6 +594,35 @@ def balance_tune(trials: int, seeds: int, out: Path | None, root: Path | None) -
     click.echo(text)
 
 
+@balance_grp.command("tune-affinity")
+@click.option("--trials", default=20)
+@click.option("--seeds", default=300, help="Seeds per leader × pet cell per trial (fits use seed_base 50 000+).")
+@click.option("--out", type=click.Path(path_type=Path), default=None)
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def balance_tune_affinity(trials: int, seeds: int, out: Path | None, root: Path | None) -> None:
+    """Q5: 12 per-cell Optuna studies over pets.<pet>.affinity.<fighter>; prints the fitted values (apply to content/roster/pets.yaml)."""
+    from forge.balance import tune_affinity
+
+    res = tune_affinity(trials=trials, seeds=seeds, root=root or find_repo_root())
+    text = json.dumps(res, indent=2)
+    if out:
+        out.write_text(text + "\n", encoding="utf-8")
+    click.echo(text)
+
+
+@balance_grp.command("holdout")
+@click.option("--seeds", default=1000, help="Seeds per cell (unseen seed_base 9000).")
+@click.option("--root", type=click.Path(path_type=Path), default=None)
+def balance_holdout(seeds: int, root: Path | None) -> None:
+    """Q5: out-of-sample per-pair spread on unseen seeds; exit 1 above 3.5 pp (INFERENCE C-94)."""
+    from forge.balance import holdout
+
+    agg = holdout(root or find_repo_root(), seeds=seeds)
+    click.echo(json.dumps({"holdout": agg["holdout"], "mean_win_rate": agg["mean_win_rate"], "wall_s": agg.get("wall_s"),
+                           "win_rates": {k: v["win_rate"] for k, v in agg["matchups"].items()}}, indent=2))
+    sys.exit(0 if agg["holdout"]["ok"] else 1)
+
+
 @main.command("softlock")
 @click.option("--root", type=click.Path(path_type=Path), default=None)
 def softlock_cmd(root: Path | None) -> None:
