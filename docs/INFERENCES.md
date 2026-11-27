@@ -659,7 +659,7 @@ ConsoleReadiness, Layer D R1/Q1/V1, §5.1 C1/R2; GAME_SPEC §1, §3, §4.6. Acce
    fidelity delta = mean ΔE76 / dL*, discriminator = NumPy logistic regression on 4 frame features (block uniformity,
    palette conformance, per-row colour coherence, edge sharpness) trained on synthetic authentic vs degraded frames
    built from Fabric art (fixed seed); gates: hold-out ≥ 0.95 and every real capture ≥ 0.5. Not a learned image
-   model. The modern (`off`) frame is reported as a control (0.49) but not gated — its margin under 0.5 is thin.
+   model. The modern (`off`) frame is reported as a control (0.4836) but not gated — its margin under 0.5 is thin.
 9. **F8-9 Fidelity ceilings.** Mean colour error ceilings nes ΔE76 ≤ 25, gb dL* ≤ 12 are ours (measured 17.69 / 4.53):
    they catch a broken palette/solver, they are not an aesthetic bar.
 10. **F8-10 HUD above the pass.** The HUD/quest text/settings sit on CanvasLayer 2 above the retro pass (layer 1), so

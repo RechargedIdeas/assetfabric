@@ -15,7 +15,7 @@ Last updated: 2026-11-27 America/New_York
 - [ ] GB ROM / other families (Genesis, GBA, PS1) — registry entry + ROMBuilder per family.
 - [ ] Fantasy consoles (PICO-8/TIC-80) and CertPack — SPEC §1 hard deferrals.
 - [ ] Real hardware / flash cart / CRT check; human eye test of the profiles.
-- [ ] Stronger R2 control margin (modern frame scores 0.49 vs the 0.5 capture threshold; not gated).
+- [ ] Stronger R2 control margin (modern frame scores 0.4836 vs the 0.5 capture threshold; not gated).
 - [ ] Optional pixel-quantised HUD mode (HUD is above the pass for readability, INFERENCE F8-10).
 
 Inventory 2026-11-20 from TODO / HANDOVER / STATUS / docs/INFERENCES.md / acceptance docs / DECISIONS (D-001, D-005).
