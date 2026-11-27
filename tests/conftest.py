@@ -28,7 +28,7 @@ CI_GROUPS: dict[str, tuple[str, ...]] = {
              "tests/test_game_increments.py::test_increment_acceptance[F6]",
              "tests/test_game_increments.py::test_increment_acceptance[F4]",
              "tests/test_game_increments.py::test_increment_acceptance[F7]",
-             "tests/test_f6_world.py", "tests/test_f5_balance_save.py"),
+             "tests/test_f6_world.py", "tests/test_f5_balance_save.py", "tests/test_worldfights.py"),
     # C9–C12 real CPU paths (ffmpeg / Xvfb / OpenCV / ONNX)
     "recon": ("tests/test_game_increments.py::test_increment_acceptance[C12]",
               "tests/test_game_increments.py::test_increment_acceptance[C11]",

@@ -7,49 +7,67 @@
   "perf": {
     "bot_length_within_target": false,
     "human_estimate_components_s": {
-      "combat": 91.6,
+      "combat": 92.4,
       "crop_wait": 0.0,
       "explore_new_areas": 180.0,
-      "interactions": 171.0,
+      "interactions": 183.0,
       "reading": 53.2,
       "select": 45.0,
       "swap_overlays": 20.0,
-      "travel": 481.4
+      "travel": 479.7
     },
-    "human_estimate_min": 17.37,
-    "human_wait_slack_s": 65.9,
+    "human_estimate_min": 17.55,
+    "human_wait_slack_s": 92.2,
     "length_note": "gate = human-pace estimate (forge/pace.py, INFERENCE C-92; a model, not a playtest); bot game time is the machine-efficiency floor, reported as-is; a human GUI playtest replaces the model",
     "length_within_target": true,
     "matrix_game_minutes": [
       7.13,
-      7.14,
-      7.13,
-      7.15,
-      7.18,
-      7.34,
-      7.34,
-      7.41,
-      7.35,
-      7.22,
-      7.25,
-      7.21
+      7.35
     ],
     "matrix_human_estimate_min": [
-      17.14,
-      18.69
+      17.34,
+      18.64
     ],
     "matrix_wipes": 0,
-    "slice_game_minutes": 7.13,
-    "slice_ticks": 25670,
-    "slice_wall_ms": 6085.6,
+    "slice_game_minutes": 7.56,
+    "slice_ticks": 27217,
+    "slice_wall_ms": 7819.1,
     "swap_wall_ms": [
-      17.49,
-      11.88
+      22.42,
+      14.78
     ],
     "target_minutes": [
       15.0,
       20.0
-    ]
+    ],
+    "world_fights_classes": {
+      "boss": {
+        "clear_median_s": [
+          8.87,
+          9.4
+        ],
+        "clear_p90_max_s": 10.08,
+        "wipe_rate_max": 0.0
+      },
+      "elite": {
+        "clear_median_s": [
+          2.75,
+          3.97
+        ],
+        "clear_p90_max_s": 4.55,
+        "wipe_rate_max": 0.0
+      },
+      "trash": {
+        "clear_median_s": [
+          1.2,
+          3.25
+        ],
+        "clear_p90_max_s": 3.65,
+        "wipe_rate_max": 0.0
+      }
+    },
+    "world_fights_encounters": 352,
+    "world_fights_wall_s": 9.63
   },
   "result": {
     "economy": {
@@ -61,24 +79,24 @@
         "xp_twin_matches_game": true
       },
       "coin_end": {
-        "p5": 111,
-        "p50": 131.0,
-        "p95": 155
+        "p5": 109,
+        "p50": 129.0,
+        "p95": 152
       },
-      "end_tick": 25670,
-      "kills": 62,
+      "end_tick": 27217,
+      "kills": 64,
       "level_ups": [
         [
           3,
-          3560
+          2733
         ],
         [
           4,
-          12770
+          12773
         ],
         [
           5,
-          23885
+          25428
         ]
       ],
       "levels": {
@@ -118,8 +136,8 @@
       "mc_seeds": 2000,
       "ok": true,
       "p_flint_edge_before_boss": 1.0,
-      "p_warden_charm_by_end": 0.9995,
-      "xp_end": 900
+      "p_warden_charm_by_end": 1.0,
+      "xp_end": 920
     },
     "locale": {
       "keys_checked": 132,
@@ -127,61 +145,17 @@
       "ok": true
     },
     "matrix": {
-      "mode": "full",
+      "mode": "fast",
       "runs": [
         {
           "boss_attempt": 1,
-          "boss_ticks": 778,
+          "boss_ticks": 805,
           "completed": true,
           "economy_ok": true,
           "exit": 0,
           "game_minutes": 7.13,
-          "human_estimate_min": 17.37,
-          "leader": "kael",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "ember_fox",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25670,
-          "wall_ms": 6146.7,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 778,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.14,
-          "human_estimate_min": 17.63,
-          "leader": "kael",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "stone_tortle",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25713,
-          "wall_ms": 6350.6,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 778,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.13,
-          "human_estimate_min": 17.41,
-          "leader": "kael",
+          "human_estimate_min": 17.34,
+          "leader": "sola",
           "levels": {
             "boss_start": 4,
             "q_warden.clear_cave": 3,
@@ -191,96 +165,8 @@
           "pet": "lumen_wisp",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25671,
-          "wall_ms": 6162.6,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 799,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.15,
-          "human_estimate_min": 17.14,
-          "leader": "nyra",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "ember_fox",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25725,
-          "wall_ms": 6167.2,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 820,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.18,
-          "human_estimate_min": 17.25,
-          "leader": "nyra",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "stone_tortle",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25841,
-          "wall_ms": 6313,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 802,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.34,
-          "human_estimate_min": 17.43,
-          "leader": "nyra",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "lumen_wisp",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 26433,
-          "wall_ms": 6329.2,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 792,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.34,
-          "human_estimate_min": 18.51,
-          "leader": "bram",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "ember_fox",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 26436,
-          "wall_ms": 6304.8,
+          "ticks": 25664,
+          "wall_ms": 7822.9,
           "wipes": 0
         },
         {
@@ -289,75 +175,9 @@
           "completed": true,
           "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.41,
-          "human_estimate_min": 18.69,
-          "leader": "bram",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "stone_tortle",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 26683,
-          "wall_ms": 6378.5,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 795,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
           "game_minutes": 7.35,
-          "human_estimate_min": 18.57,
+          "human_estimate_min": 18.64,
           "leader": "bram",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "lumen_wisp",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 26460,
-          "wall_ms": 6223.4,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 826,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.22,
-          "human_estimate_min": 17.56,
-          "leader": "sola",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "ember_fox",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25999,
-          "wall_ms": 6173.3,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 831,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.25,
-          "human_estimate_min": 17.76,
-          "leader": "sola",
           "levels": {
             "boss_start": 4,
             "q_warden.clear_cave": 3,
@@ -367,69 +187,47 @@
           "pet": "stone_tortle",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 26115,
-          "wall_ms": 6312.8,
-          "wipes": 0
-        },
-        {
-          "boss_attempt": 1,
-          "boss_ticks": 805,
-          "completed": true,
-          "economy_ok": true,
-          "exit": 0,
-          "game_minutes": 7.21,
-          "human_estimate_min": 17.41,
-          "leader": "sola",
-          "levels": {
-            "boss_start": 4,
-            "q_warden.clear_cave": 3,
-            "q_warden.craft": 4,
-            "q_warden.rest": 5
-          },
-          "pet": "lumen_wisp",
-          "script_errors": 0,
-          "softlocks": 0,
-          "ticks": 25959,
-          "wall_ms": 6156.1,
+          "ticks": 26454,
+          "wall_ms": 7875.5,
           "wipes": 0
         }
       ]
     },
     "pace": {
       "bot": {
-        "combat_s": 61.0,
-        "crop_wait_s": 65.9,
+        "combat_s": 61.6,
+        "crop_wait_s": 92.2,
         "first_visits": 6,
-        "game_min": 7.13,
+        "game_min": 7.56,
         "interactions": {
-          "buy": 0,
+          "buy": 1,
           "craft": 6,
           "gather": 19,
-          "harvest": 8,
-          "plant": 12,
+          "harvest": 9,
+          "plant": 13,
           "save": 1,
           "use": 0
         },
         "objectives_shown": 20,
-        "travel_s": 300.9
+        "travel_s": 299.8
       },
       "components_s": {
-        "combat": 91.6,
+        "combat": 92.4,
         "crop_wait": 0.0,
         "explore_new_areas": 180.0,
-        "interactions": 171.0,
+        "interactions": 183.0,
         "reading": 53.2,
         "select": 45.0,
         "swap_overlays": 20.0,
-        "travel": 481.4
+        "travel": 479.7
       },
-      "human_estimate_min": 17.37,
+      "human_estimate_min": 17.55,
       "model": "content/tune/pace.yaml (INFERENCE C-92; not a playtest)",
       "target_min": [
         15.0,
         20.0
       ],
-      "wait_slack_s": 65.9,
+      "wait_slack_s": 92.2,
       "within_target": true
     },
     "parity": {
@@ -442,7 +240,7 @@
         0,
         0
       ],
-      "final_checksum": "249f4b0f2e3d2df0874a214e99790eacd58bcc8ab8b62e22725f0c0c23aaa043",
+      "final_checksum": "a728a7ab247e8ca41fe235edc1e79695982ad5eea2c48fd64ffdf6c0b16386d5",
       "final_equal_uninterrupted": true,
       "loaded_equal_saved": true,
       "migration_parity": {
@@ -486,9 +284,9 @@
       "python_validates_save": true,
       "quit_area": "hollow",
       "quit_checkpoint": 5,
-      "quit_tick": 6347,
+      "quit_tick": 6351,
       "resumed_completed": true,
-      "resumed_ticks": 25670,
+      "resumed_ticks": 27217,
       "script_errors": 0
     },
     "script_errors": 0,
@@ -499,7 +297,7 @@
           "arrive": "S",
           "boss": false,
           "buffs": 0,
-          "hostiles": 2,
+          "hostiles": 3,
           "tick": 0
         },
         {
@@ -508,7 +306,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 5,
-          "tick": 1121
+          "tick": 1134
         },
         {
           "area": "hollow",
@@ -516,7 +314,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 6,
-          "tick": 2431
+          "tick": 2444
         },
         {
           "area": "cave_deep",
@@ -524,7 +322,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 9,
-          "tick": 4096
+          "tick": 4109
         },
         {
           "area": "hollow",
@@ -532,7 +330,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 6347
+          "tick": 6351
         },
         {
           "area": "tunnels",
@@ -540,7 +338,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 7274
+          "tick": 7278
         },
         {
           "area": "field",
@@ -548,7 +346,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 7956
+          "tick": 7960
         },
         {
           "area": "tunnels",
@@ -556,7 +354,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 3,
-          "tick": 11657
+          "tick": 11694
         },
         {
           "area": "hollow",
@@ -564,7 +362,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 7,
-          "tick": 12547
+          "tick": 12584
         },
         {
           "area": "tunnels",
@@ -572,7 +370,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 14466
+          "tick": 14503
         },
         {
           "area": "field",
@@ -580,7 +378,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 15148
+          "tick": 15185
         },
         {
           "area": "tunnels",
@@ -588,7 +386,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 6,
-          "tick": 18914
+          "tick": 20575
         },
         {
           "area": "hollow",
@@ -596,7 +394,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 3,
-          "tick": 19859
+          "tick": 21520
         },
         {
           "area": "cave_deep",
@@ -604,7 +402,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 6,
-          "tick": 20996
+          "tick": 22657
         },
         {
           "area": "warden_lair",
@@ -612,15 +410,15 @@
           "boss": true,
           "buffs": 1,
           "hostiles": 3,
-          "tick": 22212
+          "tick": 23873
         },
         {
           "area": "ridge",
           "arrive": "S",
           "boss": false,
           "buffs": 0,
-          "hostiles": 10,
-          "tick": 23065
+          "hostiles": 11,
+          "tick": 24726
         },
         {
           "area": "field",
@@ -628,7 +426,7 @@
           "boss": false,
           "buffs": 0,
           "hostiles": 0,
-          "tick": 24689
+          "tick": 26257
         }
       ],
       "boss": {
@@ -641,7 +439,9 @@
         "ticks": 778,
         "tier": 3
       },
-      "bought": [],
+      "bought": [
+        "sunroot_seed"
+      ],
       "buff_at_boss": {
         "atk": 11.8,
         "bonus": {
@@ -666,8 +466,8 @@
         },
         "leader": "kael"
       },
-      "buys": 0,
-      "callouts_total": 20,
+      "buys": 1,
+      "callouts_total": 19,
       "checkpoints": [
         {
           "area": "field",
@@ -677,105 +477,105 @@
         },
         {
           "area": "tunnels",
-          "checksum": "d6edf59b8c19effb8b2e620b9725ab0851b2a1b3eac1b551a227d60373c74177",
+          "checksum": "6de53934fa302611f5c624528b2a7504d1aab23b9b6275ccee2866c16a965d86",
           "n": 2,
-          "tick": 1121
+          "tick": 1134
         },
         {
           "area": "hollow",
-          "checksum": "24a508f06ecdd330a60590ca106ae4bce7ef651c0278228c14b4b7e23275cb8f",
+          "checksum": "a15f852c43ebe5941eab6b60b9aab1106f03ed1823c4291f5ca93fb8d29df2ce",
           "n": 3,
-          "tick": 2431
+          "tick": 2444
         },
         {
           "area": "cave_deep",
-          "checksum": "8dde1a00a5784af00703b40a0b5b1252f046e4605fe3b5a78b282e6517dd9bfa",
+          "checksum": "fea052a72643eda53c9feeddcbf61bf92596e91c2fe5132f8a7a425014fd3033",
           "n": 4,
-          "tick": 4096
+          "tick": 4109
         },
         {
           "area": "hollow",
-          "checksum": "bebbbabe644e1043c82a1f6362cec4559f46bc47d6f3dca18af3f09c2f36f431",
+          "checksum": "d539d0e9780575b593c92f7c50db46d37b95bb33d2ddd0ae8bc074df55abfac5",
           "n": 5,
-          "tick": 6347
+          "tick": 6351
         },
         {
           "area": "tunnels",
-          "checksum": "ed46f00a4811421a974aa09dc36170dad169e46c565c15ffe4390acbfa3059e5",
+          "checksum": "b4dd09d507f59696f363f8f802d95ab7d01d32c088d6344cafb1319a197dfdff",
           "n": 6,
-          "tick": 7274
+          "tick": 7278
         },
         {
           "area": "field",
-          "checksum": "aed23ab0343305d98b57e1f59852966abce26d9b9a13c035ce6dc81f6d9f66dd",
+          "checksum": "3610e2e0bcc097bbb0f42cdd3d440246da352c742c45cef130cd20c826c254a4",
           "n": 7,
-          "tick": 7956
+          "tick": 7960
         },
         {
           "area": "tunnels",
-          "checksum": "bdbd614a9eac7dfff6b4330e61760fa4db8a919ec6172c0f173ec078b4e3093c",
+          "checksum": "ae5d410e5711a51ac5720b32ccd9c2834d88d3027a5e366c474ee8da0a835a98",
           "n": 8,
-          "tick": 11657
+          "tick": 11694
         },
         {
           "area": "hollow",
-          "checksum": "55a0d0b9ce80007124b1a922596a5ede5476807a6e42fb7c44b20f1ceec81ccb",
+          "checksum": "da860711e08c07cf876d1fefd8c20f02628d6d52e87162b90c82e452513c5340",
           "n": 9,
-          "tick": 12547
+          "tick": 12584
         },
         {
           "area": "tunnels",
-          "checksum": "3fbc5a5bbfddd9b756e87f40a7aef919939658b7a024e7fd0d9b04dcda33ccf1",
+          "checksum": "39654a7deacb9e08ca6cae9c6a89035aeacdd55c14b630964edaee3f73143f5d",
           "n": 10,
-          "tick": 14466
+          "tick": 14503
         },
         {
           "area": "field",
-          "checksum": "444876d542a5ba383d29a34dccf877e81e0cd372c3e49d4585046ae78925991c",
+          "checksum": "acd38a494494ae03b3f8fd82b37adfb0198291972159cc07a516b3ee4e0d56a7",
           "n": 11,
-          "tick": 15148
+          "tick": 15185
         },
         {
           "area": "tunnels",
-          "checksum": "32ca2a1e6229f1dea16030f747717e92f953a015558d6065b018980e8d8a7696",
+          "checksum": "0f7a3627dc19aa2f067f60211dab88465c023d466e1446fe7b5820ca76ce1bf5",
           "n": 12,
-          "tick": 18914
+          "tick": 20575
         },
         {
           "area": "hollow",
-          "checksum": "0edd184ab12eb14a89d692bbd1d97be0081db7cace7c7a26060feaf38ad7a9d1",
+          "checksum": "d8d7a6d8eb97527a2d1de7a3a0db697435429f88578715cd96240cb4d6098ac2",
           "n": 13,
-          "tick": 19859
+          "tick": 21520
         },
         {
           "area": "cave_deep",
-          "checksum": "98e11aca7bbad722335468da8748cd6739d90009619558b4c4aa4ed4a60cf4a2",
+          "checksum": "0486d1eaa5618d2e502d8717fd3e713ca111903f1ddf05e8bc85595b90de2adc",
           "n": 14,
-          "tick": 20996
+          "tick": 22657
         },
         {
           "area": "warden_lair",
-          "checksum": "6fe32d52afd0983dbd3c562108cd18b94f289f580108071d1c6a43d79464d501",
+          "checksum": "6251e46a60387446783e2e82f14b08f526e0c3c424141478264b15ab9101e23b",
           "n": 15,
-          "tick": 22212
+          "tick": 23873
         },
         {
           "area": "ridge",
-          "checksum": "4ea5927989adfac049e6c2280820329a389157c45c7bc0a7396b1b609775e11c",
+          "checksum": "57be405c14cd7881a277c953503b5cad3889335ec48e5de6387573ae1470143a",
           "n": 16,
-          "tick": 23065
+          "tick": 24726
         },
         {
           "area": "field",
-          "checksum": "28ae771e1aaa8d694fc8f689f756f9aa1c272d8b480f7e12d9bc4aa8718ae55b",
+          "checksum": "30ad75d3a901245f9a2c5c010f2c9b5748cf6acef925875d4506239a48addb91",
           "n": 17,
-          "tick": 24689
+          "tick": 26257
         },
         {
           "area": "field",
-          "checksum": "63eb77174c6796fad4472891e6cbfc0d53a34962d2b08b6d4cf6e55fe8922c50",
+          "checksum": "1936637f11fe3f6439a71765505bb39a11cb09106418f4dc8c097091fad7ed06",
           "n": 18,
-          "tick": 25670
+          "tick": 27217
         }
       ],
       "completed": true,
@@ -783,9 +583,9 @@
         "counters": {
           "crafted": 6,
           "gathered": 19,
-          "harvested": 16,
-          "kills": 62,
-          "planted": 12,
+          "harvested": 18,
+          "kills": 64,
+          "planted": 13,
           "used_ember_tonic": 1
         },
         "crafted": [
@@ -850,30 +650,33 @@
             2
           ],
           [
+            "glowcap",
+            2
+          ],
+          [
+            "glowcap",
+            2
+          ],
+          [
+            "glowcap",
+            2
+          ],
+          [
             "sunroot",
-            2
-          ],
-          [
-            "glowcap",
-            2
-          ],
-          [
-            "glowcap",
             2
           ]
         ],
         "inventory": {
-          "brute_hide": 6,
-          "cave_moss": 11,
-          "coin": 112,
+          "brute_hide": 8,
+          "cave_moss": 10,
+          "coin": 107,
           "ember_ore": 1,
           "ember_shard": 26,
           "flint": 6,
-          "glowcap": 5,
-          "glowcap_spore": 2,
+          "glowcap": 7,
           "moss_salve": 2,
           "sunroot": 6,
-          "sunroot_seed": 2
+          "sunroot_seed": 1
         },
         "planted": [
           "glowcap",
@@ -883,30 +686,31 @@
           "glowcap",
           "glowcap",
           "sunroot",
+          "glowcap",
+          "glowcap",
+          "glowcap",
           "sunroot",
           "glowcap",
-          "glowcap",
-          "glowcap",
-          "glowcap"
+          "sunroot"
         ],
         "salves": []
       },
       "fighters": {
         "bram": {
           "level": 5,
-          "xp": 900
+          "xp": 920
         },
         "kael": {
           "level": 5,
-          "xp": 900
+          "xp": 920
         },
         "nyra": {
           "level": 5,
-          "xp": 900
+          "xp": 920
         },
         "sola": {
           "level": 5,
-          "xp": 900
+          "xp": 920
         },
         "vex": {
           "level": 1,
@@ -917,234 +721,1091 @@
         {
           "area": "field",
           "boss": false,
-          "end": 764,
-          "kills": 2,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 87,
+              "kael": 67,
+              "kael_ember_fox": 22,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              0
+            ],
+            "party": [
+              {
+                "level": 2,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 2,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 2,
+                "ref": "nyra"
+              },
+              {
+                "level": 2,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "field_01"
+          },
+          "end": 777,
+          "kills": 3,
           "start": 651,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 1350,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 87,
+              "kael": 66,
+              "kael_ember_fox": 17,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              0
+            ],
+            "party": [
+              {
+                "level": 2,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 2,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 2,
+                "ref": "nyra"
+              },
+              {
+                "level": 2,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "tunnels_01"
+          },
+          "end": 1363,
           "kills": 3,
-          "start": 1197,
+          "start": 1210,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 2105,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 87,
+              "kael": 64,
+              "kael_ember_fox": 19,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              1
+            ],
+            "party": [
+              {
+                "level": 2,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 2,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 2,
+                "ref": "nyra"
+              },
+              {
+                "level": 2,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "tunnels_01"
+          },
+          "end": 2118,
           "kills": 2,
-          "start": 1921,
+          "start": 1934,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 2719,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 87,
+              "kael": 50,
+              "kael_ember_fox": 18,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              0
+            ],
+            "party": [
+              {
+                "level": 2,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 2,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 2,
+                "ref": "nyra"
+              },
+              {
+                "level": 2,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "hollow_01"
+          },
+          "end": 2732,
           "kills": 3,
-          "start": 2548,
+          "start": 2561,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 3591,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 87,
+              "kael": 48,
+              "kael_ember_fox": 22,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              1
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "hollow_01"
+          },
+          "end": 3604,
           "kills": 3,
-          "start": 3395,
+          "start": 3408,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 4376,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 86,
+              "kael": 53,
+              "kael_ember_fox": 15,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              0
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_deep"
+          },
+          "end": 4389,
           "kills": 3,
-          "start": 4236,
+          "start": 4249,
           "swap": true
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 5232,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 86,
+              "kael": 50,
+              "kael_ember_fox": 19,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              2
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_deep"
+          },
+          "end": 5245,
           "kills": 3,
-          "start": 5039,
+          "start": 5052,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 5780,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {}
+            },
+            "hp": {
+              "bram": 86,
+              "kael": 62,
+              "kael_ember_fox": 19,
+              "nyra": 45,
+              "sola": 43
+            },
+            "packs": [
+              1
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_deep"
+          },
+          "end": 5784,
           "kills": 3,
-          "start": 5631,
+          "start": 5644,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 12236,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 97,
+              "kael": 74,
+              "kael_ember_fox": 22,
+              "nyra": 50,
+              "sola": 47
+            },
+            "packs": [
+              2
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "tunnels_01"
+          },
+          "end": 12273,
           "kills": 3,
-          "start": 12064,
+          "start": 12101,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 12850,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 97,
+              "kael": 61,
+              "kael_ember_fox": 19,
+              "nyra": 50,
+              "sola": 47
+            },
+            "packs": [
+              3
+            ],
+            "party": [
+              {
+                "level": 3,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 3,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 3,
+                "ref": "nyra"
+              },
+              {
+                "level": 3,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "hollow_01"
+          },
+          "end": 12887,
           "kills": 4,
-          "start": 12640,
+          "start": 12677,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 13602,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 97,
+              "kael": 60,
+              "kael_ember_fox": 22,
+              "nyra": 50,
+              "sola": 47
+            },
+            "packs": [
+              2
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "hollow_01"
+          },
+          "end": 13639,
           "kills": 3,
-          "start": 13390,
+          "start": 13427,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 19160,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 82,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              3
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "tunnels_01"
+          },
+          "end": 20821,
           "kills": 4,
-          "start": 18986,
+          "start": 20647,
           "swap": false
         },
         {
           "area": "tunnels",
           "boss": false,
-          "end": 19533,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 79,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              4
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "tunnels_01"
+          },
+          "end": 21194,
           "kills": 2,
-          "start": 19349,
+          "start": 21010,
           "swap": false
         },
         {
           "area": "hollow",
           "boss": false,
-          "end": 20463,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 69,
+              "kael_ember_fox": 21,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              4
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "hollow_01"
+          },
+          "end": 22124,
           "kills": 3,
-          "start": 20317,
+          "start": 21978,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 21535,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 55,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              3
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_deep"
+          },
+          "end": 23196,
           "kills": 4,
-          "start": 21389,
+          "start": 23050,
           "swap": false
         },
         {
           "area": "cave_deep",
           "boss": false,
-          "end": 21957,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 69,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              4
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_deep"
+          },
+          "end": 23618,
           "kills": 2,
-          "start": 21774,
+          "start": 23435,
           "swap": false
         },
         {
           "area": "warden_lair",
           "boss": false,
-          "end": 22530,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.21,
+                "def_flat": 0.75
+              }
+            },
+            "encounter": "boss_warden",
+            "hp": {
+              "bram": 106,
+              "kael": 58,
+              "kael_ember_fox": 21,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              -1
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_boss"
+          },
+          "end": 24191,
           "kills": 2,
-          "start": 22442,
+          "start": 24103,
           "swap": false
         },
         {
           "area": "warden_lair",
           "boss": true,
-          "end": 22990,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.21,
+                "def_flat": 0.75
+              }
+            },
+            "encounter": "boss_warden",
+            "hp": {
+              "bram": 106,
+              "kael": 56,
+              "kael_ember_fox": 21,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              -1
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "cave_boss"
+          },
+          "end": 24651,
           "kills": 3,
-          "start": 22636,
+          "start": 24297,
           "swap": true
         },
         {
           "area": "ridge",
           "boss": false,
-          "end": 23514,
-          "kills": 3,
-          "start": 23395,
-          "swap": false
-        },
-        {
-          "area": "ridge",
-          "boss": false,
-          "end": 23911,
-          "kills": 3,
-          "start": 23732,
-          "swap": false
-        },
-        {
-          "area": "ridge",
-          "boss": false,
-          "end": 24344,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 82,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              0
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "ridge_01"
+          },
+          "end": 25101,
           "kills": 4,
-          "start": 24147,
+          "start": 24941,
+          "swap": false
+        },
+        {
+          "area": "ridge",
+          "boss": false,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 106,
+              "kael": 79,
+              "kael_ember_fox": 18,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              1
+            ],
+            "party": [
+              {
+                "level": 4,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 4,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 4,
+                "ref": "nyra"
+              },
+              {
+                "level": 4,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "ridge_01"
+          },
+          "end": 25480,
+          "kills": 3,
+          "start": 25322,
+          "swap": false
+        },
+        {
+          "area": "ridge",
+          "boss": false,
+          "ctx": {
+            "bonus": {
+              "own": {},
+              "party": {
+                "atk_pct": 0.06,
+                "def_flat": 0.75
+              }
+            },
+            "hp": {
+              "bram": 101,
+              "kael": 71,
+              "kael_ember_fox": 22,
+              "nyra": 54,
+              "sola": 52
+            },
+            "packs": [
+              2
+            ],
+            "party": [
+              {
+                "level": 5,
+                "ref": "bram"
+              },
+              {
+                "leader": true,
+                "level": 5,
+                "pets": [
+                  "ember_fox"
+                ],
+                "ref": "kael"
+              },
+              {
+                "level": 5,
+                "ref": "nyra"
+              },
+              {
+                "level": 5,
+                "ref": "sola"
+              }
+            ],
+            "tilemap": "ridge_01"
+          },
+          "end": 25906,
+          "kills": 4,
+          "start": 25701,
           "swap": false
         }
       ],
-      "game_minutes": 7.13,
+      "game_minutes": 7.56,
       "intents": 1,
       "level_ups": [
         [
           "bram",
           3,
-          3560
+          2733
         ],
         [
           "kael",
           3,
-          3560
+          2733
         ],
         [
           "nyra",
           3,
-          3560
+          2733
         ],
         [
           "sola",
           3,
-          3560
+          2733
         ],
         [
           "bram",
           4,
-          12770
+          12773
         ],
         [
           "kael",
           4,
-          12770
+          12773
         ],
         [
           "nyra",
           4,
-          12770
+          12773
         ],
         [
           "sola",
           4,
-          12770
+          12773
         ],
         [
           "bram",
           5,
-          23885
+          25428
         ],
         [
           "kael",
           5,
-          23885
+          25428
         ],
         [
           "nyra",
           5,
-          23885
+          25428
         ],
         [
           "sola",
           5,
-          23885
+          25428
         ]
       ],
       "loot": {
@@ -1153,41 +1814,25 @@
             "emberling",
             1,
             [],
-            703
-          ],
-          [
-            "emberling",
-            1,
-            [],
-            765
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "sunroot_seed",
-                1
-              ]
-            ],
-            1314
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            1344
+            708
           ],
           [
             "cave_mite",
             1,
             [],
-            1351
+            743
+          ],
+          [
+            "emberling",
+            1,
+            [],
+            778
+          ],
+          [
+            "cave_mite",
+            1,
+            [],
+            1327
           ],
           [
             "emberling",
@@ -1198,83 +1843,7 @@
                 3
               ]
             ],
-            1986
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "brute_hide",
-                1
-              ]
-            ],
-            2106
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "cave_moss",
-                1
-              ]
-            ],
-            2631
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                3
-              ]
-            ],
-            2686
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            2720
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "glowcap_spore",
-                1
-              ],
-              [
-                "brute_hide",
-                1
-              ]
-            ],
-            3560
-          ],
-          [
-            "cave_mite",
-            1,
-            [],
-            3574
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "sunroot_seed",
-                1
-              ]
-            ],
-            3592
+            1357
           ],
           [
             "cave_mite",
@@ -1283,50 +1852,15 @@
               [
                 "coin",
                 2
-              ],
-              [
-                "cave_moss",
-                1
               ]
             ],
-            4319
+            1364
           ],
           [
-            "cave_mite",
+            "emberling",
             1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            4347
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "cave_moss",
-                1
-              ]
-            ],
-            4377
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ],
-              [
-                "cave_moss",
-                1
-              ]
-            ],
-            5103
+            [],
+            1999
           ],
           [
             "rock_brute",
@@ -1337,22 +1871,11 @@
                 1
               ],
               [
-                "coin",
-                3
-              ]
-            ],
-            5206
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "cave_moss",
+                "ember_shard",
                 1
               ]
             ],
-            5233
+            2119
           ],
           [
             "cave_mite",
@@ -1363,7 +1886,7 @@
                 1
               ]
             ],
-            5712
+            2644
           ],
           [
             "emberling",
@@ -1374,28 +1897,147 @@
                 1
               ]
             ],
-            5744
+            2699
           ],
           [
-            "emberling",
+            "cave_mite",
             1,
-            [],
-            5781
-          ],
-          [
-            "rock_brute",
-            2,
             [
               [
                 "coin",
                 3
               ],
               [
-                "ember_shard",
-                2
+                "cave_moss",
+                1
               ]
             ],
-            12191
+            2733
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "ember_shard",
+                2
+              ],
+              [
+                "glowcap_spore",
+                1
+              ]
+            ],
+            3573
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                1
+              ]
+            ],
+            3587
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ],
+            3605
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            4332
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ],
+            4360
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ],
+            4390
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                1
+              ]
+            ],
+            5116
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "brute_hide",
+                1
+              ],
+              [
+                "brute_hide",
+                1
+              ]
+            ],
+            5219
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            5246
+          ],
+          [
+            "cave_mite",
+            1,
+            [],
+            5725
           ],
           [
             "emberling",
@@ -1406,7 +2048,7 @@
                 1
               ]
             ],
-            12221
+            5756
           ],
           [
             "emberling",
@@ -1414,13 +2056,82 @@
             [
               [
                 "coin",
-                3
+                1
               ]
             ],
-            12237
+            5785
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "glowcap_spore",
+                1
+              ],
+              [
+                "glowcap_spore",
+                1
+              ]
+            ],
+            12228
+          ],
+          [
+            "emberling",
+            1,
+            [],
+            12258
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                1
+              ]
+            ],
+            12274
           ],
           [
             "cave_mite",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            12773
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            12807
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ],
+            12867
+          ],
+          [
+            "emberling",
             1,
             [
               [
@@ -1428,44 +2139,7 @@
                 1
               ]
             ],
-            12736
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            12770
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ],
-              [
-                "cave_moss",
-                1
-              ]
-            ],
-            12830
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                1
-              ]
-            ],
-            12851
+            12888
           ],
           [
             "rock_brute",
@@ -1476,14 +2150,40 @@
                 1
               ],
               [
+                "brute_hide",
+                1
+              ]
+            ],
+            13570
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "sunroot_seed",
+                1
+              ]
+            ],
+            13584
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "coin",
+                3
+              ],
+              [
                 "glowcap_spore",
                 1
               ]
             ],
-            13533
+            13640
           ],
           [
-            "emberling",
+            "cave_mite",
             1,
             [
               [
@@ -1491,61 +2191,24 @@
                 1
               ]
             ],
-            13547
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "brute_hide",
-                1
-              ],
-              [
-                "glowcap_spore",
-                1
-              ]
-            ],
-            13603
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "coin",
-                1
-              ]
-            ],
-            19099
+            20760
           ],
           [
             "emberling",
             1,
             [],
-            19109
+            20770
           ],
           [
             "emberling",
             1,
             [
               [
-                "ember_shard",
+                "coin",
                 1
               ]
             ],
-            19143
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "coin",
-                3
-              ]
-            ],
-            19161
+            20804
           ],
           [
             "cave_mite",
@@ -1554,24 +2217,20 @@
               [
                 "ember_shard",
                 1
-              ],
+              ]
+            ],
+            20822
+          ],
+          [
+            "cave_mite",
+            1,
+            [
               [
-                "cave_moss",
+                "ember_shard",
                 1
               ]
             ],
-            19429
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "coin",
-                6
-              ]
-            ],
-            19534
+            21090
           ],
           [
             "rock_brute",
@@ -1582,94 +2241,44 @@
                 5
               ]
             ],
-            20424
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            20441
-          ],
-          [
-            "emberling",
-            1,
-            [],
-            20464
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            21458
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            21488
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            21512
-          ],
-          [
-            "cave_mite",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            21536
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                2
-              ]
-            ],
-            21834
+            21195
           ],
           [
             "rock_brute",
             2,
             [
               [
-                "glowcap_spore",
-                1
-              ],
-              [
                 "coin",
                 3
+              ],
+              [
+                "ember_shard",
+                1
               ]
             ],
-            21958
+            22085
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            22102
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            22125
           ],
           [
             "cave_mite",
@@ -1684,10 +2293,47 @@
                 1
               ]
             ],
-            22504
+            23119
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                2
+              ]
+            ],
+            23149
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                3
+              ]
+            ],
+            23173
           ],
           [
             "cave_mite",
+            1,
+            [
+              [
+                "coin",
+                1
+              ],
+              [
+                "cave_moss",
+                1
+              ]
+            ],
+            23197
+          ],
+          [
+            "emberling",
             1,
             [
               [
@@ -1695,7 +2341,39 @@
                 1
               ]
             ],
-            22531
+            23495
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "coin",
+                3
+              ],
+              [
+                "glowcap_spore",
+                1
+              ]
+            ],
+            23619
+          ],
+          [
+            "cave_mite",
+            1,
+            [
+              [
+                "sunroot_seed",
+                1
+              ]
+            ],
+            24165
+          ],
+          [
+            "cave_mite",
+            1,
+            [],
+            24192
           ],
           [
             "cave_warden",
@@ -1707,132 +2385,53 @@
               ],
               [
                 "coin",
-                20
-              ],
-              [
-                "glowcap_spore",
-                2
-              ],
-              [
-                "ember_shard",
-                3
-              ]
-            ],
-            22979
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            22985
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                2
-              ]
-            ],
-            22990
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                2
-              ]
-            ],
-            23453
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "coin",
-                1
-              ]
-            ],
-            23501
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "sunroot_seed",
-                1
-              ]
-            ],
-            23515
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "glowcap_spore",
-                1
+                23
               ],
               [
                 "brute_hide",
                 1
-              ]
-            ],
-            23861
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            23885
-          ],
-          [
-            "emberling",
-            1,
-            [
-              [
-                "ember_shard",
-                1
-              ]
-            ],
-            23912
-          ],
-          [
-            "rock_brute",
-            2,
-            [
-              [
-                "coin",
-                3
               ],
               [
-                "coin",
-                4
+                "ember_shard",
+                3
               ]
             ],
-            24257
+            24640
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "coin",
+                2
+              ]
+            ],
+            24646
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            24651
+          ],
+          [
+            "emberling",
+            1,
+            [],
+            25009
           ],
           [
             "cave_mite",
             1,
             [
               [
-                "ember_shard",
+                "coin",
                 1
               ],
               [
@@ -1840,7 +2439,66 @@
                 1
               ]
             ],
-            24279
+            25040
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            25074
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            25102
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            25428
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "coin",
+                4
+              ],
+              [
+                "brute_hide",
+                1
+              ]
+            ],
+            25465
+          ],
+          [
+            "emberling",
+            1,
+            [
+              [
+                "ember_shard",
+                1
+              ]
+            ],
+            25481
           ],
           [
             "rock_brute",
@@ -1855,13 +2513,34 @@
                 4
               ]
             ],
-            24324
+            25828
           ],
           [
             "cave_mite",
             1,
             [],
-            24345
+            25841
+          ],
+          [
+            "rock_brute",
+            2,
+            [
+              [
+                "brute_hide",
+                1
+              ],
+              [
+                "coin",
+                3
+              ]
+            ],
+            25900
+          ],
+          [
+            "cave_mite",
+            1,
+            [],
+            25907
           ]
         ],
         "probe_rolls": [
@@ -1908,7 +2587,7 @@
           []
         ],
         "probe_seed": 12345,
-        "rng_final": 1466364178
+        "rng_final": 1118090508
       },
       "music": {
         "stems_loaded": {
@@ -1957,7 +2636,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 854
+            "tick": 867
           },
           {
             "biome": "cave",
@@ -1965,7 +2644,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 1121
+            "tick": 1134
           },
           {
             "biome": "cave",
@@ -1974,7 +2653,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 1148
+            "tick": 1161
           },
           {
             "biome": "cave",
@@ -1983,7 +2662,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 1197
+            "tick": 1210
           },
           {
             "biome": "cave",
@@ -1991,7 +2670,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 1440
+            "tick": 1453
           },
           {
             "biome": "cave",
@@ -2000,7 +2679,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 1494
+            "tick": 1507
           },
           {
             "biome": "cave",
@@ -2008,7 +2687,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 1498
+            "tick": 1511
           },
           {
             "biome": "cave",
@@ -2017,7 +2696,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 1841
+            "tick": 1854
           },
           {
             "biome": "cave",
@@ -2026,7 +2705,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 1921
+            "tick": 1934
           },
           {
             "biome": "cave",
@@ -2034,7 +2713,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 2195
+            "tick": 2208
           },
           {
             "biome": "cave",
@@ -2043,7 +2722,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 2481
+            "tick": 2494
           },
           {
             "biome": "cave",
@@ -2052,7 +2731,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 2548
+            "tick": 2561
           },
           {
             "biome": "cave",
@@ -2060,7 +2739,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 2809
+            "tick": 2822
           },
           {
             "biome": "cave",
@@ -2069,7 +2748,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 2875
+            "tick": 2888
           },
           {
             "biome": "cave",
@@ -2077,7 +2756,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 2950
+            "tick": 2963
           },
           {
             "biome": "cave",
@@ -2086,7 +2765,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 3196
+            "tick": 3209
           },
           {
             "biome": "cave",
@@ -2095,7 +2774,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 3395
+            "tick": 3408
           },
           {
             "biome": "cave",
@@ -2103,7 +2782,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 3681
+            "tick": 3694
           },
           {
             "biome": "cave",
@@ -2112,7 +2791,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4097
+            "tick": 4110
           },
           {
             "biome": "cave",
@@ -2120,7 +2799,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4173
+            "tick": 4186
           },
           {
             "biome": "cave",
@@ -2129,7 +2808,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4174
+            "tick": 4187
           },
           {
             "biome": "cave",
@@ -2138,7 +2817,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 4236
+            "tick": 4249
           },
           {
             "biome": "cave",
@@ -2146,7 +2825,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4466
+            "tick": 4479
           },
           {
             "biome": "cave",
@@ -2155,7 +2834,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4718
+            "tick": 4731
           },
           {
             "biome": "cave",
@@ -2163,7 +2842,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4792
+            "tick": 4805
           },
           {
             "biome": "cave",
@@ -2172,7 +2851,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4885
+            "tick": 4898
           },
           {
             "biome": "cave",
@@ -2180,7 +2859,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 4959
+            "tick": 4972
           },
           {
             "biome": "cave",
@@ -2189,7 +2868,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 4996
+            "tick": 5009
           },
           {
             "biome": "cave",
@@ -2198,7 +2877,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 5039
+            "tick": 5052
           },
           {
             "biome": "cave",
@@ -2206,7 +2885,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 5322
+            "tick": 5335
           },
           {
             "biome": "cave",
@@ -2215,7 +2894,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 5585
+            "tick": 5598
           },
           {
             "biome": "cave",
@@ -2224,7 +2903,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 5631
+            "tick": 5644
           },
           {
             "biome": "cave",
@@ -2232,7 +2911,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 5870
+            "tick": 5874
           },
           {
             "biome": "field",
@@ -2240,7 +2919,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 7956
+            "tick": 7960
           },
           {
             "biome": "cave",
@@ -2248,7 +2927,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 11657
+            "tick": 11694
           },
           {
             "biome": "cave",
@@ -2257,7 +2936,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 11969
+            "tick": 12006
           },
           {
             "biome": "cave",
@@ -2266,7 +2945,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 12064
+            "tick": 12101
           },
           {
             "biome": "cave",
@@ -2274,7 +2953,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 12326
+            "tick": 12363
           },
           {
             "biome": "cave",
@@ -2283,7 +2962,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 12584
+            "tick": 12621
           },
           {
             "biome": "cave",
@@ -2292,7 +2971,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 12640
+            "tick": 12677
           },
           {
             "biome": "cave",
@@ -2300,7 +2979,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 12940
+            "tick": 12977
           },
           {
             "biome": "cave",
@@ -2309,7 +2988,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 13067
+            "tick": 13104
           },
           {
             "biome": "cave",
@@ -2318,7 +2997,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 13390
+            "tick": 13427
           },
           {
             "biome": "cave",
@@ -2326,7 +3005,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 13692
+            "tick": 13729
           },
           {
             "biome": "field",
@@ -2334,7 +3013,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 15148
+            "tick": 15185
           },
           {
             "biome": "cave",
@@ -2342,7 +3021,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 18914
+            "tick": 20575
           },
           {
             "biome": "cave",
@@ -2351,7 +3030,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 18941
+            "tick": 20602
           },
           {
             "biome": "cave",
@@ -2360,7 +3039,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 18986
+            "tick": 20647
           },
           {
             "biome": "cave",
@@ -2368,7 +3047,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 19250
+            "tick": 20911
           },
           {
             "biome": "cave",
@@ -2377,7 +3056,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 19262
+            "tick": 20923
           },
           {
             "biome": "cave",
@@ -2386,7 +3065,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 19349
+            "tick": 21010
           },
           {
             "biome": "cave",
@@ -2394,7 +3073,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 19623
+            "tick": 21284
           },
           {
             "biome": "cave",
@@ -2403,7 +3082,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 20220
+            "tick": 21881
           },
           {
             "biome": "cave",
@@ -2412,7 +3091,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 20317
+            "tick": 21978
           },
           {
             "biome": "cave",
@@ -2420,7 +3099,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 20553
+            "tick": 22214
           },
           {
             "biome": "cave",
@@ -2429,7 +3108,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 21336
+            "tick": 22997
           },
           {
             "biome": "cave",
@@ -2438,7 +3117,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 21389
+            "tick": 23050
           },
           {
             "biome": "cave",
@@ -2446,7 +3125,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 21625
+            "tick": 23286
           },
           {
             "biome": "cave",
@@ -2455,7 +3134,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 21725
+            "tick": 23386
           },
           {
             "biome": "cave",
@@ -2464,7 +3143,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 21774
+            "tick": 23435
           },
           {
             "biome": "cave",
@@ -2472,7 +3151,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22047
+            "tick": 23708
           },
           {
             "biome": "cave",
@@ -2481,7 +3160,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 22398
+            "tick": 24059
           },
           {
             "biome": "cave",
@@ -2490,7 +3169,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 22442
+            "tick": 24103
           },
           {
             "biome": "cave",
@@ -2498,7 +3177,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22620
+            "tick": 24281
           },
           {
             "biome": "cave",
@@ -2507,7 +3186,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 22622
+            "tick": 24283
           },
           {
             "biome": "cave",
@@ -2516,7 +3195,7 @@
               "combat"
             ],
             "state": "boss",
-            "tick": 22636
+            "tick": 24297
           },
           {
             "biome": "cave",
@@ -2525,7 +3204,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 22979
+            "tick": 24640
           },
           {
             "biome": "cave",
@@ -2533,7 +3212,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 22991
+            "tick": 24652
           },
           {
             "biome": "field",
@@ -2541,7 +3220,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 23065
+            "tick": 24726
           },
           {
             "biome": "field",
@@ -2550,7 +3229,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23226
+            "tick": 24887
           },
           {
             "biome": "field",
@@ -2559,16 +3238,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 23395
-          },
-          {
-            "biome": "field",
-            "layers": [
-              "ambient",
-              "tension"
-            ],
-            "state": "tension",
-            "tick": 23604
+            "tick": 24941
           },
           {
             "biome": "field",
@@ -2576,7 +3246,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 23651
+            "tick": 25191
           },
           {
             "biome": "field",
@@ -2585,7 +3255,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 23664
+            "tick": 25271
           },
           {
             "biome": "field",
@@ -2594,7 +3264,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 23732
+            "tick": 25322
           },
           {
             "biome": "field",
@@ -2602,7 +3272,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 24001
+            "tick": 25570
           },
           {
             "biome": "field",
@@ -2611,7 +3281,7 @@
               "tension"
             ],
             "state": "tension",
-            "tick": 24086
+            "tick": 25643
           },
           {
             "biome": "field",
@@ -2620,7 +3290,7 @@
               "tension"
             ],
             "state": "combat",
-            "tick": 24147
+            "tick": 25701
           },
           {
             "biome": "field",
@@ -2628,7 +3298,7 @@
               "ambient"
             ],
             "state": "explore",
-            "tick": 24434
+            "tick": 25996
           }
         ]
       },
@@ -2639,7 +3309,7 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (11.9 ms)",
+        "TIME FROZEN \u2014 ranked swaps (14.8 ms)",
         "1. Kael  HP 47/82  score 146.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
         "2. Bram  HP 106/106  score 122.2  target cave_warden_1  cd Taunt 4.5s  @9,5",
         "3. Nyra  HP 54/54  score 114.0  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
@@ -2650,30 +3320,30 @@
       ],
       "party_stats": {
         "bram": {
-          "damage": 171,
+          "damage": 183,
           "healing": 0,
           "kills": 5
         },
         "kael": {
-          "damage": 1191,
+          "damage": 1225,
           "healing": 0,
           "kills": 31
         },
         "kael_ember_fox": {
-          "damage": 104,
+          "damage": 89,
           "healing": 0,
           "kills": 0,
           "pet": true
         },
         "nyra": {
-          "damage": 706,
+          "damage": 712,
           "healing": 0,
           "kills": 16
         },
         "sola": {
-          "damage": 191,
+          "damage": 198,
           "healing": 441,
-          "kills": 5
+          "kills": 9
         }
       },
       "quests": {
@@ -2689,26 +3359,26 @@
       },
       "softlocks": [],
       "stage_ticks": {
-        "q_forager.gather_any": 1677,
-        "q_smith.mail": 8936,
-        "q_smith.ore": 3743,
+        "q_forager.gather_any": 1690,
+        "q_smith.mail": 8940,
+        "q_smith.ore": 3756,
         "q_warden.choose": 0,
-        "q_warden.clear_cave": 5781,
-        "q_warden.craft": 18098,
-        "q_warden.enter_cave": 4096,
+        "q_warden.clear_cave": 5785,
+        "q_warden.craft": 19758,
+        "q_warden.enter_cave": 4109,
         "q_warden.forage": 562,
-        "q_warden.harvest": 10839,
-        "q_warden.home": 24689,
-        "q_warden.moss": 4534,
-        "q_warden.open_world": 23065,
-        "q_warden.patrol": 13603,
+        "q_warden.harvest": 10827,
+        "q_warden.home": 26257,
+        "q_warden.moss": 4547,
+        "q_warden.open_world": 24726,
+        "q_warden.patrol": 13640,
         "q_warden.plant": 20,
-        "q_warden.replant": 10840,
-        "q_warden.rest": 25670,
-        "q_warden.return_farm": 7956,
-        "q_warden.ridge": 24345,
-        "q_warden.second_harvest": 18057,
-        "q_warden.warden": 22979
+        "q_warden.replant": 10875,
+        "q_warden.rest": 27217,
+        "q_warden.return_farm": 7960,
+        "q_warden.ridge": 25907,
+        "q_warden.second_harvest": 19701,
+        "q_warden.warden": 24640
       },
       "swap_parity": [
         true,
@@ -2733,11 +3403,11 @@
             ],
             [
               "kael",
-              13.78
+              13.51
             ]
           ],
-          "tick": 4386,
-          "wall_ms": 17.49
+          "tick": 4399,
+          "wall_ms": 22.42
         },
         {
           "area": "warden_lair",
@@ -2760,38 +3430,33 @@
               82
             ]
           ],
-          "tick": 22786,
-          "wall_ms": 11.88
+          "tick": 24447,
+          "wall_ms": 14.78
         }
       ],
-      "ticks": 25670,
+      "ticks": 27217,
       "unlocked": [
         "vex"
       ],
       "wait_segments": [
         {
           "planted": 7,
-          "start": 8954,
-          "ticks": 1853
+          "start": 8958,
+          "ticks": 1849
         },
         {
-          "planted": 20,
-          "start": 10809,
-          "ticks": 11
+          "planted": 10875,
+          "start": 15999,
+          "ticks": 2076
         },
         {
-          "planted": 10808,
-          "start": 15949,
-          "ticks": 2059
-        },
-        {
-          "planted": 10840,
-          "start": 18010,
-          "ticks": 30
+          "planted": 8887,
+          "start": 18077,
+          "ticks": 1610
         }
       ],
-      "wait_ticks": 3953,
-      "wall_ms": 6085.6,
+      "wait_ticks": 5535,
+      "wall_ms": 7819.1,
       "wipes": 0
     },
     "tilemaps": {
@@ -2825,6 +3490,469 @@
         "palette": true,
         "solvability": true
       }
+    },
+    "world_fights": {
+      "bands": {
+        "boss": {
+          "clear_p90_max_s": 40.0,
+          "clear_s": [
+            8.0,
+            30.0
+          ],
+          "wipe_rate": [
+            0.0,
+            0.1
+          ]
+        },
+        "elite": {
+          "clear_p90_max_s": 13.0,
+          "clear_s": [
+            2.0,
+            9.0
+          ],
+          "wipe_rate": [
+            0.0,
+            0.06
+          ]
+        },
+        "trash": {
+          "clear_p90_max_s": 9.0,
+          "clear_s": [
+            1.0,
+            6.0
+          ],
+          "wipe_rate": [
+            0.0,
+            0.02
+          ]
+        }
+      },
+      "classes": {
+        "boss": {
+          "cells": 2,
+          "clear_median_range_s": [
+            8.87,
+            9.4
+          ],
+          "clear_p90_max_s": 10.08,
+          "fights": 1,
+          "n": 48,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "elite": {
+          "cells": 4,
+          "clear_median_range_s": [
+            2.75,
+            3.97
+          ],
+          "clear_p90_max_s": 4.55,
+          "fights": 2,
+          "n": 32,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "trash": {
+          "cells": 34,
+          "clear_median_range_s": [
+            1.2,
+            3.25
+          ],
+          "clear_p90_max_s": 3.65,
+          "fights": 17,
+          "n": 272,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        }
+      },
+      "encounters": 352,
+      "errors": [],
+      "fights": {
+        "cave_deep.p0": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.42,
+            1.65
+          ],
+          "clear_p90_max_s": 1.87,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "cave_deep.p1": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.2,
+            1.85
+          ],
+          "clear_p90_max_s": 2.0,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "cave_deep.p2": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.3,
+            3.25
+          ],
+          "clear_p90_max_s": 3.65,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "cave_deep.p3": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.52,
+            1.88
+          ],
+          "clear_p90_max_s": 2.08,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "cave_deep.p4": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.47,
+            2.43
+          ],
+          "clear_p90_max_s": 2.57,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "field.p0": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.27,
+            1.88
+          ],
+          "clear_p90_max_s": 2.32,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "hollow.p0": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.53,
+            1.9
+          ],
+          "clear_p90_max_s": 2.33,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "hollow.p1": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.35,
+            2.97
+          ],
+          "clear_p90_max_s": 3.4,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "hollow.p2": {
+          "class": "elite",
+          "clear_median_range_s": [
+            3.1,
+            3.97
+          ],
+          "clear_p90_max_s": 4.55,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "hollow.p3": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.93,
+            2.38
+          ],
+          "clear_p90_max_s": 2.83,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "hollow.p4": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.28,
+            2.7
+          ],
+          "clear_p90_max_s": 3.4,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "ridge.p0": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.53,
+            1.97
+          ],
+          "clear_p90_max_s": 2.33,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "ridge.p1": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.05,
+            3.07
+          ],
+          "clear_p90_max_s": 3.45,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "ridge.p2": {
+          "class": "elite",
+          "clear_median_range_s": [
+            2.75,
+            3.52
+          ],
+          "clear_p90_max_s": 4.2,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "tunnels.p0": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.37,
+            1.6
+          ],
+          "clear_p90_max_s": 2.2,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "tunnels.p1": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.5,
+            2.83
+          ],
+          "clear_p90_max_s": 3.32,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "tunnels.p2": {
+          "class": "trash",
+          "clear_median_range_s": [
+            2.25,
+            3.0
+          ],
+          "clear_p90_max_s": 3.6,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "tunnels.p3": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.6,
+            1.88
+          ],
+          "clear_p90_max_s": 2.27,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "tunnels.p4": {
+          "class": "trash",
+          "clear_median_range_s": [
+            1.8,
+            2.27
+          ],
+          "clear_p90_max_s": 3.12,
+          "down_rate_max": 0.0,
+          "n": 16,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        },
+        "warden_lair.boss": {
+          "class": "boss",
+          "clear_median_range_s": [
+            8.87,
+            9.4
+          ],
+          "clear_p90_max_s": 10.08,
+          "down_rate_max": 0.6667,
+          "n": 48,
+          "selections": 2,
+          "wipe_rate": 0.0,
+          "wipe_rate_range": [
+            0.0,
+            0.0
+          ],
+          "wipes": 0
+        }
+      },
+      "mode": "fast",
+      "seed_base": 70000,
+      "seeds": {
+        "boss": 24,
+        "world": 8
+      },
+      "selections": {
+        "bram+stone_tortle": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "sola+lumen_wisp": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        }
+      },
+      "slice_wipe_any_max": 0.3,
+      "stalls": 0,
+      "verdict": {
+        "checks": {
+          "every_cell_in_band": true,
+          "has_boss": true,
+          "has_world_fights": true,
+          "no_stalls": true,
+          "slice_wipe_any_ok": true
+        },
+        "ok": true,
+        "out_of_band": [],
+        "out_of_band_count": 0
+      },
+      "wall_s": 9.63,
+      "workers": 8
     },
     "world_gates": {
       "a11y_palettes": true,
