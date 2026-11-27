@@ -19,7 +19,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 11.3
+      "seconds": 15.0
     },
     "c5": {
       "code_rotated": true,
@@ -29,10 +29,10 @@
           "offload",
           "sync"
         ],
-        "client_id": "pl-96e3dc62",
-        "paired_at": 1795204341601,
+        "client_id": "pl-308194e3",
+        "paired_at": 1795753191607,
         "server_id": "desktop",
-        "url": "http://127.0.0.1:39347"
+        "url": "http://127.0.0.1:37763"
       },
       "python_side": {
         "bad_proofs_refused": 5,

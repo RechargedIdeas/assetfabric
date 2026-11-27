@@ -8,10 +8,10 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "recon.mesh": 0.55,
-      "recon.plan": 0.013,
-      "recon.sfm": 1.143,
-      "recon.splat_cpu": 2.908,
+      "recon.mesh": 0.593,
+      "recon.plan": 0.014,
+      "recon.sfm": 1.153,
+      "recon.splat_cpu": 2.817,
       "shuttle.gdgs": 0.021
     },
     "planned_ops": [],
@@ -91,7 +91,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.splat_cpu",
           "status": "ok",
-          "wall_s": 2.908
+          "wall_s": 2.817
         },
         {
           "backend": "opencv-sift-sfm-cpu",
@@ -102,7 +102,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.sfm",
           "status": "ok",
-          "wall_s": 1.143
+          "wall_s": 1.153
         },
         {
           "backend": "realityloom-plan-cpu",
@@ -113,7 +113,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.plan",
           "status": "ok",
-          "wall_s": 0.013
+          "wall_s": 0.014
         },
         {
           "backend": "meshweaver-density-surfacenets-cpu",
@@ -124,7 +124,7 @@
           "identical_with_simulated_gpu": true,
           "op": "recon.mesh",
           "status": "ok",
-          "wall_s": 0.55
+          "wall_s": 0.593
         },
         {
           "backend": "gdgs-multimesh-billboard-cpu",
@@ -278,7 +278,7 @@
         64,
         48
       ],
-      "seconds": 53.574,
+      "seconds": 54.682,
       "splats": 600,
       "views_registered": 8,
       "views_train": 7
