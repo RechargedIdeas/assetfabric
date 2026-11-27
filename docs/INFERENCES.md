@@ -622,3 +622,57 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     G-BAL-01 and the hold-out are unchanged). **After:** 0 wipes in 8 040 replays; trash 1.13–4.02 s (p90 ≤ 4.43),
     elite 2.62–5.00 s (p90 ≤ 5.42), Warden 8.48–9.82 s (p90 ≤ 10.32; ≥ 1 fighter downed in 98 % of replays).
     The model plays the BT + policy party AI; a human will wipe more — the playtest checklist (F6.md) covers it.
+
+## F8 — Retro / console-style (0.8.0+f8)
+
+Spec basis: SPEC §13 F8 (optional, "Confirm scope first" — confirmed t59u / C-85), §6.1 ForgeConsole, §3 Layer A
+ConsoleReadiness, Layer D R1/Q1/V1, §5.1 C1/R2; GAME_SPEC §1, §3, §4.6. Acceptance: docs/acceptance-tests/F8.md, ADR-0021.
+
+1. **F8-1 Scope.** "Retro/console-style" read as: build ForgeConsole paths (2) console-style Godot authenticity
+   profiles/shaders — the shipped feature — and (1) real ROMs in emulators — a proof that Fabric content survives real
+   console constraints. Path (3) fantasy consoles and CertPack stay deferred (SPEC §1 v1 hard deferrals). The
+   ConstraintCompiler is the C1 solver + ConsoleReadiness rows; CodeGen is the ROM's data tables (CHR, palettes,
+   nametable, OAM formation) emitted by `rom.py`.
+2. **F8-2 Profiles.** The spec names families ("NES→PS1, GBA, Genesis…") but no list. Shipped: `gz-native` (320×180,
+   PatternVault colours — the "8-bit" look of GAME_SPEC §1 at a block size), `nes-style` (256×144) and `gb-style`
+   (160×90). Each keeps its family's width inside Game Zero's 16:9 frame so the block size is an integer at 1280×720
+   (×4, ×5, ×8); real NES is 256×240 and DMG 160×144 [see F8-11]. Constraint/memory/timing numbers are the consoles'
+   published limits.
+3. **F8-3 Default off.** Modern presentation stays the default; retro is a player setting (Settings → Display style),
+   saved in `profile.settings.retro_profile` / `retro_scanlines`.
+4. **F8-4 GB colour match.** A 4-shade LCD keeps luminance order, not hue: gb-style maps by contrast-stretched L*
+   (lightness) instead of CIE76 ΔE; its fidelity metric is dL*. Consequence: colour-blind variants change hue only, so
+   they rarely change a gb frame — V1 requires "the variant changes the frame" only for lab-matched profiles.
+5. **F8-5 Shape-cue exceptions.** V1 accepts a colour collapse of an a11y signal pair only when the game also shows it
+   with a non-colour cue (`a11y_shape_cues`): "crop growing vs ready" (ready plots get a frame). gb-style collapses that
+   pair; all other pairs are kept distinct by C1 signal-separation overrides (gb: `#2f5a3d→0`, `#3080f0→2`,
+   `#4a8352→2`).
+6. **F8-6 ROM scope.** "ROMBuilder / real ROMs in emulators" gives no content target. Built: an iNES NROM-256 field
+   demo — field_01 background, the 4 base fighters (kael, nyra, bram, sola) + ember_fox in a fixed formation
+   (leader, 3 followers, pet), d-pad movement with walk frames and facing flip, bounded to the field. No combat, menus,
+   farming or audio on NES; the formation offsets are ours.
+7. **F8-7 EmulatorHarness.** cynes 0.1.2 (MIT, pip, headless) is the emulator; a dev/acceptance tool in the `dev` and
+   `retro` extras, never shipped in a game build. Frames are compared with the Python reference renderer by a
+   **bijective colour-partition match** (emulator palette RGB ≠ our NTSC decode, so classes are matched, not RGB);
+   sprite positions are searched ±2 px because the displayed frame lags the state by a frame.
+8. **F8-8 R2.** SPEC lists "constraint, fidelity delta, discriminator"; constraint = ConsoleReadiness + ROM budgets,
+   fidelity delta = mean ΔE76 / dL*, discriminator = NumPy logistic regression on 4 frame features (block uniformity,
+   palette conformance, per-row colour coherence, edge sharpness) trained on synthetic authentic vs degraded frames
+   built from Fabric art (fixed seed); gates: hold-out ≥ 0.95 and every real capture ≥ 0.5. Not a learned image
+   model. The modern (`off`) frame is reported as a control (0.49) but not gated — its margin under 0.5 is thin.
+9. **F8-9 Fidelity ceilings.** Mean colour error ceilings nes ΔE76 ≤ 25, gb dL* ≤ 12 are ours (measured 17.69 / 4.53):
+   they catch a broken palette/solver, they are not an aesthetic bar.
+10. **F8-10 HUD above the pass.** The HUD/quest text/settings sit on CanvasLayer 2 above the retro pass (layer 1), so
+    text stays readable at every profile; only the world is pixel-quantised.
+11. **F8-11 16:9 views.** Profiles crop the consoles' 4:3/10:9 screens to 16:9 at the same width rather than
+    letterboxing, so gameplay framing is identical in every profile.
+12. **F8-12 Save.** The two new profile keys are optional with defaults (`off`, false); older saves load unchanged, so
+    the Player State version stays v4 (no migration).
+13. **F8-13 Q1 policy.** "Pixel Stability Solver" read as: texel = logical pixel (camera zoom = profile scale), camera
+    on whole logical pixels, the game's non-integer sprite scales (pets 0.75, tier ≥ 3 bosses 1.5) snapped to whole
+    numbers under a profile, plus a shimmer predictor (`forge retro shimmer`) that reports texel loss for any scale.
+14. **F8-14 NES palette.** Computed from a 2C02 NTSC composite decode (phase offset chosen so $01 blue, $06 red,
+    $0A green), not copied from an emulator palette file; 54 usable entries ($0D and the $xE/$xF blacks dropped,
+    one black kept).
+15. **F8-15 Versions.** Fabric `0.8.0+f8`; the game's `config/version` also moves to `0.8.0+f8` (it carries the new
+    increment `retro-console`); Android versionCode stays the F7 derivation.

@@ -23,7 +23,7 @@ Companion track **C\*** runs in parallel and is **not** a Fabric F-gate unless n
 | **F5** | 26–29 | Monte Carlo balance, soft-lock, save migration | First boss | ✅ |
 | **F6** | 30–33 | Quest SM, farming, loot, adaptive music | **Vertical slice 15–20 min** | ✅ |
 | **F7** | 34–38 | Desktop/Android/Web PWA packaging, ShuttleLine multi, BoltPack | Tier1+Tier2 launches | ✅ |
-| **F8** | optional | Retro/console-style | Confirmed by the Producer (t59u); after the quality gaps | |
+| **F8** | optional | Retro/console-style: Console Profile Registry, R1/Q1/V1, C1/R2, ConsoleReadiness, ForgeConsole ROM path | `retro-console`: live display-style profiles + a real NES ROM in an emulator | ✅ |
 | **F9** | post | LiveOps foundation | Readiness only | |
 
 ### Progress
@@ -41,7 +41,10 @@ Live status per milestone: [STATUS.md](STATUS.md) (generated). Acceptance checkl
 
 ### Quality-gap phase (2026-11-20, before F8)
 
-Q1 CI shards `0.7.9` ✅ · Q2 G-A11Y-01 full `0.7.10` ✅ · Q3 swap advisor `0.7.11` ◐ partial (reference node < 50 ms gated; GitHub 2-core runners ≈ 63–66 ms). **Paused 2026-11-20** with gaps (a)–(f) open — see TODO.md §Current sprint and HANDOVER.md §Resume point.
+Q1 CI shards `0.7.9` ✅ · Q2 G-A11Y-01 full `0.7.10` ✅ · Q3 swap advisor `0.7.11` ◐ partial (reference node < 50 ms gated; GitHub 2-core runners ≈ 63–66 ms) · Q4 `0.7.12` ✅ · Q5 `0.7.13` ✅ · Q6 `0.7.14` ✅ · P7 `0.7.15` ✅ — every software gap closed (TODO.md §Current sprint).
+
+- **F8** ✅ accepted 2026-11-27 (`0.8.0+f8`) — Console Profile Registry (`content/retro/profiles.yaml`), R1 LUT generator (kind `retro`, 5 gates), Q1 pixel-stability policy, V1 frame harness + R2 discriminator, ConsoleReadiness, C1 palette/sub-palette/signal solver, ROMBuilder (own 6502 assembler + cycle predictor, iNES NROM field demo) and EmulatorHarness (cynes). Game: `retro-console` — live display-style profiles with gamepad, a11y palettes kept, sim byte-identical. Fantasy consoles + CertPack deferred. See [docs/acceptance-tests/F8.md](docs/acceptance-tests/F8.md).
+- **F9** next — LiveOps readiness only (no launch, no Releases).
 
 ### Entry criteria for any F(n+1)
 

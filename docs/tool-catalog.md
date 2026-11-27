@@ -45,7 +45,12 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **QA autopilot** | — | AI agent playtests (hybrid QA) | F6 | **scripted** deterministic agent (`world/autopilot.gd`), not learned; humans still needed for length/feel |
 | **PWAPipeline** | — | Web export orchestrator: size budgets, COOP/COEP, offline SW, smoke tests | F7 | **real** (`forge/pwa.py`): G-WEB-01 gzip budget, SW cache-list check, `_headers`, URL-fragment arg hook, headless-Chrome smoke (headers, isolation, SW, offline reload, header-less host); `web-nothreads` single-thread fallback + `patch_sw` stale-entry fix since 0.7.14 (ADR-0019) |
 | **Packaging (`forge build --target`)** | — | Desktop / Android / Web exports | F7 | **real** (`forge/packaging.py`): hermetic Godot home, pinned 4.3 templates (`forge templates`), staged keep-import, Linux/Windows/debug APK/Web PWA + `web-nothreads` (0.7.14), per-target verify, `BUILD.json` |
-| **GodotIPC / ConsoleReadiness** | — | Android data-plane bridge / console porting gate | staged | deferred |
+| **GodotIPC** | — | Android data-plane bridge | staged | deferred |
+| **ConsoleReadiness** | — | Console porting gate (memory / palette / tile budgets) | F8 | **real** (`forge/retro/readiness.py`, `forge retro readiness`): per-profile budgets over every sprite + area, fidelity ΔE/dL*, ROM budgets |
+| **ForgeConsole** | — | Console Profile Registry → ConstraintCompiler → AssetTranscoder → CodeGen → ROMBuilder → EmulatorHarness → CertPack | F8 | **real** except CertPack + fantasy consoles (deferred): `content/retro/profiles.yaml`, `forge/retro/` (C1 solver, transcoder, own 6502 assembler + cycle predictor, iNES NROM field-demo ROM, cynes harness), `forge retro rom|emulate` |
+| **R1 Retro Render Compiler** | — | Console-style post-process | F8 | **real**: generator kind `retro` → 64³ LUTs + `retro.json`; `ui/retro_post.gdshader` + `autoload/retro.gd` |
+| **Q1 Pixel Stability Solver** | — | Integer camera / sprite policy, shimmer | F8 | **real** (policy + shimmer predictor, `forge retro shimmer`) |
+| **V1 Retro Validation Harness / R2** | — | Frame gates, fidelity delta, discriminator | F8 | **real** (`forge/retro/validate.py`; R2 = NumPy logistic regression, not a learned image model) |
 
 ### CLI acceptance
 

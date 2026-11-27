@@ -81,6 +81,8 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `forge/pwa.py` | PWAPipeline: G-WEB-01 budget, SW cache list, `_headers`, fragment-args hook, local server + headless Chrome harness (`WebHarness`) | F7 |
 | `forge/shuttleline.py` | ShuttleLine `shuttleline.contract/1`, per-target shipped-content verification, `generic-folder` adapter | F7 |
 | `forge/boltpack.py` | BoltPack: CycloneDX SBOM (engine copyright info + platform extras + content), license audit, `LICENSES/`, `.fabricbolt` | F7 |
+| `content/retro/profiles.yaml`, `forge/retro/` (`profiles`, `colour`, `transcode`, `asm6502`, `rom`, `emulator`, `readiness`, `validate`), `forge/generators/retro.py`, `forge/cli_retro.py`, `forge/accept_f8.py` | F8 ForgeConsole: Console Profile Registry, C1 palette + sub-palette + a11y signal solver, R1 LUT generator, ConsoleReadiness, own 6502 assembler + cycle predictor, iNES ROMBuilder, cynes EmulatorHarness, V1 frame gates + R2 discriminator, F8 acceptance | F8 |
+| `games/game-zero/autoload/retro.gd`, `ui/retro_post.gdshader`, `tools/retrocheck.gd` | F8 R1 pass (CanvasLayer 1 between world and HUD), Q1 camera/sprite policy, settings, acceptance flows | F8 |
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
 | `forge/loomlink.py` | Desktop side of LoomLink: pairing server (HMAC proofs, caps, signed requests), offload ops, sync planner + store (`forge link serve`) | real (C5/C6) |
@@ -114,6 +116,14 @@ games/game-zero ─► dist/.stage (no .gdignore; PNG/WAV importer="keep") ─�
    ─► godot --export-{release,debug} <preset> ─► dist/<target>/ (Linux · Windows · debug APK · Web PWA · Web single-thread fallback `web-nothreads`, ADR-0019)
    ─► verify (exported binary / PE / aapt+apksigner / PWAPipeline + headless Chrome)
    ─► ShuttleLine contract vs shipped PCK/APK ─► BoltPack SBOM + license audit ─► dist/bolt/*.fabricbolt
+```
+
+### Retro flow (F8, ADR-0021)
+
+```
+profiles.yaml + PatternVault ─► gen retro (C1 LUT, a11y signal solver, Q1 table) ─► assets/generated/retro/*_lut.png + retro.json
+   ─► Godot: world (canvas 0) ─► Retro CanvasLayer 1: sample cell centre → a11y remap → LUT → scanlines ─► HUD CanvasLayer 2
+sprites + tilemaps ─► AssetTranscoder (C1 sub-palettes, 8×8 CHR) ─► ROMBuilder (6502 asm + cycle predictor) ─► .nes ─► cynes EmulatorHarness ─► V1 match
 ```
 
 ### PocketLoom flow (C1–C6)

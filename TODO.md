@@ -7,7 +7,16 @@ Last updated: 2026-11-27 America/New_York
 > Paused 2026-11-20, resumed 2026-11-26 (Producer t61u). Q1–Q2 done, Q3 partial, ✅ (a) row 5 slice length (0.7.12) → ✅ (b) row 4
 > D-005 tables + ✅ (c) row 6 balance (0.7.13, Q5) → ✅ (d) row 8 cluster auth/blobs + ✅ (e) row 9 D-001 + ✅ (f) row 10 doc nits
 > (0.7.14, Q6) → ✅ (c′) row 7 world fights (0.7.15, P7). **Every software quality-gap row is closed** except the
-> hardware-gated row 3 follow-up (native step). **Next: F8 → F9** (HANDOVER.md §Next steps).
+> hardware-gated row 3 follow-up (native step). **F8 landed in `0.8.0+f8`** (docs/acceptance-tests/F8.md). **Next: F9 LiveOps readiness only** (HANDOVER.md §Next steps).
+
+## F8 follow-ups (not scheduled; see docs/acceptance-tests/F8.md §Not proven)
+
+- [ ] NES ROM beyond the field demo (combat, menus, chip audio) — only if the Producer wants a ROM product.
+- [ ] GB ROM / other families (Genesis, GBA, PS1) — registry entry + ROMBuilder per family.
+- [ ] Fantasy consoles (PICO-8/TIC-80) and CertPack — SPEC §1 hard deferrals.
+- [ ] Real hardware / flash cart / CRT check; human eye test of the profiles.
+- [ ] Stronger R2 control margin (modern frame scores 0.49 vs the 0.5 capture threshold; not gated).
+- [ ] Optional pixel-quantised HUD mode (HUD is above the pass for readability, INFERENCE F8-10).
 
 Inventory 2026-11-20 from TODO / HANDOVER / STATUS / docs/INFERENCES.md / acceptance docs / DECISIONS (D-001, D-005).
 Rule: each row lands as its own patch release on `main` (tests + `forge accept` gate + docs) or is marked blocked with the

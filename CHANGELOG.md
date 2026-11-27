@@ -4,6 +4,38 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.8.0+f8] — 2026-11-27 — F8 Retro / console-style (`retro-console`)
+
+SPEC §13 F8 (optional, scope confirmed t59u), §6.1 ForgeConsole, §3 ConsoleReadiness + R1/Q1/V1, §5.1 C1/R2;
+GAME_SPEC §4.6. ADR-0021, INFERENCES §F8 (F8-1…F8-15), docs/acceptance-tests/F8.md.
+
+### Added
+- **Console Profile Registry** `content/retro/profiles.yaml` (`forge/retro/profiles.py`): `gz-native` 320×180 ×4
+  (PatternVault colours), `nes-style` 256×144 ×5 (54-colour palette computed from a 2C02 NTSC decode), `gb-style`
+  160×90 ×8 (DMG 4-shade, lightness match); default `off`.
+- **C1 / R1 generator** (kind `retro`, `forge/generators/retro.py`): 64³ LUT per profile (512×512 PNG) with exact pins,
+  a11y signal-separation overrides, Q1 scale table, `retro.json`; gates registry · lut_exact · a11y_signals ·
+  q1_pixel_stability · budget. Brief `content/briefs/f8/retro.yaml`; GroundWeave ops `gen.retro`, `retro.rom` (CPU).
+- **Game Zero retro pass**: `autoload/retro.gd` + `ui/retro_post.gdshader` — one full-screen CanvasLayer between the
+  world and the HUD (HUD layers moved to 2): cell-centre sample (`textureLod` 0), a11y remap, LUT, optional scanlines;
+  Q1 camera zoom = profile scale, whole-pixel camera, snapped sprite scales, integer stretch. Settings → *Display
+  style* + *Scanlines* (locale keys, gamepad-navigable), persisted in `profile.settings.retro_profile|retro_scanlines`;
+  `--retro=<profile>` arg; `--scene=retrocheck` acceptance flows.
+- **ForgeConsole ROM path**: AssetTranscoder + C1 sub-palette solver (`transcode.py`), own two-pass 6502 assembler with
+  a cycle predictor (`asm6502.py`), ROMBuilder (`rom.py`, iNES NROM-256 field demo: field_01 + kael/nyra/bram/sola +
+  ember_fox, d-pad walk), ConsoleReadiness (`readiness.py`), EmulatorHarness (`emulator.py`, cynes headless,
+  bijective colour-partition frame match).
+- **V1 / R2** (`validate.py`): block uniformity, palette conformance, shader-vs-model exactness, sub-pixel invariance,
+  scanline structure, shimmer predictor, NumPy logistic-regression discriminator.
+- `forge accept F8` (`forge/accept_f8.py`, results/F8.json), `forge retro profiles|readiness|rom|emulate|shimmer`;
+  `tests/test_f8_retro.py`; F8 increment runs in the `recon` CI shard.
+- `cynes>=0.1.2` (MIT) in the `dev` extra and a new `retro` extra (dev/acceptance only, never shipped).
+
+### Changed
+- Version `0.8.0+f8` (package, `forge.yaml` milestone F8 / increment `retro-console`, game `config/version`).
+- A11y: the colour-blind remap runs inside the retro pass when a profile is active (`A11y.remap_active` counts it);
+  `A11y.settings()` carries the retro keys; reset restores `off`.
+
 ## [0.7.15+f7] — 2026-11-27 — Quality gap P7: world-fight wipe-rate / clear-time bands
 
 ### Added

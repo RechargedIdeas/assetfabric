@@ -11,7 +11,7 @@ godot --headless --path games/game-zero -- --scene=sandbox --autoplay   # headle
 forge accept F1                                   # same, parsed + recorded
 ```
 
-User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`; F5: `--save-dir=<abs path>` (default `user://saves`), `--scene=balance --jobs=<file>` (balance worker), `--scene=savecheck [--fixtures=<file>]`; F6 slice: `--scene=slice [--autoplay] [--leader=<id> --pet=<id>] [--seed=<n>] [--resume] [--quit-after-checkpoint=<n>]`; F7: `--net-report` (G-NET-01 report + quit), `--scene=savecheck --import-b64=<base64 save> [--rewrite]` (cross-device save import). Exported builds take the same args (`./GameZero.x86_64 --headless -- --autoplay`); the Web build reads them from the URL fragment `#fabric-args=<url-encoded JSON array>`.
+User args (after `--`): `--scene=<name>`, `--autoplay`, `--boot-only`, `--encounter=<id>`, `--watchdog=<sec>`; F4 live channel: `--live-dir=<dir>`, `--serve` (keep running headless), `--live-backlog` (consume existing tickets), `--live-resume` (guardian restart), `--allow-fault-injection` (tests only), `--no-live`; F5: `--save-dir=<abs path>` (default `user://saves`), `--scene=balance --jobs=<file>` (balance worker), `--scene=savecheck [--fixtures=<file>]`; F6 slice: `--scene=slice [--autoplay] [--leader=<id> --pet=<id>] [--seed=<n>] [--resume] [--quit-after-checkpoint=<n>]`; F7: `--net-report` (G-NET-01 report + quit), F8: `--retro=<off|gz-native|nes-style|gb-style>` (start in a display profile), `--scene=retrocheck --phase=configure|verify|render` (F8 acceptance flows), `--scene=savecheck --import-b64=<base64 save> [--rewrite]` (cross-device save import). Exported builds take the same args (`./GameZero.x86_64 --headless -- --autoplay`); the Web build reads them from the URL fragment `#fabric-args=<url-encoded JSON array>`.
 
 Controls (defaults; every one is rebindable on keyboard and gamepad in **Settings** — Escape / F10 / pad Start): WASD/arrows/d-pad/left stick move · J/Space/pad X attack · K/pad Y skill · E/pad A interact · H/pad B salve · Tab/pad RB freeze-swap (then 1–4 / d-pad pick) · Q/pad LB tactic · `/` typed command · R/pad Back restart. Settings also switches the colour-blind palette (Default / Deuteranopia / Protanopia) live. Schema: `autoload/fabric.gd` `INPUT_SCHEMA`; palette remap: `autoload/a11y.gd`.
 Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interact (plant / harvest / gather / craft at the bench / travel through an exit) · H use a Moss Salve · Tab freeze time + 1–4 swap · Q toggle tactic · `/` typed command.
@@ -33,6 +33,7 @@ Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interac
 | `audio/music_director.gd` | F6 adaptive music (biome stem sets × explore/tension/combat/boss layers) |
 | `data/generated/world.json` | **Codegen-World output** (economy, loot, quests + quest chart, music rules, areas) — do not hand-edit |
 | `locale/` | Locale tables (`tr()` keys only in code) |
+| `autoload/retro.gd`, `ui/retro_post.gdshader` | F8 R1 retro pass: profile registry from `assets/generated/retro/retro.json`, LUT post-process on CanvasLayer 1 (HUD on 2), Q1 camera/sprite policy, settings in `profile.settings.retro_*` |
 | `export_presets.cfg` | F7 export presets: `desktop-linux`, `desktop-windows`, `android` (debug, arm64, no INTERNET), `web` (threads + PWA). Build with `forge build --target …` — see [docs/packaging.md](../../docs/packaging.md) |
 
 ## Increments
@@ -47,5 +48,6 @@ Slice (`--scene=slice`): ←/→ leader, ↑/↓ pet, E/Enter start · E interac
 | F5 | first-boss (tier-3 Cave Warden: 3 phases, summons, enrage, boss arena; save on victory; proven by the balance runner) — `--scene=boss` | ✅ |
 | F6 | vertical-slice (GAME_SPEC §6.1: select → farm → tunnels → cave → craft → Cave Warden → open world → save/quit/reload) — `--scene=slice` | ✅ |
 | F7 | launch-candidates (Linux + Windows desktop, debug APK, Web PWA; save travels desktop → Android → Web → desktop; networking dormant) — `forge build --target all` | ✅ |
+| F8 | retro-console (Settings → Display style: off / gz-native / nes-style / gb-style + scanlines, live, gamepad-navigable, saved in the profile; sim unchanged) — `--retro=<profile>`, `--scene=retrocheck`; NES field-demo ROM via `forge retro rom` | ✅ |
 
 Current state: [`HANDOVER.md`](../../HANDOVER.md).
