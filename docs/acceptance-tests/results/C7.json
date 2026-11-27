@@ -7,12 +7,12 @@
   "perf": {
     "batch_digest": "a021dd09eae8a1729c3f6f3fcc17d2a92e9f4e0c94d95b21d9a574cc07485f79",
     "batch_wall_s": {
-      "n1_2core_nogpu": 3.13,
-      "n2": 2.36,
-      "n3": 2.19
+      "n1_2core_nogpu": 3.05,
+      "n2": 2.45,
+      "n3": 1.87
     },
     "lease_s": 6.0,
-    "max_gen_job_s_2core": 1.157,
+    "max_gen_job_s_2core": 1.13,
     "mode": "full"
   },
   "result": {
@@ -65,14 +65,14 @@
           "executed_by_node": {
             "a": 36
           },
-          "max_gen_job_s": 1.157,
+          "max_gen_job_s": 1.13,
           "mesh": true,
           "nodes": 1,
           "over_budget": [],
           "stolen_in": {
             "a": 0
           },
-          "wall_s": 3.13,
+          "wall_s": 3.05,
           "wrong": []
         },
         "n2": {
@@ -82,7 +82,7 @@
             "a": 29,
             "b": 7
           },
-          "max_gen_job_s": 1.084,
+          "max_gen_job_s": 1.206,
           "mesh": true,
           "nodes": 2,
           "over_budget": [],
@@ -90,7 +90,7 @@
             "a": 0,
             "b": 7
           },
-          "wall_s": 2.36,
+          "wall_s": 2.45,
           "wrong": []
         },
         "n3": {
@@ -101,7 +101,7 @@
             "b": 4,
             "c": 6
           },
-          "max_gen_job_s": 1.293,
+          "max_gen_job_s": 1.348,
           "mesh": true,
           "nodes": 3,
           "over_budget": [],
@@ -110,7 +110,7 @@
             "b": 4,
             "c": 6
           },
-          "wall_s": 2.19,
+          "wall_s": 1.87,
           "wrong": []
         }
       },
@@ -119,7 +119,7 @@
     "failures": {
       "kill_node": {
         "completed": 48,
-        "elapsed_s": 7.31,
+        "elapsed_s": 7.47,
         "executed_by_node": {
           "a": 30,
           "b": 16,
@@ -127,23 +127,23 @@
         },
         "killed": {
           "c_held": 4,
-          "results_at_kill": 14
+          "results_at_kill": 15
         },
         "lease_s": 6.0,
         "ok": true,
-        "requeued_at_origin": 4,
+        "requeued_at_origin": 6,
         "wrong": []
       },
       "ok": true,
       "origin_restart": {
         "completed": 24,
         "executed_by_node": {
-          "a": 8,
-          "b": 16
+          "a": 10,
+          "b": 14
         },
         "ok": true,
-        "parked_results_redelivered_by_peer": 8,
-        "recovered_from_journal": 14,
+        "parked_results_redelivered_by_peer": 6,
+        "recovered_from_journal": 16,
         "wrong": []
       },
       "retry": {
@@ -245,11 +245,60 @@
       "unknown_op_status": 400
     },
     "not_proven": [
-      "cross-machine transport (LAN/Tailscale); node auth is integrity + authentication, not encryption",
+      "cross-machine transport (LAN/Tailscale) \u2014 TLS/mTLS proven on loopback only (docs/cluster-lan-runbook.md); plain http mode stays integrity + authentication only",
       "Kotlin/PocketLoom as a cluster peer node",
       "real GPU devices (device placement uses simulated adverts)",
       "origin loss without restart"
     ],
+    "tls": {
+      "auth_rejected_counter": 1,
+      "batch": {
+        "by_node": [
+          "a"
+        ],
+        "completed": 8,
+        "jobs": 8,
+        "wrong": []
+      },
+      "blob": {
+        "bytes": 1048576,
+        "executed_on": "b",
+        "ok": true
+      },
+      "handshake": {
+        "cipher": "TLS_AES_256_GCM_SHA384",
+        "server_cn": "a",
+        "version": "TLSv1.3"
+      },
+      "issued": [
+        "a",
+        "b",
+        "operator"
+      ],
+      "key_modes": [
+        "0o600"
+      ],
+      "mesh": true,
+      "ok": true,
+      "refused": {
+        "foreign_ca_client_cert": "refused:SSLError:TLSV1_ALERT_UNKNOWN_CA",
+        "hostname_mismatch": "refused:SSLCertVerificationError:CERTIFICATE_VERIFY_FAILED",
+        "http_downgrade": "refused_client_side",
+        "no_client_cert": "refused:SSLError:TLSV13_ALERT_CERTIFICATE_REQUIRED",
+        "plaintext_to_tls_port": "refused:RemoteDisconnected:Remote end closed connection without response",
+        "untrusted_server_ca": "refused:SSLCertVerificationError:[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: "
+      },
+      "tls_rejected_counter": 6,
+      "transport": [
+        "https+mtls",
+        "https+mtls"
+      ],
+      "unsigned_inside_tls": 401,
+      "urls": {
+        "a": "https://127.0.0.1:45775",
+        "b": "https://127.0.0.1:33135"
+      }
+    },
     "transport": "loopback processes (no LAN)"
   }
 }

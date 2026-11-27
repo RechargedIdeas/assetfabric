@@ -41,10 +41,10 @@
     "matrix_wipes": 0,
     "slice_game_minutes": 7.56,
     "slice_ticks": 27217,
-    "slice_wall_ms": 7073.3,
+    "slice_wall_ms": 6647.3,
     "swap_wall_ms": [
-      17.79,
-      15.54
+      18.53,
+      11.88
     ],
     "target_minutes": [
       15.0,
@@ -77,7 +77,7 @@
       }
     },
     "world_fights_encounters": 8040,
-    "world_fights_wall_s": 114.44
+    "world_fights_wall_s": 117.57
   },
   "result": {
     "economy": {
@@ -150,7 +150,7 @@
       "xp_end": 920
     },
     "locale": {
-      "keys_checked": 135,
+      "keys_checked": 137,
       "missing": [],
       "ok": true
     },
@@ -176,7 +176,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27217,
-          "wall_ms": 6726.2,
+          "wall_ms": 6717.3,
           "wipes": 0
         },
         {
@@ -198,7 +198,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27380,
-          "wall_ms": 6865.9,
+          "wall_ms": 6767.3,
           "wipes": 0
         },
         {
@@ -220,7 +220,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27266,
-          "wall_ms": 6698.2,
+          "wall_ms": 6677.3,
           "wipes": 0
         },
         {
@@ -242,7 +242,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25589,
-          "wall_ms": 6574.7,
+          "wall_ms": 6396.8,
           "wipes": 0
         },
         {
@@ -264,7 +264,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25668,
-          "wall_ms": 6575.1,
+          "wall_ms": 6578.1,
           "wipes": 0
         },
         {
@@ -286,7 +286,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25609,
-          "wall_ms": 6488.2,
+          "wall_ms": 6465.7,
           "wipes": 0
         },
         {
@@ -308,7 +308,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 28928,
-          "wall_ms": 6926.2,
+          "wall_ms": 7127.9,
           "wipes": 0
         },
         {
@@ -330,7 +330,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26454,
-          "wall_ms": 6719.8,
+          "wall_ms": 6733,
           "wipes": 0
         },
         {
@@ -352,7 +352,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 28974,
-          "wall_ms": 6994.5,
+          "wall_ms": 6741.8,
           "wipes": 0
         },
         {
@@ -374,7 +374,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27249,
-          "wall_ms": 6617.5,
+          "wall_ms": 6435.4,
           "wipes": 0
         },
         {
@@ -396,7 +396,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25815,
-          "wall_ms": 6620.7,
+          "wall_ms": 6356.6,
           "wipes": 0
         },
         {
@@ -418,7 +418,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25664,
-          "wall_ms": 6540.7,
+          "wall_ms": 6237,
           "wipes": 0
         }
       ]
@@ -470,7 +470,7 @@
         0,
         0
       ],
-      "final_checksum": "c2b29f103867b07d13e10abb88ccbe553248237dcb23f6090ae2eaef6601ddd2",
+      "final_checksum": "64275d8012f00bc41668fc59dbdbb033a157176951410bd66678582217b07381",
       "final_equal_uninterrupted": true,
       "loaded_equal_saved": true,
       "migration_parity": {
@@ -701,109 +701,109 @@
       "checkpoints": [
         {
           "area": "field",
-          "checksum": "713cf059c88496bb0ae8cbda993ff69bf6e6d166b2ee76ffc0f21b04e17e9941",
+          "checksum": "1587b7e8aea66fb45df4f8fc29104a7d465578536e06df2b657f82cb9afc5534",
           "n": 1,
           "tick": 0
         },
         {
           "area": "tunnels",
-          "checksum": "d6e031941c0980c13016b66149537f1f42e22d66c22deaec1b716f98f38ef11f",
+          "checksum": "80c7faa1f17005c07cd647a4649191166d825670242b220857ed23230dd66493",
           "n": 2,
           "tick": 1134
         },
         {
           "area": "hollow",
-          "checksum": "21ebb7ab74ce0b7714a520181fa5d0afa4aac476f0fd3ea4bbcd6ff98b5f4735",
+          "checksum": "d3d9bcb548a6b85cbb4d3732c75e5a56b9b1ceaa1d5881a0f9d204acc96ae03a",
           "n": 3,
           "tick": 2444
         },
         {
           "area": "cave_deep",
-          "checksum": "257bae864af9cd5d8eb5c99b61d31c1e5f144086f8b1ee5f62db14511afcc92e",
+          "checksum": "7d04742d0bf8e8a9b3a8f5b7364809f74f31004020d28b7822f751e2b435bae3",
           "n": 4,
           "tick": 4109
         },
         {
           "area": "hollow",
-          "checksum": "731529945769de913a638756e37916d9c73433ec3ae53b42cc13789885295455",
+          "checksum": "4826816a79fdd4f21d0971af949baf889a58823c521a3f64fc385b791e16a0d1",
           "n": 5,
           "tick": 6351
         },
         {
           "area": "tunnels",
-          "checksum": "dd5d752a5605e58a03cafc334a4d794393711a35c0e67160145327c7e87736ec",
+          "checksum": "4a5b1dee5c67eb74f4e4b9c4a72c3474787680aebc76c3b4f1af92527179c2a0",
           "n": 6,
           "tick": 7278
         },
         {
           "area": "field",
-          "checksum": "1b332e81897e083ee80076faa05b3f57a4fa908a85da57362ec58600801d5d67",
+          "checksum": "c861adbcad1a9e30eaede46e7cefe4b254688ef13d9922b24ce36e31bb049985",
           "n": 7,
           "tick": 7960
         },
         {
           "area": "tunnels",
-          "checksum": "6ed89dc6a83b941d5f39822f09a115371f6b692d72c9cb85146c89472bab5f5c",
+          "checksum": "387b09ca4ab350dd91de3c8b7a8c329ab934a6bf640027fc08f04fcb5f0882ae",
           "n": 8,
           "tick": 11694
         },
         {
           "area": "hollow",
-          "checksum": "4f21d032049222a43af98bffbfe0fa9ba7e32ba16b59c730e7dc4a97c73d68b9",
+          "checksum": "0ca2c5a1df2e66e6676012bf3dc9db9ce25c5fd42923eb22e1f79f3aed385fb1",
           "n": 9,
           "tick": 12584
         },
         {
           "area": "tunnels",
-          "checksum": "c8350d767bc73044469130fcb809b8b48c231f1a74618ff5d4a73bfd676e4ef5",
+          "checksum": "c7501ea8810aaf9e5f174a5e7fa27663811e28d4929c00917abf2eee476f75ce",
           "n": 10,
           "tick": 14503
         },
         {
           "area": "field",
-          "checksum": "63888d52d585ff7f7da000572b89646c1891824fb4bfd3bd369433abaf707fc0",
+          "checksum": "d8c5a2ffe91625f178015ae49663d0c8a2fabe04b7c3966cb021b14749658405",
           "n": 11,
           "tick": 15185
         },
         {
           "area": "tunnels",
-          "checksum": "b398583c4be681160132ca93dd4160fddf2b4b49176b2a4a944fee1349c7f337",
+          "checksum": "ef04edd9549d8cc09e21ae1065a8404b3c4c33a9a9d522d414195d3fbfe32572",
           "n": 12,
           "tick": 20575
         },
         {
           "area": "hollow",
-          "checksum": "dd17efcd47ace6874363a1d324da477e00f17765e02d01c76f1dba52fec89121",
+          "checksum": "dc885d540e41d332585a2062afef752a52fa3e54aee85d50997d52670015729d",
           "n": 13,
           "tick": 21520
         },
         {
           "area": "cave_deep",
-          "checksum": "e2891e0fbf998face8cb7b39c145ac5e9f3c9ca4d11ae7ab4c00a7532a56fd5a",
+          "checksum": "5543f9d7190c83d5faa20b46b540b7ce177a471544ec6abe7fd2f969009a18c5",
           "n": 14,
           "tick": 22657
         },
         {
           "area": "warden_lair",
-          "checksum": "32f25869b0a5854167348b1fe4f9355901cdb6001a40406ca6b22929b3b839be",
+          "checksum": "1b29f93ab2b3c00b6faff104a6231dcb3c52b96d051a95d23c25df32ecf0ad41",
           "n": 15,
           "tick": 23873
         },
         {
           "area": "ridge",
-          "checksum": "20eec104a77b4cbce95bdc3b8ae79248084d4df292e34dfab604792aad55500e",
+          "checksum": "6b2b109f76f6cc24396e1ffa44c9a6598ec13c0e2eb7d81d5af9b13882d16e55",
           "n": 16,
           "tick": 24726
         },
         {
           "area": "field",
-          "checksum": "cb91ead5eb031b2e71208acfb43370e164f3612ba4d2415f719eb0824dd230a5",
+          "checksum": "2f4dac444d65aa5af10daee09cb68b6d8d3ede5dee8133aed9e9283f039259c3",
           "n": 17,
           "tick": 26257
         },
         {
           "area": "field",
-          "checksum": "bf45967b5acf6008fcc7789e964f265ee01517d310d1b69380e1889c024f6d10",
+          "checksum": "cb4d783629efa53bb803d7fa460b8dac071546e64467cc25153a911143d2a8f3",
           "n": 18,
           "tick": 27217
         }
@@ -3539,7 +3539,7 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (15.5 ms)",
+        "TIME FROZEN \u2014 ranked swaps (11.9 ms)",
         "1. Kael  HP 47/82  score 146.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
         "2. Bram  HP 106/106  score 122.2  target cave_warden_1  cd Taunt 4.5s  @9,5",
         "3. Nyra  HP 54/54  score 114.0  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
@@ -3637,7 +3637,7 @@
             ]
           ],
           "tick": 4399,
-          "wall_ms": 17.79
+          "wall_ms": 18.53
         },
         {
           "area": "warden_lair",
@@ -3661,7 +3661,7 @@
             ]
           ],
           "tick": 24447,
-          "wall_ms": 15.54
+          "wall_ms": 11.88
         }
       ],
       "ticks": 27217,
@@ -3686,7 +3686,7 @@
         }
       ],
       "wait_ticks": 5535,
-      "wall_ms": 7073.3,
+      "wall_ms": 6647.3,
       "wipes": 0
     },
     "tilemaps": {
@@ -4221,7 +4221,7 @@
         "out_of_band": [],
         "out_of_band_count": 0
       },
-      "wall_s": 114.44,
+      "wall_s": 117.57,
       "workers": 8
     },
     "world_gates": {

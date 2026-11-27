@@ -715,3 +715,31 @@ feature flags (launch content deferred)", GAME_SPEC §5 "Live seasonal content (
     floor to the active serial — acceptable for a local-only, readiness design.
 11. **F9-11 Versions.** Fabric and game `0.9.0+f9`; increment `liveops-readiness`. Android versionCode/name and the
     Windows file version stay at the F7 values (no new store build).
+
+## Post-F9 operations batch 1 (0.9.1+f9)
+
+12. **F9-12 Diagnostics consent toggle.** Settings gets a "Diagnostics (kept on this device)" row at the top (↑ from
+    the display rows; Enter / pad A toggles), **Off by default**. LiveOps owns the effect: on → `consent.json` +
+    session record written at once; off → the local `diag/` record is deleted (opting out removes what was kept;
+    nothing was ever uploaded). The choice is mirrored into the save's profile layer (`profile.settings.
+    diagnostics_consent`) like the other settings, so a profile carried to a new device carries the opt-in — older
+    profiles without the key leave the device's own choice alone. "Reset to defaults" turns it off. The privacy notice
+    is ours, a placeholder starting with `[PLACEHOLDER — LEGAL REVIEW REQUIRED]` (F9-8): `forge liveops readiness`
+    reports `privacy_text_legal_review: user_gated` until the marker is removed by a legal-reviewed text.
+99. **C-99 LoomCluster TLS / mTLS.** Spec §10 asks for the fleet over LAN/Tailscale; Q6 left it unencrypted. Ours:
+    optional TLS **1.3 only**, ECDSA P-256 private fleet CA (825 days) issuing one leaf per node/operator (397 days,
+    serverAuth + clientAuth, SANs = given hosts + localhost/127.0.0.1/::1), client certificate **required**, server
+    chain + hostname verified against the fleet CA only, `http://` refused while TLS is on, HMAC kept inside TLS
+    (defence in depth: cert without secret or secret without cert gets nothing). The node id picks its cert. No CRL —
+    revocation = re-issue the CA (runbook). Handshakes run in the handler thread (15 s timeout) so a stalled client
+    cannot block accept. Proven on loopback only (C7 `tls`): 8-job batch + 1 MiB blob over `https+mtls`; plaintext,
+    no client cert, foreign-CA cert, untrusted server CA, wrong hostname, downgrade refused; unsigned-inside-TLS 401.
+100. **C-100 Hardware kit assumptions.** (a) Godot 4.3's Android activity takes engine args from the
+    `command_line_params` string-array intent extra; if a device build ignores it, `verify_android.py` reports the two
+    headless checks `null` (not failed) and the manual playtest covers the slice. (b) The Windows script runs the
+    console wrapper (`GameZero.console.exe`) for stdout; the windowed boot proves the GPU driver path, not gameplay.
+    (c) A report passes only with every automated check true and every checklist item answered; reports stay local
+    (`hw-reports/`, user folder written as `~`). The scripts were exercised on the build box only: the PowerShell
+    script under PowerShell 7 on Linux against the Linux export, the Android flow against a scripted fake `adb`, the
+    Web script against loopback copies of `dist/web*` — none of that is the target hardware.
+

@@ -5,7 +5,7 @@ description: Universal content fabric + execution substrate; Game Zero is the fi
 
 fabric:
   milestone: F9
-  version: "0.9.0+f9"
+  version: "0.9.1+f9"
 
 game:
   id: game-zero

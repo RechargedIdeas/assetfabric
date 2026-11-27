@@ -3,8 +3,9 @@
 **Last updated:** 2026-11-27 America/New_York
 **Repository:** https://github.com/RechargedIdeas/assetfabric (**private**, branch `main`)
 **License:** proprietary, All Rights Reserved (ADR-0001)
-**Current Fabric milestone:** **F9 — LiveOps foundation, readiness only** (accepted, `0.9.0+f9`, 2026-11-27). **All spec milestones are complete: F0–F9 + C1–C12.** F8 retro accepted `0.8.0+f8`; F7 packaging accepted `0.7.0+f7`
+**Current Fabric milestone:** **F9 — LiveOps foundation, readiness only** (accepted `0.9.0+f9`; current package `0.9.1+f9`, 2026-11-27). **All spec milestones are complete: F0–F9 + C1–C12.** F8 retro accepted `0.8.0+f8`; F7 packaging accepted `0.7.0+f7`
 **Current game increment:** `liveops-readiness`
+**Post-F9 operations (Producer t64u, 2026-11-27):** batch 1 `0.9.1+f9` — in-game diagnostics consent toggle + privacy-notice placeholder (F9-12), LoomCluster TLS 1.3 + mTLS (C-99, docs/cluster-lan-runbook.md), hardware verification kit (`scripts/verify-hardware/`, docs/hardware-verification.md, C-100). Batch 2 (`0.9.2+f9`, ROCm ONNX + SplatForge external runner, Q3 native step feasibility) next.
 **Companion track:** **PocketLoom C1–C6 accepted** (`forge accept C1-C6`, debug APK `0.1.0-c6`, package `0.7.1+f7`) — standalone offline Android companion + LoomLink pairing/offload/sync; not yet run on a device
 **Stub replacement sprint (2026-11-20):** batch 1 landed in `0.7.4+f7` — **C9 MirrorWeave has no stubs**: desktop video (CPU VP8/VP9 via system ffmpeg), X11 capture, signed WebSocket transport and Studio input are `real`; Android MediaProjection/H.264, AccessibilityService input and Camera2 focus are compiled into the APK as **`real_unverified_on_device`** (never run on a phone). Batch 2 landed in `0.7.5+f7` — **C10 video capture** (desktop ffmpeg keyframe ingest real; phone Camera2+MediaRecorder recorder `real_unverified_on_device`), **C11 dense depth** real (DepthAnything V2 Small, Apache-2.0, onnxruntime CPU; weights via `forge models fetch` with SHA-256, never committed), **GIRT ONNX** desktop export + parity tooling (`forge girt`), model licence gate `forge models audit`. Batch 2b landed in `0.7.6+f7` — **ARCore** session + depth: desktop pose coverage and DEPTH16 ingest (+ DepthAnything aligned to ARCore anchors) are real; the ARCore SDK capture (`ArCoreCapture`) is compiled into the APK as `real_unverified_on_device` (ARCore is under Google's terms, not OSS — INFERENCES C-68, confirm before release). Batch 3 landed in `0.7.7+f7` — **C12**: CPU photogrammetry (OpenCV SIFT SfM, sparse, no BA — C-73/C-74; `forge recon photogrammetry`), MeshWeaver (splat density → surface nets → OBJ) and GDGS Godot import (MultiMesh billboards, verified in Godot under Xvfb) are `real`, plus a bounded tiny-scene **CPU SplatForge trainer** (own NumPy isotropic 3DGS, `forge recon train --stage splat-cpu` — C-77); **full-scale SplatForge training stays the only stub** (needs a GPU — C-75). Register: 25 real · 8 real_unverified_on_device · 1 stub · 3 deferred. Batch 4 landed in `0.7.8+f7` — **VoiceBridge** (Vosk small en-us, Apache-2.0, grammar-constrained + confidence gate; synthetic speech 0.90 accuracy / 0.05 wrong-action, the residue is a hold↔go confusion — C-79), **persona micro-LM** on the spec's Qwen2.5-0.5B backbone (int8 ONNX, CPU, review-gated drafting; LoRA planned; the game keeps cache + bigram — C-80), **Studio** Swatches/Voice/Persona tabs + read-only slash commands. PocketLoom ONNX rung stays a stub (C-82). **Quality-gap phase (TODO.md §Current sprint, P1–P10):** Q1 landed in `0.7.9+f7` — CI pytest split into 3 parallel shards that partition the suite (`--ci-group`), apt/uv caches, stale C10–C12 descriptions fixed. Q2 landed in `0.7.10+f7` — **G-A11Y-01 full**: in-game Settings screen (Escape / F10 / pad Start) rebinds every action on keyboard and gamepad, live colour-blind palette remap generated from PatternVault with a ΔE gate, settings persisted in the save profile. Q3 landed in `0.7.11+f7` — **swap advisor < 50 ms on the reference box** (p95 37.8–39.4 ms pinned to 2 physical cores, gated in `forge accept F3`; GitHub runners ≈ 63–66 ms, so partial), pure GDScript data-layout work, outcomes/balance unchanged. Q4 landed in `0.7.12+f7` (slice length), Q5 in `0.7.13+f7` (economy model + per-pair balance). Q6 landed in `0.7.14+f7` — **LoomCluster HMAC node auth + content-addressed blob transfer** (C-95, C-96), **`web-nothreads` single-thread Web fallback** (ADR-0019, D-001 closed, C-97), doc nits.
 
@@ -89,7 +90,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 - **PocketLoom**: debug-signed only; never installed on a phone (camera/picker intents, QR → intent hand-off, on-device timings unverified). ONNX rung is a stub (no runtime bundled). LoomLink has no TLS/PAKE: HMAC gives integrity + replay protection, not confidentiality (use Tailscale); the hello proof allows offline guessing of the 8-char code within its 300 s TTL; desktop `last_ts` not persisted across restarts; deletions not synced (no tombstones); session key not Keystore-wrapped. INFERENCES C-1…C-15.
 
 - **C9–C12**: see `docs/acceptance-tests/C9-C12.md` §Not proven — every Android half (MediaProjection, input, Camera2 focus/video, ARCore capture) never ran on a phone (`real_unverified_on_device`), X11-only capture, no WebRTC, no desktop HW H.264; dense depth is CPU-only (DepthAnything V2 Small); reconstruction is CPU photogrammetry + a tiny-scene CPU splat trainer, full-scale splat training needs a GPU (stub); capture thresholds unvalidated (C-38), overlap unmeasured, ETAs unmeasured, DepthAnything/ARCore licences unverified (C-42); Kotlin classes JVM-tested only, never on a phone.
-- **LoomCluster / GroundWeave (C7/C8)**: proven on loopback processes only. Node↔node HTTP is HMAC-authenticated with one shared fleet secret since 0.7.14 (401 on unsigned/stale/replayed) but **not encrypted** — keep it on loopback or Tailscale/WireGuard; PocketLoom is a LoomLink client, not a cluster peer; no real GPU rung exists (all `planned`), runtime demotion proven on a synthetic ladder; reduced balance matrix (not the full 2400 fights) is what was re-timed on 2 cores; origin loss without restart loses results; artifacts move as signed content-addressed blobs since 0.7.14 (INFERENCES C-16…C-31, C-95, C-96).
+- **LoomCluster / GroundWeave (C7/C8)**: proven on loopback processes only. Node↔node HTTP is HMAC-authenticated with one shared fleet secret since 0.7.14 (401 on unsigned/stale/replayed); **optional TLS 1.3 + mTLS since 0.9.1** (private fleet CA, C-99) proven on loopback only — plain-HTTP mode is still unencrypted, keep it on loopback; off loopback use TLS + Tailscale/WireGuard (docs/cluster-lan-runbook.md); PocketLoom is a LoomLink client, not a cluster peer; no real GPU rung exists (all `planned`), runtime demotion proven on a synthetic ladder; reduced balance matrix (not the full 2400 fights) is what was re-timed on 2 cores; origin loss without restart loses results; artifacts move as signed content-addressed blobs since 0.7.14 (INFERENCES C-16…C-31, C-95, C-96).
 
 ## Resume point (paused 2026-11-20)
 
@@ -99,7 +100,8 @@ State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 202
 
 | Branch | Head | Holds | State |
 |---|---|---|---|
-| `main` | `0.9.0+f9` | everything accepted through F9 (all spec milestones) | CI green |
+| `main` | `0.9.1+f9` | everything accepted through F9 (all spec milestones) + post-F9 batch 1 | CI green |
+| `feat/post-f9-ops` | — | post-F9 batch 1 (consent toggle, cluster TLS, hardware kit) | **fast-forwarded into `main` as `0.9.1+f9`**; safe to delete |
 | `feat/f9-liveops` | — | F9 LiveOps readiness | **fast-forwarded into `main` as `0.9.0+f9`** (2026-11-27); safe to delete |
 | `feat/f8-retro` | — | F8 retro / console-style | **fast-forwarded into `main` as `0.8.0+f8`** (2026-11-27); safe to delete |
 | `feat/q4-slice` | — | Q4 slice length | **merged into `main` as `0.7.12+f7`** (2026-11-26); safe to delete |
@@ -131,14 +133,17 @@ Every spec milestone (F0–F9, C1–C12) is accepted. What is left needs hardwar
    offline, pin `games/game-zero/data/liveops/pubkey.pem`, add `data/liveops/*` to the export include filters. Until
    then release builds ignore every bundle (`forge liveops readiness` → `production_public_key: user_gated`).
 2. **LiveOps service / delivery** — out of F9 scope (readiness only); any fetch from the game needs a Producer decision
-   and a network-policy ADR (G-NET-01). In-game diagnostics consent toggle + privacy/legal text (INFERENCES F9-8).
+   and a network-policy ADR (G-NET-01). ✅ In-game diagnostics consent toggle landed `0.9.1+f9` (F9-12); the privacy
+   notice is a marked placeholder → **legal review** (user-gated).
 3. **Signing + store listings** (docs/packaging.md §Signing & stores) — Producer keys/certs (Authenticode, Android
    release key/AAB, BoltPack signature).
 4. **Real hardware runs**: Windows build never executed (no Windows host); debug APK + PocketLoom on the Redmi Note 12
    Pro 5G (D-002: install, generate, capture, QR pairing, drain + sync, timings; all `real_unverified_on_device`
-   Android paths); Web build on a public HTTPS host.
+   Android paths); Web build on a public HTTPS host. **Kit ready (0.9.1):** `scripts/verify-hardware/`
+   (`verify-windows.ps1 [-Playtest]`, `verify_android.py`, `verify_web.py`, `hwreport.py`) — docs/hardware-verification.md.
 5. **GPU**: first ROCm ONNX rung + full-scale SplatForge on a `rocm` LoomCluster node (the only C9–C12 stub left);
-   two-machine LoomCluster run on a real LAN/Tailscale (+ encryption); Kotlin cluster peer.
+   two-machine LoomCluster run on a real LAN/Tailscale (✅ TLS 1.3 + mTLS ready since 0.9.1 — follow
+   docs/cluster-lan-runbook.md); Kotlin cluster peer.
 6. **Human GUI playtest** of the vertical slice (checklist docs/acceptance-tests/F6.md) — length vs 15–20 min is a
    human-pace estimate today; Game-Design sign-off on names/numbers (D-005).
 7. Q3 follow-up (optional): native forward-sim step (GDExtension, C++ toolchain) for < 50 ms swap advisor on slow

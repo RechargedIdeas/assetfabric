@@ -9,12 +9,12 @@
     "apk_sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746",
     "gen_ms": {
       "cave": {
-        "max": 25.88,
-        "mean": 5.26
+        "max": 29.51,
+        "mean": 4.95
       },
       "sprite": {
-        "max": 30.99,
-        "mean": 4.07
+        "max": 31.16,
+        "mean": 3.87
       }
     },
     "mode": "full"
@@ -29,7 +29,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 10.2
+      "seconds": 7.6
     },
     "c2": {
       "budget_ms": 250.0,
@@ -48,8 +48,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 25.88,
-          "ms_mean": 5.26,
+          "ms_max": 29.51,
+          "ms_mean": 4.95,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,
@@ -70,8 +70,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 30.99,
-          "ms_mean": 4.07,
+          "ms_max": 31.16,
+          "ms_mean": 3.87,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,

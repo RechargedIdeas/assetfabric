@@ -197,10 +197,11 @@ REST · CLI (`forge`) · MCP · ACP · WebSocket · gRPC · in-Studio terminal.
 ```
 
 - **Execution semantics:** at-least-once; ops are deterministic functions of their payload, so duplicates and placement do not change results (the first result wins). Failing jobs retry (`cluster.protocol.max_attempts`). `gen` runs in a child process whose device set is the node's advert.
-- **Auth + artifacts (0.7.14):** every request/response is HMAC-SHA256 signed with the fleet secret (`X-Loom-Ts/Nonce/Sig`, `X-Loom-RSig`; ±120 s, nonce replay guard → 401; no secret → node refuses to start). Results carry `{sha256,size}`; the origin pulls signed `GET /blob/<sha256>` and verifies the digest before accepting. Not encrypted (C-95, C-96).
+- **Auth + artifacts (0.7.14):** every request/response is HMAC-SHA256 signed with the fleet secret (`X-Loom-Ts/Nonce/Sig`, `X-Loom-RSig`; ±120 s, nonce replay guard → 401; no secret → node refuses to start). Results carry `{sha256,size}`; the origin pulls signed `GET /blob/<sha256>` and verifies the digest before accepting (C-95, C-96).
+- **TLS / mTLS (0.9.1, C-99):** optional (`FORGE_CLUSTER_TLS_DIR` / `--tls-dir`): private fleet CA (`forge/cluster_tls.py`), TLS 1.3, client cert required, chain + hostname checked against the fleet CA, `http://` refused while on, HMAC kept inside TLS; `--bind/--advertise` for LAN/Tailscale (docs/cluster-lan-runbook.md).
 - **Placement:** `requires.device` is matched against adverts; unmatched → HTTP 400. GPU-required GroundWeave ops (`recon.splat`) are routed this way.
 - **PocketLoom:** `forge link serve --cluster URL` plugs a `ClusterBridge` into LoomLink's `/offload`; the phone is a client of the fleet (a Kotlin peer node is future work).
-- **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback — see SECURITY.md for what that does not cover.
+- **GroundWeave rules:** every generator kind must have a `gen.<kind>` op; the last rung is a real CPU backend (or the op is `gpu_required` + `route: loomcluster`); `run_brief` refuses undeclared generators; `planned` rungs are never selected; `groundweave.execute` demotes a rung that raises. Transport is HTTP/JSON on loopback by default, HTTPS + mTLS when enabled — see SECURITY.md for what that does not cover.
 
 ## C9–C12 companion interfaces (MirrorWeave · LensForge · depth · SplatForge path)
 

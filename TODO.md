@@ -9,11 +9,23 @@ Last updated: 2026-11-27 America/New_York
 > (0.7.14, Q6) → ✅ (c′) row 7 world fights (0.7.15, P7). **Every software quality-gap row is closed** except the
 > hardware-gated row 3 follow-up (native step). **F8 landed in `0.8.0+f8`**, **F9 landed in `0.9.0+f9`** (docs/acceptance-tests/F8.md, F9.md). **All spec milestones F0–F9 + C1–C12 are complete**; what remains is hardware-/Producer-gated (HANDOVER.md §Next steps).
 
+## Current sprint — post-F9 software-completable items (Producer t64u, 2026-11-27: "Properly complete all tasks")
+
+- [x] **Batch 1 (`0.9.1+f9`)**: in-game diagnostics consent toggle + privacy notice placeholder (F9-12); LoomCluster
+  TLS 1.3 + mTLS (C-99, docs/cluster-lan-runbook.md); hardware verification kit (C-100, docs/hardware-verification.md).
+- [ ] **Batch 2 (`0.9.2+f9`)**: ROCm ONNX execution-provider selection + full-scale SplatForge external runner
+  (`rocm_ready_unverified`, never GPU-proven here); Q3 native GDExtension swap-advisor step if a C++ toolchain is
+  cleanly feasible on the build box (else documented skip).
+- [ ] Legal review of `settings.diagnostics.notice` (remove the `[PLACEHOLDER — LEGAL REVIEW REQUIRED]` marker).
+- [ ] Run the kit on real hardware: `verify-windows.ps1 -Playtest` on Shivati, `verify_android.py` with the Redmi,
+  `verify_web.py` against a public HTTPS host; first two-machine LoomCluster run per docs/cluster-lan-runbook.md.
+
 ## F9 follow-ups (user-gated; see docs/acceptance-tests/F9.md §Still user-gated)
 
 - [ ] Producer key ceremony: production RSA key offline, pin `games/game-zero/data/liveops/pubkey.pem`, add `data/liveops/*` to export include filters (docs/liveops-runbook.md).
 - [ ] LiveOps delivery/service (CDN, staged rollout) — out of F9 scope; needs a Producer decision + network-policy ADR (G-NET-01).
-- [ ] In-game diagnostics consent toggle in Settings + privacy/legal text (INFERENCES F9-8); in-game message for a read-only newer save (`save.read_only_newer`).
+- [x] In-game diagnostics consent toggle in Settings (0.9.1, F9-12) — privacy/legal text still a marked placeholder (legal review user-gated).
+- [ ] In-game message for a read-only newer save (`save.read_only_newer`).
 - [ ] Exercise the bundle path on real Windows / Android / public Web hosts.
 
 ## F8 follow-ups (not scheduled; see docs/acceptance-tests/F8.md §Not proven)
@@ -82,7 +94,7 @@ recorded in BoltPack (`THIRD_PARTY_NOTICES.md`). Model weights are never committ
 
 - [x] PocketLoom C1–C6: standalone offline debug APK (FabricCore JobExecutor + local store, on-device generation, UI, capture, pairing, offload/sync) — accepted 2026-11-12 (`forge accept C1-C6`)
 - [x] LoomCluster C7 + GroundWeave C8 (drafts from `wip/f5-companions` reviewed, hardened, verified) — accepted 2026-11-19 (`forge accept C7-C8`, 0.7.2+f7)
-- [ ] C7 follow-ups: LAN/Tailscale run across two real machines; cluster auth (reuse LoomLink HMAC) before binding off loopback; PocketLoom (Kotlin) as a cluster *peer* node; blob transfer for large artifacts; origin election/hand-off when the origin never returns
+- [ ] C7 follow-ups: LAN/Tailscale run across two real machines (TLS/mTLS ready since 0.9.1 — docs/cluster-lan-runbook.md; auth since 0.7.14); PocketLoom (Kotlin) as a cluster *peer* node; blob transfer for large artifacts; origin election/hand-off when the origin never returns
 - [ ] C8 follow-ups: first real GPU rung (ROCm/DirectML/Vulkan ONNX for G1-Sprite/Tile) wired through `groundweave.execute`; re-time the full 2400-fight balance on a 2-core node
 - [x] C9–C12 (MirrorWeave, LensForge, depth, SplatForge): interfaces + clearly labelled stubs — accepted 2026-11-19 (`forge accept C9-C12`, 0.7.3+f7)
 - [ ] C9–C12 follow-ups (each replaces a labelled stub; see `content/companions/c9_c12.yaml`): MediaProjection screen capture + H.264/WebRTC (C9); overlap/parallax measurement and validating the capture thresholds against a real reconstruction (C10, C-38/C-40); DepthAnything V2 CPU/ROCm estimator — verify its licence first, ARCore depth (C11, C-42); SplatForge/OpenSplat on a ROCm LoomCluster node, CPU photogrammetry (COLMAP), MeshWeaver, GDGS Godot import, `.splat` validation (C12)

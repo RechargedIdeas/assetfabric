@@ -9,7 +9,7 @@ config_version=5
 
 config/name="Game Zero"
 config/description="AssetFabric MVP — 8-bit fighter/farming hybrid"
-config/version="0.9.0+f9"
+config/version="0.9.1+f9"
 run/main_scene="res://scenes/boot.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"

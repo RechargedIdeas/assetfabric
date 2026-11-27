@@ -92,6 +92,15 @@ PocketLoom: job **`pocketloom`** (setup-java 17, Gradle cache via `gradle/action
 
 F7: the F7 **fast** subset runs inside pytest (presets, manifest targets, ShuttleLine vs sources, BoltPack SBOM + license audit for every target, network-API scan, editor save/remap round-trip). Platform exports + `forge accept F7` (full) are **local-only** (≈1 GB templates, JDK + Android SDK, headless Chrome; ≈ 2.5 min) — see [docs/packaging.md §CI](docs/packaging.md#ci). Planned: cached `package` job, Windows runner for DirectML. `[INFERENCE: workflow shape]`
 
+### Hardware verification (0.9.1, not CI)
+
+What CI cannot run — a Windows PC, a real Android phone, a public HTTPS host, a human — is covered by
+`scripts/verify-hardware/` (docs/hardware-verification.md): each script writes a JSON report (`hw-reports/`, gitignored)
+that `hwreport.py check` validates (pass only with every automated check true and the manual checklist answered).
+CI only tests the kit itself (`tests/test_hw_verification.py`: report format, the Android flow against a scripted fake
+`adb`, PowerShell parse when `pwsh` exists). LoomCluster TLS/mTLS is proven on loopback in `forge accept C7` (`tls`)
+and `tests/test_c7_c8.py`; real two-machine runs follow docs/cluster-lan-runbook.md.
+
 ## 5. Performance & fidelity contracts
 
 - **Weakest acceptance node:** 2 CPU cores, no GPU. Every acceptance test must pass there.

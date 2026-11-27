@@ -4,6 +4,32 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.9.1+f9] — 2026-11-27 — Post-F9 operations batch 1: consent toggle, LoomCluster TLS, hardware kit
+
+Software-completable items from HANDOVER §Next steps (2, 4, 5 partially). INFERENCES F9-12, C-99, C-100.
+
+### Added
+- **In-game diagnostics consent toggle + privacy notice** (F9-8 → F9-12): Settings row (keyboard/gamepad), default Off,
+  wired to `LiveOps.set_diagnostics_consent` (on writes the local session record, off deletes it), mirrored into the
+  save profile (`diagnostics_consent`), reset → Off; notice locale key `settings.diagnostics.notice` marked
+  `[PLACEHOLDER — LEGAL REVIEW REQUIRED]`. `forge accept F9` gains `consent_ui` (9 UI steps via injected keyboard +
+  gamepad events, reboot keeps it, a new device adopts it from the profile); readiness items
+  `consent_toggle_in_settings` (pass) and `privacy_text_legal_review` (user_gated).
+- **LoomCluster TLS 1.3 + mTLS** (C-99): `forge/cluster_tls.py`, `forge cluster tls-keygen / tls-show`, `forge cluster
+  --tls-dir`, `forge cluster node --bind/--advertise/--tls-dir`, status `transport: https+mtls`, `tls_rejected` stat;
+  C7 acceptance `tls` check (real loopback HTTPS fleet + 6 refusal cases); docs/cluster-lan-runbook.md.
+- **Hardware verification kit** (C-100): `scripts/verify-hardware/` — `verify-windows.ps1` (smoke + timed playtest),
+  `verify_android.py` (adb install/launch/autoplay/logcat), `verify_web.py` (public HTTPS, both Web builds),
+  `hwreport.py` + `checklists.json`; docs/hardware-verification.md; tests incl. a scripted fake `adb`.
+
+### Changed
+- `.gitignore`: `/.fabric/cluster-tls/`, `/hw-reports/`. Settings list area 470 → 360 px to fit the notice.
+- SECURITY.md (LoomCluster TLS, consent toggle). Version `0.9.1+f9`.
+
+### Verified
+- `pytest -q` 304 passed (6 min 41 s, local); `forge accept all` F0–F9 + C1–C12 all green, re-recorded (14 min 45 s wall,
+  local box, CPU only); STATUS regenerated. No hardware or GPU claim: the kit is the instrument for that, not the result.
+
 ## [0.9.0+f9] — 2026-11-27 — F9 LiveOps foundation, readiness only (`liveops-readiness`)
 
 SPEC §13 F9 ("readiness only"), §12 "remote config / feature flags (launch content deferred)"; GAME_SPEC §5, §8, G-NET-01.

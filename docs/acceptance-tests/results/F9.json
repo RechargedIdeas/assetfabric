@@ -5,19 +5,21 @@
   "milestone": "F9",
   "passed": true,
   "perf": {
+    "consent_ui_steps": 9,
     "device_boots": 22,
-    "device_wall_s": 6.7,
+    "device_wall_s": 8.1,
     "flags": 4,
     "forge_bad_bundles": 10,
     "forge_bad_bundles_refused": 10,
     "knobs": 26,
-    "liveops_boot_ms_max": 1.33,
-    "liveops_boot_ms_mean": 0.71,
+    "liveops_boot_ms_max": 1.38,
+    "liveops_boot_ms_mean": 0.74,
     "user_gated": [
       "production_public_key",
+      "privacy_text_legal_review",
       "live_service"
     ],
-    "wall_s": 10.3
+    "wall_s": 13.4
   },
   "result": {
     "combat": {
@@ -27,15 +29,68 @@
       "defaults": "642df8161c490e15",
       "rollback_2": "642df8161c490e15"
     },
+    "consent_ui": {
+      "new_device_same_profile": {
+        "diag_written": true,
+        "exit": 0,
+        "script_errors": 0,
+        "state": {
+          "consent": true,
+          "consent_file": true,
+          "diag_file": true,
+          "flag": true,
+          "profile": true
+        }
+      },
+      "reboot_same_device": {
+        "diag_written": true,
+        "exit": 0,
+        "script_errors": 0,
+        "state": {
+          "consent": true,
+          "consent_file": true,
+          "diag_file": true,
+          "flag": true,
+          "profile": true
+        }
+      },
+      "toggle": {
+        "errors": [],
+        "events": [
+          {
+            "diagnostics": true
+          },
+          {
+            "diagnostics": false
+          },
+          {
+            "diagnostics": true
+          }
+        ],
+        "exit": 0,
+        "script_errors": 0,
+        "steps": [
+          "default_off",
+          "notice_is_locale_text",
+          "notice_legal_placeholder",
+          "label_shows_off",
+          "keyboard_reaches_toggle",
+          "keyboard_on",
+          "label_shows_on",
+          "gamepad_off_deletes_record",
+          "gamepad_on_again"
+        ]
+      }
+    },
     "device": {
       "device_status": {
         "active": 4,
         "boot_sentinel": null,
-        "dir": "/tmp/f9-ycdi7rtv/device",
+        "dir": "/tmp/f9-u1jy91k6/device",
         "inbox": false,
         "last_status": {
           "active_invalid": [],
-          "boot_ms": 0.54,
+          "boot_ms": 0.62,
           "errors": [],
           "flags": {
             "adaptive_music": true,
@@ -58,12 +113,12 @@
           "5.json"
         ],
         "rejected": [
-          "1-164194.json",
-          "3-163862.json",
-          "3-166114.json",
-          "3-168345.json",
-          "3-168589.json",
-          "3-172824.json"
+          "1-188636.json",
+          "3-179218.json",
+          "3-188141.json",
+          "3-190750.json",
+          "3-200423.json",
+          "3-207937.json"
         ],
         "state": {
           "active_serial": 4,
@@ -75,7 +130,7 @@
           "active_invalid": [
             "active serial 1 is not the promoted serial 4 (swapped on disk)"
           ],
-          "boot_ms": 0.54,
+          "boot_ms": 0.62,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -104,7 +159,7 @@
           "active_invalid": [
             "signature invalid"
           ],
-          "boot_ms": 0.41,
+          "boot_ms": 0.4,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -131,7 +186,7 @@
         },
         "after_crash_loop": {
           "active_invalid": [],
-          "boot_ms": 0.87,
+          "boot_ms": 0.97,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -158,7 +213,7 @@
         },
         "boot_again_1": {
           "active_invalid": [],
-          "boot_ms": 0.7,
+          "boot_ms": 0.88,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -185,7 +240,7 @@
         },
         "crash_boot_1": {
           "active_invalid": [],
-          "boot_ms": 1.17,
+          "boot_ms": 1.21,
           "diag_written": false,
           "exit": -6,
           "flags": {
@@ -212,7 +267,7 @@
         },
         "crash_boot_2": {
           "active_invalid": [],
-          "boot_ms": 0.88,
+          "boot_ms": 0.74,
           "diag_written": false,
           "exit": -6,
           "flags": {
@@ -266,7 +321,7 @@
         },
         "diag_on": {
           "active_invalid": [],
-          "boot_ms": 0.12,
+          "boot_ms": 0.15,
           "diag_written": true,
           "exit": 0,
           "flags": {
@@ -294,7 +349,7 @@
         },
         "fresh": {
           "active_invalid": [],
-          "boot_ms": 0.17,
+          "boot_ms": 0.15,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -321,7 +376,7 @@
         },
         "net_off_boot": {
           "active_invalid": [],
-          "boot_ms": 0.54,
+          "boot_ms": 0.62,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -349,7 +404,7 @@
         },
         "no_key": {
           "active_invalid": [],
-          "boot_ms": 0.08,
+          "boot_ms": 0.07,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -377,7 +432,7 @@
         },
         "promote_1": {
           "active_invalid": [],
-          "boot_ms": 1.1,
+          "boot_ms": 1.19,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -404,7 +459,7 @@
         },
         "promote_2_balance_off": {
           "active_invalid": [],
-          "boot_ms": 1.07,
+          "boot_ms": 1.16,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -431,7 +486,7 @@
         },
         "reject_consent": {
           "active_invalid": [],
-          "boot_ms": 1.11,
+          "boot_ms": 1,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -460,7 +515,7 @@
         },
         "reject_content": {
           "active_invalid": [],
-          "boot_ms": 0.92,
+          "boot_ms": 1.05,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -489,7 +544,7 @@
         },
         "reject_out_of_range": {
           "active_invalid": [],
-          "boot_ms": 0.97,
+          "boot_ms": 1.16,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -518,7 +573,7 @@
         },
         "reject_replay_1": {
           "active_invalid": [],
-          "boot_ms": 0.92,
+          "boot_ms": 1.03,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -547,7 +602,7 @@
         },
         "reject_tampered": {
           "active_invalid": [],
-          "boot_ms": 0.94,
+          "boot_ms": 1.38,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -576,7 +631,7 @@
         },
         "reject_wrong_key": {
           "active_invalid": [],
-          "boot_ms": 0.95,
+          "boot_ms": 0.71,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -595,7 +650,7 @@
           },
           "quarantined": 0,
           "rejected": [
-            "key_id 3835a5813a830e3a does not match the pinned key b692377b3e6b8da8"
+            "key_id 058b6baef3e089cb does not match the pinned key c23e0706f46f82e4"
           ],
           "retro_request_nes": "nes-style",
           "save_guard": null,
@@ -605,7 +660,7 @@
         },
         "restored": {
           "active_invalid": [],
-          "boot_ms": 0.56,
+          "boot_ms": 0.53,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -632,7 +687,7 @@
         },
         "rollback_4_defaults": {
           "active_invalid": [],
-          "boot_ms": 1.33,
+          "boot_ms": 1.11,
           "diag_written": false,
           "exit": 0,
           "flags": {
@@ -692,7 +747,7 @@
           "source": "defaults"
         }
       },
-      "wall_s": 6.7
+      "wall_s": 8.1
     },
     "diagnostics": {
       "files": [
@@ -728,7 +783,7 @@
       },
       "future_build": {
         "errors": [
-          "build_min 9.0.0 > build 0.9.0+f9"
+          "build_min 9.0.0 > build 0.9.1+f9"
         ],
         "ok": false
       },
@@ -774,7 +829,7 @@
       },
       "wrong_key": {
         "errors": [
-          "key_id 3835a5813a830e3a does not match the pinned key b692377b3e6b8da8"
+          "key_id 058b6baef3e089cb does not match the pinned key c23e0706f46f82e4"
         ],
         "ok": false
       }
@@ -851,6 +906,16 @@
           "status": "pass"
         },
         {
+          "detail": "Settings screen: diagnostics toggle (default off) + privacy notice (INFERENCES F9-12)",
+          "id": "consent_toggle_in_settings",
+          "status": "pass"
+        },
+        {
+          "detail": "privacy notice is a placeholder \u2014 legal review required (F9-8)",
+          "id": "privacy_text_legal_review",
+          "status": "user_gated"
+        },
+        {
           "detail": "no endpoint, no delivery service, no launch \u2014 F9 is readiness only (spec \u00a713)",
           "id": "live_service",
           "status": "user_gated"
@@ -859,9 +924,10 @@
       "ok": true,
       "user_gated": [
         "production_public_key",
+        "privacy_text_legal_review",
         "live_service"
       ]
     },
-    "wall_s": 10.3
+    "wall_s": 13.4
   }
 }

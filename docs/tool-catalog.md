@@ -20,7 +20,7 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | **SplatForge** | — | 3DGS training | C12 / F3–F4 backdrop | tiny-scene CPU trainer **real** (0.7.7, `recon.splat_cpu`, own NumPy isotropic 3DGS, ≤ 2k splats); full-scale **stub** (`recon.splat` gpu_required → loomcluster) |
 | **MeshWeaver** | — | Splat→mesh | Phase 2 | **real** CPU rung (0.7.7: density → surface nets → OBJ); SuGaR rung planned (GPU) |
 | **LensForge** | Lens | Camera intelligence | C10–C11 | quality/modes/telemetry, video keyframe ingest, ARCore pose coverage/DEPTH16 ingest, dense depth (DepthAnything V2 Small, CPU) real; phone Camera2 video/focus + ARCore capture `real_unverified_on_device` |
-| **LoomCluster** | Loom | Equal-node clustering | C7 | **real (C7), loopback-proven**: `forge/loomcluster.py`, `forge cluster …`; negotiation, stealing, leases, retry, journal recovery, device placement, LoomLink bridge; **HMAC-signed node requests/responses + content-addressed `/blob/<sha256>` transfer since 0.7.14** (`forge cluster keygen`). No LAN run, no encryption |
+| **LoomCluster** | Loom | Equal-node clustering | C7 | **real (C7), loopback-proven**: `forge/loomcluster.py`, `forge cluster …`; negotiation, stealing, leases, retry, journal recovery, device placement, LoomLink bridge; **HMAC-signed node requests/responses + content-addressed `/blob/<sha256>` transfer since 0.7.14** (`forge cluster keygen`); **optional TLS 1.3 + mTLS since 0.9.1** (`forge cluster tls-keygen`, `--tls-dir`, private fleet CA; C-99). No real two-machine run yet (docs/cluster-lan-runbook.md) |
 | **GroundWeave** | Weave | GPU→CPU fallback ladder | C8 | **real (C8)**: `content/groundweave/ladder.yaml`, `forge/groundweave.py`, `forge groundweave …`; CPU rungs real, every GPU rung `planned` (no GPU backend built); enforced by the pipeline. PocketLoom applies the rule locally (C2) |
 | **MirrorWeave** | Mirror | Cross-device control/stream | C9 | stills, CPU VP8/VP9 video, X11 capture, signed WS, Studio input real; Android capture/H.264/input/focus `real_unverified_on_device` |
 | **LoomLink** | Link | PocketLoom↔desktop pairing | C5 | **real (C5/C6)**: one-time code + `loomlink://` QR URI + Tailscale address, HMAC-SHA256 mutual proof, capability ∩, signed requests; offload + version-vector sync (`forge link serve`, `forge/loomlink.py`, `fabric.core.LoomLinkClient`). No TLS/PAKE yet |
@@ -80,3 +80,7 @@ Fabric-themed names from ASSETFABRIC_SPEC §4.5. Status column reflects what is 
 | `forge build --sandbox auto` | Every generator job sandboxed; output identical |
 | `forge live set k=v …` / `sprite <id>` / `push` / `watch` | Ticket acked `committed` by a running game |
 | `forge live serve` | Game under guardian; crash/hang → restart + resume |
+
+## Hardware verification kit (0.9.1)
+
+`scripts/verify-hardware/` — `verify-windows.ps1` (Windows smoke + timed playtest), `verify_android.py` (adb: install, launch, on-device autoplay, logcat), `verify_web.py` (public HTTPS host, both Web builds, headless Chrome), `hwreport.py` (report check / checklist answers). Guide: docs/hardware-verification.md. Exercised on the build box only (pwsh on Linux, fake adb, loopback Web) — real-hardware status unchanged until a report passes.
