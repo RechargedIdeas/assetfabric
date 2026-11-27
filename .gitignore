@@ -50,3 +50,4 @@ companions/pocketloom/**/build/
 # Model weights (fetched with SHA-256 by `forge models fetch`, never committed)
 store/models/**
 !store/models/.gitkeep
+/hw-reports/

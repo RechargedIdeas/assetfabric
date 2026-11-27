@@ -1,0 +1,148 @@
+{
+  "format": "assetfabric-hw-checklists",
+  "schema": 1,
+  "note": "Manual items a person answers during a hardware run. Sources: docs/acceptance-tests/F6.md §Human playtest, D-002 (PocketLoom on the Redmi Note 12 Pro 5G), C9-C12.md §Not proven, packaging.md. Scripts copy them into the report with answer=null until the tester answers.",
+  "playtest": [
+    {
+      "id": "slice_length",
+      "ask": "Minutes from character select to the open-world exit (first-time player; target 15-20)",
+      "kind": "number"
+    },
+    {
+      "id": "hud_readable",
+      "ask": "HUD, quest log and freeze overlay readable at 1x and 2x scale",
+      "kind": "yes_no"
+    },
+    {
+      "id": "controls",
+      "ask": "Controls work: E interact, H salve (one per press), Tab freeze + 1-4 swap, Q tactic, / typed command",
+      "kind": "yes_no"
+    },
+    {
+      "id": "gamepad",
+      "ask": "A gamepad drives the menus, Settings and play",
+      "kind": "yes_no"
+    },
+    {
+      "id": "settings",
+      "ask": "Settings: rebinding, colour-blind palette, display style, scanlines, diagnostics toggle (default Off) all work",
+      "kind": "yes_no"
+    },
+    {
+      "id": "music",
+      "ask": "Music fades and layer changes feel right (explore -> tension -> combat -> boss)",
+      "kind": "yes_no"
+    },
+    {
+      "id": "art",
+      "ask": "Farm plots, bench, gather nodes and the lair seal are legible",
+      "kind": "yes_no"
+    },
+    {
+      "id": "threat",
+      "ask": "Trash packs feel like fights; did you wipe at the Warden? (how many times)",
+      "kind": "text"
+    },
+    {
+      "id": "save_resume",
+      "ask": "Quit at a checkpoint and relaunch: the run resumes where you left it",
+      "kind": "yes_no"
+    },
+    {
+      "id": "names_numbers",
+      "ask": "Game-Design sign-off on economy / loot / quest names and numbers (D-005) — notes",
+      "kind": "text"
+    }
+  ],
+  "android_game": [
+    {
+      "id": "game_launches",
+      "ask": "Game Zero launches to the select screen in landscape",
+      "kind": "yes_no"
+    },
+    {
+      "id": "game_touch_or_pad",
+      "ask": "Playable with a Bluetooth/USB gamepad (touch controls are not built)",
+      "kind": "yes_no"
+    },
+    {
+      "id": "game_save_resume",
+      "ask": "Quit at a checkpoint, swipe the app away, relaunch: the run resumes",
+      "kind": "yes_no"
+    },
+    {
+      "id": "game_fps_feel",
+      "ask": "Frame pacing feels smooth in the deep cave and the boss fight",
+      "kind": "yes_no"
+    }
+  ],
+  "android_pocketloom": [
+    {
+      "id": "loom_launches",
+      "ask": "PocketLoom opens without a crash",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_offline_generate",
+      "ask": "Generate an asset offline (airplane mode on)",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_qr_pairing",
+      "ask": "Pair with the desktop: `forge link serve` QR scanned, pairing accepted",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_drain_sync",
+      "ask": "Queued jobs drain to the desktop and results sync back",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_capture",
+      "ask": "Camera capture (Camera2 focus/video) works",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_mediaprojection",
+      "ask": "MirrorWeave screen capture (MediaProjection) streams to the desktop",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_remote_input",
+      "ask": "MirrorWeave remote input (AccessibilityService) works after enabling it in system settings",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_arcore",
+      "ask": "ARCore session + depth start (device supports ARCore)",
+      "kind": "yes_no"
+    },
+    {
+      "id": "loom_timings",
+      "ask": "Note on-device timings shown by PocketLoom (generation ms, sync ms)",
+      "kind": "text"
+    }
+  ],
+  "web": [
+    {
+      "id": "firefox",
+      "ask": "web (threads) boots and plays in Firefox on the public host",
+      "kind": "yes_no"
+    },
+    {
+      "id": "safari",
+      "ask": "web or web-nothreads boots and plays in Safari (macOS/iOS)",
+      "kind": "yes_no"
+    },
+    {
+      "id": "install_pwa",
+      "ask": "Install as an app (PWA) and play offline after closing the browser",
+      "kind": "yes_no"
+    },
+    {
+      "id": "save_persist",
+      "ask": "Save, close the tab, reopen: the save is still there",
+      "kind": "yes_no"
+    }
+  ]
+}
