@@ -181,5 +181,16 @@
   "retro.profile.off": "Modern (default)",
   "retro.profile.gz-native": "Retro — Fabric 320×180",
   "retro.profile.nes-style": "Retro — 8-bit console (NES-style)",
-  "retro.profile.gb-style": "Retro — handheld 4-shade (DMG-style)"
+  "retro.profile.gb-style": "Retro — handheld 4-shade (DMG-style)",
+  "liveops.flag.retro_styles": "Retro display styles",
+  "liveops.flag.retro_styles.note": "Console-style display profiles in Settings. Off: the modern display is used.",
+  "liveops.flag.adaptive_music": "Adaptive music",
+  "liveops.flag.adaptive_music.note": "Music follows exploration, tension, combat and boss states. Off: ambient only.",
+  "liveops.flag.remote_balance": "Balance updates",
+  "liveops.flag.remote_balance.note": "Signed balance updates installed with the game. Off: shipped values only.",
+  "liveops.flag.diagnostics": "Share diagnostics",
+  "liveops.flag.diagnostics.note": "Keep a local session record you can export. Nothing is sent anywhere.",
+  "liveops.status.defaults": "Shipped settings",
+  "liveops.status.bundle": "Update %d active",
+  "save.read_only_newer": "This save was made by a newer version of the game. It is kept safe and read-only."
 }

@@ -101,6 +101,13 @@ ops:
     note: F8 R1 data — CIELAB nearest-colour LUTs per console profile (NumPy, chunked; byte-identical at any core count).
     ladder:
       - {id: retro-lut-numpy, device: cpu, impl: real}
+  gen.liveops:
+    kind: liveops
+    budget_s_2core: 10
+    probe_brief: liveops_manifest
+    note: F9 LiveOps readiness manifest — flags with safe offline defaults + balance-knob ranges (pure Python, JSON).
+    ladder:
+      - {id: liveops-manifest-cpu, device: cpu, impl: real}
   retro.rom:
     budget_s_2core: 30
     probe_brief: "runtime:retro-rom"

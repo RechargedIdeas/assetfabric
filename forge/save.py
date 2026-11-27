@@ -146,3 +146,25 @@ FIXTURES: dict[str, dict[str, Any]] = {
            "world": {"area": "cave_boss", "cleared": ["boss_warden"], "bosses_defeated": ["cave_warden"],
                      "inventory": {}, "quests": {}, "flags": {}}},
 }
+
+
+# F9 (LiveOps readiness): save compatibility across build roll-forward / roll-back. A save written by a NEWER build
+# (version > CURRENT) is never migrated down and never overwritten — the game treats it as read-only (save.gd
+# `newer_than_build`), so rolling a device back to an older build cannot destroy progress ([INFERENCE F9-6]).
+def classify(save: Any) -> str:
+    """'current' | 'migratable' (older, migrates forward) | 'newer' (read-only on this build) | 'invalid'."""
+    if not isinstance(save, dict):
+        return "invalid"
+    try:
+        v = int(save.get("version", 1))
+    except (TypeError, ValueError):
+        return "invalid"
+    if v > CURRENT:
+        return "newer"
+    if v < CURRENT:
+        return "migratable" if v >= 1 else "invalid"
+    return "current" if not validate(save) else "invalid"
+
+
+def safe_to_overwrite(existing: Any) -> bool:
+    return classify(existing) != "newer"

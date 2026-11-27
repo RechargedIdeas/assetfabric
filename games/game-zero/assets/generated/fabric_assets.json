@@ -268,6 +268,29 @@
         "slice"
       ]
     },
+    "liveops_manifest": {
+      "files": {
+        "liveops.json": {
+          "res": "res://assets/generated/liveops/liveops.json",
+          "sha256": "2175bf1c89ad9d1b3846de75442e9e233cc0e2bd98361ccb5a3ef14dbc7bcd79"
+        }
+      },
+      "kind": "liveops",
+      "meta": {
+        "flags": [
+          "adaptive_music",
+          "diagnostics",
+          "remote_balance",
+          "retro_styles"
+        ],
+        "kind": "liveops",
+        "knobs": 26
+      },
+      "tags": [
+        "liveops",
+        "f9"
+      ]
+    },
     "mat_cave_stone": {
       "files": {
         "mat_cave_stone_albedo.png": {

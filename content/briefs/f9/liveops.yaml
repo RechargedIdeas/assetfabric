@@ -1,0 +1,8 @@
+# F9 brief — LiveOps readiness manifest: feature flags / kill switches with safe offline defaults + the balance-knob
+# table (= F4 tune limits) → assets/generated/liveops/liveops.json, read by the game's LiveOps autoload.
+briefs:
+  - id: liveops_manifest
+    kind: liveops
+    export_dir: liveops
+    max_ms: 5000
+    tags: [liveops, f9]

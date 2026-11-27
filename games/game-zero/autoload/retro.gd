@@ -71,6 +71,8 @@ func scale() -> int:
 func set_profile(p: String) -> String:
 	if not profiles.has(p):
 		p = "off"
+	if p != "off" and not LiveOps.enabled("retro_styles"):
+		p = "off"          # F9 kill switch (content/liveops/flags.yaml) — the modern display is always available
 	profile = p
 	refresh()
 	changed.emit(p)

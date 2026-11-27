@@ -9,7 +9,7 @@ config_version=5
 
 config/name="Game Zero"
 config/description="AssetFabric MVP — 8-bit fighter/farming hybrid"
-config/version="0.8.0+f8"
+config/version="0.9.0+f9"
 run/main_scene="res://scenes/boot.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -17,11 +17,12 @@ config/icon="res://icon.svg"
 [autoload]
 
 Fabric="*res://autoload/fabric.gd"
+Live="*res://autoload/live.gd"
+LiveOps="*res://autoload/liveops.gd"
 A11y="*res://autoload/a11y.gd"
 Retro="*res://autoload/retro.gd"
 GIRT="*res://autoload/girt.gd"
 CascadeHub="*res://autoload/cascade_hub.gd"
-Live="*res://autoload/live.gd"
 Save="*res://autoload/save.gd"
 
 [display]

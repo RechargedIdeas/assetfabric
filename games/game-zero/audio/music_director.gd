@@ -53,6 +53,8 @@ func set_biome(b: String, tick: int) -> void:
 
 
 func set_state(s: String, tick: int) -> void:
+	if not LiveOps.enabled("adaptive_music"):
+		s = "explore"      # F9 kill switch — music stays on the exploration mix
 	if s == state:
 		return
 	state = s

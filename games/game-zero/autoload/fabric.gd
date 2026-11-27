@@ -401,6 +401,10 @@ func _load_game_data() -> void:
 			abilities[id] = game_data["abilities"][id]
 		else:
 			abilities[id] = res.to_dict()
+	# F9: a remote-config overlay (LiveOps) survives a game-data reload (F4 hot reload / forge build)
+	var lo := get_node_or_null("/root/LiveOps")
+	if lo != null:
+		lo.reapply()
 
 
 ## Runtime WAV loader (Godot 4.3 has no AudioStreamWAV.load_from_file).

@@ -1,0 +1,40 @@
+# F9 LiveOps readiness (ASSETFABRIC_SPEC §12 "LiveOps readiness: remote config / feature flags (launch content deferred)";
+# §13 F9 "LiveOps foundation — readiness only"; GAME_SPEC §5 "Live seasonal content (remote config readiness OK)",
+# §8 "Remote config hooks for balance knobs").
+#
+# Every flag has a SAFE OFFLINE DEFAULT: with no config bundle (or a bad one) the game behaves exactly like 0.8.0+f8.
+# Bundles are local files only — the game never fetches anything (G-NET-01). See docs/liveops-runbook.md.
+#
+# kinds:
+#   kill_switch  — default true (feature on); a signed bundle may turn it off without a rebuild.
+#   consent      — the PLAYER's decision; default false; a bundle can NEVER set it ([INFERENCE F9-4]).
+# Balance knobs are not listed here: they are exactly the F4 live-tune rules (content/tune/limits.yaml) — the same
+# numeric leaves with the same ranges, validated by forge and again by the game (defense in depth).
+schema_version: "1.0"
+bundle_format: gamezero-liveops
+bundle_schema: 1
+flags:
+  retro_styles:
+    kind: kill_switch
+    default: true
+    label_key: liveops.flag.retro_styles
+    note_key: liveops.flag.retro_styles.note
+    gates: "Retro.set_profile — when off the display style is forced to modern (F8 profiles hidden)"
+  adaptive_music:
+    kind: kill_switch
+    default: true
+    label_key: liveops.flag.adaptive_music
+    note_key: liveops.flag.adaptive_music.note
+    gates: "MusicDirector.set_state — when off music stays on the ambient stem (no tension/combat/boss crossfades)"
+  remote_balance:
+    kind: kill_switch
+    default: true
+    label_key: liveops.flag.remote_balance
+    note_key: liveops.flag.remote_balance.note
+    gates: "LiveOps.apply — when off a bundle's balance patches are ignored (its flags still apply)"
+  diagnostics:
+    kind: consent
+    default: false
+    label_key: liveops.flag.diagnostics
+    note_key: liveops.flag.diagnostics.note
+    gates: "LiveOps.write_diagnostics — local session record only, written only when the player opts in"

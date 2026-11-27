@@ -10,7 +10,10 @@ const CURRENT := 4
 const TICK_HZ := 60
 
 var dir := ""
-var last_load := {}     # diagnostics of the last load(): {ok, migrated_from, recovered_from_backup, errors}
+var last_load := {}     # diagnostics of the last load(): {ok, migrated_from, recovered_from_backup, errors, newer_than_build}
+## F9: true once a slot holding a save from a NEWER build was seen — such a save is never migrated down and never
+## overwritten (rolling a device back to an older build must not destroy progress; forge/save.py `classify`).
+var read_only := false
 
 
 func _ready() -> void:
@@ -187,6 +190,10 @@ func write(save: Dictionary, slot: String = "slot0") -> String:
 	s["version"] = CURRENT
 	s["checksum"] = checksum(s)
 	var p := path(slot)
+	if int(_read(p).get("version", 0)) > CURRENT:
+		read_only = true
+		push_warning("SaveSystem: %s was written by a newer build — kept read-only, not overwritten" % p.get_file())
+		return ""
 	var tmp := p + ".tmp"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
@@ -210,12 +217,18 @@ func _read(p: String) -> Dictionary:
 
 ## Load (+ migrate) a slot; falls back to the backup on a torn/tampered primary.
 func load_slot(slot: String = "slot0", apply_settings: bool = true) -> Dictionary:
-	last_load = {"ok": false, "migrated_from": [], "recovered_from_backup": false, "errors": []}
+	last_load = {"ok": false, "migrated_from": [], "recovered_from_backup": false, "errors": [], "newer_than_build": false}
 	for candidate in [path(slot), path(slot) + ".bak"]:
 		var raw := _read(candidate)
 		if raw.is_empty():
 			last_load["errors"].append("%s: unreadable" % candidate.get_file())
 			continue
+		if int(raw.get("version", 1)) > CURRENT:
+			# F9: never fall back to an older .bak behind a newer primary (that would later overwrite it)
+			last_load["newer_than_build"] = true
+			last_load["errors"].append("%s: written by a newer build (v%d > v%d) — read-only" % [candidate.get_file(), int(raw["version"]), CURRENT])
+			read_only = true
+			return {}
 		if int(raw.get("version", 1)) == CURRENT and str(raw.get("checksum", "")) != checksum(raw):
 			last_load["errors"].append("%s: checksum mismatch" % candidate.get_file())
 			continue
