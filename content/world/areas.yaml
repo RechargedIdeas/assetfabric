@@ -10,7 +10,9 @@ areas:
     links: {E: {to: tunnels, arrive: S}}
     nodes: {G: flint}
     packs:
-      - {spawn: 0, units: [{ref: emberling, count: 2}]}
+      # P7 (0.7.15, C-98): was 2 emberlings — cleared in 0.63 s median for the fastest selection (under the 1 s trash
+      # floor); a cave mite strayed out of the tunnels makes the first fight a fight
+      - {spawn: 0, units: [{ref: emberling, count: 2}, {ref: cave_mite, count: 1}]}
   - id: tunnels                 # GAME_SPEC §4.4 biomes: caves, tunnels, open world
     tilemap: tunnels_01
     biome: cave
@@ -60,6 +62,7 @@ areas:
     links: {S: {to: warden_lair, arrive: E}, E: {to: field, arrive: E}}
     nodes: {G: flint}
     packs:
-      - {spawn: 0, units: [{ref: emberling, count: 3}]}
+      # P7 (0.7.15, C-98): was 3 emberlings — 1.02 s median at level 4, on the trash floor; one cave mite more
+      - {spawn: 0, units: [{ref: emberling, count: 3}, {ref: cave_mite, count: 1}]}
       - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 2}]}
       - {spawn: 2, units: [{ref: rock_brute, count: 2}, {ref: cave_mite, count: 2}]}    # ridge warband (tier-2 elite group)

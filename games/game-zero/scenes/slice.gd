@@ -350,7 +350,23 @@ func _active_packs_cleared() -> bool:
 	return true
 
 
+## P7 (0.7.15): the state a world fight starts from — party levels + pet, item/buff bonuses, every party member's HP
+## (carried between fights) and the tilemap — so `forge worldfights` can replay the same fight over many seeds.
+## Diagnostics only: nothing here feeds back into the run.
+func _fight_context() -> Dictionary:
+	var hp := {}
+	for e in sim.entities:
+		if e.team == 0:
+			hp[e.id] = maxi(0, e.hp)
+	var ctx := {"tilemap": str(area_def["tilemap"]), "party": ws.party_def(), "bonus": encounter.get("bonus", {}),
+		"hp": hp, "packs": []}
+	if _boss_built:
+		ctx["encounter"] = str(area_def["encounter"])
+	return ctx
+
+
 func _update_combat() -> void:
+	var engaged_packs := []
 	var near := false
 	var tension := false
 	var boss := false
@@ -366,13 +382,17 @@ func _update_combat() -> void:
 			near = true
 			if h.tier >= 3:
 				boss = true
+			engaged_packs.append(int(h.get_meta("pack", -1)))
 		elif d <= tr_range:
 			tension = true
 	if near:
 		_calm = 0
 		if not in_combat:
 			in_combat = true
-			_fight = {"area": ws.area, "start": ws.tick, "kills": 0, "boss": false, "swap": false}
+			_fight = {"area": ws.area, "start": ws.tick, "kills": 0, "boss": false, "swap": false, "ctx": _fight_context()}
+		for pk in engaged_packs:        # P7: which packs this fight pulled (world-fight Monte Carlo context)
+			if not _fight["ctx"]["packs"].has(pk):
+				_fight["ctx"]["packs"].append(pk)
 		if boss:
 			_fight["boss"] = true
 			if not _boss_engaged:

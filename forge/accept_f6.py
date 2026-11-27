@@ -10,6 +10,9 @@ craft → Cave Warden → open world → save) plus:
    2 representative selections, used by pytest/CI).
 3. Parity — Python twins replay the Godot quest trace (forge.world.QuestLog) and loot probe rolls
    (forge.world.roll_loot) exactly; save v1–v3 fixtures migrate to v4 identically.
+5. World fights (P7, 0.7.15) — every fight each selection actually fought is replayed from its recorded start state
+   over many seeds (forge/worldfights.py); wipe rate and engaged clear time must sit in the trash / elite / boss
+   bands of content/tune/worldfights.yaml (INFERENCE C-98) for every selection × fight.
 4. Static — Codegen-World gates (schema, cross-refs, quest-chart soft-lock analysis, economy
    solvability, loot tables, music rules) recorded in the registry; every locale key the slice uses exists.
 
@@ -153,9 +156,20 @@ def f6_run(root: Path) -> tuple[int, dict[str, Any]]:
             ms = o.get("slice", {})
             eco = slice_report(load_world(root), load_design(root), ms) if ms.get("ticks") else {"ok": False}
             return ({"leader": sel[0], "pet": sel[1], "exit": c, "script_errors": o["_script_errors"]} | _summary(ms)
-                    | {"economy_ok": eco.get("ok"), "levels": {k: v["level"] for k, v in eco.get("levels", {}).items()}})
+                    | {"economy_ok": eco.get("ok"), "levels": {k: v["level"] for k, v in eco.get("levels", {}).items()},
+                       "_fights": ms.get("fights", [])})
         with ThreadPoolExecutor(max_workers=max(1, min(4, (os.cpu_count() or 2)))) as ex:
-            result["matrix"] = {"mode": "fast" if fast_mode() else "full", "runs": list(ex.map(one, sels))}
+            runs = list(ex.map(one, sels))
+        fights_by_sel = {f"{x['leader']}+{x['pet']}": x.pop("_fights") for x in runs}
+        result["matrix"] = {"mode": "fast" if fast_mode() else "full", "runs": runs}
+        # P7 world-fight bands (0.7.15, C-98): replay every recorded fight of every selection over many seeds
+        from forge import worldfights
+
+        wcfg = worldfights.load_config(root)
+        wld = load_world(root)
+        units = {k: worldfights.fight_units(v, wld) for k, v in fights_by_sel.items()}
+        wf = worldfights.run(units, wcfg["seeds"]["fast" if fast_mode() else "full"], root)
+        result["world_fights"] = worldfights.summary(wf) | {"mode": "fast" if fast_mode() else "full"}
         # 3. parity with the Python twins
         w = load_world(root)
         ql, mism = QuestLog(w), []
@@ -253,6 +267,12 @@ def f6_check(r: dict[str, Any]) -> list[str]:
     _need(p.get("loot_probe_equal") is True, "loot probe rolls differ between GDScript and Python", errs)
     _need(bool(r.get("world_gates")) and all(v is True for v in r.get("world_gates", {}).values()), f"world gates: {r.get('world_gates')}", errs)
     _need(r.get("locale", {}).get("ok") is True, f"missing locale keys: {r.get('locale', {}).get('missing')}", errs)
+    # P7 world-fight wipe-rate / clear-time bands (content/tune/worldfights.yaml, C-98), every selection × fight
+    wfr = r.get("world_fights", {})
+    wv = wfr.get("verdict", {})
+    _need(wv.get("ok") is True, f"world-fight bands: {wv.get('checks')} {wv.get('out_of_band', [])[:6]} errors={wfr.get('errors')}", errs)
+    _need(sum((c or {}).get("cells", 0) for c in (wfr.get("classes") or {}).values()) >= 18 * len(runs),
+          f"world-fight MC covered too few fights: {wfr.get('classes')}", errs)
     return errs
 
 
@@ -272,4 +292,9 @@ def f6_perf(r: dict[str, Any]) -> dict[str, Any]:
                            "bot game time is the machine-efficiency floor, reported as-is; a human GUI playtest replaces the model",
             "matrix_game_minutes": [x.get("game_minutes") for x in runs],
             "matrix_wipes": sum(x.get("wipes") or 0 for x in runs),
+            "world_fights_wall_s": r.get("world_fights", {}).get("wall_s"),
+            "world_fights_encounters": r.get("world_fights", {}).get("encounters"),
+            "world_fights_classes": {k: {"wipe_rate_max": v["wipe_rate_range"][1], "clear_median_s": v["clear_median_range_s"],
+                                         "clear_p90_max_s": v["clear_p90_max_s"]}
+                                     for k, v in (r.get("world_fights", {}).get("classes") or {}).items()},
             "swap_wall_ms": [x.get("wall_ms") for x in s.get("swaps", [])]}

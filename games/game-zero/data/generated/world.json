@@ -160,6 +160,10 @@
       {
        "count": 2,
        "ref": "emberling"
+      },
+      {
+       "count": 1,
+       "ref": "cave_mite"
       }
      ]
     }
@@ -279,6 +283,10 @@
       {
        "count": 3,
        "ref": "emberling"
+      },
+      {
+       "count": 1,
+       "ref": "cave_mite"
       }
      ]
     },

@@ -1,0 +1,29 @@
+# P7 (0.7.15) world-fight bands — INFERENCE C-98. GAME_SPEC names no wipe-rate or clear-time numbers (only §4.4 "bosses
+# + trash mobs with tier system", §5 G-BAL-01 and §6.1 15–20 min). These bands are our design intent for the slice and
+# are gated by `forge accept F6` (forge/worldfights.py). A fight is replayed from the state the slice met it in
+# (levels, gear/buffs, carried HP, its packs, its tilemap) over many seeds; times are from the first landed hit.
+schema_version: "1.0"
+tick_hz: 60
+seeds:                            # per (selection, fight); full = 12 selections, fast (pytest/CI) = 2 selections
+  full: {world: 30, boss: 100}
+  fast: {world: 8, boss: 24}
+seed_base: 70000                  # never used by balance fits (50 000+), the G-BAL-01 seeds (1000) or the hold-out (20 000)
+variance: 0.20                    # same dice as the slice (slice.gd _area_encounter)
+crit: 0.10
+tick_limit: 3600                  # 60 s: a world fight still running is a timeout (counted as a failure)
+# A fight's class: boss = the Warden's lair encounter; elite = ≥ 2 tier-2 units pulled together; trash = everything else.
+elite_min_tier2: 2
+bands:
+  # Checked per selection × fight. wipe_rate: [min, max] of P(party wipe); clear_s: [min, max] of the *median* engaged
+  # clear time, and p90 ≤ clear_p90_max_s. Bands are per pack: a pull of k packs may take k × the upper time bounds.
+  # Floors exist so "in band" cannot mean "trivial": a world fight shorter than one second of engaged combat is over
+  # before the 8-bit read of a fight (two or three attack cycles) and gives the farm-to-cave loop no tension.
+  trash: {wipe_rate: [0.0, 0.02], clear_s: [1.0, 6.0], clear_p90_max_s: 9.0}
+  elite: {wipe_rate: [0.0, 0.06], clear_s: [2.0, 9.0], clear_p90_max_s: 13.0}
+  # The slice Warden is met at level 4 with crafted gear + tonic — "a deliberately forgiving first boss for a
+  # first-time player" (Q5, economy_design.yaml, C-93); the hard tuning point stays G-BAL-01 (level 3, no gear,
+  # 0.55–0.90 win rate, F5-2). So the slice band caps the wipe rate and requires a real fight (≥ 8 s), no floor.
+  boss:  {wipe_rate: [0.0, 0.10], clear_s: [8.0, 30.0], clear_p90_max_s: 40.0}
+# Whole-slice: P(at least one wipe in one playthrough) from the per-fight rates of one selection (independence assumed).
+slice_wipe_any_max: 0.30
+# Every selection (leader × pet) must sit inside the bands, not only the pooled fight.

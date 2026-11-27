@@ -22,8 +22,10 @@ func _ready() -> void:
 		push_error("balance: cannot read %s" % path)
 		get_tree().quit(2)
 		return
-	var base: Dictionary = Fabric.read_json("res://data/encounters/%s.json" % spec["encounter"])
-	var layout = Fabric.json_asset(base["tilemap"])
+	# P7 (0.7.15): an inline `encounter_def` (world packs have no encounter file) and per-job `patch` (hostiles,
+	# tilemap, party bonus) + `start_hp` (HP carried into the fight) let `forge worldfights` replay slice fights.
+	var base: Dictionary = spec["encounter_def"] if spec.has("encounter_def") else Fabric.read_json("res://data/encounters/%s.json" % spec["encounter"])
+	var layouts := {}
 	var trees: Dictionary = Fabric.read_json("res://data/ai/behaviour_trees.json")["trees"]
 	var t0 := Time.get_ticks_usec()
 	var cache := {}     # overrides signature -> [data, abilities]
@@ -35,6 +37,12 @@ func _ready() -> void:
 		var data: Dictionary = cache[sig][0]
 		var abilities: Dictionary = cache[sig][1]
 		var enc := base.duplicate(true)
+		var patch: Dictionary = job.get("patch", {})
+		for k in patch:
+			enc[k] = patch[k]
+		if not layouts.has(enc["tilemap"]):
+			layouts[enc["tilemap"]] = Fabric.json_asset(enc["tilemap"])
+		var layout = layouts[enc["tilemap"]]
 		enc["seed"] = int(job["seed"])
 		enc["variance"] = float(spec.get("variance", 0.1))
 		enc["crit"] = float(spec.get("crit", 0.1))
@@ -45,9 +53,13 @@ func _ready() -> void:
 			var segs := str(p["path"]).split(".")
 			if segs[0] == "sim":
 				sim.set(segs[1], float(p["value"]))
+		var start_hp: Dictionary = job.get("start_hp", {})
+		for e in sim.entities:
+			if e.team == 0 and start_hp.has(e.id):     # downed members got up at REVIVE_FRAC in the slice (F6-5)
+				e.hp = clampi(int(start_hp[e.id]), 1, e.max_hp)
 		var brain = Brain.new(trees)
 		sim.brain_override = brain.tick
-		var limit := int(base.get("tick_limit", 18000))
+		var limit := int(enc.get("tick_limit", 18000))
 		var outcome := "running"
 		while true:
 			sim.step({})
@@ -62,7 +74,10 @@ func _ready() -> void:
 				break
 		var boss_phase := 0
 		var deaths := []     # F6 diagnostics: party death order [id, tick]
+		var engage := -1     # P7: first landed hit (either side) — clear time is measured from here
 		for ev in sim.events:
+			if engage < 0 and ev["type"] == "hit":
+				engage = int(ev["tick"])
 			if ev["type"] == "defeated" and int(ev.get("target_team", 1)) == 0:
 				deaths.append([ev["target"], int(ev["tick"])])
 		var party_hp := 0
@@ -74,7 +89,7 @@ func _ready() -> void:
 				party_hp += e.hp
 				party_max += e.max_hp
 		print("BALANCE_RESULT " + JSON.stringify({"id": job["id"], "seed": job["seed"], "outcome": outcome, "ticks": sim.tick,
-			"boss_phase": boss_phase, "leader_alive": sim.leader() != null and sim.leader().is_leader, "summons": sim.summons, "party_hp_ratio": snappedf(float(party_hp) / maxf(1.0, party_max), 0.001), "deaths": deaths}))
+			"boss_phase": boss_phase, "leader_alive": sim.leader() != null and sim.leader().is_leader, "summons": sim.summons, "party_hp_ratio": snappedf(float(party_hp) / maxf(1.0, party_max), 0.001), "deaths": deaths, "engage_tick": engage}))
 		n += 1
 	print("BALANCE_DONE %d %.1f" % [n, (Time.get_ticks_usec() - t0) / 1000.0])
 	get_tree().quit(0)
