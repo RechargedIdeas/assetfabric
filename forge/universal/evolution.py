@@ -78,15 +78,14 @@ class Store:
 
 
 def active_recipe(family: str, root: Path | None = None, state_dir: Path | None = None) -> dict[str, Any] | None:
-    """The promoted recipe for `family` (None when nothing was ever promoted — callers then use their default)."""
+    """The recipe production code uses for `family`: the active promoted version, or the committed baseline (version 1)
+    when nothing was promoted / after a rollback to 1. Single source of truth for builds AND benchmarks."""
     s = Store(root, state_dir)
-    if not s.path.exists():
-        return None
-    st = s.load()
-    f = st["families"].get(family)
-    if not f or f["active"] == 1:
-        return None
-    return next(v["recipe"] for v in f["versions"] if v["version"] == f["active"])
+    if s.path.exists():
+        f = s.load()["families"].get(family)
+        if f and f["active"] != 1:
+            return dict(next(v["recipe"] for v in f["versions"] if v["version"] == f["active"]))
+    return dict(baseline_recipe(family, root))
 
 
 # ----------------------------------------------------------------------------- benchmark suites
@@ -165,7 +164,7 @@ def eval_parametric(recipe: dict[str, Any], root: Path | None = None, templates:
         tree = csg.resolve(t["tree"], params)
         lo, hi = csg.bounds(tree)
         rec = csg.MeshRecipe(cell=float(np.max(hi - lo)) * float(recipe["cell_frac"]), newton_steps=int(recipe["newton_steps"]))
-        m = csg.polygonize(tree, rec)
+        m, _, passes = openscad.polygonize_within_budget(tree, rec, int(t["tri_budget"]))   # exactly the production path
         v = M.validate(m)
         rel = abs(v["volume"] - refs[tid]["volume"]) / refs[tid]["volume"]
         ratio = m.n_triangles / float(t["tri_budget"])
@@ -173,10 +172,11 @@ def eval_parametric(recipe: dict[str, Any], root: Path | None = None, templates:
         budget &= ratio <= 1.0
         errs.append(rel)
         ratios.append(ratio)
-        per[tid] = {"rel_volume_error": round(rel, 6), "triangles": m.n_triangles, "tri_budget": t["tri_budget"]}
+        per[tid] = {"rel_volume_error": round(rel, 6), "triangles": m.n_triangles, "tri_budget": t["tri_budget"],
+                    "budget_passes": passes}
     wall = time.perf_counter() - t0
     obj = float(np.mean(errs) + 0.02 * np.mean(ratios))
-    gates = {"manifold_watertight": manifold, "tri_budget_first_pass": budget,
+    gates = {"manifold_watertight": manifold, "within_tri_budget": budget,
              "max_rel_volume_error": max(errs) <= float(gcfg["max_rel_volume_error"]),
              "suite_wall_s": wall <= float(gcfg["suite_wall_s"])}
     return Evaluation(dict(recipe), obj, gates, {"per_template": per, "mean_rel_volume_error": round(float(np.mean(errs)), 6),
@@ -206,15 +206,8 @@ def eval_normals(recipe: dict[str, Any], root: Path | None = None, gates_cfg: di
     t0 = time.perf_counter()
     errs, finite, unit = [], True, True
     for alpha, n_true in _analytic_cases():
-        rec = maps2d.NormalRecipe(blur=int(recipe["blur"]), strength=1.0, dome=float(recipe["dome"]))
-        h = maps2d.height_from_alpha(alpha, rec)
+        n, _ = maps2d.normals_for_silhouette(alpha, recipe)        # exactly the production path (Sprite Lamp packs)
         m = alpha > 0
-        dmax = 0.0
-        cur = m.copy()
-        while cur.any():          # inscribed radius in pixels (same erosion metric as height_from_alpha)
-            dmax += 1
-            cur = maps2d._erode4(cur)
-        n = maps2d.normals_from_height(h, float(recipe["relief"]) * dmax)
         finite &= bool(np.isfinite(n).all())
         unit &= bool(np.allclose(np.linalg.norm(n, axis=-1), 1.0, atol=1e-6))
         inner = m & maps2d._erode4(maps2d._erode4(m))       # ignore the 2-px rim (undefined slope at the silhouette)

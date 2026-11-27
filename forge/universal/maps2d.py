@@ -51,6 +51,26 @@ def height_from_alpha(alpha: np.ndarray, recipe: NormalRecipe = NormalRecipe()) 
     return np.where(m, h, 0.0)
 
 
+def inscribed_radius(alpha: np.ndarray) -> float:
+    """Largest 4-erosion depth of the silhouette in pixels (the same metric height_from_alpha uses)."""
+    cur, d = alpha > 0, 0.0
+    while cur.any():
+        d += 1
+        cur = _erode4(cur)
+    return d
+
+
+def normals_for_silhouette(alpha: np.ndarray, recipe: dict | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """Production 2D normal pipeline: silhouette → height → normals with relief relative to the inscribed radius.
+    `recipe` = {blur, relief, dome}; default: the active self-improvement recipe (baseline when none promoted)."""
+    if recipe is None:
+        from forge.universal import evolution
+        recipe = evolution.active_recipe("maps2d.normal")
+    rec = NormalRecipe(blur=int(recipe["blur"]), strength=1.0, dome=float(recipe["dome"]))
+    h = height_from_alpha(alpha, rec)
+    return normals_from_height(h, float(recipe["relief"]) * max(inscribed_radius(alpha), 1.0)), h
+
+
 def normals_from_height(h: np.ndarray, strength: float = 2.0) -> np.ndarray:
     """Unit normals (h, w, 3) as float (x right, y up, z out of the image) via central differences."""
     gx = np.zeros_like(h)

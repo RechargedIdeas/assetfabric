@@ -205,18 +205,23 @@ class SpriteLampAdapter(Adapter):
     formats = ("png-diffuse", "png-normal", "png-depth", "png-ambient-occlusion", "png-lighting-profiles")
     MAX_PROFILE_ERR_DEG = 12.0
 
-    def export(self, scene: ir.Scene, out: Path, recipe: maps2d.NormalRecipe | None = None) -> dict[str, Any]:
+    def export(self, scene: ir.Scene, out: Path, recipe: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Per-frame silhouette → height → normals with the active `maps2d.normal` self-improvement recipe (or `recipe`)."""
+        from forge.universal import evolution
         pk = Pack(out)
-        rec = recipe or maps2d.NormalRecipe()
+        rec = dict(recipe or evolution.active_recipe("maps2d.normal"))
         listing = []
         for sid in sorted(scene.sprites):
             sp = scene.sprites[sid]
             atlas = _atlas(scene, sp)
             alpha = atlas[..., 3]
             h = np.zeros(alpha.shape)
+            n = np.zeros((*alpha.shape, 3))
+            n[..., 2] = 1.0
             for (x, y, w, hh) in sp.frames:
-                h[y:y + hh, x:x + w] = maps2d.height_from_alpha(alpha[y:y + hh, x:x + w], rec)
-            n = maps2d.normals_from_height(h, rec.strength)
+                fn, fh = maps2d.normals_for_silhouette(alpha[y:y + hh, x:x + w], rec)
+                n[y:y + hh, x:x + w] = fn
+                h[y:y + hh, x:x + w] = fh
             nm = _safe(sid)
             pk.add(f"{nm}_Diffuse.png", png.encode(atlas))
             pk.add(f"{nm}_Normal.png", png.encode(maps2d.encode_normals(n, alpha)))
@@ -226,7 +231,7 @@ class SpriteLampAdapter(Adapter):
                 pk.add(f"{nm}_{pname}.png", png.encode(img))
             listing.append(nm)
         return pk.finish(self, scene, sprites=listing, normal_encoding="tangent space, OpenGL (+Y up)",
-                         recipe={"blur": rec.blur, "strength": rec.strength, "dome": rec.dome})
+                         recipe={k: rec[k] for k in sorted(rec)})
 
     def verify(self, out: Path) -> dict[str, Any]:
         out = Path(out)

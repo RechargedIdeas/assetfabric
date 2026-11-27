@@ -6,13 +6,13 @@ schema_version: "1.0"
 families:
   parametric.csg:
     description: "CSG fallback polygonisation (cell size as a fraction of the model extent + Newton projection steps)"
-    objective: "minimise mean |V_mesh - V_ref| / V_ref + 0.02 · mean(triangles / tri_budget) over the template suite"
+    objective: "minimise mean |V_mesh - V_ref| / V_ref + 0.02 · mean(triangles / tri_budget) over the template suite (V_ref: OpenSCAD $fn=128)"
     params:
-      cell_frac:    {value: 0.04, min: 0.008, max: 0.05, step_mul: 1.25}
-      newton_steps: {value: 0, min: 0, max: 3, step: 1, int: true}
+      cell_frac:    {value: 0.015625, min: 0.008, max: 0.05, step_mul: 1.25}
+      newton_steps: {value: 1, min: 0, max: 3, step: 1, int: true}
     gates:
       manifold_watertight: "every suite mesh is a closed, consistently oriented 2-manifold"
-      tri_budget_first_pass: "the recipe itself stays inside every template's triangle budget (no budget re-polygonisation)"
+      within_tri_budget: "every final mesh (after the production budget coarsening) is inside its template's triangle budget"
       max_rel_volume_error: 0.05
       suite_wall_s: 60
   maps2d.normal:

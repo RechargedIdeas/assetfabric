@@ -1,0 +1,526 @@
+{
+  "description": "Universal engine: one IR for 2D/2.5D/3D with coordinate conventions, parametric templates through the real OpenSCAD CLI + NumPy CSG fallback, tiered adapters (Godot/Blender native, OpenSCAD CLI bridge, Unreal/Unity/RPG Maker/Sprite Lamp/... interchange packs, photogrammetry + 3DGS), Wikipedia-derived engines catalog, benchmark-gated self-improvement with rollback, sandboxed plugins + gap detector",
+  "errors": [],
+  "increment": "universal-engine",
+  "milestone": "U1",
+  "passed": true,
+  "perf": {
+    "adapters_demo_s": 6.97,
+    "openscad_vs_fallback_rel_diff": {
+      "barrel": 0.00322,
+      "cog": 0.00393,
+      "crate": 0.00234,
+      "pillar": 0.00469
+    },
+    "plugin_verify_s": 0.35,
+    "timings_s": {
+      "adapters": 9.78,
+      "catalog": 0.14,
+      "evolution": 14.5,
+      "ir": 0.18,
+      "parametric": 16.93,
+      "plugins": 2.16
+    }
+  },
+  "result": {
+    "adapters": {
+      "availability": {
+        "blender": true,
+        "godot": true,
+        "openscad": true
+      },
+      "by_adapter": [
+        [
+          "appgamekit",
+          "interchange_pack"
+        ],
+        [
+          "atlas2d",
+          "interchange_pack"
+        ],
+        [
+          "blender",
+          "native_verified"
+        ],
+        [
+          "catalog-generic",
+          "interchange_pack"
+        ],
+        [
+          "clickteam",
+          "interchange_pack"
+        ],
+        [
+          "colmap",
+          "interchange_pack"
+        ],
+        [
+          "construct",
+          "interchange_pack"
+        ],
+        [
+          "gltf",
+          "interchange_pack"
+        ],
+        [
+          "godot",
+          "native_verified"
+        ],
+        [
+          "meshpack-agfpro",
+          "interchange_pack"
+        ],
+        [
+          "meshpack-coppercube",
+          "interchange_pack"
+        ],
+        [
+          "meshpack-esenthel",
+          "interchange_pack"
+        ],
+        [
+          "meshpack-gameguru",
+          "interchange_pack"
+        ],
+        [
+          "meshpack-raysupreme",
+          "interchange_pack"
+        ],
+        [
+          "openscad",
+          "cli_bridge"
+        ],
+        [
+          "rpgmaker",
+          "interchange_pack"
+        ],
+        [
+          "splats",
+          "interchange_pack"
+        ],
+        [
+          "spritelamp",
+          "interchange_pack"
+        ],
+        [
+          "unity",
+          "interchange_pack"
+        ],
+        [
+          "unreal",
+          "interchange_pack"
+        ]
+      ],
+      "counts": {
+        "adapters": 23,
+        "exports": 33,
+        "exports_ok": 33,
+        "imports": 10,
+        "imports_ok": 10,
+        "native_ok": 6,
+        "native_ran": 6
+      },
+      "demo_s": 6.97,
+      "deterministic": true,
+      "failures": [],
+      "native": {
+        "blender/2.5d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "blender",
+          "version": "Blender 4.3.2"
+        },
+        "blender/3d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "blender",
+          "version": "Blender 4.3.2"
+        },
+        "godot/2.5d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "godot",
+          "version": "4.3.stable.official.77dcf97d8"
+        },
+        "godot/2d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "godot",
+          "version": "4.3.stable.official.77dcf97d8"
+        },
+        "godot/3d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "godot",
+          "version": "4.3.stable.official.77dcf97d8"
+        },
+        "openscad/3d": {
+          "ok": true,
+          "ran": true,
+          "reason": null,
+          "tool": "openscad",
+          "version": "OpenSCAD version 2021.01"
+        }
+      },
+      "nondeterministic": []
+    },
+    "catalog": {
+      "by_tier": {
+        "cli_bridge": 1,
+        "descriptor_only": 76,
+        "interchange_pack": 120,
+        "native_verified": 3
+      },
+      "entries_total": 200,
+      "errors": [],
+      "named_tools": 28,
+      "ok": true,
+      "wikipedia_unique": 178
+    },
+    "evolution": {
+      "normals": {
+        "baseline_objective_deg": 25.3601,
+        "promoted_objectives_deg": [
+          19.3687,
+          11.6132,
+          4.043
+        ],
+        "versions": 4
+      },
+      "parametric": {
+        "baseline": {
+          "cell_frac": 0.015625,
+          "newton_steps": 1
+        },
+        "baseline_objective": 0.018376,
+        "candidates": 7,
+        "gate_violator_rejected": "gate failed: max_rel_volume_error",
+        "promoted": {
+          "objective": 0.016971,
+          "recipe": {
+            "cell_frac": 0.01953125,
+            "newton_steps": 2
+          }
+        },
+        "regression_rejected": "no strict improvement (0.0200155 vs active 0.0183764)"
+      },
+      "rollback": {
+        "active": 1,
+        "previous": 2,
+        "production_used_promoted": true,
+        "restored_baseline": true
+      }
+    },
+    "groundweave": {
+      "ok": true,
+      "ops": [
+        "gen.parametric",
+        "universal.export"
+      ],
+      "problems": []
+    },
+    "ir": {
+      "2.5d": {
+        "convention": "gltf",
+        "json_digest_equal": true,
+        "max_world_err_after_roundtrip": {
+          "blender": 0.0,
+          "unity": 0.0,
+          "unreal": 0.0
+        },
+        "nodes": 10,
+        "valid": true
+      },
+      "2d": {
+        "convention": "gltf",
+        "json_digest_equal": true,
+        "max_world_err_after_roundtrip": {
+          "blender": 0.0,
+          "unity": 0.0,
+          "unreal": 0.0
+        },
+        "nodes": 2,
+        "valid": true
+      },
+      "3d": {
+        "convention": "gltf",
+        "json_digest_equal": true,
+        "max_world_err_after_roundtrip": {
+          "blender": 0.0,
+          "unity": 0.0,
+          "unreal": 1.1102230246251565e-16
+        },
+        "nodes": 14,
+        "valid": true
+      }
+    },
+    "parametric": {
+      "openscad": "OpenSCAD version 2021.01",
+      "override_cog_teeth20": {
+        "backend": "openscad-cli",
+        "cross_check": {
+          "fallback_volume": 45493.754684,
+          "ok": true,
+          "openscad_volume": 45763.982619381,
+          "rel_diff": 0.00594,
+          "tol": 0.04
+        },
+        "ok": true
+      },
+      "templates": {
+        "barrel": {
+          "backend": "openscad-cli",
+          "cross_check": {
+            "fallback_volume": 0.392173,
+            "ok": true,
+            "openscad_volume": 0.390910168,
+            "rel_diff": 0.00322,
+            "tol": 0.04
+          },
+          "deterministic": true,
+          "fallback_ok": true,
+          "fallback_triangles": 55872,
+          "files": [
+            "model.glb",
+            "model.obj",
+            "model.off",
+            "model.scad",
+            "model.stl",
+            "report.json"
+          ],
+          "glb_ok": true,
+          "manifold": true,
+          "ok": true,
+          "roundtrip": {
+            "obj": true,
+            "off": true,
+            "stl": true
+          },
+          "triangles": 4652,
+          "volume": 0.390910168,
+          "watertight": true,
+          "within_budget": true
+        },
+        "cog": {
+          "backend": "openscad-cli",
+          "cross_check": {
+            "fallback_volume": 42691.133999,
+            "ok": true,
+            "openscad_volume": 42858.971219258,
+            "rel_diff": 0.00393,
+            "tol": 0.04
+          },
+          "deterministic": true,
+          "fallback_ok": true,
+          "fallback_triangles": 51616,
+          "files": [
+            "model.glb",
+            "model.obj",
+            "model.off",
+            "model.scad",
+            "model.stl",
+            "report.json"
+          ],
+          "glb_ok": true,
+          "manifold": true,
+          "ok": true,
+          "roundtrip": {
+            "obj": true,
+            "off": true,
+            "stl": true
+          },
+          "triangles": 528,
+          "volume": 42858.971219258,
+          "watertight": true,
+          "within_budget": true
+        },
+        "crate": {
+          "backend": "openscad-cli",
+          "cross_check": {
+            "fallback_volume": 0.901884,
+            "ok": true,
+            "openscad_volume": 0.903997986,
+            "rel_diff": 0.00234,
+            "tol": 0.04
+          },
+          "deterministic": true,
+          "fallback_ok": true,
+          "fallback_triangles": 58524,
+          "files": [
+            "model.glb",
+            "model.obj",
+            "model.off",
+            "model.scad",
+            "model.stl",
+            "report.json"
+          ],
+          "glb_ok": true,
+          "manifold": true,
+          "ok": true,
+          "roundtrip": {
+            "obj": true,
+            "off": true,
+            "stl": true
+          },
+          "triangles": 92,
+          "volume": 0.903997986,
+          "watertight": true,
+          "within_budget": true
+        },
+        "pillar": {
+          "backend": "openscad-cli",
+          "cross_check": {
+            "fallback_volume": 0.710396,
+            "ok": true,
+            "openscad_volume": 0.713724636,
+            "rel_diff": 0.00469,
+            "tol": 0.04
+          },
+          "deterministic": true,
+          "fallback_ok": true,
+          "fallback_triangles": 34548,
+          "files": [
+            "model.glb",
+            "model.obj",
+            "model.off",
+            "model.scad",
+            "model.stl",
+            "report.json"
+          ],
+          "glb_ok": true,
+          "manifold": true,
+          "ok": true,
+          "roundtrip": {
+            "obj": true,
+            "off": true,
+            "stl": true
+          },
+          "triangles": 188,
+          "volume": 0.713724636,
+          "watertight": true,
+          "within_budget": true
+        }
+      }
+    },
+    "plugins": {
+      "gaps_after": {
+        "formats_covered": 10,
+        "x3d_listed": false
+      },
+      "gaps_before": {
+        "formats_covered": 9,
+        "formats_total": 16,
+        "gaps": 14,
+        "x3d_listed": true
+      },
+      "hostile": {
+        "net-exfil": {
+          "checks": {
+            "contract": false,
+            "manifest": true,
+            "security_policy": false
+          },
+          "first_errors": [
+            "adapter.py:3: import socket not allowed",
+            "contract suite not run: manifest/security checks failed"
+          ],
+          "rejected": true
+        },
+        "nondeterministic": {
+          "checks": {
+            "contract": false,
+            "manifest": true,
+            "security_policy": true
+          },
+          "first_errors": [
+            "3d: export is not deterministic (['assetfabric_manifest.json', 'scene.json'])"
+          ],
+          "rejected": true
+        },
+        "sandbox-escape": {
+          "checks": {
+            "contract": false,
+            "manifest": true,
+            "security_policy": false
+          },
+          "escape_file_exists": false,
+          "first_errors": [
+            "adapter.py:13: use of __import__ not allowed",
+            "adapter.py:20: use of open not allowed"
+          ],
+          "rejected": true,
+          "runtime_with_static_gate_bypassed": {
+            "bwrap": "RuntimeError: net=OSError fs=OSError",
+            "process": "RuntimeError: net=PermissionError fs=PermissionError"
+          }
+        }
+      },
+      "hot_load": {
+        "loaded": [
+          "x3d-export@1.0.0"
+        ],
+        "refused": {}
+      },
+      "proxy_export": {
+        "files": [
+          "scene.x3d",
+          "x3d_stats.json"
+        ],
+        "plugin": true,
+        "verify": true
+      },
+      "register": {
+        "contract": {
+          "class_matches_manifest": true,
+          "export_3d_deterministic": true,
+          "export_3d_manifest": true,
+          "export_3d_verify": true
+        },
+        "ok": true,
+        "sandbox_tier": "bwrap",
+        "verify_s": 0.35,
+        "version": "1.0.0"
+      },
+      "same_version_refused": true,
+      "scaffold": {
+        "contract_fails_until_implemented": true,
+        "created": [
+          "plugin.yaml",
+          "adapter.py"
+        ],
+        "first_error": [
+          "NotImplementedError: fbx-export: export not implemented yet"
+        ]
+      },
+      "tamper": {
+        "loaded": [],
+        "refused": {
+          "x3d-export": "tree hash mismatch (plugin files changed after registration)"
+        }
+      },
+      "upgrade_rollback": {
+        "previous": "1.0.0",
+        "rollback": {
+          "from": "1.1.0",
+          "id": "x3d-export",
+          "ok": true,
+          "to": "1.0.0"
+        },
+        "v110_registered": true
+      }
+    },
+    "timings_s": {
+      "adapters": 9.78,
+      "catalog": 0.14,
+      "evolution": 14.5,
+      "ir": 0.18,
+      "parametric": 16.93,
+      "plugins": 2.16
+    }
+  }
+}

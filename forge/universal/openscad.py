@@ -253,15 +253,11 @@ def _extent(t: dict[str, Any], params: dict[str, float]) -> float:
 
 
 def default_recipe(t: dict[str, Any], params: dict[str, float], root: Path | None = None) -> csg.MeshRecipe:
-    """The promoted recipe from the evolution store if one exists for this template, else extent/64 with 1 Newton step."""
-    try:
-        from forge.universal import evolution
-        rec = evolution.active_recipe("parametric.csg", root)
-        if rec:
-            return csg.MeshRecipe(cell=_extent(t, params) * float(rec["cell_frac"]), newton_steps=int(rec["newton_steps"]))
-    except Exception:  # noqa: BLE001 — evolution store is optional state; never block a build on it
-        pass
-    return csg.MeshRecipe(cell=_extent(t, params) / 64.0, newton_steps=1)
+    """The active self-improvement recipe (content/universal/recipes/baseline.yaml unless a better one was promoted
+    locally): cell = extent × cell_frac, Newton projection steps. Budget coarsening is applied by the caller."""
+    from forge.universal import evolution
+    rec = evolution.active_recipe("parametric.csg", root)
+    return csg.MeshRecipe(cell=_extent(t, params) * float(rec["cell_frac"]), newton_steps=int(rec["newton_steps"]))
 
 
 def to_scene(t: dict[str, Any], m: M.TriMesh) -> ir.Scene:

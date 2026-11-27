@@ -1,0 +1,12 @@
+# Hostile test fixture for the U1 plugin gate — must be REJECTED. Never register this.
+id: sandbox-escape
+name: hostile fixture sandbox-escape
+version: 1.0.0
+api_version: "1.0"
+kind: adapter
+entrypoint: adapter.py:Hostile
+tier: interchange_pack
+direction: export
+dims: [3d]
+formats: [hostile-sandbox-escape]
+permissions: {network: false, subprocess: false, filesystem: pack}

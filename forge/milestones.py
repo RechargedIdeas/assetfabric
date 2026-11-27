@@ -249,7 +249,18 @@ INCREMENTS["F9"] = Increment("F9", "liveops-readiness", (), f9_check,
                              "roll-forward rollback / crash-loop quarantine / tamper -> defaults), save forward-compat guard, "
                              "opt-in local scrubbed diagnostics, readiness checklist; G-NET-01 strict, no live service",
                              f9_perf, f9_run)
+# U1 universal 2D/2.5D/3D engine (user request t65u) — forge/accept_u1.py; pure Python, records native tools when present
+from forge.accept_u1 import u1_check, u1_perf, u1_run  # noqa: E402
+
+INCREMENTS["U1"] = Increment("U1", "universal-engine", (), u1_check,
+                             "Universal engine: one IR for 2D/2.5D/3D with coordinate conventions, parametric templates "
+                             "through the real OpenSCAD CLI + NumPy CSG fallback, tiered adapters (Godot/Blender native, "
+                             "OpenSCAD CLI bridge, Unreal/Unity/RPG Maker/Sprite Lamp/... interchange packs, photogrammetry "
+                             "+ 3DGS), Wikipedia-derived engines catalog, benchmark-gated self-improvement with rollback, "
+                             "sandboxed plugins + gap detector",
+                             u1_perf, u1_run)
 ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9"]
+U_ORDER = ["U1"]
 
 # Companion track (parallel, not an F-gate — BUILD_ORDER.md): PocketLoom C1–C6.
 from forge import accept_companions as _ac  # noqa: E402
