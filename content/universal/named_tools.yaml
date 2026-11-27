@@ -1,0 +1,97 @@
+# AssetFabric Universal Engine — curated named engines & tools (Milestone U1, user request t65u).
+# Copyright © 2026 Recharged Ideas. All Rights Reserved.
+#
+# tier (what AssetFabric itself proves, see docs/architecture/universal-engine.md §Adapter tiers):
+#   native_verified  — the tool's own binary loads our output headlessly in `forge accept U1` (when installed)
+#   cli_bridge       — we drive the tool's CLI (real binary) to produce/consume content
+#   interchange_pack — we write the tool's documented import formats + manifest and validate them with our own
+#                      readers; the closed-source / non-Linux tool itself is NOT run here
+#   descriptor_only  — catalog record + generic pack; the tool's import formats are not confirmed
+# direction: export (AssetFabric → tool), import (tool output → AssetFabric IR), or both.
+# inference: true marks entries whose identity or format facts are extrapolated ([INFERENCE] U1-*, docs/INFERENCES.md).
+schema_version: "1.0"
+tools:
+  - {id: unreal-engine, name: Unreal Engine, kind: engine, vendor: Epic Games, dims: [2d, 3d], adapter: unreal, tier: interchange_pack,
+     direction: export, convention: unreal, linux_editor: true,
+     formats: [glb, png, texturepacker-json, unreal-python-import-script, json-manifest],
+     note: "UE5 Interchange imports glTF/GLB; Paper2D imports TexturePacker JSON sheets; normal maps converted to DirectX green-down. FBX is NOT written (no verified writer)."}
+  - {id: unity, name: Unity, kind: engine, vendor: Unity Technologies, dims: [2d, 2.5d, 3d], adapter: unity, tier: interchange_pack,
+     direction: export, convention: unity, linux_editor: true,
+     formats: [upm-package, unitypackage, meta-yaml, obj, glb, png],
+     note: "OBJ imports natively; GLB via the com.unity.cloud.gltfast package dependency; Sprite .meta files carry Multiple-mode rects (bottom-left origin)."}
+  - {id: godot, name: Godot, kind: engine, vendor: Godot Foundation, dims: [2d, 2.5d, 3d], adapter: godot, tier: native_verified,
+     direction: both, convention: godot, linux_editor: true, native_binary: godot,
+     formats: [glb, png, tres-spriteframes], note: "Godot 4.3 headless loads every GLB through GLTFDocument in CI."}
+  - {id: blender, name: Blender, kind: tool, vendor: Blender Foundation, dims: [3d], adapter: blender, tier: native_verified,
+     direction: both, convention: blender, linux_editor: true, native_binary: blender,
+     formats: [glb, obj, stl, bpy-import-script], note: "Bridge script runs in `blender --background`; CI has no Blender, so CI checks the script's AST/contract and the box run is recorded."}
+  - {id: openscad, name: OpenSCAD, kind: tool, vendor: OpenSCAD project, dims: [3d], adapter: openscad, tier: cli_bridge,
+     direction: both, convention: zup-rh, linux_editor: true, native_binary: openscad,
+     formats: [scad, stl, off, obj, glb], note: "Parametric templates compile through the real OpenSCAD CLI; the NumPy CSG fallback runs when it is absent."}
+  - {id: rpg-maker, name: "RPG Maker (MV / MZ / VX Ace)", kind: engine, vendor: Gotcha Gotcha Games / Kadokawa, dims: [2d], adapter: rpgmaker,
+     tier: interchange_pack, direction: export, convention: gltf, linux_editor: false,
+     formats: [png-character-sheet, png-tileset],
+     note: "MV/MZ: 48 px frames, 3×4 block per character ($-prefixed single sheet 144×192; 8-character sheet 576×384), B–E tilesets 768×768 (16×16 tiles). VX Ace: 32 px."}
+  - {id: sprite-lamp, name: Sprite Lamp, kind: tool, vendor: Snake Hill Games, dims: [2d, 2.5d], adapter: spritelamp, tier: interchange_pack,
+     direction: both, convention: gltf,
+     formats: [png-diffuse, png-normal, png-depth, png-ambient-occlusion, png-lighting-profiles],
+     note: "Writes the five lighting profiles Sprite Lamp takes as input plus the normal/depth/AO maps it produces; profiles ↔ normals consistency is checked by photometric recovery."}
+  - {id: sprite-pro, name: Sprite Pro, kind: tool, vendor: unknown, dims: [2d], adapter: spritelamp, tier: interchange_pack, direction: export,
+     convention: gltf, inference: true, formats: [png-diffuse, png-normal, png-depth],
+     note: "[INFERENCE U1-2] identity ambiguous (no single product of this name could be confirmed); served by the same normal/depth/diffuse sheet pack."}
+  - {id: gameguru, name: GameGuru (Classic / MAX), kind: engine, vendor: TheGameCreators, dims: [3d], adapter: meshpack-gameguru, tier: interchange_pack,
+     direction: export, convention: directx-yup, inference: true, formats: [directx-x, obj, png, fpe],
+     note: "[INFERENCE U1-3] DirectX .x model + .fpe entity descriptor (keys desc/model/textured/scale) — field set taken from public examples, not verified in the editor."}
+  - {id: clickteam-fusion, name: Clickteam Fusion 2.5, kind: engine, vendor: Clickteam, dims: [2d], adapter: clickteam, tier: interchange_pack,
+     direction: export, convention: gltf, formats: [png-frame-sequence, json-hotspots],
+     note: "Per-animation, per-direction numbered PNG frames for the animation editor's import, plus hot spot / action point manifest."}
+  - {id: construct-2, name: Construct 2, kind: engine, vendor: Scirra, dims: [2d], adapter: construct, tier: interchange_pack,
+     direction: export, convention: gltf, formats: [png-sprite-strip, json-strip-descriptor],
+     note: "Sprite strips for 'Import sprite strip' (columns × rows) + animation speeds; Construct 2 is retired (Construct 3 reads the same strips)."}
+  - {id: coppercube-6, name: CopperCube 6, kind: engine, vendor: Ambiera, dims: [3d], adapter: meshpack-coppercube, tier: interchange_pack,
+     direction: export, convention: directx-yup, formats: [obj, mtl, directx-x, png],
+     note: "Imports Wavefront OBJ and DirectX .x (among others)."}
+  - {id: esenthel, name: Esenthel Engine, kind: engine, vendor: Esenthel, dims: [3d], adapter: meshpack-esenthel, tier: interchange_pack,
+     direction: export, convention: gltf, inference: true, formats: [obj, mtl, glb, png],
+     note: "[INFERENCE U1-4] OBJ + glTF import assumed from public docs/changelogs; not verified in the editor."}
+  - {id: epic-character-generator, name: ePic Character Generator, kind: tool, vendor: Quadarts, dims: [2d], adapter: epic-chargen, tier: interchange_pack,
+     direction: import, convention: gltf, formats: [png],
+     note: "Producer tool: its exported PNG characters are ingested into IR sprites and receive generated normal/depth/AO maps."}
+  - {id: agfpro-3, name: "Axis Game Factory AGFPRO 3", kind: engine, vendor: Axis Game Factory, dims: [3d], adapter: meshpack-agfpro, tier: interchange_pack,
+     direction: export, convention: gltf, inference: true, formats: [obj, mtl, png],
+     note: "[INFERENCE U1-5] custom-asset import via OBJ assumed (Unity-based tool); not verified."}
+  - {id: appgamekit, name: AppGameKit, kind: engine, vendor: TheGameCreators, dims: [2d, 3d], adapter: appgamekit, tier: interchange_pack,
+     direction: export, convention: directx-yup, formats: [png-atlas, agk-subimages-txt, obj, directx-x],
+     note: "Atlas + subimages.txt (name:x:y:w:h per line, LoadSubImage); 3D via LoadObject (.obj / .x)."}
+  - {id: raysupreme-3d, name: RaySupreme 3D, kind: tool, vendor: RaySupreme, dims: [3d], adapter: meshpack-raysupreme, tier: interchange_pack,
+     direction: export, convention: gltf, inference: true, formats: [obj, stl],
+     note: "[INFERENCE U1-6] OBJ/STL import assumed; Windows-only, not verified."}
+  - {id: fuse, name: Adobe Fuse CC, kind: tool, vendor: Adobe (discontinued 2020), dims: [3d], adapter: fuse, tier: interchange_pack,
+     direction: import, convention: gltf, formats: [obj],
+     note: "Producer tool (character creator): exported OBJ characters are ingested, validated and re-exported to every 3D target."}
+  - {id: flipside-studio, name: Flipside Studio, kind: tool, vendor: Flipside XR, dims: [3d], adapter: unity, tier: interchange_pack,
+     direction: export, convention: unity, inference: true, formats: [upm-package, glb],
+     note: "[INFERENCE U1-7] custom avatars/sets are authored through Flipside's Unity-based creator tools, so the Unity pack is the path."}
+  - {id: creative-engine, name: Creative Engine, kind: engine, vendor: unknown, dims: [2d, 3d], adapter: catalog-generic, tier: descriptor_only,
+     direction: export, convention: gltf, inference: true, formats: [glb, png-atlas],
+     note: "[INFERENCE U1-8] identity ambiguous; generic glTF + PNG atlas pack offered, import path unconfirmed."}
+  # ---- photogrammetry
+  - {id: colmap, name: COLMAP, kind: photogrammetry, vendor: open source (BSD), dims: [3d], adapter: colmap, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [colmap-text-model],
+     note: "cameras.txt / images.txt / points3D.txt (world-to-camera, OpenCV camera frame) written and re-read; becomes cli_bridge when `colmap` is installed."}
+  - {id: meshroom, name: Meshroom / AliceVision, kind: photogrammetry, vendor: AliceVision (MPL-2.0), dims: [3d], adapter: recon-import, tier: interchange_pack,
+     direction: import, convention: opengl-yup, formats: [obj, ply], note: "Textured OBJ / PLY outputs ingested into IR."}
+  - {id: realitycapture, name: RealityCapture (RealityScan), kind: photogrammetry, vendor: Epic Games, dims: [3d], adapter: recon-import, tier: interchange_pack,
+     direction: import, convention: opengl-yup, formats: [obj, ply], note: "Windows-only; exported OBJ/PLY ingested."}
+  - {id: openmvs, name: OpenMVS, kind: photogrammetry, vendor: open source (AGPL-3.0), dims: [3d], adapter: colmap, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [colmap-text-model, ply],
+     note: "Consumes a COLMAP model via InterfaceCOLMAP; its PLY meshes are ingested."}
+  # ---- 3D Gaussian splatting
+  - {id: opensplat, name: OpenSplat, kind: splats, vendor: open source (AGPL-3.0), dims: [3d], adapter: splats, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [3dgs-ply, colmap-text-model, nerfstudio-transforms]}
+  - {id: nerfstudio, name: Nerfstudio / gsplat, kind: splats, vendor: open source (Apache-2.0), dims: [3d], adapter: splats, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [nerfstudio-transforms, 3dgs-ply]}
+  - {id: postshot, name: Jawset Postshot, kind: splats, vendor: Jawset, dims: [3d], adapter: splats, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [colmap-text-model, 3dgs-ply], note: "Windows-only."}
+  - {id: supersplat, name: PlayCanvas SuperSplat, kind: splats, vendor: PlayCanvas (MIT), dims: [3d], adapter: splats, tier: interchange_pack,
+     direction: both, convention: opengl-yup, formats: [3dgs-ply]}

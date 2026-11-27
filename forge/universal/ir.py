@@ -206,6 +206,28 @@ class SplatSet:
 
 
 @dataclass
+class Camera:
+    """Pinhole camera: intrinsics in pixels; `pose` = camera-to-world 4×4 in the scene convention, camera looking down
+    its local -Z with +Y up (OpenGL/glTF camera frame). Used by photogrammetry / splat exporters (COLMAP, nerfstudio)."""
+    id: str
+    width: int
+    height: int
+    fx: float
+    fy: float
+    cx: float
+    cy: float
+    pose: np.ndarray = field(default_factory=lambda: np.eye(4))
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"id": self.id, "width": self.width, "height": self.height, "fx": self.fx, "fy": self.fy,
+                "cx": self.cx, "cy": self.cy, "pose": _arr(np.asarray(self.pose, np.float64))}
+
+    @staticmethod
+    def from_dict(d: dict[str, Any]) -> "Camera":
+        return Camera(d["id"], d["width"], d["height"], d["fx"], d["fy"], d["cx"], d["cy"], _unarr(d["pose"]))
+
+
+@dataclass
 class Node:
     name: str
     matrix: np.ndarray = field(default_factory=lambda: np.eye(4))
@@ -215,19 +237,22 @@ class Node:
     points: str | None = None
     splats: str | None = None
     children: list[int] = field(default_factory=list)
+    camera: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {"name": self.name, "matrix": _arr(np.asarray(self.matrix, np.float64)), "mesh": self.mesh,
                 "sprite": self.sprite, "layer": self.layer, "points": self.points, "splats": self.splats,
-                "children": list(self.children)}
+                "children": list(self.children), "camera": self.camera}
 
     @staticmethod
     def from_dict(d: dict[str, Any]) -> "Node":
-        return Node(d["name"], _unarr(d["matrix"]), d["mesh"], d["sprite"], d["layer"], d["points"], d["splats"], list(d["children"]))
+        return Node(d["name"], _unarr(d["matrix"]), d["mesh"], d["sprite"], d["layer"], d["points"], d["splats"],
+                    list(d["children"]), d.get("camera"))
 
 
 _COLL = (("textures", Texture), ("materials", Material), ("skeletons", Skeleton), ("meshes", MeshAsset),
-         ("sprites", Sprite), ("layers", Layer25D), ("point_clouds", PointCloud), ("splats", SplatSet))
+         ("sprites", Sprite), ("layers", Layer25D), ("point_clouds", PointCloud), ("splats", SplatSet),
+         ("cameras", Camera))
 
 
 @dataclass
@@ -243,6 +268,7 @@ class Scene:
     layers: dict[str, Layer25D] = field(default_factory=dict)
     point_clouds: dict[str, PointCloud] = field(default_factory=dict)
     splats: dict[str, SplatSet] = field(default_factory=dict)
+    cameras: dict[str, Camera] = field(default_factory=dict)
     nodes: list[Node] = field(default_factory=list)
     roots: list[int] = field(default_factory=list)
     meta: dict[str, Any] = field(default_factory=dict)
@@ -327,6 +353,16 @@ class Scene:
             sk.inverse_bind = np.einsum("ij,njk,kl->nil", m4, sk.inverse_bind, inv)
         for pc in s.point_clouds.values():
             pc.positions = coords.convert_points(pc.positions, self.convention, dst).astype(pc.positions.dtype)
+        for cam in s.cameras.values():
+            # same physical camera re-expressed: position scaled + basis rotated/reflected (camera-local frame unchanged)
+            m4 = coords.matrix4(self.convention, dst)
+            pose = np.asarray(cam.pose, float)
+            rot = coords.matrix(self.convention, dst) @ pose[:3, :3]
+            rot = rot / np.linalg.norm(rot, axis=0, keepdims=True)   # a reflection (det -1) when handedness flips
+            new = np.eye(4)
+            new[:3, :3] = rot
+            new[:3, 3] = (m4 @ np.append(pose[:3, 3], 1.0))[:3]
+            cam.pose = new
         for n in s.nodes:
             n.matrix = coords.convert_transform(n.matrix, self.convention, dst)
         s.convention = dst
@@ -422,7 +458,7 @@ def validate(s: Scene) -> dict[str, Any]:
         seen.add(i)
         n = s.nodes[i]
         for ref, coll in ((n.mesh, s.meshes), (n.sprite, s.sprites), (n.layer, s.layers), (n.points, s.point_clouds),
-                          (n.splats, s.splats)):
+                          (n.splats, s.splats), (n.camera, s.cameras)):
             if ref is not None and ref not in coll:
                 errs.append(f"node {n.name}: dangling reference {ref}")
         for c in n.children:

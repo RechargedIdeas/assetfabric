@@ -65,6 +65,20 @@ class TriMesh:
         return vn / np.where(n == 0, 1, n)
 
 
+def box_project_uvs(m: TriMesh, scale: float = 1.0) -> TriMesh:
+    """Unshare vertices per face and assign box-projected UVs (dominant face-normal axis) — texture-ready CSG output."""
+    p, f = m.positions, m.faces
+    tri = p[f]                                            # (F, 3, 3)
+    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    ax = np.argmax(np.abs(fn), axis=1)
+    keep = np.array([[1, 2], [0, 2], [0, 1]])[ax]        # project onto the two other axes
+    uv = np.take_along_axis(tri, np.repeat(keep[:, None, :], 3, axis=1), axis=2) * scale
+    nrm = fn / np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-20)
+    out = TriMesh(tri.reshape(-1, 3), np.arange(f.shape[0] * 3).reshape(-1, 3),
+                  np.repeat(nrm, 3, axis=0), uv.reshape(-1, 2) % 1.0 if False else uv.reshape(-1, 2), dict(m.meta))
+    return out
+
+
 def merge(meshes: list[TriMesh]) -> TriMesh:
     pos, fac, off = [], [], 0
     for m in meshes:

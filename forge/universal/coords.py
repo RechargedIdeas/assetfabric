@@ -50,7 +50,8 @@ CONVENTIONS: dict[str, Convention] = {c.id: c for c in (
     Convention("opengl-yup", "RH", "+Y", "+Z", 1.0, "bottom-left", "+Y"),
     Convention("directx-yup", "LH", "+Y", "+Z", 1.0, "top-left", "-Y"),
     Convention("zup-rh", "RH", "+Z", "-Y", 1.0, "bottom-left", "+Y"),         # 3ds Max / OpenSCAD / CAD style
-    Convention("source", "RH", "+Z", "+X", 0.0254, "top-left", "-Y"),        # Source/Hammer units ≈ 1 inch
+    Convention("source", "RH", "+Z", "+X", 0.0254, "top-left", "-Y"),        # Source/Quake-family units ≈ 1 inch
+    Convention("zup-rh-yfwd", "RH", "+Z", "+Y", 1.0, "top-left", "+Y"),      # CryEngine/Lumberyard/O3DE/Panda3D/Torque3D
 )}
 
 

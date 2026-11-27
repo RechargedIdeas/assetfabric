@@ -173,9 +173,17 @@ def write_glb(scene: ir.Scene) -> bytes:
 
     skin_of: dict[str, int] = {}
     node_ids: list[int] = []
+    cam_index: dict[str, int] = {}
+    for cid in sorted(s.cameras):
+        c = s.cameras[cid]
+        cam_index[cid] = b.add("cameras", {"name": cid, "type": "perspective", "perspective": {
+            "yfov": float(2 * np.arctan(c.height / (2 * c.fy))), "aspectRatio": float(c.width / c.height), "znear": 0.01}})
     for i, n in enumerate(s.nodes):
         nd: dict[str, Any] = {"name": n.name}
         mat = np.asarray(n.matrix, float)
+        if n.camera:
+            mat = mat @ np.asarray(s.cameras[n.camera].pose, float)   # IR camera pose is world; parent assumed identity
+            nd["camera"] = cam_index[n.camera]
         if not np.allclose(mat, np.eye(4)):
             nd["matrix"] = [float(x) for x in mat.T.reshape(-1)]       # glTF matrices are column-major
         ref = (n.mesh if n.mesh else ("points:" + n.points if n.points else None))
