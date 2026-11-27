@@ -8,7 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "lens.assess": 0.009
+      "lens.assess": 0.013
     },
     "planned_ops": [],
     "real": 5,
@@ -16,7 +16,7 @@
   },
   "result": {
     "apk": {
-      "apk_bytes": 1943594,
+      "apk_bytes": 1944299,
       "classes_in_dex": {
         "ArCoreCapture": true,
         "Camera2Focus": true,
@@ -75,7 +75,7 @@
           "identical_with_simulated_gpu": true,
           "op": "lens.assess",
           "status": "ok",
-          "wall_s": 0.009
+          "wall_s": 0.013
         }
       ]
     },

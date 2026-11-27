@@ -21,20 +21,30 @@
     "length_note": "gate = human-pace estimate (forge/pace.py, INFERENCE C-92; a model, not a playtest); bot game time is the machine-efficiency floor, reported as-is; a human GUI playtest replaces the model",
     "length_within_target": true,
     "matrix_game_minutes": [
+      7.56,
+      7.61,
+      7.57,
+      7.11,
       7.13,
-      7.35
+      7.11,
+      8.04,
+      7.35,
+      8.05,
+      7.57,
+      7.17,
+      7.13
     ],
     "matrix_human_estimate_min": [
-      17.34,
-      18.64
+      17.15,
+      18.76
     ],
     "matrix_wipes": 0,
     "slice_game_minutes": 7.56,
     "slice_ticks": 27217,
-    "slice_wall_ms": 7819.1,
+    "slice_wall_ms": 7341.1,
     "swap_wall_ms": [
-      22.42,
-      14.78
+      21.57,
+      13.87
     ],
     "target_minutes": [
       15.0,
@@ -43,31 +53,31 @@
     "world_fights_classes": {
       "boss": {
         "clear_median_s": [
-          8.87,
-          9.4
+          8.48,
+          9.82
         ],
-        "clear_p90_max_s": 10.08,
+        "clear_p90_max_s": 10.32,
         "wipe_rate_max": 0.0
       },
       "elite": {
         "clear_median_s": [
-          2.75,
-          3.97
+          2.62,
+          5.0
         ],
-        "clear_p90_max_s": 4.55,
+        "clear_p90_max_s": 5.42,
         "wipe_rate_max": 0.0
       },
       "trash": {
         "clear_median_s": [
-          1.2,
-          3.25
+          1.13,
+          4.02
         ],
-        "clear_p90_max_s": 3.65,
+        "clear_p90_max_s": 4.43,
         "wipe_rate_max": 0.0
       }
     },
-    "world_fights_encounters": 352,
-    "world_fights_wall_s": 9.63
+    "world_fights_encounters": 8040,
+    "world_fights_wall_s": 128.08
   },
   "result": {
     "economy": {
@@ -145,17 +155,61 @@
       "ok": true
     },
     "matrix": {
-      "mode": "fast",
+      "mode": "full",
       "runs": [
         {
           "boss_attempt": 1,
-          "boss_ticks": 805,
+          "boss_ticks": 778,
           "completed": true,
           "economy_ok": true,
           "exit": 0,
-          "game_minutes": 7.13,
-          "human_estimate_min": 17.34,
-          "leader": "sola",
+          "game_minutes": 7.56,
+          "human_estimate_min": 17.55,
+          "leader": "kael",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 27217,
+          "wall_ms": 7610.3,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 778,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.61,
+          "human_estimate_min": 17.81,
+          "leader": "kael",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 27380,
+          "wall_ms": 7584.1,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 778,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.57,
+          "human_estimate_min": 17.6,
+          "leader": "kael",
           "levels": {
             "boss_start": 4,
             "q_warden.clear_cave": 3,
@@ -165,8 +219,96 @@
           "pet": "lumen_wisp",
           "script_errors": 0,
           "softlocks": 0,
-          "ticks": 25664,
-          "wall_ms": 7822.9,
+          "ticks": 27266,
+          "wall_ms": 7535.8,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 799,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.11,
+          "human_estimate_min": 17.15,
+          "leader": "nyra",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25589,
+          "wall_ms": 7262.8,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 820,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.13,
+          "human_estimate_min": 17.23,
+          "leader": "nyra",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25668,
+          "wall_ms": 7236,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 802,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.11,
+          "human_estimate_min": 17.15,
+          "leader": "nyra",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25609,
+          "wall_ms": 7198.5,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 792,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 8.04,
+          "human_estimate_min": 18.76,
+          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 28928,
+          "wall_ms": 7574.6,
           "wipes": 0
         },
         {
@@ -188,7 +330,95 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26454,
-          "wall_ms": 7875.5,
+          "wall_ms": 7431.5,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 795,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 8.05,
+          "human_estimate_min": 18.74,
+          "leader": "bram",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 28974,
+          "wall_ms": 7404.1,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 826,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.57,
+          "human_estimate_min": 17.74,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "ember_fox",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 27249,
+          "wall_ms": 7100.6,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 831,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.17,
+          "human_estimate_min": 17.72,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "stone_tortle",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25815,
+          "wall_ms": 6948.5,
+          "wipes": 0
+        },
+        {
+          "boss_attempt": 1,
+          "boss_ticks": 805,
+          "completed": true,
+          "economy_ok": true,
+          "exit": 0,
+          "game_minutes": 7.13,
+          "human_estimate_min": 17.34,
+          "leader": "sola",
+          "levels": {
+            "boss_start": 4,
+            "q_warden.clear_cave": 3,
+            "q_warden.craft": 4,
+            "q_warden.rest": 5
+          },
+          "pet": "lumen_wisp",
+          "script_errors": 0,
+          "softlocks": 0,
+          "ticks": 25664,
+          "wall_ms": 6840.5,
           "wipes": 0
         }
       ]
@@ -3309,7 +3539,7 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (14.8 ms)",
+        "TIME FROZEN \u2014 ranked swaps (13.9 ms)",
         "1. Kael  HP 47/82  score 146.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
         "2. Bram  HP 106/106  score 122.2  target cave_warden_1  cd Taunt 4.5s  @9,5",
         "3. Nyra  HP 54/54  score 114.0  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
@@ -3407,7 +3637,7 @@
             ]
           ],
           "tick": 4399,
-          "wall_ms": 22.42
+          "wall_ms": 21.57
         },
         {
           "area": "warden_lair",
@@ -3431,7 +3661,7 @@
             ]
           ],
           "tick": 24447,
-          "wall_ms": 14.78
+          "wall_ms": 13.87
         }
       ],
       "ticks": 27217,
@@ -3456,7 +3686,7 @@
         }
       ],
       "wait_ticks": 5535,
-      "wall_ms": 7819.1,
+      "wall_ms": 7341.1,
       "wipes": 0
     },
     "tilemaps": {
@@ -3529,14 +3759,14 @@
       },
       "classes": {
         "boss": {
-          "cells": 2,
+          "cells": 12,
           "clear_median_range_s": [
-            8.87,
-            9.4
+            8.48,
+            9.82
           ],
-          "clear_p90_max_s": 10.08,
+          "clear_p90_max_s": 10.32,
           "fights": 1,
-          "n": 48,
+          "n": 1200,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3545,14 +3775,14 @@
           "wipes": 0
         },
         "elite": {
-          "cells": 4,
+          "cells": 24,
           "clear_median_range_s": [
-            2.75,
-            3.97
+            2.62,
+            5.0
           ],
-          "clear_p90_max_s": 4.55,
+          "clear_p90_max_s": 5.42,
           "fights": 2,
-          "n": 32,
+          "n": 720,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3561,14 +3791,14 @@
           "wipes": 0
         },
         "trash": {
-          "cells": 34,
+          "cells": 204,
           "clear_median_range_s": [
-            1.2,
-            3.25
+            1.13,
+            4.02
           ],
-          "clear_p90_max_s": 3.65,
+          "clear_p90_max_s": 4.43,
           "fights": 17,
-          "n": 272,
+          "n": 6120,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3577,19 +3807,19 @@
           "wipes": 0
         }
       },
-      "encounters": 352,
+      "encounters": 8040,
       "errors": [],
       "fights": {
         "cave_deep.p0": {
           "class": "trash",
           "clear_median_range_s": [
-            1.42,
-            1.65
+            1.38,
+            1.92
           ],
-          "clear_p90_max_s": 1.87,
+          "clear_p90_max_s": 2.17,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3600,13 +3830,13 @@
         "cave_deep.p1": {
           "class": "trash",
           "clear_median_range_s": [
-            1.2,
-            1.85
+            1.13,
+            2.13
           ],
-          "clear_p90_max_s": 2.0,
+          "clear_p90_max_s": 2.5,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3617,13 +3847,13 @@
         "cave_deep.p2": {
           "class": "trash",
           "clear_median_range_s": [
-            2.3,
-            3.25
+            2.27,
+            4.02
           ],
-          "clear_p90_max_s": 3.65,
+          "clear_p90_max_s": 4.43,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3634,13 +3864,13 @@
         "cave_deep.p3": {
           "class": "trash",
           "clear_median_range_s": [
-            1.52,
-            1.88
+            1.47,
+            2.47
           ],
-          "clear_p90_max_s": 2.08,
+          "clear_p90_max_s": 2.63,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3651,13 +3881,13 @@
         "cave_deep.p4": {
           "class": "trash",
           "clear_median_range_s": [
-            1.47,
-            2.43
+            1.35,
+            2.77
           ],
-          "clear_p90_max_s": 2.57,
+          "clear_p90_max_s": 3.42,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3668,13 +3898,13 @@
         "field.p0": {
           "class": "trash",
           "clear_median_range_s": [
-            1.27,
-            1.88
+            1.22,
+            2.73
           ],
-          "clear_p90_max_s": 2.32,
+          "clear_p90_max_s": 3.02,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3685,13 +3915,13 @@
         "hollow.p0": {
           "class": "trash",
           "clear_median_range_s": [
-            1.53,
-            1.9
+            1.43,
+            2.5
           ],
-          "clear_p90_max_s": 2.33,
+          "clear_p90_max_s": 2.65,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3702,13 +3932,13 @@
         "hollow.p1": {
           "class": "trash",
           "clear_median_range_s": [
-            2.35,
-            2.97
+            2.1,
+            3.58
           ],
-          "clear_p90_max_s": 3.4,
+          "clear_p90_max_s": 4.1,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3719,13 +3949,13 @@
         "hollow.p2": {
           "class": "elite",
           "clear_median_range_s": [
-            3.1,
-            3.97
+            2.78,
+            5.0
           ],
-          "clear_p90_max_s": 4.55,
-          "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "clear_p90_max_s": 5.42,
+          "down_rate_max": 0.0333,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3736,13 +3966,13 @@
         "hollow.p3": {
           "class": "trash",
           "clear_median_range_s": [
-            1.93,
-            2.38
+            1.72,
+            2.75
           ],
-          "clear_p90_max_s": 2.83,
+          "clear_p90_max_s": 2.98,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3753,13 +3983,13 @@
         "hollow.p4": {
           "class": "trash",
           "clear_median_range_s": [
-            2.28,
-            2.7
+            1.98,
+            3.47
           ],
-          "clear_p90_max_s": 3.4,
+          "clear_p90_max_s": 3.88,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3770,13 +4000,13 @@
         "ridge.p0": {
           "class": "trash",
           "clear_median_range_s": [
-            1.53,
-            1.97
+            1.43,
+            2.5
           ],
-          "clear_p90_max_s": 2.33,
+          "clear_p90_max_s": 2.75,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3787,13 +4017,13 @@
         "ridge.p1": {
           "class": "trash",
           "clear_median_range_s": [
-            2.05,
-            3.07
+            2.0,
+            3.85
           ],
-          "clear_p90_max_s": 3.45,
+          "clear_p90_max_s": 4.33,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3804,13 +4034,13 @@
         "ridge.p2": {
           "class": "elite",
           "clear_median_range_s": [
-            2.75,
-            3.52
+            2.62,
+            4.77
           ],
-          "clear_p90_max_s": 4.2,
+          "clear_p90_max_s": 5.2,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3821,13 +4051,13 @@
         "tunnels.p0": {
           "class": "trash",
           "clear_median_range_s": [
-            1.37,
-            1.6
+            1.17,
+            1.97
           ],
-          "clear_p90_max_s": 2.2,
+          "clear_p90_max_s": 2.32,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3838,13 +4068,13 @@
         "tunnels.p1": {
           "class": "trash",
           "clear_median_range_s": [
-            2.5,
-            2.83
+            2.08,
+            3.5
           ],
-          "clear_p90_max_s": 3.32,
+          "clear_p90_max_s": 4.0,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3855,13 +4085,13 @@
         "tunnels.p2": {
           "class": "trash",
           "clear_median_range_s": [
-            2.25,
-            3.0
+            2.2,
+            3.52
           ],
-          "clear_p90_max_s": 3.6,
+          "clear_p90_max_s": 4.03,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3872,13 +4102,13 @@
         "tunnels.p3": {
           "class": "trash",
           "clear_median_range_s": [
-            1.6,
-            1.88
+            1.4,
+            2.2
           ],
-          "clear_p90_max_s": 2.27,
+          "clear_p90_max_s": 2.57,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3889,13 +4119,13 @@
         "tunnels.p4": {
           "class": "trash",
           "clear_median_range_s": [
-            1.8,
-            2.27
+            1.53,
+            2.73
           ],
-          "clear_p90_max_s": 3.12,
+          "clear_p90_max_s": 3.1,
           "down_rate_max": 0.0,
-          "n": 16,
-          "selections": 2,
+          "n": 360,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3906,13 +4136,13 @@
         "warden_lair.boss": {
           "class": "boss",
           "clear_median_range_s": [
-            8.87,
-            9.4
+            8.48,
+            9.82
           ],
-          "clear_p90_max_s": 10.08,
-          "down_rate_max": 0.6667,
-          "n": 48,
-          "selections": 2,
+          "clear_p90_max_s": 10.32,
+          "down_rate_max": 0.98,
+          "n": 1200,
+          "selections": 12,
           "wipe_rate": 0.0,
           "wipe_rate_range": [
             0.0,
@@ -3921,18 +4151,58 @@
           "wipes": 0
         }
       },
-      "mode": "fast",
+      "mode": "full",
       "seed_base": 70000,
       "seeds": {
-        "boss": 24,
-        "world": 8
+        "boss": 100,
+        "world": 30
       },
       "selections": {
+        "bram+ember_fox": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "bram+lumen_wisp": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
         "bram+stone_tortle": {
           "fights": 20,
           "p_any_wipe": 0.0
         },
+        "kael+ember_fox": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "kael+lumen_wisp": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "kael+stone_tortle": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "nyra+ember_fox": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "nyra+lumen_wisp": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "nyra+stone_tortle": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "sola+ember_fox": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
         "sola+lumen_wisp": {
+          "fights": 20,
+          "p_any_wipe": 0.0
+        },
+        "sola+stone_tortle": {
           "fights": 20,
           "p_any_wipe": 0.0
         }
@@ -3951,7 +4221,7 @@
         "out_of_band": [],
         "out_of_band_count": 0
       },
-      "wall_s": 9.63,
+      "wall_s": 128.08,
       "workers": 8
     },
     "world_gates": {

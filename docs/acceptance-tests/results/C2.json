@@ -5,16 +5,16 @@
   "milestone": "C2",
   "passed": true,
   "perf": {
-    "apk_bytes": 1943594,
-    "apk_sha256": "dc6b6042638aa7d74e8cc0c310d937ea3666d969189696f02407f73858e840c9",
+    "apk_bytes": 1944299,
+    "apk_sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746",
     "gen_ms": {
       "cave": {
-        "max": 20.18,
-        "mean": 3.63
+        "max": 24.43,
+        "mean": 4.38
       },
       "sprite": {
-        "max": 22.77,
-        "mean": 3.12
+        "max": 23.46,
+        "mean": 3.79
       }
     },
     "mode": "full"
@@ -22,14 +22,14 @@
   "result": {
     "build": {
       "apk": {
-        "bytes": 1943594,
+        "bytes": 1944299,
         "path": "dist/pocketloom/pocketloom-0.4.0-c11-debug.apk",
-        "sha256": "dc6b6042638aa7d74e8cc0c310d937ea3666d969189696f02407f73858e840c9"
+        "sha256": "810994a6cd820b1fa009c2025ce040d01473b81c675f19131546702674374746"
       },
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 6.3
+      "seconds": 10.4
     },
     "c2": {
       "budget_ms": 250.0,
@@ -48,8 +48,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 20.18,
-          "ms_mean": 3.63,
+          "ms_max": 24.43,
+          "ms_mean": 4.38,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,
@@ -70,8 +70,8 @@
             ]
           ],
           "gates_pass": 16,
-          "ms_max": 22.77,
-          "ms_mean": 3.12,
+          "ms_max": 23.46,
+          "ms_mean": 3.79,
           "n": 16,
           "palette_locked_independent": true,
           "retried": 0,

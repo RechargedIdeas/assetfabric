@@ -29,6 +29,7 @@ Full ADR text lives in `docs/adr/NNNN-<slug>.md`. ADRs are never deleted — the
 | [0017](docs/adr/0017-slice-length-human-pace-gate.md) | Vertical-slice length gated on a human-pace estimate (until a playtest) | accepted |
 | [0018](docs/adr/0018-economy-design-model.md) | Economy, loot and XP numbers come from a design model, gated in Codegen-World and F6; per-pair balance gated on unseen seeds | accepted |
 | [0019](docs/adr/0019-web-single-thread-fallback.md) | Ship a single-thread `web-nothreads` Web fallback beside the threads build (closes D-001) | accepted |
+| [0020](docs/adr/0020-world-fight-bands.md) | World fights gated on wipe-rate / clear-time bands from a Monte Carlo replay of the slice (closes P7) | accepted |
 
 ## Open decisions (not ADRs yet)
 
