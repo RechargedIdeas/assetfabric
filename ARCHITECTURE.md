@@ -68,6 +68,7 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `games/game-zero/autoload/live.gd` | Live channel (game side): poll, validate, overlay, acks, in-flight marker, quarantine, WAL | F4 |
 | `games/game-zero/sim/statechart.gd`, `data/statecharts/` | Parallel statechart runtime (combat / movement / ai / dialogue / reload) | F4 |
 | `forge/balance.py`, `games/game-zero/tools/balance.gd` | Monte Carlo balance runner (sharded headless Godot workers, CRN seeds, Wilson CIs, G-BAL-01 verdict) + Optuna TPE tuner | F5 |
+| `forge/worldfights.py`, `content/tune/worldfights.yaml` | World-fight Monte Carlo: replays each recorded slice fight (start state from `slice.gd::_fight_context`) in the balance worker; wipe-rate / clear-time bands per selection × fight (ADR-0020) | P7 (0.7.15) |
 | `forge/softlock.py` | Static soft-lock report (statecharts + encounter reachability) + stall-probe overrides; runtime detector lives in `sim/combat_sim.gd` | F5 |
 | `forge/save.py`, `games/game-zero/autoload/save.gd` | Player State save (Profile / Roster / World), v1→v2→v3→v4 migrations (v4: farm, checkpoint, quest counters, buffs, gear — F6), canonical JSON + sha256, atomic write + `.bak` fallback (Python twin ↔ GDScript) | F5 |
 | `forge/accept_f5.py`, `scenes/boss.tscn`, `data/encounters/boss_warden.json` | F5 acceptance (boss clear ×2, save round-trip, G-BAL-01, soft-lock probe); tier-3 boss with HP-phase manager | F5 |

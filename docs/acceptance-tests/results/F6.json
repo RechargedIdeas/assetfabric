@@ -1,5 +1,5 @@
 {
-  "description": "Vertical slice (GAME_SPEC \u00a76.1): select \u2192 farm \u2192 tunnels \u2192 cave \u2192 craft \u2192 Cave Warden \u2192 open world \u2192 save; quit/reload parity, 12-selection matrix, quest/loot/save parity",
+  "description": "Vertical slice (GAME_SPEC \u00a76.1): select \u2192 farm \u2192 tunnels \u2192 cave \u2192 craft \u2192 Cave Warden \u2192 open world \u2192 save; quit/reload parity, 12-selection matrix, world-fight wipe/clear-time bands, quest/loot/save parity",
   "errors": [],
   "increment": "vertical-slice",
   "milestone": "F6",

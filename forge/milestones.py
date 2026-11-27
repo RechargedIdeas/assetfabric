@@ -224,7 +224,7 @@ from forge.accept_f6 import f6_check, f6_perf, f6_run  # noqa: E402
 
 INCREMENTS["F6"] = Increment("F6", "vertical-slice", ("--scene=slice", "--autoplay"), f6_check,
                              "Vertical slice (GAME_SPEC §6.1): select → farm → tunnels → cave → craft → Cave Warden → "
-                             "open world → save; quit/reload parity, 12-selection matrix, quest/loot/save parity", f6_perf, f6_run)
+                             "open world → save; quit/reload parity, 12-selection matrix, world-fight wipe/clear-time bands, quest/loot/save parity", f6_perf, f6_run)
 from forge.accept_f7 import f7_check, f7_perf, f7_run  # noqa: E402
 
 INCREMENTS["F7"] = Increment("F7", "launch-candidates", ("--net-report",), f7_check,

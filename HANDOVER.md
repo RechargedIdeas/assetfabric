@@ -10,7 +10,7 @@
 
 **Companion interfaces (C9–C12):** accepted (`forge accept C9-C12`); after the stub-replacement sprint the register is 25 real · 8 `real_unverified_on_device` · 1 stub (full-scale SplatForge GPU training) · 3 deferred (`content/companions/c9_c12.yaml`). Nothing ran on a phone or a GPU.
 **Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
-**Next:** **F8 — retro/console-style** (confirmed by the Producer, t59u; scope in SPEC §13 F8), then **F9 — LiveOps readiness only** (no launch). Quality gaps: (a) `0.7.12`, (b)+(c) `0.7.13`, (d)+(e)+(f) `0.7.14` landed; the one open row is **P7 world-fight wipe-rate / clear-time bands** (TODO.md row 7). See [§Next steps](#next-steps-ordered).
+**Next:** **F8 — retro/console-style** (confirmed by the Producer, t59u; scope in SPEC §13 F8), then **F9 — LiveOps readiness only** (no launch). Quality gaps: (a) `0.7.12`, (b)+(c) `0.7.13`, (d)+(e)+(f) `0.7.14`, (c′) P7 world-fight bands `0.7.15` landed — **every software quality gap is closed** except the hardware-gated Q3 follow-up (native forward-sim step; needs a C++ toolchain). See [§Next steps](#next-steps-ordered).
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
 Milestone dashboard: [STATUS.md](STATUS.md).
@@ -84,16 +84,17 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 
 ## Resume point (paused 2026-11-20)
 
-State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 2026-11-26: `0.7.12+f7` = (a); `0.7.13+f7` = (b) + (c) (2026-11-27); `0.7.14+f7` = (d) + (e) + (f) (2026-11-27). All work is pushed; nothing local-only.
+State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 2026-11-26: `0.7.12+f7` = (a); `0.7.13+f7` = (b) + (c) (2026-11-27); `0.7.14+f7` = (d) + (e) + (f) (2026-11-27); `0.7.15+f7` = (c′) P7 world-fight bands (2026-11-27). All work is pushed; nothing local-only.
 
 **Open branches on origin:**
 
 | Branch | Head | Holds | State |
 |---|---|---|---|
-| `main` | `0.7.14+f7` | everything accepted through Q6 | CI green |
+| `main` | `0.7.15+f7` | everything accepted through P7 | CI green |
 | `feat/q4-slice` | — | Q4 slice length | **merged into `main` as `0.7.12+f7`** (2026-11-26); safe to delete |
 | `feat/q5-economy` | — | Q5 economy model + per-pair hold-out | **merged into `main` as `0.7.13+f7`** (2026-11-27); safe to delete |
 | `feat/q6-cluster-web` | — | Q6 cluster auth + blobs, web-nothreads, doc nits | **merged into `main` as `0.7.14+f7`** (2026-11-27); safe to delete |
+| `feat/quality-p7` | — | P7 world-fight wipe-rate / clear-time bands | **fast-forwarded into `main` as `0.7.15+f7`** (2026-11-27); safe to delete |
 | `feat/quality-q1`…`q3`, `feat/stubs-real-b1`…`b4` (incl. `b2b`), `feat/companions-pocketloom`, `feat/companions-c7-c8`, `feat/companions-c9-c12`, `feat/f5-balance`, `feat/f6-slice`, `feat/f7-packaging` | — | fully merged into `main` (ancestors of `main`) | safe to delete on origin when the Producer agrees |
 | `wip/f5-companions` | `73e01e1` | early companion WIP (PocketLoom, LoomCluster, GroundWeave drafts) | **not an ancestor of `main` but superseded** — its content was rebuilt, verified and merged via `feat/companions-pocketloom` and `feat/companions-c7-c8`; keep for history or delete |
 
@@ -101,17 +102,18 @@ State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 202
 
 1. ✅ **(a) Slice length** (P5) — landed `0.7.12+f7`: Ore Hollow, patrol beat, q_smith, Windward Ridge (C-91); `forge accept F6` gates the human-pace estimate (C-92, ADR-0017): 17.03–18.51 min on all 12 selections; bot 7.10–7.35 game-min. A human GUI playtest stays the real proof.
 2. ✅ **(b) D-005 economy / loot / quest tables** (P4) — landed `0.7.13+f7`: economy design model (ADR-0018, C-93), `economy_design` gate in Codegen-World, loot MC + XP pacing in `forge accept F6` on all 12 selections. Names/numbers stay Game-Design sign-off.
-3. ✅ **(c) Per-pair balance ≤ 3.5 pp on unseen seeds** (P6) — landed `0.7.13+f7`: **2.71 pp** on 1000 fresh seeds/cell (seed_base 20 000, full `forge accept F5`); bounded Optuna study recorded but not applied (noise), 3 affinities recalibrated by paired CRN probe (C-94). **P7 world fights** (wipe-rate / clear-time bands) still open.
+3. ✅ **(c) Per-pair balance ≤ 3.5 pp on unseen seeds** (P6) — landed `0.7.13+f7`: **2.71 pp** on 1000 fresh seeds/cell (seed_base 20 000, full `forge accept F5`); bounded Optuna study recorded but not applied (noise), 3 affinities recalibrated by paired CRN probe (C-94). P7 world fights landed in `0.7.15+f7` (item 7).
 4. ✅ **(d) LoomCluster node auth + content-addressed blob transfer** (P8) — landed `0.7.14+f7`: HMAC-SHA256 signed requests and responses (fleet secret, ±120 s window, nonce replay guard → 401), `{sha256,size}` results + signed `/blob/<sha256>` pull verified by the origin; C7 `auth_blobs` check (C-95, C-96). Still no encryption.
 5. ✅ **(e) Web single-thread fallback** (D-001, P9) — landed `0.7.14+f7`: `web-nothreads` target, ADR-0019, C-97; `patch_sw` fix for Godot 4.3's stale `index.worker.js` SW entry.
 6. ✅ **(f) Doc nits** (P10) — landed `0.7.14+f7`; STATUS regenerated.
-7. **F8** retro/console-style (confirmed by the Producer, t59u), then **F9** LiveOps readiness only.
+7. ✅ **(c′) World-fight wipe-rate / clear-time bands** (P7) — landed `0.7.15+f7`: `forge/worldfights.py` replays every recorded slice fight from its start state over fixed seeds; bands in `content/tune/worldfights.yaml` (ADR-0020, C-98) gated per selection × fight in `forge accept F6` — full 8 040 fights, 0 wipes, trash 1.13–4.02 s / elite 2.62–5.00 s / Warden 8.48–9.82 s median clear, all in band; field + ridge first packs +1 cave mite (field was < 1 s). F5 outcomes byte-identical.
+8. **F8** retro/console-style (confirmed by the Producer, t59u), then **F9** LiveOps readiness only.
 
 Q3 follow-up (not scheduled): native forward-sim step (GDExtension, ADR-0003) to meet < 50 ms on slow 2-core runners — needs a C++ toolchain, per-platform builds (Linux, Windows, Android arm64, Web dlink) and a bit-parity gate; see `docs/perf/gdscript-thread-scaling/`.
 
 ## Next steps (ordered)
 
-1. **F8 — retro/console-style** (confirmed by the Producer, t59u, C-85): read SPEC §13 F8 + GAME_SPEC for the retro/console target, write `docs/acceptance-tests/F8.md` first, one milestone per run on `feat/f8-…`, `forge accept F8` + CI green before fast-forwarding `main` (version `0.8.0+f8`). Then **F9 — LiveOps readiness only** (no launch, no Releases). Open quality-gap row **P7 world-fight bands** (TODO.md row 7) can be done before F8 if the Producer wants every gap row closed first.
+1. **F8 — retro/console-style** (confirmed by the Producer, t59u, C-85): read SPEC §13 F8 + GAME_SPEC for the retro/console target, write `docs/acceptance-tests/F8.md` first, one milestone per run on `feat/f8-…`, `forge accept F8` + CI green before fast-forwarding `main` (version `0.8.0+f8`). Then **F9 — LiveOps readiness only** (no launch, no Releases). All software quality-gap rows are closed (P7 in `0.7.15+f7`); only the hardware-gated Q3 native-step follow-up remains.
 2. **Remaining hardware-gated items**: first real GPU rung (ROCm ONNX) + full-scale SplatForge on a `rocm` LoomCluster node (the only C9–C12 stub left); two-machine LoomCluster run; Kotlin cluster peer.
 3. **PocketLoom on hardware**: `adb install` the debug APK on the Redmi Note 12 Pro 5G (D-002); generate, capture (camera + import), pair via QR with `forge link serve`, drain + sync; record timings.
 4. Human GUI playtest of the vertical slice (length vs 15–20 min, HUD/quest readability, controls, music mix) — checklist in docs/acceptance-tests/F6.md; play the F7 builds on real Windows, the Redmi Note 12 Pro 5G (D-002) and a public HTTPS host.

@@ -351,7 +351,7 @@ func _active_packs_cleared() -> bool:
 
 
 ## P7 (0.7.15): the state a world fight starts from — party levels + pet, item/buff bonuses, every party member's HP
-## (carried between fights) and the tilemap — so `forge worldfights` can replay the same fight over many seeds.
+## (carried between fights) and the tilemap — so forge/worldfights.py (`forge accept F6`) can replay the same fight over many seeds.
 ## Diagnostics only: nothing here feeds back into the run.
 func _fight_context() -> Dictionary:
 	var hp := {}

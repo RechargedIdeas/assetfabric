@@ -4,6 +4,30 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+## [0.7.15+f7] — 2026-11-27 — Quality gap P7: world-fight wipe-rate / clear-time bands
+
+### Added
+- **World-fight Monte Carlo** (`forge/worldfights.py`, ADR-0020, INFERENCE C-98): the slice records each fight's start
+  state (`slice.gd::_fight_context` — party levels + pet, item/buff bonus, carried HP, pulled packs, tilemap); every
+  recorded fight of every selection is replayed in the balance worker over fixed seeds (seed_base 70 000; full 30 seeds
+  per world fight + 100 per Warden fight × 12 selections = 8 040 fights ≈ 128 s on 8 vCPU; FAST/CI 352 fights ≈ 10 s).
+- **Bands** `content/tune/worldfights.yaml`, gated per selection × fight in `forge accept F6` (`result.world_fights`):
+  trash wipe ≤ 2 %, median engaged clear 1–6 s, p90 ≤ 9 s; elite (≥ 2 tier-2) ≤ 6 %, 2–9 s, p90 ≤ 13 s; slice Warden
+  ≤ 10 % (no floor — C-93 "deliberately forgiving first boss"), 8–30 s, p90 ≤ 40 s; P(≥ 1 wipe per playthrough) ≤ 30 %;
+  no soft-locks / timeouts.
+- Balance worker (`--scene=balance`): inline `encounter_def`, per-job `patch` + `start_hp`, `engage_tick` in results.
+  F5 jobs unchanged — G-BAL-01 (mean 0.7083, 2400 fights) and the hold-out (2.71 pp) re-recorded with identical numbers.
+- `tests/test_worldfights.py` (unit: fight units, classes, band verdicts, seed ranges; Godot: carried state is replayed
+  and the gate fires on a weakened party). Runs in the `game` CI shard.
+
+### Changed
+- **Tuning** (pack composition only, `content/world/areas.yaml`): field pack 2 emberlings → + 1 cave mite (median clear
+  was 0.63–0.93 s for 5 of 12 selections, under the 1 s trash floor); Windward Ridge first pack 3 emberlings → + 1 cave
+  mite (it sat on the floor at 1.02 s). After: 0 wipes in 8 040 replays; trash 1.13–4.02 s, elite 2.62–5.00 s, Warden
+  8.48–9.82 s median clear — every cell in band. Slice: human-pace estimate 17.15–18.76 min, economy + XP pacing still
+  met on all 12 selections, 64 kills / 21 fights on the main run.
+- `forge accept all` re-recorded (F0–F7, C1–C12 green); full `forge accept F6` ≈ 3 min (was ≈ 1 min).
+
 ## [0.7.14+f7] — 2026-11-27 — Quality gaps Q6: LoomCluster node auth + blob transfer, Web single-thread fallback (D-001), doc nits
 
 ### Added

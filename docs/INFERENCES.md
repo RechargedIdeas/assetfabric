@@ -599,3 +599,26 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     (SwiftShader) on a header-less local host: gzip-9 9.37 MB, boots, SW + offline boot (after `patch_sw` removes 4.3's
     stale `index.worker.js` cache entry), IndexedDB save round-trip, swap ranking p95 68.7 ms in the recorded 0.7.14 run
     (132.6 ms in the first measurement — run-to-run noise under SwiftShader; above the 50 ms native budget, not gated). Real browsers on a public HTTPS host (Chrome/Firefox/Safari) remain untested.
+
+### P7 — world-fight wipe-rate / clear-time bands (0.7.15, gap c′)
+
+98. **C-98 World-fight bands.** GAME_SPEC gives no wipe-rate or clear-time numbers for world fights (§4.4 only "bosses +
+    trash mobs with tier system", §5 G-BAL-01 for the boss, §6.1 15–20 min for the slice). Ours, in
+    `content/tune/worldfights.yaml` (ADR-0020): fight classes **trash** (everything else), **elite** (≥ 2 tier-2 units
+    pulled together), **boss** (the lair encounter). Per selection × fight: trash wipe ≤ 2 %, median engaged clear
+    1–6 s, p90 ≤ 9 s; elite ≤ 6 %, 2–9 s, p90 ≤ 13 s; slice Warden ≤ 10 %, 8–30 s, p90 ≤ 40 s; time bounds × k for a
+    pull of k packs; P(≥ 1 wipe per playthrough, independence assumed) ≤ 30 %; no soft-locks/timeouts (60 s limit).
+    The 1 s trash floor is the shortest fight that still reads as one in 8-bit combat (two or three attack cycles);
+    the Warden has no wipe floor because Q5 (C-93) made the slice boss "deliberately forgiving" at level 4 + gear —
+    G-BAL-01 (level 3, no gear, 0.55–0.90) stays the hard point. Engaged time is measured from the first landed hit
+    (the walk-in is excluded). Replays use the recorded start state of each fight (party levels + pet, item/buff
+    bonus, carried HP — downed members at their 25 % revive HP — and the pulled packs), seed_base 70 000 (CRN across
+    selections, no overlap with G-BAL-01 1000, the hold-out 20 000 or fits 50 000+), the slice dice (±20 %, 10 % crit).
+    Full: 30 seeds per world fight, 100 per boss fight, 12 selections (8 040 fights, ≈ 2 min on 8 vCPU); FAST/CI: 8 / 24
+    on 2 selections. **Measured before tuning (0.7.14 content, 30 seeds):** 0 wipes in 7 170 replays; trash medians
+    0.63–4.02 s — the field pack (2 emberlings, the first fight, level 2) cleared in 0.63–0.93 s for 5 of 12
+    selections, Windward Ridge's first pack (3 emberlings) sat on the floor at 1.02 s; elite 2.62–5.00 s; Warden
+    8.55–9.97 s, 0 wipes. **Tuned:** both packs + 1 cave mite (pack composition only — shared enemy stats untouched so
+    G-BAL-01 and the hold-out are unchanged). **After:** 0 wipes in 8 040 replays; trash 1.13–4.02 s (p90 ≤ 4.43),
+    elite 2.62–5.00 s (p90 ≤ 5.42), Warden 8.48–9.82 s (p90 ≤ 10.32; ≥ 1 fighter downed in 98 % of replays).
+    The model plays the BT + policy party AI; a human will wipe more — the playtest checklist (F6.md) covers it.
