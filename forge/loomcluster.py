@@ -249,7 +249,10 @@ def _client_ctx(override: Any = None) -> Any:
     key = (os.environ.get(cluster_tls.DIR_ENV, ""), os.environ.get(cluster_tls.NAME_ENV, ""), name)
     ctx = _TLS_IDENTITY["ctx"].get(key)
     if ctx is None:
-        ctx = _TLS_IDENTITY["ctx"][key] = cluster_tls.client_context(name)
+        try:
+            ctx = _TLS_IDENTITY["ctx"][key] = cluster_tls.client_context(name)
+        except cluster_tls.ClusterTLSError as e:
+            raise ClusterAuthError(f"cannot open an https:// cluster connection: {e}") from e
     return ctx
 
 

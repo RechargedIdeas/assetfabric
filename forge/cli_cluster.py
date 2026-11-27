@@ -45,9 +45,35 @@ def gw_verify(cores: int | None, ops: tuple[str, ...], no_compare: bool) -> None
     sys.exit(0 if r["ok"] else 1)
 
 
-@click.group("cluster")
-def cluster_grp() -> None:
+class _ClusterGroup(click.Group):
+    """Turn transport/auth failures of client commands into one clear message instead of a traceback."""
+
+    def invoke(self, ctx: click.Context):  # noqa: ANN201
+        from forge import cluster_tls
+        from forge import loomcluster as lc
+
+        try:
+            return super().invoke(ctx)
+        except (lc.ClusterAuthError, cluster_tls.ClusterTLSError) as e:
+            hint = ("" if "TLS" not in str(e) and "https" not in str(e)
+                    else " (TLS fleet: pass `forge cluster --tls-dir <dir> …` or set FORGE_CLUSTER_TLS_DIR)")
+            raise click.ClickException(f"{e}{hint}") from e
+        except OSError as e:          # URLError, refused, TLS handshake failures
+            raise click.ClickException(f"cluster node unreachable or refused the connection: {e}") from e
+
+
+@click.group("cluster", cls=_ClusterGroup)
+@click.option("--tls-dir", type=click.Path(path_type=Path), default=None,
+              help="Talk to a TLS/mTLS fleet with this client's certs (`operator` unless FORGE_CLUSTER_TLS_NAME); "
+                   "same as FORGE_CLUSTER_TLS_DIR.")
+def cluster_grp(tls_dir: Path | None) -> None:
     """LoomCluster equal nodes (advertise / negotiate / queue / steal / retry)."""
+    import os
+
+    from forge import cluster_tls
+
+    if tls_dir:
+        os.environ[cluster_tls.DIR_ENV] = str(tls_dir.resolve())
 
 
 @cluster_grp.command("node")
