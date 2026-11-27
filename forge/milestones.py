@@ -254,7 +254,8 @@ from forge import accept_cluster as _acl  # noqa: E402
 CL_ORDER = ["C7", "C8"]
 _CL_DESC = {
     "C7": "LoomCluster: equal nodes advertise/negotiate, steal work, checkpoint, retry; node-count-independent results; "
-          "PocketLoom LoomLink offload runs on the fleet",
+          "PocketLoom LoomLink offload runs on the fleet; HMAC-signed node requests/responses (401 on unsigned/replayed), "
+          "content-addressed /blob transfer",
     "C8": "GroundWeave: GPU→CPU fallback ladder for every op; 2-core/no-GPU budgets + byte-identical output; pipeline refuses "
           "undeclared generators",
 }
