@@ -27,6 +27,7 @@ FORGE_ACCEPT_FAST=1 forge accept F7 --no-write   # static subset (CI / no templa
 | `desktop-windows` | `desktop-windows` | release | `GameZero.exe` + `GameZero.console.exe` + `GameZero.pck` | PE32+ x86-64 header (GUI + console subsystems); pck file set == Linux and every data file byte-identical. **No runtime smoke** (no wine on the build host — run `GameZero.console.exe --headless -- --net-report` on Windows) |
 | `android` | `android` | **debug** | `GameZero-debug.apk` | `aapt dump badging/permissions` (package, versionCode 7, minSdk 21 / targetSdk 34, `arm64-v8a`, launchable, **no INTERNET**), `apksigner verify` (v1+v2+v3, debug key), `apkanalyzer apk download-size`; the APK's packed content runs the full slice on the desktop runtime (no device/emulator — no KVM) |
 | `web` | `web` | release (threads) | `index.html` + `index.{js,wasm,pck,worker.js,audio.worklet.js,service.worker.js,manifest.json,offline.html}` + icons + `_headers` | PWAPipeline: G-WEB-01 budget, SW cache list, headless-Chrome smoke (COOP/COEP, isolation, SW, offline reload, header-less host via SW shim) |
+| `web-nothreads` | `web-nothreads` | release (single thread, D-001 / ADR-0019) | `index.{html,js,wasm,pck,audio.worklet.js,service.worker.js,manifest.json,offline.html}` + icons + `_headers` (no COOP/COEP) — no `worker.js` | PWAPipeline: budget, SW cache list (+ `patch_sw` fix for Godot 4.3's stale `index.worker.js` entry), headless-Chrome smoke on a header-less host: not isolated, boots, SW + offline boot, swap advisor serial path, IndexedDB save round-trip |
 
 Every target dir also gets `BUILD.json` (command, toolchain, sizes, SHA-256 of every file, smoke results),
 `shuttle.json` (ShuttleLine contract check), `sbom.cdx.json` and `LICENSES/` (BoltPack), and a
@@ -79,6 +80,11 @@ Nothing in `.fabric/godot-home`, `.fabric/cache`, `dist/`, `*.keystore` is commi
 * Smoke (local `http.server` + headless Chrome): response headers on html/wasm/pck, `crossOriginIsolated` +
   `SharedArrayBuffer`, game boots with 0 script errors, SW registered and controlling, wasm/pck in the SW cache,
   **offline reload** (context offline) boots from cache, and a header-less host reaches isolation via the SW.
+* **Single-thread fallback (`web-nothreads`, ADR-0019)** for hosts or embedders that cannot be cross-origin isolated:
+  Godot 4.3 `web_nothreads_*` templates, PWA on, no isolation shim, no COOP/COEP needed — any static host works.
+  The swap advisor runs its serial path (`OS.has_feature("nothreads")`). Post-step `patch_sw` drops install-time SW
+  cache entries the export did not produce: 4.3-stable lists a non-existent `index.worker.js`, which otherwise makes
+  the SW install fail (no offline play). Serve `dist/web` where you control headers, `dist/web-nothreads` elsewhere.
 
 Hosting with nginx:
 

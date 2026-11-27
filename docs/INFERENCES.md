@@ -200,8 +200,8 @@ those lines were made concrete.
     CI one runner. C7 is therefore accepted on **loopback nodes (separate OS processes)**: protocol, scheduling,
     determinism and failure handling are real; transport across machines is not exercised.
 17. **C-17 [INFERENCE] Node protocol.** HTTP/JSON (`/advert /hello /submit /steal /result /owner /status /results`),
-    stdlib only, bound to `cluster.protocol.bind` (loopback). **No authentication/encryption** — the intended fix is to
-    reuse LoomLink's per-device HMAC + capability model and run over Tailscale. Until then it must not be exposed.
+    stdlib only, bound to `cluster.protocol.bind` (loopback). Originally no authentication/encryption; **since 0.7.14
+    every request and response is HMAC-signed with a fleet secret (C-95)**. Still no encryption — pin to Tailscale.
 18. **C-18 [INFERENCE] "Coordinator can be elected".** Every node schedules for itself; the "coordinator" (lowest live
     node id) is derived from adverts and used for reporting only — nothing depends on it, so there is no master.
 19. **C-19 [INFERENCE] Execution semantics.** At-least-once with deterministic ops; first result wins. The origin keeps a
@@ -235,7 +235,8 @@ those lines were made concrete.
     12 × 2 matrix. The full 2400-fight G-BAL-01 run was not re-timed on 2 cores. `recon.splat` is `gpu_required`
     (3DGS has no honest CPU path) and is only *routed* (placement proven with a stand-in op); SplatForge is C12.
 28. **C-28 [INFERENCE] Artifact transfer.** `gen` returns digests; with `return_data` it also returns base64 bytes so
-    `forge cluster gen --out` can land them. Fine for current assets; large blobs need the LoomLink store/blob path.
+    `forge cluster gen --out` can land them. **Superseded in 0.7.14 (C-96):** bytes no longer travel in result JSON —
+    results carry `{sha256,size}` and the origin pulls `/blob/<sha256>`.
 29. **C-29 [INFERENCE] CI placement / version.** `forge accept C7-C8` runs in the parallel `pocketloom` job (needs Godot for
     the probes and the JDK/SDK for the Kotlin hop); pytest carries only `tests/test_c7_c8.py`. Version `0.7.2+f7` (patch:
     new commands/modules; milestone unchanged).
