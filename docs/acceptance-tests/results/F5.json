@@ -5,13 +5,13 @@
   "milestone": "F5",
   "passed": true,
   "perf": {
-    "balance_wall_s": 51.05,
+    "balance_wall_s": 44.33,
     "balance_workers": 8,
-    "boss_sim_ms": 165.53,
+    "boss_sim_ms": 158.07,
     "boss_ticks": 880,
     "holdout_combo_deviation": 0.0271,
-    "holdout_wall_s": 232.58,
-    "ms_per_encounter_per_worker": 170.2
+    "holdout_wall_s": 224.61,
+    "ms_per_encounter_per_worker": 147.8
   },
   "result": {
     "abilities_loaded": 17,
@@ -113,7 +113,7 @@
         "rule": 1052
       },
       "dialogue": [],
-      "field_warm_ms": 114.55,
+      "field_warm_ms": 98.15,
       "girt": {
         "callouts_served": 11,
         "lm_calls": 0,
@@ -123,7 +123,7 @@
         "policy_calls": 200,
         "policy_fallbacks": 0,
         "policy_over_budget": 0,
-        "policy_p95_us": 9,
+        "policy_p95_us": 11,
         "registry": [
           {
             "arch": "mlp-7-12-1-tanh",
@@ -391,7 +391,7 @@
           0.9
         ]
       },
-      "wall_s": 51.05,
+      "wall_s": 44.33,
       "workers": 8
     },
     "boss": {
@@ -579,7 +579,7 @@
       "seed_base": 20000,
       "seeds_per_cell": 1000,
       "softlocks": 0,
-      "wall_s": 232.58,
+      "wall_s": 224.61,
       "win_rates": {
         "bram+ember_fox": 0.681,
         "bram+lumen_wisp": 0.726,
@@ -601,7 +601,7 @@
     "outcome": "victory",
     "save": {
       "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
-      "path": "/tmp/fabric-f5-kt2jsxer/saves/slot0.json",
+      "path": "/tmp/fabric-f5-0_17wy1d/saves/slot0.json",
       "state": {
         "checksum": "4b13a9f40ffc77da623c192f5c48f2c833091a2a87283f22bfbd96ca17c39e33",
         "format": "gamezero-save",
@@ -696,6 +696,7 @@
       "last_load": {
         "errors": [],
         "migrated_from": [],
+        "newer_than_build": false,
         "ok": true,
         "recovered_from_backup": false
       },
@@ -749,13 +750,14 @@
             "slot0.json: unreadable"
           ],
           "migrated_from": [],
+          "newer_than_build": false,
           "ok": true,
           "recovered_from_backup": true
         },
         "loaded_equal_first": true
       }
     },
-    "sim_ms": 165.53,
+    "sim_ms": 158.07,
     "softlock_probe": {
       "encounters": 24,
       "outcomes": {

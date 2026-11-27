@@ -8,8 +8,8 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "depth.distance": 0.013,
-      "depth.estimate": 1.0
+      "depth.distance": 0.012,
+      "depth.estimate": 0.935
     },
     "planned_ops": [],
     "real": 4,
@@ -83,7 +83,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.distance",
           "status": "ok",
-          "wall_s": 0.013
+          "wall_s": 0.012
         },
         {
           "backend": "depthanything-v2-onnx-cpu",
@@ -94,7 +94,7 @@
           "identical_with_simulated_gpu": true,
           "op": "depth.estimate",
           "status": "ok",
-          "wall_s": 1.0
+          "wall_s": 0.935
         }
       ]
     },
@@ -105,7 +105,7 @@
         "delta1_min": 0.9,
         "spearman_min": 0.9
       },
-      "infer_s_1_thread": 0.854,
+      "infer_s_1_thread": 0.791,
       "metrics_12_anchors": {
         "abs_rel": 0.024602137795421513,
         "delta1": 0.99835205078125,
@@ -212,7 +212,7 @@
     },
     "model_ready": true,
     "offload": {
-      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f1b475a7b50>",
+      "bad_image_error": "UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7f0aa40573d0>",
       "bad_image_refused": true,
       "metric": {
         "anchor_rmse_m": 0.15766392751650302,

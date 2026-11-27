@@ -19,7 +19,7 @@
       "junit_failures": 0,
       "junit_tests": 46,
       "ok": true,
-      "seconds": 7.5
+      "seconds": 10.2
     },
     "c4": {
       "blob_identical": true,
@@ -30,7 +30,7 @@
         "media": "image/jpeg",
         "provenance": {
           "bytes": 15406,
-          "captured_at": 1795769380833,
+          "captured_at": 1795773852693,
           "device": "jvm-cli",
           "height": 480,
           "media": "image/jpeg",
@@ -40,9 +40,9 @@
         },
         "sha256": "c9733dc805b374c44e91ced4652ceae8578cb2b8a3fd1cbdd51eb55ea75e746e",
         "size": 15406,
-        "updated_by": "pl-13374afa",
+        "updated_by": "pl-f6d1d916",
         "vv": {
-          "pl-13374afa": 1
+          "pl-f6d1d916": 1
         }
       },
       "image_capture_query": true,

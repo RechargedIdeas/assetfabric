@@ -1,0 +1,867 @@
+{
+  "description": "LiveOps readiness: flag/kill-switch manifest with safe offline defaults, signed remote-config bundles for balance knobs (RSA, anti-replay serial), device state machine (promote / reject / roll-forward rollback / crash-loop quarantine / tamper -> defaults), save forward-compat guard, opt-in local scrubbed diagnostics, readiness checklist; G-NET-01 strict, no live service",
+  "errors": [],
+  "increment": "liveops-readiness",
+  "milestone": "F9",
+  "passed": true,
+  "perf": {
+    "device_boots": 22,
+    "device_wall_s": 6.7,
+    "flags": 4,
+    "forge_bad_bundles": 10,
+    "forge_bad_bundles_refused": 10,
+    "knobs": 26,
+    "liveops_boot_ms_max": 1.33,
+    "liveops_boot_ms_mean": 0.71,
+    "user_gated": [
+      "production_public_key",
+      "live_service"
+    ],
+    "wall_s": 10.3
+  },
+  "result": {
+    "combat": {
+      "baseline_no_liveops": "642df8161c490e15",
+      "bundle_1": "10a8510d4d5395ed",
+      "bundle_1_again": "10a8510d4d5395ed",
+      "defaults": "642df8161c490e15",
+      "rollback_2": "642df8161c490e15"
+    },
+    "device": {
+      "device_status": {
+        "active": 4,
+        "boot_sentinel": null,
+        "dir": "/tmp/f9-ycdi7rtv/device",
+        "inbox": false,
+        "last_status": {
+          "active_invalid": [],
+          "boot_ms": 0.54,
+          "errors": [],
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "key": "pinned",
+          "max_serial": 5,
+          "patches_applied": 0,
+          "previous_boot_crashed": false,
+          "quarantined": 0,
+          "rejected": [],
+          "serial": 4,
+          "source": "bundle"
+        },
+        "previous": null,
+        "quarantine": [
+          "5.json"
+        ],
+        "rejected": [
+          "1-164194.json",
+          "3-163862.json",
+          "3-166114.json",
+          "3-168345.json",
+          "3-168589.json",
+          "3-172824.json"
+        ],
+        "state": {
+          "active_serial": 4,
+          "max_serial": 5
+        }
+      },
+      "steps": {
+        "active_downgrade_swap": {
+          "active_invalid": [
+            "active serial 1 is not the promoted serial 4 (swapped on disk)"
+          ],
+          "boot_ms": 0.54,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        },
+        "active_tampered": {
+          "active_invalid": [
+            "signature invalid"
+          ],
+          "boot_ms": 0.41,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        },
+        "after_crash_loop": {
+          "active_invalid": [],
+          "boot_ms": 0.87,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 5,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 4,
+          "source": "bundle"
+        },
+        "boot_again_1": {
+          "active_invalid": [],
+          "boot_ms": 0.7,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": false,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": false
+          },
+          "inbox": "none",
+          "music_state_for_combat": "explore",
+          "offline_peer": true,
+          "patches_applied": 2,
+          "probe": {
+            "abilities.claw.power": 3,
+            "enemies.emberling.stats.hp": 30
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "off",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 1,
+          "source": "bundle"
+        },
+        "crash_boot_1": {
+          "active_invalid": [],
+          "boot_ms": 1.17,
+          "diag_written": false,
+          "exit": -6,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "promoted",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 1,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 30
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 5,
+          "source": "bundle"
+        },
+        "crash_boot_2": {
+          "active_invalid": [],
+          "boot_ms": 0.88,
+          "diag_written": false,
+          "exit": -6,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 1,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 30
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 5,
+          "source": "bundle"
+        },
+        "diag_off": {
+          "active_invalid": [],
+          "boot_ms": 0.12,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        },
+        "diag_on": {
+          "active_invalid": [],
+          "boot_ms": 0.12,
+          "diag_written": true,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": true,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "session_has_paths": false,
+          "source": "defaults"
+        },
+        "fresh": {
+          "active_invalid": [],
+          "boot_ms": 0.17,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        },
+        "net_off_boot": {
+          "active_invalid": [],
+          "boot_ms": 0.54,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "network_namespace": "bwrap --unshare-net",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 4,
+          "source": "bundle"
+        },
+        "no_key": {
+          "active_invalid": [],
+          "boot_ms": 0.08,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "ignored_no_key",
+          "inbox_left": true,
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        },
+        "promote_1": {
+          "active_invalid": [],
+          "boot_ms": 1.1,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": false,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": false
+          },
+          "inbox": "promoted",
+          "music_state_for_combat": "explore",
+          "offline_peer": true,
+          "patches_applied": 2,
+          "probe": {
+            "abilities.claw.power": 3,
+            "enemies.emberling.stats.hp": 30
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "off",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 1,
+          "source": "bundle"
+        },
+        "promote_2_balance_off": {
+          "active_invalid": [],
+          "boot_ms": 1.07,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "promoted",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_consent": {
+          "active_invalid": [],
+          "boot_ms": 1.11,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "flag diagnostics: consent is the player's decision, a bundle cannot set it"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_content": {
+          "active_invalid": [],
+          "boot_ms": 0.92,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "unknown key content (bundles carry flags + balance patches only)"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_out_of_range": {
+          "active_invalid": [],
+          "boot_ms": 0.97,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "enemies.emberling.stats.hp: 99999 outside [1, 9999]"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_replay_1": {
+          "active_invalid": [],
+          "boot_ms": 0.92,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "serial 1 is not newer than 2 (replay/downgrade)"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_tampered": {
+          "active_invalid": [],
+          "boot_ms": 0.94,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "signature invalid"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "reject_wrong_key": {
+          "active_invalid": [],
+          "boot_ms": 0.95,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": false,
+            "retro_styles": true
+          },
+          "inbox": "rejected",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [
+            "key_id 3835a5813a830e3a does not match the pinned key b692377b3e6b8da8"
+          ],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 2,
+          "source": "bundle"
+        },
+        "restored": {
+          "active_invalid": [],
+          "boot_ms": 0.56,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 4,
+          "source": "bundle"
+        },
+        "rollback_4_defaults": {
+          "active_invalid": [],
+          "boot_ms": 1.33,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "promoted",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": null,
+          "script_errors": 0,
+          "serial": 4,
+          "source": "bundle"
+        },
+        "save_guard": {
+          "active_invalid": [],
+          "boot_ms": 0.13,
+          "diag_written": false,
+          "exit": 0,
+          "flags": {
+            "adaptive_music": true,
+            "diagnostics": false,
+            "remote_balance": true,
+            "retro_styles": true
+          },
+          "inbox": "none",
+          "music_state_for_combat": "combat",
+          "offline_peer": true,
+          "patches_applied": 0,
+          "probe": {
+            "abilities.claw.power": 1,
+            "enemies.emberling.stats.hp": 24
+          },
+          "quarantined": 0,
+          "rejected": [],
+          "retro_request_nes": "nes-style",
+          "save_guard": {
+            "bytes_unchanged": true,
+            "load_empty": true,
+            "newer_than_build": true,
+            "read_only": true,
+            "roundtrip_ok": true,
+            "write_refused": true
+          },
+          "script_errors": 0,
+          "serial": 0,
+          "source": "defaults"
+        }
+      },
+      "wall_s": 6.7
+    },
+    "diagnostics": {
+      "files": [
+        "godot.log",
+        "session.json"
+      ],
+      "leaks": [],
+      "redactions": {
+        "email": 1,
+        "home_path": 2,
+        "identity": 2,
+        "ipv4": 1,
+        "ipv6": 1,
+        "mac": 1,
+        "token": 1
+      },
+      "refused_without_consent": true,
+      "schema_errors": [],
+      "uploaded": false
+    },
+    "forge_rules": {
+      "consent_flag": {
+        "errors": [
+          "flag diagnostics: consent is the player's decision, a bundle cannot set it"
+        ],
+        "ok": false
+      },
+      "content_key": {
+        "errors": [
+          "unknown keys ['content'] (bundles carry flags + balance patches only)"
+        ],
+        "ok": false
+      },
+      "future_build": {
+        "errors": [
+          "build_min 9.0.0 > build 0.9.0+f9"
+        ],
+        "ok": false
+      },
+      "out_of_range": {
+        "errors": [
+          "enemies.emberling.stats.hp: 99999 outside [1, 9999]"
+        ],
+        "ok": false
+      },
+      "replayed_serial": {
+        "errors": [
+          "serial 1 is not newer than 1 (replay/downgrade)"
+        ],
+        "ok": false
+      },
+      "sim_knob": {
+        "errors": [
+          "sim.leash: sim.* knobs are dev-only live tune, not remote config"
+        ],
+        "ok": false
+      },
+      "tampered_payload": {
+        "errors": [
+          "signature invalid"
+        ],
+        "ok": false
+      },
+      "unknown_flag": {
+        "errors": [
+          "flag double_xp: unknown"
+        ],
+        "ok": false
+      },
+      "unknown_knob": {
+        "errors": [
+          "enemies.season_boss.stats.hp: no such numeric field"
+        ],
+        "ok": false
+      },
+      "valid": {
+        "errors": [],
+        "ok": true
+      },
+      "wrong_key": {
+        "errors": [
+          "key_id 3835a5813a830e3a does not match the pinned key b692377b3e6b8da8"
+        ],
+        "ok": false
+      }
+    },
+    "manifest": {
+      "defaults": {
+        "adaptive_music": true,
+        "diagnostics": false,
+        "remote_balance": true,
+        "retro_styles": true
+      },
+      "errors": [],
+      "flags": [
+        "adaptive_music",
+        "diagnostics",
+        "remote_balance",
+        "retro_styles"
+      ],
+      "in_sync": true,
+      "knobs": 26
+    },
+    "net_scan": {
+      "network_api_uses": [],
+      "ok": true
+    },
+    "readiness": {
+      "failed": [],
+      "items": [
+        {
+          "detail": "4 flags, locale keys present",
+          "id": "flags_manifest_valid",
+          "status": "pass"
+        },
+        {
+          "detail": "games/game-zero/assets/generated/liveops/liveops.json",
+          "id": "game_manifest_in_sync",
+          "status": "pass"
+        },
+        {
+          "detail": "0 uses",
+          "id": "no_network_api_in_game",
+          "status": "pass"
+        },
+        {
+          "detail": "no PEM / private key tracked",
+          "id": "no_signing_key_in_repo",
+          "status": "pass"
+        },
+        {
+          "detail": "/.fabric/liveops/, *.pem",
+          "id": "key_dir_gitignored",
+          "status": "pass"
+        },
+        {
+          "detail": "Producer key ceremony pending \u2014 release builds ignore every bundle until then",
+          "id": "production_public_key",
+          "status": "user_gated"
+        },
+        {
+          "detail": "docs/liveops-runbook.md",
+          "id": "runbook",
+          "status": "pass"
+        },
+        {
+          "detail": "saves from a newer build are never overwritten (save.gd + forge/save.py)",
+          "id": "save_forward_compat_guard",
+          "status": "pass"
+        },
+        {
+          "detail": {
+            "diagnostics": false
+          },
+          "id": "privacy_defaults",
+          "status": "pass"
+        },
+        {
+          "detail": "no endpoint, no delivery service, no launch \u2014 F9 is readiness only (spec \u00a713)",
+          "id": "live_service",
+          "status": "user_gated"
+        }
+      ],
+      "ok": true,
+      "user_gated": [
+        "production_public_key",
+        "live_service"
+      ]
+    },
+    "wall_s": 10.3
+  }
+}

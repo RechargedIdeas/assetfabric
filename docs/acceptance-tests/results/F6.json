@@ -41,10 +41,10 @@
     "matrix_wipes": 0,
     "slice_game_minutes": 7.56,
     "slice_ticks": 27217,
-    "slice_wall_ms": 6586.1,
+    "slice_wall_ms": 7073.3,
     "swap_wall_ms": [
-      20.81,
-      13.44
+      17.79,
+      15.54
     ],
     "target_minutes": [
       15.0,
@@ -77,7 +77,7 @@
       }
     },
     "world_fights_encounters": 8040,
-    "world_fights_wall_s": 126.41
+    "world_fights_wall_s": 114.44
   },
   "result": {
     "economy": {
@@ -176,7 +176,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27217,
-          "wall_ms": 7014.2,
+          "wall_ms": 6726.2,
           "wipes": 0
         },
         {
@@ -198,7 +198,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27380,
-          "wall_ms": 7193.9,
+          "wall_ms": 6865.9,
           "wipes": 0
         },
         {
@@ -220,7 +220,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27266,
-          "wall_ms": 7137.1,
+          "wall_ms": 6698.2,
           "wipes": 0
         },
         {
@@ -242,7 +242,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25589,
-          "wall_ms": 6956.4,
+          "wall_ms": 6574.7,
           "wipes": 0
         },
         {
@@ -264,7 +264,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25668,
-          "wall_ms": 7024.6,
+          "wall_ms": 6575.1,
           "wipes": 0
         },
         {
@@ -286,7 +286,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25609,
-          "wall_ms": 6721.5,
+          "wall_ms": 6488.2,
           "wipes": 0
         },
         {
@@ -308,7 +308,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 28928,
-          "wall_ms": 7122.8,
+          "wall_ms": 6926.2,
           "wipes": 0
         },
         {
@@ -330,7 +330,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 26454,
-          "wall_ms": 6969.2,
+          "wall_ms": 6719.8,
           "wipes": 0
         },
         {
@@ -352,7 +352,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 28974,
-          "wall_ms": 7667.4,
+          "wall_ms": 6994.5,
           "wipes": 0
         },
         {
@@ -374,7 +374,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 27249,
-          "wall_ms": 7404.5,
+          "wall_ms": 6617.5,
           "wipes": 0
         },
         {
@@ -396,7 +396,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25815,
-          "wall_ms": 7339.1,
+          "wall_ms": 6620.7,
           "wipes": 0
         },
         {
@@ -418,7 +418,7 @@
           "script_errors": 0,
           "softlocks": 0,
           "ticks": 25664,
-          "wall_ms": 7271.8,
+          "wall_ms": 6540.7,
           "wipes": 0
         }
       ]
@@ -3539,7 +3539,7 @@
         "platform": "desktop"
       },
       "overlay": [
-        "TIME FROZEN \u2014 ranked swaps (13.4 ms)",
+        "TIME FROZEN \u2014 ranked swaps (15.5 ms)",
         "1. Kael  HP 47/82  score 146.7  target cave_warden_1  cd Shield Bash 1.0s, Slash 0.3s  @9,3",
         "2. Bram  HP 106/106  score 122.2  target cave_warden_1  cd Taunt 4.5s  @9,5",
         "3. Nyra  HP 54/54  score 114.0  target cave_warden_1  cd Volley 1.4s, Arrow 0.1s  @9,7",
@@ -3637,7 +3637,7 @@
             ]
           ],
           "tick": 4399,
-          "wall_ms": 20.81
+          "wall_ms": 17.79
         },
         {
           "area": "warden_lair",
@@ -3661,7 +3661,7 @@
             ]
           ],
           "tick": 24447,
-          "wall_ms": 13.44
+          "wall_ms": 15.54
         }
       ],
       "ticks": 27217,
@@ -3686,7 +3686,7 @@
         }
       ],
       "wait_ticks": 5535,
-      "wall_ms": 6586.1,
+      "wall_ms": 7073.3,
       "wipes": 0
     },
     "tilemaps": {
@@ -4221,7 +4221,7 @@
         "out_of_band": [],
         "out_of_band_count": 0
       },
-      "wall_s": 126.41,
+      "wall_s": 114.44,
       "workers": 8
     },
     "world_gates": {

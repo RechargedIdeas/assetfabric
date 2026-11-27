@@ -8,7 +8,7 @@
     "fabriccore_junit_tests": 46,
     "mode": "full",
     "op_wall_s_2core": {
-      "mirror.encode": 0.082
+      "mirror.encode": 0.068
     },
     "planned_ops": [],
     "real": 7,
@@ -103,7 +103,7 @@
           "identical_with_simulated_gpu": true,
           "op": "mirror.encode",
           "status": "ok",
-          "wall_s": 0.082
+          "wall_s": 0.068
         }
       ]
     },
@@ -383,7 +383,7 @@
       "ok": true,
       "replay": 403,
       "tampered": 403,
-      "wall_s_15_frames": 0.134
+      "wall_s_15_frames": 0.119
     }
   }
 }
