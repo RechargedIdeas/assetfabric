@@ -58,8 +58,15 @@ func set_palette(v: String) -> String:
 	_mat.set_shader_parameter("src", src)
 	_mat.set_shader_parameter("dst", dst)
 	_mat.set_shader_parameter("count", mini(pairs.size(), MAX_PAIRS))
-	_layer.visible = v != "default" and not pairs.is_empty()
+	refresh_layer()
+	Retro.refresh()                   # F8: a retro profile applies the variant inside its own pass
 	return v
+
+
+## The remap layer stands down while a retro profile is on (Retro's pass remaps before quantising).
+func refresh_layer() -> void:
+	var pairs: Array = tables.get(palette, [])
+	_layer.visible = palette != "default" and not pairs.is_empty() and not Retro.active()
 
 
 ## Next / previous variant in the list (Settings screen).
@@ -81,12 +88,14 @@ func ui_colour(role: String, fallback: Color = Color.MAGENTA) -> Color:
 
 
 func remap_active() -> bool:
-	return _layer.visible
+	return _layer.visible or (Retro.post_active() and palette != "default" and not tables.get(palette, []).is_empty())
 
 
 ## Profile-layer settings dict (the save's `profile.settings`).
 func settings() -> Dictionary:
-	return {"palette_variant": palette, "input_remap": Fabric.current_remap()}
+	var st := {"palette_variant": palette, "input_remap": Fabric.current_remap()}
+	st.merge(Retro.settings())       # F8: retro profile + scanlines travel with the profile layer
+	return st
 
 
 func apply_settings(s: Dictionary) -> void:
@@ -95,6 +104,7 @@ func apply_settings(s: Dictionary) -> void:
 	var rm = s.get("input_remap", {})
 	Fabric.apply_input_remap(rm if typeof(rm) == TYPE_DICTIONARY else {})
 	set_palette(str(s.get("palette_variant", "default")))
+	Retro.apply_settings(s)
 
 
 func sidecar_path() -> String:

@@ -435,7 +435,7 @@
         },
         "retro.json": {
           "res": "res://assets/generated/retro/retro.json",
-          "sha256": "a11d36993cd35813ff97740a28e20b7cce5b7f3358ef476794d3686cd1e43c51"
+          "sha256": "ebde515b0af5e6cd7c10b2728704cd56c9a6ebb4315c1555cefcbeb3020d57c5"
         }
       },
       "kind": "retro",

@@ -98,6 +98,7 @@ func starter_pets() -> Array:
 func _show_select() -> void:
 	phase = "select"
 	var layer := CanvasLayer.new()
+	layer.layer = 2                       # above the F8 retro post-process
 	hud = Label.new()
 	hud.position = Vector2(48, 48)
 	layer.add_child(hud)
@@ -804,7 +805,8 @@ func _sync_view() -> void:
 		if c is Camera2D:
 			var l = sim.leader()
 			if l:
-				c.position = l.pos.round()
+				c.position = Retro.camera_position(l.pos, Vector2(sim.grid.width * sim.grid.tile_size,
+					sim.grid.height * sim.grid.tile_size), l.pos.round())
 	if not frozen and hud:
 		var st: String = ws.quests.stage("q_warden")
 		var inv := []

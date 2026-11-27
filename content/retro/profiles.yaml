@@ -22,6 +22,10 @@ order: ["off", "gz-native", "nes-style", "gb-style"]
 # non-colour cue. V1 accepts a colour collapse only for these. "crop growing vs ready": ready plots get a frame
 # (scenes/slice.gd _draw). [INFERENCE F8-5]
 a11y_shape_cues: ["crop growing vs ready"]
+# Q1 Pixel Stability: the non-integer sprite scales the game uses (scenes/encounter.gd _sprite_for: pets 0.75, tier ≥ 3
+# bosses 1.5; tests/test_f8_retro.py keeps this list in sync) and the game's base camera zoom. Under a profile the
+# camera zooms to the profile scale (texel = logical pixel) and these scales snap to whole numbers (validate.q1_scale).
+q1: {sprite_scales: [0.75, 1.5], base_zoom: 2}
 profiles:
   gz-native:
     family: fabric

@@ -10,6 +10,8 @@ Gates:
   exact art colours quantise deterministically; for `gz-native` every PatternVault colour maps to itself.
 - `a11y_signals` — every PatternVault signal pair (a11y_checks) stays two different colours after a11y remap + profile
   quantisation, for every variant, unless the pair is listed in `a11y_shape_cues` (the game also shows it by shape).
+- `q1_pixel_stability` — with the Q1 policy (camera zoom = profile scale, whole-pixel snapping, whole-number sprite
+  scales) the shimmer predictor reports 0 shimmer and 0 texel loss for every profile × sprite scale the game uses.
 - `budget`.
 
 C1 signal separation: before the LUT is built, `transcode.solve_signal_overrides` moves single PatternVault colours to
@@ -101,8 +103,15 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
     sig = signal_report(ctx.root, profs, luts, list(raw.get("a11y_shape_cues", [])))
     gates.append(GateResult("a11y_signals", sig["ok"], {"failing": [r for r in sig["rows"] if not r["ok"]][:10],
                                                          "collapsed_with_cue": [r for r in sig["rows"] if not r["distinct"]][:10]}))
+    from forge.retro.validate import q1_report, q1_scale
+
+    q1 = raw.get("q1", {})
+    q1r = q1_report([float(x) for x in q1.get("sprite_scales", [])], profs, float(q1.get("base_zoom", 2)))
+    gates.append(GateResult("q1_pixel_stability", q1r["ok"], {"naive_shimmer_max": q1r["naive_shimmer_max"],
+                                                               "naive_texel_loss_max": q1r["naive_texel_loss_max"]}))
     table = {"schema_version": "1.0", "default": raw["default"], "order": raw["order"],
-             "base_viewport": raw["base_viewport"], "profiles": {pid: p.table() for pid, p in profs.items()}}
+             "base_viewport": raw["base_viewport"], "profiles": {pid: p.table() for pid, p in profs.items()},
+             "q1_scales": {"%.2f" % float(x): q1_scale(float(x)) for x in q1.get("sprite_scales", [])}}
     data = json.dumps(table, indent=1, sort_keys=True).encode() + b"\n"
     arts.append(Artifact("retro.json", data, "application/json"))
     elapsed = (time.perf_counter() - t0) * 1000

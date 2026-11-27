@@ -14,6 +14,8 @@ var _list: VBoxContainer
 var _status: Label
 var _rows := {}               # action -> Button
 var _palette_btn: Button
+var _retro_btn: Button        # F8: retro / console-style profile (◀ ▶), above the palette row
+var _scan_btn: Button         # F8: scanlines on/off (accept toggles)
 var _capturing := ""          # action waiting for its new binding
 var _capture_armed := false   # ignore the press that opened capture
 var events_log := []               # what happened, for headless reports: [{"rebind"...}, {"palette"...}]
@@ -31,6 +33,17 @@ func _ready() -> void:
 	var title := Label.new()
 	title.text = tr("settings.title")
 	v.add_child(title)
+	# F8 display rows sit *above* the palette row: focus still opens on the palette (G-A11Y-01 flow unchanged); pad/arrow
+	# up reaches the retro profile, then scanlines.
+	_scan_btn = Button.new()
+	_scan_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_scan_btn.pressed.connect(_toggle_scanlines)
+	v.add_child(_scan_btn)
+	_retro_btn = Button.new()
+	_retro_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_retro_btn.pressed.connect(func(): _set_retro(1))
+	_retro_btn.gui_input.connect(_retro_gui_input)
+	v.add_child(_retro_btn)
 	_palette_btn = Button.new()
 	_palette_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_palette_btn.pressed.connect(func(): _set_palette(1))
@@ -67,6 +80,8 @@ func _ready() -> void:
 
 
 func _refresh() -> void:
+	_retro_btn.text = "%s: %s  ◀ ▶" % [tr("settings.retro"), tr("retro.profile." + Retro.profile)]
+	_scan_btn.text = "%s: %s" % [tr("settings.scanlines"), tr("settings.on" if Retro.scanlines else "settings.off")]
 	_palette_btn.text = "%s: %s  ◀ ▶" % [tr("settings.palette"), tr("settings.palette." + A11y.palette)]
 	for action in _rows:
 		var labels := []
@@ -82,6 +97,31 @@ func _palette_gui_input(ev: InputEvent) -> void:
 	elif ev.is_action_pressed("ui_left"):
 		_set_palette(-1)
 		_palette_btn.accept_event()
+
+
+func _retro_gui_input(ev: InputEvent) -> void:
+	if ev.is_action_pressed("ui_right"):
+		_set_retro(1)
+		_retro_btn.accept_event()
+	elif ev.is_action_pressed("ui_left"):
+		_set_retro(-1)
+		_retro_btn.accept_event()
+
+
+func _set_retro(step: int) -> void:
+	var p := Retro.cycle(step)
+	A11y.save_settings()
+	events_log.append({"retro": p})
+	_status.text = tr("settings.retro.changed") % tr("retro.profile." + p)
+	_refresh()
+
+
+func _toggle_scanlines() -> void:
+	Retro.set_scanlines(not Retro.scanlines)
+	A11y.save_settings()
+	events_log.append({"scanlines": Retro.scanlines})
+	_status.text = "%s: %s" % [tr("settings.scanlines"), tr("settings.on" if Retro.scanlines else "settings.off")]
+	_refresh()
 
 
 func _set_palette(step: int) -> void:
@@ -134,6 +174,8 @@ func _input(ev: InputEvent) -> void:
 
 func _reset() -> void:
 	Fabric.reset_bindings()
+	Retro.scanlines = false
+	Retro.set_profile("off")
 	A11y.set_palette("default")
 	A11y.save_settings()
 	events_log.append({"reset": true})

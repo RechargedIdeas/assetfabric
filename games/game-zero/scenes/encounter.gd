@@ -88,8 +88,11 @@ func _build() -> void:
 	var cam := Camera2D.new()
 	cam.zoom = Vector2(2, 2)
 	cam.position = Vector2(sim.grid.width * sim.grid.tile_size, sim.grid.height * sim.grid.tile_size) / 2.0
+	cam.add_to_group("fabric_camera")     # F8 Q1 camera policy (Retro autoload)
 	add_child(cam)
+	Retro.apply_cameras()
 	var layer := CanvasLayer.new()
+	layer.layer = 2                       # HUD above the F8 retro post-process (Retro.LAYER = 1)
 	hud = Label.new()
 	hud.position = Vector2(8, 8)
 	layer.add_child(hud)
@@ -516,15 +519,19 @@ func _sprite_for(e) -> Sprite2D:
 		s.scale = Vector2(0.75, 0.75)
 	elif e.tier >= 3:
 		s.scale = Vector2(1.5, 1.5)        # bosses read bigger at a glance
+	s.set_meta("base_scale", s.scale.x)   # F8 Q1: snapped to whole numbers under a retro profile (_sync_view)
 	add_child(s)
 	sprites[e.id] = s
 	return s
 
 
 func _sync_view() -> void:
+	_retro_camera()
 	for e in sim.entities:
 		var s: Sprite2D = sprites[e.id] if sprites.has(e.id) else _sprite_for(e)   # F5: summoned adds
 		s.position = e.pos.round()
+		var bs := Retro.sprite_scale(float(s.get_meta("base_scale", 1.0)))
+		s.scale = Vector2(bs, bs)
 		s.visible = e.alive()
 		s.flip_h = e.facing < 0
 		s.frame = maxi(0, FRAME_NAMES.find(e.anim))
@@ -544,6 +551,20 @@ func _sync_view() -> void:
 		_: lines.append(tr("hud.objective.defeat"))
 	lines.append(Fabric.hint("hud.hint.controls"))
 	hud.text = "\n".join(lines)
+
+
+## F8 Q1 camera policy: under a retro profile the camera follows the leader on whole world pixels (clamped to the map);
+## otherwise the encounter keeps its fixed framing.
+func _retro_camera() -> void:
+	if not Retro.active():
+		return
+	var l = sim.leader()
+	if l == null:
+		return
+	var map_px := Vector2(sim.grid.width * sim.grid.tile_size, sim.grid.height * sim.grid.tile_size)
+	for c in get_children():
+		if c is Camera2D:
+			c.position = Retro.camera_position(l.pos, map_px, c.position)
 
 
 ## Time-freeze overlay (GAME_SPEC §4.1): ranked swaps with each fighter's HP, target, cooldowns and
