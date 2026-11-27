@@ -225,6 +225,7 @@ func validate_payload(p, min_serial: int) -> Array:
 # --------------------------------------------------------------------------- boot state machine
 
 func boot() -> void:
+	var t0 := Time.get_ticks_usec()
 	flags = defaults()
 	consent = _load_consent()
 	for n in consent:
@@ -294,6 +295,7 @@ func boot() -> void:
 			report["active_invalid"] = r2[1]          # tamper on disk / build no longer compatible → safe defaults
 	report["flags"] = flags.duplicate()
 	report["max_serial"] = int(state.get("max_serial", 0))
+	report["boot_ms"] = snappedf((Time.get_ticks_usec() - t0) / 1000.0, 0.01)
 	if DirAccess.dir_exists_absolute(dir):
 		_write("status.json", report)
 	if enabled("diagnostics"):

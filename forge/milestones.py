@@ -240,7 +240,16 @@ INCREMENTS["F8"] = Increment("F8", "retro-console", (), f8_check,
                              "discriminator, ConsoleReadiness, C1 sub-palette solver + cycle predictor, NES ROM built from Fabric "
                              "content and booted in a real emulator, gamepad-only console-first flow, gameplay unchanged",
                              f8_perf, f8_run)
-ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"]
+# F9 LiveOps foundation — readiness only (spec §13; no live service, no launch) — forge/accept_f9.py
+from forge.accept_f9 import f9_check, f9_perf, f9_run  # noqa: E402
+
+INCREMENTS["F9"] = Increment("F9", "liveops-readiness", (), f9_check,
+                             "LiveOps readiness: flag/kill-switch manifest with safe offline defaults, signed remote-config "
+                             "bundles for balance knobs (RSA, anti-replay serial), device state machine (promote / reject / "
+                             "roll-forward rollback / crash-loop quarantine / tamper -> defaults), save forward-compat guard, "
+                             "opt-in local scrubbed diagnostics, readiness checklist; G-NET-01 strict, no live service",
+                             f9_perf, f9_run)
+ORDER = ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9"]
 
 # Companion track (parallel, not an F-gate — BUILD_ORDER.md): PocketLoom C1–C6.
 from forge import accept_companions as _ac  # noqa: E402

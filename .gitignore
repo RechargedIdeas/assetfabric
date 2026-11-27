@@ -37,6 +37,8 @@ companions/pocketloom/local.properties
 /.fabric/cache/
 /.fabric/jdk/
 /.fabric/cluster.key
+# F9 LiveOps signing keys (dev keys from `forge liveops keygen`; production key = Producer key ceremony, never in git)
+/.fabric/liveops/
 games/game-zero/*.import
 
 # Gradle (PocketLoom)
