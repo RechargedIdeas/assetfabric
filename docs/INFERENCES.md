@@ -518,10 +518,30 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     brains, ≈ 11 % GIRT policy — no single hot spot; a thread pool sized to the affinity mask gave no measurable gain
     (not shipped); no C++ toolchain on the box for a GDExtension. Recorded in `docs/perf/gdscript-thread-scaling/`.
 
-### Reserved (unmerged WIP, branch `feat/q4-slice`)
+### Q4 — vertical slice length (0.7.12, gap a / P5)
 
-91. **C-91 Slice pacing content** — *reserved, text not written.* WIP: crops 2 / 3 game-min, second crop cycle via the
-    stall, route repopulation packs gated on `stage:q_warden>=craft`. Not on `main`.
-92. **C-92 Human-pace estimate model** — *reserved, text not written.* WIP: `content/tune/pace.yaml` + `forge/pace.py`
-    (itemised travel × 1.6, combat × 1.5, crop wait × 1, interactions, reading, first-visit exploration). First estimate
-    14.3 min (< 15). A model, never a substitute for the pending human GUI playtest. Not on `main`.
+91. **C-91 Slice pacing content.** GAME_SPEC §6.1 asks for "15–20 minutes of continuous playable content" and §5 for
+    "one cave system + one open-world transition + farming loop"; it names no areas, quests or numbers, so all of this is
+    ours (placeholders, like D-005): crops grow 2 / 3 game-minutes (was 40 / 60 s) so a crop cycle spans a cave run; a
+    second crop cycle paid with stall seeds (`replant`, `second_harvest`); a new **Ore Hollow** chamber in the cave
+    system between the tunnels and the deep cave (ember-ore nodes, 2 packs); a **patrol** beat in the second growth
+    window (named pack wave `hollow.patrol` plus one tunnels pack; quest event `cleared:hollow.patrol`), so the growth
+    window is played, not waited out; a **q_smith** side quest (3 ember ore + 2 flint → Ember Mail, shared gear
+    +0.75 def; crafting gear sets `flag:gear_<id>` because gear is not in the bag); the route repopulates for the boss
+    trip (`stage:q_warden>=craft`); and the lair's back exit now opens onto **Windward Ridge**, an open-world area
+    (3 packs including a 2-brute warband, 4 flint nodes) before the walk home — the open-world transition of §6.1 item 4.
+    The bot is not slowed: its game time went 2.9 → 7.10–7.35 min because there is more to do (21 fights vs 9, 6 areas
+    vs 4, 4 quests vs 2). Bot crop wait is 68 s of the 7.1 min. Codegen-World validates wave names and stage gates
+    (`cross_refs`).
+92. **C-92 Human-pace estimate model.** No playtest exists, so F6 gates a *model* of a first-time human run
+    (`forge/pace.py`, constants in `content/tune/pace.yaml`, written down before the gate existed and not fitted to
+    anything): character select 45 s; travel = bot path time × 1.6 (detours, backtracking); combat = bot fight time × 1.5
+    (manual leader, positioning, swaps); 30 s per newly entered area; per-action costs (plant / harvest / gather / use
+    3 s, buy 6 s, craft 8 s, save 6 s); every objective read at 200 wpm (≥ 2.5 s each); 10 s per swap overlay. Crop wait
+    is counted per bot wait segment **minus** the slack a slower human already spent since that crop was planted,
+    `max(0, W − (f − 1) · active)` with f = human active ÷ bot active, so waiting is never inflated by the factors.
+    0.7.12: **17.03–18.51 min** across all 12 leader × pet selections (main run 17.26: travel 481 s, combat 85 s,
+    interactions 171 s, exploring 180 s, reading 53 s, crop wait 0 s after 68 s of slack). `forge accept F6` fails if
+    any selection lands outside 15–20 min; bot game time is reported as-is. Sensitivity: the 1.6 / 1.5 factors carry the
+    result — at 1.3 / 1.2 the main run drops to 15.47 min, at 1.0 / 1.0 to 13.78 min. It stays a model: the human GUI
+    playtest (F6.md) replaces it, and changing a constant needs a DECISIONS entry.

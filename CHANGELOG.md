@@ -4,12 +4,30 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
-### Docs — pause (2026-11-20)
-- Work paused by the Producer after Q3. README, HANDOVER (new §Resume point with every open branch), TODO (sprint table
-  states + resume order), BUILD_ORDER, TESTING (swapbench gate), SECURITY, tool-catalog (`--scene=swapbench`),
-  INFERENCES (C-88 contradiction fixed, final Q3 attempt, C-91/C-92 reserved for the WIP), DECISIONS (open decisions),
-  F6.md (length-gap WIP note) and STATUS brought current; stale C9–C12 "labelled stubs" claims removed.
-- Q4 slice-length work is **not released**: unverified WIP on `feat/q4-slice`.
+## [0.7.12+f7] — 2026-11-26 — Quality gaps Q4: vertical slice reaches 15–20 min (human-pace estimate, gated)
+
+### Added
+- **Slice content** (quality gap P5, INFERENCE C-91): **Ore Hollow** (`hollow_01`, new chamber of the cave system between
+  the tunnels and the deep cave: ember-ore nodes, 2 packs); a **patrol** beat during the second crop cycle (named pack
+  wave `hollow.patrol` + a tunnels pack; quest stage `q_warden.patrol` on `cleared:hollow.patrol`); side quest
+  **q_smith** (3 ember ore + 2 flint → **Ember Mail**, shared gear +0.75 def); **Windward Ridge** (`ridge_01`, open-world
+  area behind the Warden's lair: 3 packs incl. a 2-brute warband, 4 flint nodes; stages `open_world` → `ridge` → `home`);
+  second crop cycle (`replant` with stall seeds, `second_harvest`), crops 2 / 3 game-min, route repopulation for the boss
+  trip. All data-driven in `content/world/*.yaml` + `content/briefs/f6/slice.yaml`.
+- **Named pack waves**: a pack may carry `wave: <name>`; clearing every pack of a wave is the persistent fact
+  `cleared:<area>.<wave>`; Codegen-World `cross_refs` rejects unknown waves and unknown `requires: stage:` gates.
+- Gear crafting sets `flag:gear_<id>` so quests can read equipped gear.
+- **Human-pace estimate** `forge/pace.py` + `content/tune/pace.yaml` (INFERENCE C-92, ADR-0017); the slice report
+  records `wait_ticks`, `wait_segments` (start, length, planting tick of the awaited crop) and `buys`.
+
+### Changed
+- **`forge accept F6` gates the length**: every selection's human-pace estimate must lie in 15–20 min. 0.7.12:
+  **17.03–18.51 min** (main run 17.26); bot game time 7.10–7.35 min (was 2.75–3.37), reported as-is. 12/12 selections,
+  0 wipes, 0 soft-locks; save/quit/reload now quits at checkpoint 5 (Ore Hollow, mid-slice).
+- Crop wait counts only what a slower human would still wait (per segment, minus the slack since planting).
+
+### Not proven
+- Still no human GUI playtest; the 1.6 / 1.5 travel / combat factors carry the result (1.3 / 1.2 → 15.5 min).
 
 ## [0.7.11+f7] — 2026-11-20 — Quality gaps Q3: swap advisor < 50 ms on 2 cores of the reference box (GAME_SPEC §4.1; partial on slower CPUs)
 

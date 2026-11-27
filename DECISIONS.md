@@ -26,6 +26,7 @@ Full ADR text lives in `docs/adr/NNNN-<slug>.md`. ADRs are never deleted — the
 | [0014](docs/adr/0014-amd-first-inference.md) | AMD-first backends: DirectML / ROCm / Vulkan (not CUDA-first) | accepted |
 | [0015](docs/adr/0015-studio-pyside6.md) | Studio: Python + PySide6, outside Godot | accepted |
 | [0016](docs/adr/0016-one-milestone-offset.md) | One-milestone offset between Fabric and Game | accepted |
+| [0017](docs/adr/0017-slice-length-human-pace-gate.md) | Vertical-slice length gated on a human-pace estimate (until a playtest) | accepted |
 
 ## Open decisions (not ADRs yet)
 

@@ -1,6 +1,6 @@
 # HANDOVER.md — Current State Snapshot
 
-**Last updated:** 2026-11-20 America/New_York
+**Last updated:** 2026-11-26 America/New_York
 **Repository:** https://github.com/RechargedIdeas/assetfabric (**private**, branch `main`)
 **License:** proprietary, All Rights Reserved (ADR-0001)
 **Current Fabric milestone:** **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** (accepted, `0.7.0+f7`)
@@ -10,7 +10,7 @@
 
 **Companion interfaces (C9–C12):** accepted (`forge accept C9-C12`); after the stub-replacement sprint the register is 25 real · 8 `real_unverified_on_device` · 1 stub (full-scale SplatForge GPU training) · 3 deferred (`content/companions/c9_c12.yaml`). Nothing ran on a phone or a GPU.
 **Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
-**Next:** **paused 2026-11-20 by the Producer** ("update all documentation, push everything, then pause"). Resume at [§Resume point](#resume-point-paused-2026-11-20): quality gaps (a)–(f), then F8 (confirmed by the Producer, t59u) and F9 (LiveOps readiness only).
+**Next:** **resumed 2026-11-26** (Producer t61u "Properly proceed with all"). Quality gap (a) slice length landed in `0.7.12+f7`; continue at [§Resume point](#resume-point-paused-2026-11-20) with (b)–(f), then F8 (confirmed by the Producer, t59u) and F9 (LiveOps readiness only).
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
 Milestone dashboard: [STATUS.md](STATUS.md).
@@ -73,7 +73,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 - Voice: VoiceBridge (Vosk) is real on the desktop/Studio/CLI (synthetic speech only); the running game has no microphone/Vosk binding yet; "hold" is misheard as "go" on synthetic voices (C-79, needs a grammar decision).
 - Roster names/numbers are placeholders (D-005).
 - **Balance**: per-pair (leader × pet) spread is gated since F6: 3.21 pp on the acceptance seeds (partly in-sample) and 5.25 pp on unseen seeds ≈ the 200-seed noise floor [INFERENCE F6-2]. An out-of-sample per-cell gate needs ~800 seeds/cell.
-- **Slice length**: the QA autopilot finishes the slice in ≈ 2.8–3.4 game-minutes vs the GAME_SPEC §6.1 15–20 min human target (soft metric, INFERENCE F6-12). Human length, readability of the HUD/quest text, controls feel, music mix and art legibility need a **GUI playtest** (see F6.md).
+- **Slice length** (since 0.7.12): gated on a human-pace *estimate* of 17.0–18.5 min across all 12 selections (ADR-0017, INFERENCE C-92); the QA autopilot itself finishes in 7.1–7.35 game-minutes. Real human length, readability of the HUD/quest text, controls feel, music mix and art legibility need a **GUI playtest** (see F6.md).
 - Economy / loot / quest / music numbers and names are placeholders (D-005, INFERENCE F6-3).
 - Optuna log in `results/F5-tune.json` is a short study (12 × 24 seeds) — noise-dominated; shipped values verified at 200 seeds [INFERENCE F5-12].
 - F5 acceptance runs 2400 fights; on a 2-core node expect ≈ 7–9 min.
@@ -84,20 +84,20 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 
 ## Resume point (paused 2026-11-20)
 
-State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). All work is pushed; nothing local-only.
+State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 2026-11-26: `0.7.12+f7` = (a). All work is pushed; nothing local-only.
 
 **Open branches on origin:**
 
 | Branch | Head | Holds | State |
 |---|---|---|---|
 | `main` | Q3 + this docs pass | everything accepted through Q3 | CI green |
-| `feat/q4-slice` | `6082d4a` | **unverified Q4 WIP** (gap a): crops 2 / 3 game-min (`content/world/economy.yaml`), second crop cycle — new `q_warden` stages `replant` (`total:planted>=6`, seeds bought at the stall) and `second_harvest` (`total:harvested>=12`), harvest guard 4 → 8; route repopulation packs gated `requires: "stage:q_warden>=craft"` (tunnels + cave_deep; generator validates the stage); autopilot buys the cheapest affordable seed and waits by growing plots (wait no longer counts as a soft-lock); `rep.wait_ticks` + `buys` in the slice report; solvability counts stall seeds bought with deterministic coin per stage; locale keys for the new stages; human-pace model `forge/pace.py` + `content/tune/pace.yaml` (INFERENCE C-91/C-92 — IDs reserved, text not yet written) | world.json regenerated; 3 selections complete headless (kael, bram, nyra: 6.35–6.51 bot game-min, ≈ 51 % of it crop wait, 0 wipes, 0 soft-locks); **pace model estimate 14.3 min — below the 15–20 target**; not yet gated in F6, F6 not re-recorded, pytest / `forge accept all` not run, no docs. Do not merge as-is |
+| `feat/q4-slice` | — | Q4 slice length | **merged into `main` as `0.7.12+f7`** (2026-11-26); safe to delete |
 | `feat/quality-q1`…`q3`, `feat/stubs-real-b1`…`b4` (incl. `b2b`), `feat/companions-pocketloom`, `feat/companions-c7-c8`, `feat/companions-c9-c12`, `feat/f5-balance`, `feat/f6-slice`, `feat/f7-packaging` | — | fully merged into `main` (ancestors of `main`) | safe to delete on origin when the Producer agrees |
 | `wip/f5-companions` | `73e01e1` | early companion WIP (PocketLoom, LoomCluster, GroundWeave drafts) | **not an ancestor of `main` but superseded** — its content was rebuilt, verified and merged via `feat/companions-pocketloom` and `feat/companions-c7-c8`; keep for history or delete |
 
 **Resume order** (one small patch release each, landed on `main` when green — rules in TODO.md §Current sprint):
 
-1. **(a) Slice length** (P5) — continue `feat/q4-slice`. Honest finding so far: the slice has ≈ 3 min of *active* optimal play; longer crop timers mostly add waiting. Needs more real content (more packs/areas or a farm-defence beat) so the pace estimate reaches 15–20 min without tuning the model constants, then make `forge accept F6` gate the estimate (bot time reported as-is) and write C-91/C-92. A human GUI playtest stays the real proof.
+1. ✅ **(a) Slice length** (P5) — landed `0.7.12+f7`: Ore Hollow, patrol beat, q_smith, Windward Ridge (C-91); `forge accept F6` gates the human-pace estimate (C-92, ADR-0017): 17.03–18.51 min on all 12 selections; bot 7.10–7.35 game-min. A human GUI playtest stays the real proof.
 2. **(b) D-005 economy / loot / quest tables** (P4) — data-driven, balanced with the sims, names/numbers stay Game-Design-owned.
 3. **(c) Per-pair balance ≤ 3.5 pp on unseen seeds + a recorded longer Optuna study** (P6, P7).
 4. **(d) LoomCluster node auth** (HMAC + pairing secret like LoomLink, replay refusal) **+ content-addressed blob transfer** (P8).
