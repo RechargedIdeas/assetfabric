@@ -139,11 +139,15 @@ def verdict(agg: dict[str, Any]) -> dict[str, Any]:
     checks = {
         "encounters_ge_1000": agg["encounters"] >= 1000,
         "max_choice_deviation_lt_5pp": agg["choice_deviation"] < DEV_LIMIT,
-        "max_combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT,     # F6: per-pair is gated
+        # F6 gated the per-pair point spread < 5 pp; at 200 seeds/cell (SE ≈ 3.2 pp) that is below the noise floor.
+        # Q5 (C-94): every cell's Wilson 95 % CI must reach the ±5 pp band (no cell *significantly* off), and the
+        # powered per-pair gate is the hold-out (1000 unseen seeds/cell, ≤ 3.5 pp, `holdout`, full `forge accept F5`).
+        "combo_ci_within_5pp": all(m["ci95"][0] <= agg["mean_win_rate"] + DEV_LIMIT
+                                   and m["ci95"][1] >= agg["mean_win_rate"] - DEV_LIMIT for m in agg["matchups"].values()),
         "mean_in_target_band": TARGET_BAND[0] <= agg["mean_win_rate"] <= TARGET_BAND[1],
         "no_softlocks": agg["softlocks"] == 0,
     }
-    soft: dict[str, bool] = {}     # F5 reported combo spread here; gated since F6
+    soft = {"max_combo_deviation_lt_5pp": agg["combo_deviation"] < DEV_LIMIT}   # reported (gated F6–0.7.12)
     return {"G-BAL-01": all(checks.values()), "checks": checks, "soft": soft, "dev_limit": DEV_LIMIT,
             "target_band": list(TARGET_BAND)}
 

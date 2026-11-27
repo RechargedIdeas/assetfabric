@@ -13,8 +13,8 @@ PLAN = {
     "F2": "Codegen (chars/abilities/stats), G1-Audio",
     "F3": "GIRT, CascadeHub, micro LM path, callouts",
     "F4": "Sandbox (bwrap/process tiers), atomic hot reload, snapshots + WAL, statecharts, guardian",
-    "F5": "Monte Carlo balance (G-BAL-01) + Optuna tuning, soft-lock detection, versioned save migration, tier-3 boss",
-    "F6": "Quest statechart, farming/gather/craft economy, tiered loot, adaptive music, cave system ↔ open world; vertical slice (all 8 GAME_SPEC §6.1 items; 15–20 min gated on a human-pace estimate since 0.7.12 — 17.0–18.5 min, bot 7.1–7.35 game-min; human playtest pending)",
+    "F5": "Monte Carlo balance (G-BAL-01) + Optuna tuning, soft-lock detection, versioned save migration, tier-3 boss; per-pair hold-out ≤ 3.5 pp on 1000 unseen seeds/cell since 0.7.13 (2.71 pp)",
+    "F6": "Quest statechart, farming/gather/craft economy, tiered loot, adaptive music, cave system ↔ open world; vertical slice (all 8 GAME_SPEC §6.1 items; 15–20 min gated on a human-pace estimate since 0.7.12 — 17.0–18.5 min, bot 7.1–7.35 game-min; human playtest pending); economy design model gated since 0.7.13 (ADR-0018)",
     "F7": "Godot 4.3 exports (Linux, Windows, debug APK, Web PWA) via forge build --target, PWAPipeline (G-WEB-01), ShuttleLine multi-target contract, BoltPack SBOM + license audit",
 }
 

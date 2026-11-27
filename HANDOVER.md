@@ -1,6 +1,6 @@
 # HANDOVER.md — Current State Snapshot
 
-**Last updated:** 2026-11-26 America/New_York
+**Last updated:** 2026-11-27 America/New_York
 **Repository:** https://github.com/RechargedIdeas/assetfabric (**private**, branch `main`)
 **License:** proprietary, All Rights Reserved (ADR-0001)
 **Current Fabric milestone:** **F7 — Packaging: Desktop / Android / Web PWA launch candidates, ShuttleLine multi, BoltPack** (accepted, `0.7.0+f7`)
@@ -10,7 +10,7 @@
 
 **Companion interfaces (C9–C12):** accepted (`forge accept C9-C12`); after the stub-replacement sprint the register is 25 real · 8 `real_unverified_on_device` · 1 stub (full-scale SplatForge GPU training) · 3 deferred (`content/companions/c9_c12.yaml`). Nothing ran on a phone or a GPU.
 **Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
-**Next:** **resumed 2026-11-26** (Producer t61u "Properly proceed with all"). Quality gap (a) slice length landed in `0.7.12+f7`; continue at [§Resume point](#resume-point-paused-2026-11-20) with (b)–(f), then F8 (confirmed by the Producer, t59u) and F9 (LiveOps readiness only).
+**Next:** **resumed 2026-11-26** (Producer t61u "Properly proceed with all"). Quality gap (a) slice length landed in `0.7.12+f7`; (b) economy tables + (c) per-pair balance landed in `0.7.13+f7` (Q5); continue at [§Resume point](#resume-point-paused-2026-11-20) with (d)–(f) (Q6 WIP on `feat/q6-cluster-web`) and P7 world fights, then F8 (confirmed by the Producer, t59u) and F9 (LiveOps readiness only).
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
 Milestone dashboard: [STATUS.md](STATUS.md).
@@ -21,7 +21,7 @@ Milestone dashboard: [STATUS.md](STATUS.md).
 
 | Piece | State |
 |---|---|
-| `forge` CLI | status, doctor, validate, job, store, build (`--sandbox`, `--target` platform builds), gen, palette, accept, report, sandbox, live (set/sprite/push/watch/serve/status), balance (run/tune), softlock, save (inspect/migrate), templates (status/fetch), shuttle (contract/export), link (serve — PocketLoom pairing), cluster, groundweave, mirror, lens, depth, recon (C9–C12; stubs exit 3 with a `[STUB …]` label) |
+| `forge` CLI | status, doctor, validate, job, store, build (`--sandbox`, `--target` platform builds), gen, palette, accept, report, sandbox, live (set/sprite/push/watch/serve/status), balance (run/tune/tune-affinity/holdout), softlock, save (inspect/migrate), templates (status/fetch), shuttle (contract/export), link (serve — PocketLoom pairing), cluster, groundweave, mirror, lens, depth, recon (C9–C12; stubs exit 3 with a `[STUB …]` label) |
 | Asset store + orchestrator | real (SQLite, sha256, provenance); in-order worker; no GC / remote workers |
 | Generators | **procedural CPU backends**: G1-Sprite (humanoid/beast/pet), G1-Tile (CA caves), DyeWorks (albedo + normal), **Codegen** (roster → game_data.json + ability .tres), **G1-Audio** (chiptune stems + SFX), **policy** (NumPy BC → JSON MLP), **callouts**, **persona_lm** (bigram stand-in), **world** (Codegen-World: economy/loot/quests/music/areas → `data/generated/world.json`). ONNX/NCA/diffusion/real-LM backends not built |
 | Gates | palette, dims, seamless, solvability, floor ratio, BudgetGate (time + bytes); world: schema, cross-refs, quest-chart soft-lock, economy solvability, loot tables, music rules |
@@ -33,7 +33,7 @@ Milestone dashboard: [STATUS.md](STATUS.md).
 | CI | GitHub Actions (push to `main` / `feat/**`, PRs): job `test` = pytest + determinism gate + Godot 4.3 headless increments; job `pocketloom` (parallel) = `forge accept C1-C6` full (JDK 17 + Gradle cache + runner Android SDK) then `forge accept C7-C8` (Godot cached), then `forge accept C9-C12` |
 | GIRT / CascadeHub | real, CPU/GDScript backends (`autoload/girt.gd`, `autoload/cascade_hub.gd`); ONNX Runtime GDExtension not built |
 | Substrate (F4) | **real**: sandbox tiers bwrap + process (Firecracker/gVisor detected, no launcher — `/dev/kvm` not accessible), live channel (atomic hot reload, 2PC, probe, rollback), Tier-2 snapshots + WAL, parallel statecharts + soft-lock analysis, Guardian (crash/hang restart + resume + quarantine). See `docs/SUBSTRATE.md` |
-| Balance (F5) | **real**: `forge balance run` (12 character-select matchups × 200 seeds = 2400 headless boss fights, sharded over CPU cores, CRN, Wilson CIs) — G-BAL-01 pass, gated per choice **and per leader × pet cell** since F6 (pet↔character affinity, INFERENCE F6-1/F6-2); `forge balance tune` (Optuna TPE, CPU, optional extra `tune`) |
+| Balance (F5) | **real**: `forge balance run` (12 character-select matchups × 200 seeds = 2400 headless boss fights, sharded over CPU cores, CRN, Wilson CIs) — G-BAL-01 pass, gated per choice **and per leader × pet cell** since F6 (pet↔character affinity, INFERENCE F6-1/F6-2; noise-aware CI check since 0.7.13); **hold-out** `forge balance holdout` (1000 unseen seeds/cell, seed_base 20 000, ≤ 3.5 pp — 2.71 pp in 0.7.13, full `forge accept F5`, C-94); `forge balance tune` / `tune-affinity` (Optuna TPE, CPU, optional extra `tune`) |
 | Soft-lock (F5) | **real**: static (statecharts + encounter reachability incl. boss room) + runtime stall/timeout detector; mis-tuned probe proves it fires |
 | Save (F5/F6) | **real**: Player State v4 (profile / roster / world incl. farm, checkpoint, quest counters, buffs, gear), migrations v1→v2→v3→v4, canonical JSON + sha256, atomic write + `.bak` recovery; GDScript ↔ Python parity. Cross-device round-trip **G-SAVE-01 proven at F7** (desktop → Android content → Web/IndexedDB → desktop, checksum identical every hop); transfer is manual (`--import-b64`), no cloud sync |
 | Packaging (F7) | **real, unsigned/debug**: `forge build --target desktop-linux|desktop-windows|android|web|all` → `dist/` (gitignored). Hermetic Godot home + sha256-pinned 4.3 templates; staged keep-import ships Fabric output byte-for-byte; per-target verify; PWAPipeline (G-WEB-01 9.3 MB gzip / 45 MB, offline SW, COOP/COEP); ShuttleLine contract checked against every PCK/APK; BoltPack SBOM + license audit + `.fabricbolt`. Sizes + SHA-256: docs/acceptance-tests/F7.md. Local-only (CI runs the static F7 subset). See docs/packaging.md |
@@ -84,7 +84,7 @@ godot --path games/game-zero -- --scene=slice     # the vertical slice (windowed
 
 ## Resume point (paused 2026-11-20)
 
-State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 2026-11-26: `0.7.12+f7` = (a). All work is pushed; nothing local-only.
+State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 2026-11-26: `0.7.12+f7` = (a); `0.7.13+f7` = (b) + (c) (2026-11-27). All work is pushed; nothing local-only.
 
 **Open branches on origin:**
 
@@ -92,14 +92,15 @@ State at the pause: `main` = `0.7.11+f7` (Q3 landed as **partial**). Resumed 202
 |---|---|---|---|
 | `main` | Q3 + this docs pass | everything accepted through Q3 | CI green |
 | `feat/q4-slice` | — | Q4 slice length | **merged into `main` as `0.7.12+f7`** (2026-11-26); safe to delete |
+| `feat/q5-economy` | — | Q5 economy model + per-pair hold-out | **merged into `main` as `0.7.13+f7`** (2026-11-27); safe to delete |
 | `feat/quality-q1`…`q3`, `feat/stubs-real-b1`…`b4` (incl. `b2b`), `feat/companions-pocketloom`, `feat/companions-c7-c8`, `feat/companions-c9-c12`, `feat/f5-balance`, `feat/f6-slice`, `feat/f7-packaging` | — | fully merged into `main` (ancestors of `main`) | safe to delete on origin when the Producer agrees |
 | `wip/f5-companions` | `73e01e1` | early companion WIP (PocketLoom, LoomCluster, GroundWeave drafts) | **not an ancestor of `main` but superseded** — its content was rebuilt, verified and merged via `feat/companions-pocketloom` and `feat/companions-c7-c8`; keep for history or delete |
 
 **Resume order** (one small patch release each, landed on `main` when green — rules in TODO.md §Current sprint):
 
 1. ✅ **(a) Slice length** (P5) — landed `0.7.12+f7`: Ore Hollow, patrol beat, q_smith, Windward Ridge (C-91); `forge accept F6` gates the human-pace estimate (C-92, ADR-0017): 17.03–18.51 min on all 12 selections; bot 7.10–7.35 game-min. A human GUI playtest stays the real proof.
-2. **(b) D-005 economy / loot / quest tables** (P4) — data-driven, balanced with the sims, names/numbers stay Game-Design-owned.
-3. **(c) Per-pair balance ≤ 3.5 pp on unseen seeds + a recorded longer Optuna study** (P6, P7).
+2. ✅ **(b) D-005 economy / loot / quest tables** (P4) — landed `0.7.13+f7`: economy design model (ADR-0018, C-93), `economy_design` gate in Codegen-World, loot MC + XP pacing in `forge accept F6` on all 12 selections. Names/numbers stay Game-Design sign-off.
+3. ✅ **(c) Per-pair balance ≤ 3.5 pp on unseen seeds** (P6) — landed `0.7.13+f7`: **2.71 pp** on 1000 fresh seeds/cell (seed_base 20 000, full `forge accept F5`); bounded Optuna study recorded but not applied (noise), 3 affinities recalibrated by paired CRN probe (C-94). **P7 world fights** (wipe-rate / clear-time bands) still open.
 4. **(d) LoomCluster node auth** (HMAC + pairing secret like LoomLink, replay refusal) **+ content-addressed blob transfer** (P8).
 5. **(e) Web single-thread fallback** (D-001, P9).
 6. **(f) Doc nits** (P10) — then regenerate STATUS (`forge report`).

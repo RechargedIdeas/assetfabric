@@ -27,10 +27,11 @@ Full ADR text lives in `docs/adr/NNNN-<slug>.md`. ADRs are never deleted — the
 | [0015](docs/adr/0015-studio-pyside6.md) | Studio: Python + PySide6, outside Godot | accepted |
 | [0016](docs/adr/0016-one-milestone-offset.md) | One-milestone offset between Fabric and Game | accepted |
 | [0017](docs/adr/0017-slice-length-human-pace-gate.md) | Vertical-slice length gated on a human-pace estimate (until a playtest) | accepted |
+| [0018](docs/adr/0018-economy-design-model.md) | Economy, loot and XP numbers come from a design model, gated in Codegen-World and F6; per-pair balance gated on unseen seeds | accepted |
 
 ## Open decisions (not ADRs yet)
 
-Tracked in [TODO.md §Decisions needed](TODO.md#decisions-needed): **D-001** Web single-thread fallback (resume item e), **D-002** Android reference device, **D-005** final roster + economy/loot/quest content (Game Design; resume items a/b). F8 scope was confirmed by the Producer on 2026-11-20 (t59u, INFERENCE C-85). The swap-advisor native path (quality gap P3 follow-up) would use the GDExtension half of ADR-0003 — no new ADR needed unless it changes the GDScript-fallback rule.
+Tracked in [TODO.md §Decisions needed](TODO.md#decisions-needed): **D-001** Web single-thread fallback (resume item e), **D-002** Android reference device, **D-005** — *content tables closed by [ADR-0018](docs/adr/0018-economy-design-model.md) in 0.7.13* (data-driven economy design model + gates, INFERENCE C-93); only the Game-Design **sign-off** of final names/numbers stays open. F8 scope was confirmed by the Producer on 2026-11-20 (t59u, INFERENCE C-85). The swap-advisor native path (quality gap P3 follow-up) would use the GDExtension half of ADR-0003 — no new ADR needed unless it changes the GDScript-fallback rule.
 
 ## Adding an ADR
 

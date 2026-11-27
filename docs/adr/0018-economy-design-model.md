@@ -26,8 +26,11 @@ a gap the specs leave open, so the numbers are `[INFERENCE]` (C-93) until Game D
    twin of `world/loot.gd`) and checks the reliability and coin targets; XP pacing is checked deterministically on
    the recorded run, and the twin's predicted level-ups must equal the game's logged ones. Main run and every selection.
 4. The per-pair balance gap (TODO P6) is closed the same way: an out-of-sample hold-out (1000 seeds per leader × pet cell,
-   seed_base 9000, never used for fitting) gated at ≤ 3.5 pp in `forge accept F5` full mode (C-94), and the per-cell
-   pet↔character affinities come from a recorded per-cell Optuna study (`results/F5-tune-affinity.json`).
+   **seed_base 20 000**, never used for fitting) gated at ≤ 3.5 pp in `forge accept F5` full mode (C-94). The first
+   hold-out range (9000) was spent choosing which cells to recalibrate, so it is not reused as a gate. A bounded
+   per-cell Optuna study is recorded (`results/F5-tune-affinity.json`) but was too noisy to apply; three affinities
+   were recalibrated with a paired common-random-number probe on fit seeds (60 000+). The 200-seed G-BAL-01 per-pair
+   check becomes noise-aware (every cell's Wilson 95 % CI reaches mean ± 5 pp); its point spread is reported.
 
 ## Consequences
 
@@ -35,7 +38,10 @@ a gap the specs leave open, so the numbers are `[INFERENCE]` (C-93) until Game D
 - The targets are ours; Game Design may change them (that is the sign-off left on D-005), but then the tables must still
   pass the gate.
 - v1 has no coin sink beyond seeds, so coin accumulates (≈ 130 at the end of the slice); a sink is a Game Design item.
-- The hold-out costs 12 000 fights (≈ 4–7 min on 8 vCPU), so it runs only in full `forge accept F5`, not in pytest/CI.
+- The hold-out costs 12 000 fights (≈ 4 min on 8 vCPU, ≈ 15–20 min extrapolated on the 2-core node), so it runs only in
+  full `forge accept F5`, not in pytest/CI; CI keeps the noise-aware 200-seed per-pair check.
+- Any future affinity refit must use fit seeds (50 000+) and be confirmed on a range it has never seen; if 20 000 is
+  ever used to choose values, the gate moves again (C-94).
 
 ## Alternatives considered
 
