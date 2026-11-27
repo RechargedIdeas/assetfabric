@@ -95,6 +95,7 @@ func remap_active() -> bool:
 func settings() -> Dictionary:
 	var st := {"palette_variant": palette, "input_remap": Fabric.current_remap()}
 	st.merge(Retro.settings())       # F8: retro profile + scanlines travel with the profile layer
+	st["diagnostics_consent"] = LiveOps.diagnostics_consent()   # post-F9: the player's opt-in (F9-8, F9-12)
 	return st
 
 
@@ -105,6 +106,8 @@ func apply_settings(s: Dictionary) -> void:
 	Fabric.apply_input_remap(rm if typeof(rm) == TYPE_DICTIONARY else {})
 	set_palette(str(s.get("palette_variant", "default")))
 	Retro.apply_settings(s)
+	if s.has("diagnostics_consent"):  # older profiles carry no key → the device's own consent stays as it is
+		LiveOps.set_diagnostics_consent(s.get("diagnostics_consent") == true)
 
 
 func sidecar_path() -> String:

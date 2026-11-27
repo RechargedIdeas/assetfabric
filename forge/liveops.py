@@ -440,6 +440,9 @@ def _git_files(root: Path) -> list[str]:
     return p.stdout.splitlines() if p.returncode == 0 else []
 
 
+LEGAL_PLACEHOLDER = "[PLACEHOLDER — LEGAL REVIEW REQUIRED]"
+
+
 def readiness(root: Path | None = None) -> dict[str, Any]:
     root = root or find_repo_root()
     items: list[dict[str, Any]] = []
@@ -479,6 +482,17 @@ def readiness(root: Path | None = None) -> dict[str, Any]:
     consent = [n for n, f in raw["flags"].items() if f["kind"] == "consent"]
     item("privacy_defaults", "pass" if consent and not any(d[n] for n in consent) else "fail",
          {n: d[n] for n in consent})
+    menu = root / "games/game-zero/ui/settings_menu.gd"
+    mt = menu.read_text(encoding="utf-8") if menu.exists() else ""
+    item("consent_toggle_in_settings", "pass" if "set_diagnostics_consent" in mt and "settings.diagnostics.notice" in mt
+         else "fail", "Settings screen: diagnostics toggle (default off) + privacy notice (INFERENCES F9-12)")
+    notice = locale_en(root).get("settings.diagnostics.notice", "")
+    if not notice:
+        item("privacy_text_legal_review", "fail", "locale key settings.diagnostics.notice missing")
+    elif notice.startswith(LEGAL_PLACEHOLDER):
+        item("privacy_text_legal_review", "user_gated", "privacy notice is a placeholder — legal review required (F9-8)")
+    else:
+        item("privacy_text_legal_review", "pass", "legal-reviewed text in place")
     item("live_service", "user_gated", "no endpoint, no delivery service, no launch — F9 is readiness only (spec §13)")
     failed = [i["id"] for i in items if i["status"] == "fail"]
     return {"ok": not failed, "failed": failed, "items": items,

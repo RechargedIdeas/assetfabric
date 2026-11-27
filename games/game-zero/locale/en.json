@@ -120,7 +120,7 @@
   "settings.palette.protanopia": "Protanopia (red–green, red-weak)",
   "settings.palette.changed": "Palette: %s",
   "settings.reset": "Reset to defaults",
-  "settings.reset.done": "Controls, palette and display style reset to defaults.",
+  "settings.reset.done": "Controls, palette, display style and diagnostics reset to defaults (diagnostics off).",
   "settings.back": "Back",
   "settings.hint": "Choose an action and press Enter / pad A, then press the new key, button or stick direction. Escape cancels.",
   "settings.capture": "Press a key, button or stick direction for “%s” (Escape cancels)…",
@@ -192,5 +192,9 @@
   "liveops.flag.diagnostics.note": "Keep a local session record you can export. Nothing is sent anywhere.",
   "liveops.status.defaults": "Shipped settings",
   "liveops.status.bundle": "Update %d active",
-  "save.read_only_newer": "This save was made by a newer version of the game. It is kept safe and read-only."
+  "save.read_only_newer": "This save was made by a newer version of the game. It is kept safe and read-only.",
+  "settings.diagnostics": "Diagnostics (kept on this device)",
+  "settings.diagnostics.notice": "[PLACEHOLDER — LEGAL REVIEW REQUIRED] Privacy: when on, Game Zero keeps a small session record on this device (build, platform, settings state, whether the last session crashed). It is never sent anywhere by the game; you can export a scrubbed copy yourself to share with support. Off by default; turning it off deletes the record.",
+  "settings.diagnostics.changed_on": "Diagnostics on: a local session record is kept on this device only.",
+  "settings.diagnostics.changed_off": "Diagnostics off: the local session record was deleted."
 }

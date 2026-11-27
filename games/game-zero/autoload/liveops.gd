@@ -366,6 +366,35 @@ func set_consent(name: String, on: bool) -> void:
 	_write("consent.json", d)
 	consent[name] = on
 	flags[name] = on
+	if name == "diagnostics":
+		if on:
+			write_diagnostics()           # opt-in takes effect for this session at once
+		else:
+			clear_diagnostics()           # opt-out removes the local record (nothing was ever uploaded)
+	report["flags"] = flags.duplicate()
+
+
+## Player-facing diagnostics consent (Settings screen, post-F9 / INFERENCES F9-12). Off unless the player opted in.
+func diagnostics_consent() -> bool:
+	return bool(consent.get("diagnostics", false))
+
+
+## Settings / save-profile entry point: only writes when the value really changes (no stray consent.json on boot).
+func set_diagnostics_consent(on: bool) -> bool:
+	if on != diagnostics_consent():
+		set_consent("diagnostics", on)
+	return diagnostics_consent()
+
+
+## Delete the local session record(s). Returns how many files were removed.
+func clear_diagnostics() -> int:
+	var n := 0
+	var dd := _p("diag")
+	if DirAccess.dir_exists_absolute(dd):
+		for f in DirAccess.get_files_at(dd):
+			if DirAccess.remove_absolute(dd.path_join(f)) == OK:
+				n += 1
+	return n
 
 
 ## Local session record (opt-in). No paths, no user/host names, no ids — `forge liveops diag-export` scrubs anyway.
