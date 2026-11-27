@@ -51,8 +51,9 @@ PUBLIC_PROPRIETARY = {
 MODERN_IMPORT_OK = {"adventure-game-studio", "crystal-space", "stratagus", "java-3d", "rpg-maker", "clickteam-fusion",
                     "gamemaker", "aleph-one", "clanlib", "unreal-engine", "worldforge", "nscripter", "virtools"}
 NAMED_ALIASES = {"unreal-engine": "unreal-engine", "unity": "unity", "godot": "godot", "rpg-maker": "rpg-maker",
-                 "clickteam-fusion": "clickteam-fusion", "construct": "construct-2", "appgamekit": "appgamekit",
-                 "blender-game-engine": "blender"}
+                 "clickteam-fusion": "clickteam-fusion", "construct": "construct-2", "appgamekit": "appgamekit"}
+# NOT aliased: "blender-game-engine" (removed from Blender in 2.80, 2019) — our native Blender check proves Blender's
+# importer, not the BGE runtime, so the BGE row keeps its own profile-derived tier.
 PACKS = {"2d": ["png-atlas", "texturepacker-json", "png-frames"], "2.5d": ["png-atlas", "texturepacker-json", "layer-manifest", "glb-cards"],
          "3d": ["glb", "obj-mtl"]}
 
@@ -166,9 +167,9 @@ def entries(root: Path | None = None) -> list[dict[str, Any]]:
             out.append({"id": e["id"], "name": e["name"], "kind": "engine", "source": "wikipedia", "dims": p["dims"],
                         "adapter": p["adapter"], "tier": p["tier"], "convention": p["convention"], "packs": p["packs"],
                         "tier_reason": p["tier_reason"]})
-    wiki_ids = {e["id"] for e in cat["engines"]}
+    merged = {e["id"] for e in cat["engines"]} | {e["profile"]["named_tool"] for e in cat["engines"] if e["profile"]["named_tool"]}
     for n in cat["named_tools"]:
-        if n["id"] in wiki_ids:
+        if n["id"] in merged:            # already listed as the Wikipedia row it matches (e.g. Construct → construct-2)
             continue
         out.append({"id": n["id"], "name": n["name"], "kind": n["kind"], "source": "named", "dims": n["dims"],
                     "adapter": n["adapter"], "tier": n["tier"], "convention": n["convention"],

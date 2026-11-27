@@ -5,21 +5,21 @@
   "milestone": "U1",
   "passed": true,
   "perf": {
-    "adapters_demo_s": 6.97,
+    "adapters_demo_s": 7.38,
     "openscad_vs_fallback_rel_diff": {
       "barrel": 0.00322,
       "cog": 0.00393,
       "crate": 0.00234,
       "pillar": 0.00469
     },
-    "plugin_verify_s": 0.35,
+    "plugin_verify_s": 0.5,
     "timings_s": {
-      "adapters": 9.78,
-      "catalog": 0.14,
-      "evolution": 14.5,
+      "adapters": 11.25,
+      "catalog": 0.3,
+      "evolution": 17.93,
       "ir": 0.18,
-      "parametric": 16.93,
-      "plugins": 2.16
+      "parametric": 16.33,
+      "plugins": 3.64
     }
   },
   "result": {
@@ -120,7 +120,7 @@
         "native_ok": 6,
         "native_ran": 6
       },
-      "demo_s": 6.97,
+      "demo_s": 7.38,
       "deterministic": true,
       "failures": [],
       "native": {
@@ -174,9 +174,9 @@
         "cli_bridge": 1,
         "descriptor_only": 76,
         "interchange_pack": 120,
-        "native_verified": 3
+        "native_verified": 2
       },
-      "entries_total": 200,
+      "entries_total": 199,
       "errors": [],
       "named_tools": 28,
       "ok": true,
@@ -483,7 +483,7 @@
         },
         "ok": true,
         "sandbox_tier": "bwrap",
-        "verify_s": 0.35,
+        "verify_s": 0.5,
         "version": "1.0.0"
       },
       "same_version_refused": true,
@@ -515,12 +515,12 @@
       }
     },
     "timings_s": {
-      "adapters": 9.78,
-      "catalog": 0.14,
-      "evolution": 14.5,
+      "adapters": 11.25,
+      "catalog": 0.3,
+      "evolution": 17.93,
       "ir": 0.18,
-      "parametric": 16.93,
-      "plugins": 2.16
+      "parametric": 16.33,
+      "plugins": 3.64
     }
   }
 }

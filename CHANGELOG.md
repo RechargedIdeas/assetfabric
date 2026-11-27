@@ -4,6 +4,29 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Added — U1 universal 2D/2.5D/3D engine (user request t65u; branch `feat/universal-engine-u1`)
+- **Scene IR** `forge/universal/ir.py` (2D sprites/atlases, 2.5D layers/cards, 3D meshes + skins + PBR + cameras, point
+  clouds, 3DGS splats; deterministic JSON digest) and **10 coordinate conventions** (`coords.py`: glTF/Godot, Unity,
+  Unreal, Blender, Source, OpenGL/DirectX Y-up, Z-up variants) with sub-1e-9 round trips.
+- **Parametric generation**: YAML templates (crate, pillar, barrel, cog) → deterministic `.scad` → the **real OpenSCAD
+  CLI** when installed, plus an own NumPy CSG/SDF marching-tetrahedra fallback (`csg.py`), volume cross-check (0.2–0.5 %),
+  STL/OBJ/OFF/GLB writers + readers; `forge parametric list|scad|build`; GroundWeave op `gen.parametric` (ADR-0024).
+- **Adapter SDK + 23 adapters** (`forge/universal/exporters/`): Godot + Blender **native_verified** (headless runs),
+  OpenSCAD **cli_bridge**, interchange packs for Unreal, Unity, RPG Maker MV/MZ/VX Ace, Sprite Lamp / Sprite Pro,
+  Construct, Clickteam Fusion, AppGameKit, GameGuru, CopperCube, Esenthel, AGFPRO, RaySupreme, COLMAP, 3DGS/nerfstudio,
+  Fuse / ePic / recon importers, catalog-generic; own glTF 2.0 writer/reader; deterministic packs with SHA-256
+  manifests (ADR-0023). `forge universal export|verify|demo|adapters|native`; GroundWeave op `universal.export`.
+- **Engines catalog** from Wikipedia *List of game engines* rev 1388112807 (178 rows) + 28 curated tools = 199 entries
+  (`content/universal/engines_catalog.yaml`, `forge universal catalog|search|catalog-build`).
+- **Self-improvement** `evolution.py`: benchmark-gated recipe promotion (strict gain + every gate), telemetry, rollback;
+  production paths read the active recipe; OpenSCAD `$fn=128` reference volumes (ADR-0025).
+- **Plugins + gap detector** `plugins.py`: manifest rules, static AST policy, contract suite inside forge.sandbox
+  (bwrap), versioned register/rollback, sandboxed hot-load proxies, tamper refusal, scaffold; `capabilities.yaml` gap
+  report; example X3D exporter plugin; hostile fixtures (ADR-0026).
+- `forge accept U1` (`forge/accept_u1.py`, ≈ 50 s), `tests/test_universal_engine.py` (54 tests),
+  `docs/architecture/universal-engine.md`, ADR-0023…0026, INFERENCES §U1, locale keys `universal.*`; OpenSCAD added
+  to the CI apt packages.
+
 ## [0.9.0+f9] — 2026-11-27 — F9 LiveOps foundation, readiness only (`liveops-readiness`)
 
 SPEC §13 F9 ("readiness only"), §12 "remote config / feature flags (launch content deferred)"; GAME_SPEC §5, §8, G-NET-01.

@@ -84,6 +84,7 @@ Normative map for AssetFabric. Design specs live in `docs/design/`; ADRs + this 
 | `content/retro/profiles.yaml`, `forge/retro/` (`profiles`, `colour`, `transcode`, `asm6502`, `rom`, `emulator`, `readiness`, `validate`), `forge/generators/retro.py`, `forge/cli_retro.py`, `forge/accept_f8.py` | F8 ForgeConsole: Console Profile Registry, C1 palette + sub-palette + a11y signal solver, R1 LUT generator, ConsoleReadiness, own 6502 assembler + cycle predictor, iNES ROMBuilder, cynes EmulatorHarness, V1 frame gates + R2 discriminator, F8 acceptance | F8 |
 | `games/game-zero/autoload/retro.gd`, `ui/retro_post.gdshader`, `tools/retrocheck.gd` | F8 R1 pass (CanvasLayer 1 between world and HUD), Q1 camera/sprite policy, settings, acceptance flows | F8 |
 | `content/liveops/flags.yaml`, `forge/liveops.py`, `forge/generators/liveops.py`, `forge/cli_liveops.py`, `forge/accept_f9.py`, `forge/schemas/diag_bundle.schema.json` | F9 LiveOps readiness: flag manifest, payload rules, RSA sign/verify, roll-forward rollback, device status, PII scrubber, readiness checklist (ADR-0022) |
+| `forge/universal/` (`ir`, `coords`, `mesh`, `csg`, `openscad`, `gltf`, `maps2d`, `exporters/`, `native/`, `registry`, `engine`, `evolution`, `plugins`, `plugin_worker`), `forge/cli_universal.py`, `forge/accept_u1.py`, `content/universal/` | U1 universal 2D/2.5D/3D engine: scene IR + conventions, parametric (OpenSCAD CLI bridge + NumPy CSG fallback), 23 tiered adapters, Wikipedia engines catalog, benchmark-gated self-improvement, sandboxed plugins + gap report (ADR-0023…0026; [docs/architecture/universal-engine.md](docs/architecture/universal-engine.md)) |
 | `games/game-zero/autoload/liveops.gd`, `tools/liveopscheck.gd` | F9 game side: local bundle state machine (inbox → verify → promote/reject, crash-loop quarantine, tamper → defaults), kill switches, balance overlay via LiveChannel; QA scene |
 | `forge/accept_f7.py` | F7 acceptance: builds, desktop slice in a network-less namespace, Android content run, G-SAVE-01 ring, G-WEB-01, G-NET-01, remap | F7 |
 | `companions/pocketloom/` | PocketLoom: `fabriccore/` (pure Kotlin/JVM runtime: JobExecutor, Dispatcher, AssetStore + version vectors, OffloadQueue, Telemetry, LocalForge, ModelCache, Captures, LoomLink client, SyncClient, CLI) + `app/` (Android UI, platform widgets) | real (C1–C6, debug APK) |
@@ -136,6 +137,17 @@ forge liveops bundle (validate → RSA sign) ─► bundle.json ─► [platform
 Godot LiveOps (boot, local files only): crash guard (boot.json) ─► inbox verify (pinned key, rules, serial > max) ─► active / rejected
    ─► active re-verify (tamper/downgrade → defaults) ─► kill switches (Retro, MusicDirector) + balance overlay (LiveChannel)
 no bundle / any failure ─► manifest defaults == shipped behaviour (F2 state hash identical); never touches saves; no network
+```
+
+### Universal engine flow (U1, ADR-0023…0026)
+
+```
+template.yaml ──bind──► emit_scad ──► OpenSCAD CLI (cli_bridge) ─┐ cross-check
+                 └────► csg.py SDF → marching tetrahedra (CPU) ──┴─► TriMesh ─► ir.Scene ◄── reference / IR JSON / importers
+ir.Scene ──coords.convert──► adapter.export ──► deterministic Pack + manifest ──► adapter.verify (own readers)
+                                                     └─► native_check: Godot GLTFDocument · Blender bridge · OpenSCAD render
+evolution: active recipe ──► production paths;  evolve = propose → benchmark (production path) → gates → promote | reject; rollback
+plugins:   gaps → scaffold → verify (manifest + AST policy + sandboxed contract) → register (tree hash) → sandboxed proxy in REGISTRY
 ```
 
 ### PocketLoom flow (C1–C6)

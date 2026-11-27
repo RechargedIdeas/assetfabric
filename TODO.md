@@ -2,6 +2,16 @@
 
 Last updated: 2026-11-27 America/New_York
 
+## U1 follow-ups — universal engine (t65u; see docs/acceptance-tests/U1.md §Not claimed)
+
+- [ ] Native checks for more tools where a Linux/headless path exists (Unity batchmode import of the UPM package,
+      UnrealEditor-Cmd `-run=pythonscript` with the generated import script) → promote those adapters to `native_verified`.
+- [ ] FBX / USD writers (high-severity gaps in `forge universal gaps`); VRM, 3MF, DAE, SPZ as plugins.
+- [ ] Second plugin kind `processor` (LOD chain, UV unwrap, animation retarget) — reported as feature gaps.
+- [ ] Vulkan/ROCm compute rung for `gen.parametric` (planned in the GroundWeave ladder).
+- [ ] Confirm import formats for descriptor-only catalog engines (76) and inference-flagged tools (U1-2…U1-8).
+- [ ] Decide when a locally promoted recipe becomes the committed baseline (reviewed commit).
+
 ## Current sprint — quality gaps (Producer t59u, 2026-11-20; phase 2 of "replace stubs, fix quality gaps, then F8 and F9")
 
 > Paused 2026-11-20, resumed 2026-11-26 (Producer t61u). Q1–Q2 done, Q3 partial, ✅ (a) row 5 slice length (0.7.12) → ✅ (b) row 4

@@ -12,6 +12,17 @@
 **Fleet track:** **LoomCluster C7 + GroundWeave C8 accepted** (`forge accept C7-C8`, package `0.7.2+f7`) — equal-node scheduler proven on **loopback processes** (not a LAN), GPU→CPU ladder with the CPU path proven on 2 pinned cores; no real GPU backend exists yet
 **F8 (0.8.0+f8):** Settings → Display style (off / gz-native / nes-style / gb-style + scanlines) as one R1 LUT pass between world and HUD, Q1 integer camera/sprite policy, a11y remap kept, sim byte-identical; NES field-demo ROM built from Fabric content and driven in cynes — docs/acceptance-tests/F8.md, ADR-0021, INFERENCES §F8.
 **F9 (0.9.0+f9):** LiveOps readiness only — flag manifest with safe offline defaults (`content/liveops/flags.yaml` → generator `liveops`), RSA-signed **local** config bundles (kill switches + balance knobs = F4 tune limits; anti-replay serial; no content, no consent flags), game `LiveOps` autoload (inbox → verify → promote/reject, crash-loop quarantine, tamper/downgrade → shipped defaults), newer saves read-only, opt-in scrubbed local diagnostics, `forge liveops …`, runbook `docs/liveops-runbook.md`, ADR-0022, INFERENCES §F9. The game never fetches anything (G-NET-01 strict). **No live service, no delivery endpoint, no launch.**
+**U1 universal engine (user request t65u; branch `feat/universal-engine-u1`):** `forge/universal/` delivers:
+* one scene IR for 2D, 2.5D and 3D, plus 10 coordinate conventions;
+* parametric templates through the **real OpenSCAD CLI** and an own NumPy CSG/SDF fallback;
+* 23 tiered adapters. **native_verified:** Godot, Blender. **cli_bridge:** OpenSCAD. **interchange_pack:** Unreal, Unity,
+  RPG Maker, Sprite Lamp/Pro, Construct, Clickteam, AppGameKit, GameGuru, CopperCube, Esenthel, AGFPRO, RaySupreme,
+  COLMAP, 3DGS, Fuse, ePic. Interchange-pack tools are not run;
+* the Wikipedia engines catalog (178 rows, rev 1388112807) plus 28 curated tools = 199 entries;
+* benchmark-gated self-improvement with rollback;
+* sandboxed plugins plus a live gap report.
+
+`forge accept U1` is green. Design: ADR-0023…0026 and `docs/architecture/universal-engine.md`. Inferences: INFERENCES §U1.
 **Next:** nothing spec-required is left — every remaining item is hardware- or Producer-gated (§Next steps). Quality gaps (a)–(f), (c′) all landed in `0.7.12`–`0.7.15`.
 **Producer direction (2026-11-05):** build the complete project milestone-by-milestone, push `main` after each milestone, no public releases.
 
@@ -31,6 +42,7 @@ Milestone dashboard: [STATUS.md](STATUS.md).
 | SwatchStudio | CLI only (`forge palette`, `forge gen --seed`) |
 | Godot binding | `fabric_assets.json` registry + `Fabric` autoload (runtime load, no editor import) |
 | Game Zero | sandbox (F1), first combat (F2), **party AI (F3)**: compiled BTs + GIRT policy targeting, time-freeze swap with threaded forward-sim ranking, typed intents via CascadeHub, callouts, post-combat dialogue; keyboard play + headless autoplay + demo mode; deterministic sim; **live tune (F4)**: `--scene=live`, live channel, snapshots/WAL replay, statecharts, guardian-supervised `--serve`; **first boss (F5)**: `--scene=boss`, tier-3 Cave Warden (3 HP phases, 2 summoned emberlings, enrage) in a carved G1-Tile boss arena, autoplay rally, save on victory; **vertical slice (F6)**: `--scene=slice` — character + pet select, farm plots (plant/grow/harvest), gather nodes, workbench crafting (salve, tonic, gear), tiered loot, quest log (main + side quest), field ⇄ tunnels ⇄ deep cave → Warden's lair → open-world exit, adaptive music (biome × state stems), checkpoints + save/quit/resume, XP/levels, boss unlock; headless QA autopilot (`--autoplay`) |
+| Universal engine (U1) | **real**: `forge universal …` / `forge parametric …`. **native_verified:** Godot 4.3 GLTFDocument, Blender 4.3 bridge. **cli_bridge:** OpenSCAD 2021.01. Every other named engine/tool is an `interchange_pack` (documented import formats, validated by our own readers; tool not run). There is no FBX/USD writer (gaps). Plugins run only inside forge.sandbox. `forge accept U1` + `tests/test_universal_engine.py` |
 | Acceptance | `forge accept C1-C6` (PocketLoom) `forge accept C7-C8` and `forge accept C9-C12` (recorded `results/C*.json`); `forge accept F0..F9` recorded in `docs/acceptance-tests/results/` (F3–F6 add `perf` blocks); `FORGE_ACCEPT_FAST=1` runs the 2-selection F6 subset (pytest/CI) |
 | CI | GitHub Actions (push to `main` / `feat/**`, PRs): job `test` = pytest + determinism gate + Godot 4.3 headless increments; job `pocketloom` (parallel) = `forge accept C1-C6` full (JDK 17 + Gradle cache + runner Android SDK) then `forge accept C7-C8` (Godot cached), then `forge accept C9-C12` |
 | GIRT / CascadeHub | real, CPU/GDScript backends (`autoload/girt.gd`, `autoload/cascade_hub.gd`); ONNX Runtime GDExtension not built |
@@ -125,7 +137,9 @@ Q3 follow-up (not scheduled): native forward-sim step (GDExtension, ADR-0003) to
 
 ## Next steps (ordered)
 
-Every spec milestone (F0–F9, C1–C12) is accepted. What is left needs hardware, people or a Producer decision:
+Every spec milestone (F0–F9, C1–C12) is accepted. U1 (universal engine, t65u) is accepted on its branch. Its
+follow-ups are in TODO.md §U1: native checks for Unity/Unreal, FBX/USD writers, processor plugins, and a GPU
+`gen.parametric` rung. What is left needs hardware, people or a Producer decision:
 
 1. **Producer key ceremony for LiveOps** (docs/liveops-runbook.md §Key ceremony): generate the production RSA key
    offline, pin `games/game-zero/data/liveops/pubkey.pem`, add `data/liveops/*` to the export include filters. Until

@@ -18,8 +18,8 @@ counts:
   named_tools: 28
   wikipedia_by_tier:
     descriptor_only: 75
-    interchange_pack: 95
-    named: 8
+    interchange_pack: 96
+    named: 7
   named_by_tier:
     native_verified: 2
     cli_bridge: 1
@@ -384,10 +384,10 @@ engines:
     - obj-mtl
     convention: blender
     convention_source: curated
-    named_tool: blender
-    adapter: null
-    tier: null
-    tier_reason: named tool — see named_tools
+    named_tool: null
+    adapter: catalog-generic
+    tier: interchange_pack
+    tier_reason: public toolchain + modern import formats
 - id: build-engine
   name: Build engine
   alternate_names: []

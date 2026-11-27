@@ -715,3 +715,55 @@ feature flags (launch content deferred)", GAME_SPEC §5 "Live seasonal content (
     floor to the active serial — acceptable for a local-only, readiness design.
 11. **F9-11 Versions.** Fabric and game `0.9.0+f9`; increment `liveops-readiness`. Android versionCode/name and the
     Windows file version stay at the F7 values (no new store build).
+
+## U1 — Universal 2D/2.5D/3D engine (user request t65u)
+
+Scope: `forge/universal/`, `content/universal/`, `forge accept U1`. Design: ADR-0023…0026 and
+[docs/architecture/universal-engine.md](architecture/universal-engine.md).
+
+1. **U1-1 Generic convention.** Catalog engines without a curated coordinate convention (30 are curated) get glTF axes
+   (RH, +Y up, metres), on the assumption that their glTF/OBJ importer converts. Each entry is marked
+   `convention_source: inference:U1-1`.
+2. **U1-2 Sprite Pro.** No single product of this name could be confirmed. It is served by the same
+   normal/depth/diffuse sheet pack as Sprite Lamp.
+3. **U1-3 GameGuru `.fpe`.** We write a DirectX `.x` model plus an `.fpe` entity descriptor (keys
+   desc/model/textured/scale). The field set comes from public examples and was not verified in the editor.
+4. **U1-4 Esenthel.** OBJ + glTF import is assumed from public docs/changelogs and was not verified in the editor.
+5. **U1-5 AGFPRO 3.** Custom-asset import via OBJ is assumed (Unity-based tool) and was not verified.
+6. **U1-6 RaySupreme 3D.** OBJ/STL import is assumed. The tool is Windows-only and was not verified.
+7. **U1-7 Flipside Studio.** Custom avatars and sets are authored through Flipside's Unity-based creator tools, so the
+   Unity pack is the path.
+8. **U1-8 Creative Engine.** The identity is ambiguous. A generic glTF + PNG atlas pack is offered, and the tier stays
+   `descriptor_only`.
+9. **U1-9 Unity `.meta`.** We write minimal `.meta` YAML:
+   * `fileFormatVersion: 2`;
+   * a GUID derived as md5(package/path), so it is deterministic;
+   * Sprite importer settings with Multiple-mode rects (bottom-left origin).
+
+   Unity fills in any omitted importer fields with its defaults. This has not been opened in the Unity Editor here.
+10. **U1-10 Wikipedia tier rules.** A row is `interchange_pack` when the engine has a public toolchain (open source,
+    or a known freely downloadable proprietary editor from the curated list) **and** a release/activity year that implies
+    PNG/OBJ/glTF import. Otherwise it is `descriptor_only`, with the reason recorded per entry. "Blender Game Engine"
+    (removed in Blender 2.80) is **not** merged with the Blender named tool, because our native Blender check proves
+    Blender's importer, not the BGE runtime.
+11. **U1-11 Reference volumes.** Ground truth for the `parametric.csg` benchmark is OpenSCAD 2021.01 at `$fn=128`. The
+    polygon/circle area error there is ≈ 4e-4, which is below the 2e-3…5e-3 errors being ranked. When OpenSCAD is
+    absent, a cell-centre voxel count is used and labelled as such.
+12. **U1-12 Objective weights.** For `parametric.csg` the objective is mean relative volume error + 0.02 × mean
+    triangle/budget ratio, so a 1 % volume error is worth half a triangle budget. For `maps2d.normal` it is the mean
+    angular error on 3 analytic silhouettes (hemisphere, ellipse, small disc), ignoring a 2-px rim. Both are our
+    choices.
+13. **U1-13 Plugin policy.**
+    * Plugins are limited to `interchange_pack`/`descriptor_only`, with no network, no subprocess, and writes only via
+      `Pack.add`.
+    * Plugin size is capped at 50 files / 512 KiB.
+    * The import allow-list is numpy, json, math, struct, zlib, hashlib, re, typing, dataclasses, io, base64,
+      itertools, collections, functools, enum, string, textwrap, fractions, decimal, xml.etree.ElementTree, pathlib,
+      and `forge.universal.*` except plugins/native/evolution/catalog_build.
+
+    The static policy is defence in depth. The sandbox (bwrap or audit hook) is the enforcement.
+14. **U1-14 Capability list.** `content/universal/capabilities.yaml` (16 formats, 3 features) is our reading of what a
+    "universal" engine needs next. It is not exhaustive, and adding an entry is how a newly emerging format enters the
+    gap report.
+15. **U1-15 Versions.** Code is on branch `feat/universal-engine-u1`. Merging and choosing the version number are
+    release decisions: the Fabric version stays at the base branch's value and the milestone id is `U1`.
