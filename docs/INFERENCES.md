@@ -501,7 +501,7 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
     live) × 5 reps, with the Godot process pinned to **2 CPUs** via `taskset` (weakest node = 2 cores, AGENTS rule 6).
     "Cores" are physical cores: one logical CPU per `thread_siblings_list` group (`forge/cpus.py`); pinned to two SMT
     siblings of one core, GitHub's runner measured p95 66 ms, which is a 1-core machine, not the weakest node. GitHub CI
-    (2 physical EPYC cores) passes the gate. Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
+    runners have 2 physical cores but are slower (see below). Pinning two cores of a fast cloud x86 box is a proxy, not a real low-end CPU; the max (48.6 ms) is close to the target,
     and a slower machine does exceed it: GitHub's 2-core runners measured p95 63–66 ms. So the < 50 ms gate is hard on the
     reference node (`forge accept F3`) and reported-only in FAST mode / CI and the GroundWeave probe; 150 ms stays the hard
     ceiling everywhere. Quality gap P3 is therefore **partial**: met on the reference box, not on slower 2-core CPUs. The
@@ -514,3 +514,14 @@ was "real interfaces + clearly labelled stubs, a real CPU path only where cheap 
 90. **C-90 No behaviour change.** The optimisation is accepted only because every recorded F2–F6 outcome, tick count,
     state hash and balance number is identical to 0.7.10 (timings excepted); unrolled policy maths keeps the operation
     order so float results are bit-identical.
+    Final attempt before landing (2026-11-20): serial cost of the worst state splits ≈ 44 % movement/casts, ≈ 45 % BT
+    brains, ≈ 11 % GIRT policy — no single hot spot; a thread pool sized to the affinity mask gave no measurable gain
+    (not shipped); no C++ toolchain on the box for a GDExtension. Recorded in `docs/perf/gdscript-thread-scaling/`.
+
+### Reserved (unmerged WIP, branch `feat/q4-slice`)
+
+91. **C-91 Slice pacing content** — *reserved, text not written.* WIP: crops 2 / 3 game-min, second crop cycle via the
+    stall, route repopulation packs gated on `stage:q_warden>=craft`. Not on `main`.
+92. **C-92 Human-pace estimate model** — *reserved, text not written.* WIP: `content/tune/pace.yaml` + `forge/pace.py`
+    (itemised travel × 1.6, combat × 1.5, crop wait × 1, interactions, reading, first-visit exploration). First estimate
+    14.3 min (< 15). A model, never a substitute for the pending human GUI playtest. Not on `main`.

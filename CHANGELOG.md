@@ -4,6 +4,13 @@ All notable changes to AssetFabric. Format follows [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Docs — pause (2026-11-20)
+- Work paused by the Producer after Q3. README, HANDOVER (new §Resume point with every open branch), TODO (sprint table
+  states + resume order), BUILD_ORDER, TESTING (swapbench gate), SECURITY, tool-catalog (`--scene=swapbench`),
+  INFERENCES (C-88 contradiction fixed, final Q3 attempt, C-91/C-92 reserved for the WIP), DECISIONS (open decisions),
+  F6.md (length-gap WIP note) and STATUS brought current; stale C9–C12 "labelled stubs" claims removed.
+- Q4 slice-length work is **not released**: unverified WIP on `feat/q4-slice`.
+
 ## [0.7.11+f7] — 2026-11-20 — Quality gaps Q3: swap advisor < 50 ms on 2 cores of the reference box (GAME_SPEC §4.1; partial on slower CPUs)
 
 ### Changed
