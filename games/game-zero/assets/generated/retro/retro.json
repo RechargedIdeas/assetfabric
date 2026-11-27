@@ -1,0 +1,55 @@
+{
+ "base_viewport": [
+  1280,
+  720
+ ],
+ "default": "off",
+ "order": [
+  "off",
+  "gz-native",
+  "nes-style",
+  "gb-style"
+ ],
+ "profiles": {
+  "gb-style": {
+   "family": "gb",
+   "label_key": "retro.profile.gb-style",
+   "logical": [
+    160,
+    90
+   ],
+   "lut": "gb-style_lut.png",
+   "match": "lightness",
+   "palette_size": 4,
+   "scale": 8,
+   "scanlines": 0.0
+  },
+  "gz-native": {
+   "family": "fabric",
+   "label_key": "retro.profile.gz-native",
+   "logical": [
+    320,
+    180
+   ],
+   "lut": "gz-native_lut.png",
+   "match": "lab",
+   "palette_size": 51,
+   "scale": 4,
+   "scanlines": 0.0
+  },
+  "nes-style": {
+   "family": "nes",
+   "label_key": "retro.profile.nes-style",
+   "logical": [
+    256,
+    144
+   ],
+   "lut": "nes-style_lut.png",
+   "match": "lab",
+   "palette_size": 54,
+   "scale": 5,
+   "scanlines": 0.0
+  }
+ },
+ "schema_version": "1.0"
+}

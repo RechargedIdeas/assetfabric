@@ -50,7 +50,8 @@ def nearest(rgb: np.ndarray, palette: np.ndarray, match: str = "lab") -> np.ndar
     return out.reshape(rgb.shape[:-1])
 
 
-def build_lut(palette: np.ndarray, exact: np.ndarray | None = None, match: str = "lab") -> tuple[np.ndarray, list[str]]:
+def build_lut(palette: np.ndarray, exact: np.ndarray | None = None, match: str = "lab",
+              overrides: dict[str, int] | None = None) -> tuple[np.ndarray, list[str]]:
     """64³ nearest-colour LUT as a 512×512 RGB image (slice b at (b%8, b//8), texel (r, g) inside it).
 
     Bin centres map to their nearest palette colour (CIELAB). Then every colour in `exact` (and every palette colour)
@@ -72,6 +73,9 @@ def build_lut(palette: np.ndarray, exact: np.ndarray | None = None, match: str =
                 continue
             pins[key] = int(w)
             idx[key] = int(w)
+    for h, w in sorted((overrides or {}).items()):       # C1 signal-separation moves (transcode.solve_signal_overrides)
+        c = hex_rgb(h)
+        idx[c[0] >> 2, c[1] >> 2, c[2] >> 2] = int(w)
     img = np.zeros((LUT_SIDE, LUT_SIDE, 3), dtype=np.uint8)
     for bb in range(LUT_LEVELS):
         ox, oy = (bb % 8) * LUT_LEVELS, (bb // 8) * LUT_LEVELS

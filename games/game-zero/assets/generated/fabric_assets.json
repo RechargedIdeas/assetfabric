@@ -419,6 +419,633 @@
         "policy"
       ]
     },
+    "retro_profiles": {
+      "files": {
+        "gb-style_lut.png": {
+          "res": "res://assets/generated/retro/gb-style_lut.png",
+          "sha256": "e31fa8b89fb0715be876134842c8bc270db544d678f379503aecf5fa53c8025a"
+        },
+        "gz-native_lut.png": {
+          "res": "res://assets/generated/retro/gz-native_lut.png",
+          "sha256": "d102f401f3b117a0d4776f333926524843f30074ec6358f14164c395e3b086ad"
+        },
+        "nes-style_lut.png": {
+          "res": "res://assets/generated/retro/nes-style_lut.png",
+          "sha256": "a9c6df4ed2d7db52de379c585a9f55758beb1bed5eab5dab4465e5eb5e4709d8"
+        },
+        "retro.json": {
+          "res": "res://assets/generated/retro/retro.json",
+          "sha256": "a11d36993cd35813ff97740a28e20b7cce5b7f3358ef476794d3686cd1e43c51"
+        }
+      },
+      "kind": "retro",
+      "meta": {
+        "c1_overrides": {
+          "gb-style": {
+            "#2f5a3d": 0,
+            "#3080f0": 2,
+            "#4a8352": 2
+          }
+        },
+        "kind": "retro",
+        "profiles": [
+          "gz-native",
+          "nes-style",
+          "gb-style"
+        ],
+        "signals": [
+          {
+            "de_seen": 67.8,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": true,
+            "shown": [
+              "#40c060",
+              "#f0c040"
+            ],
+            "variant": "default",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 118.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#e04040",
+              "#40c060"
+            ],
+            "variant": "default",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 92.1,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#c2413a",
+              "#3fa7a0"
+            ],
+            "variant": "default",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 81.8,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#c2413a",
+              "#4a8352"
+            ],
+            "variant": "default",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 77.1,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#c2413a",
+              "#2f5a3d"
+            ],
+            "variant": "default",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 137.2,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": true,
+            "shown": [
+              "#3080f0",
+              "#f0c040"
+            ],
+            "variant": "deuteranopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 110.4,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#e04040",
+              "#3080f0"
+            ],
+            "variant": "deuteranopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 53.8,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#6a5acd",
+              "#3fa7a0"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 78.1,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#6a5acd",
+              "#4a8352"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 70.8,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#6a5acd",
+              "#2f5a3d"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 132.4,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": true,
+            "shown": [
+              "#3080f0",
+              "#f0c040"
+            ],
+            "variant": "protanopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 85.2,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#e04040",
+              "#3080f0"
+            ],
+            "variant": "protanopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 46.6,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#4a7acd",
+              "#3fa7a0"
+            ],
+            "variant": "protanopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 71.4,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#4a7acd",
+              "#4a8352"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 64.3,
+            "distinct": true,
+            "ok": true,
+            "profile": "gz-native",
+            "shape_cue": false,
+            "shown": [
+              "#4a7acd",
+              "#2f5a3d"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 32.7,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": true,
+            "shown": [
+              "#81d365",
+              "#bbbc40"
+            ],
+            "variant": "default",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 89.4,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#81d365"
+            ],
+            "variant": "default",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 74.4,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#75c6d0"
+            ],
+            "variant": "default",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 76.6,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#20864a"
+            ],
+            "variant": "default",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 68.1,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#004a18"
+            ],
+            "variant": "default",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 110.6,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": true,
+            "shown": [
+              "#3768b4",
+              "#bbbc40"
+            ],
+            "variant": "deuteranopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 75.1,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#3768b4"
+            ],
+            "variant": "deuteranopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 59.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#5654cd",
+              "#75c6d0"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 86.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#5654cd",
+              "#20864a"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 87.3,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#5654cd",
+              "#004a18"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 112.6,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": true,
+            "shown": [
+              "#3768b4",
+              "#bbbc40"
+            ],
+            "variant": "protanopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 61.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#9d4a3e",
+              "#3768b4"
+            ],
+            "variant": "protanopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 46.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#3768b4",
+              "#75c6d0"
+            ],
+            "variant": "protanopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 74.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#3768b4",
+              "#20864a"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 75.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "nes-style",
+            "shape_cue": false,
+            "shown": [
+              "#3768b4",
+              "#004a18"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 0.0,
+            "distinct": false,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": true,
+            "shown": [
+              "#8bac0f",
+              "#8bac0f"
+            ],
+            "variant": "default",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 51.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "default",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 51.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "default",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 51.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "default",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 17.9,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#0f380f"
+            ],
+            "variant": "default",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 0.0,
+            "distinct": false,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": true,
+            "shown": [
+              "#8bac0f",
+              "#8bac0f"
+            ],
+            "variant": "deuteranopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 49.7,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "deuteranopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 49.7,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 49.7,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 17.2,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#0f380f"
+            ],
+            "variant": "deuteranopia",
+            "what": "hostile on dark moss"
+          },
+          {
+            "de_seen": 0.0,
+            "distinct": false,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": true,
+            "shown": [
+              "#8bac0f",
+              "#8bac0f"
+            ],
+            "variant": "protanopia",
+            "what": "crop growing vs ready"
+          },
+          {
+            "de_seen": 50.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "protanopia",
+            "what": "red vs green UI"
+          },
+          {
+            "de_seen": 50.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "protanopia",
+            "what": "hostile vs hero base"
+          },
+          {
+            "de_seen": 50.0,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#8bac0f"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on moss floor"
+          },
+          {
+            "de_seen": 17.6,
+            "distinct": true,
+            "ok": true,
+            "profile": "gb-style",
+            "shape_cue": false,
+            "shown": [
+              "#306230",
+              "#0f380f"
+            ],
+            "variant": "protanopia",
+            "what": "hostile on dark moss"
+          }
+        ]
+      },
+      "tags": [
+        "retro",
+        "f8"
+      ]
+    },
     "ridge_01": {
       "files": {
         "ridge_01.json": {

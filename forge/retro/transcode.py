@@ -249,3 +249,50 @@ def render(ts: TileSet, iid: str, profile: Profile, w: int, h: int) -> np.ndarra
                 out[m["y"] + y, m["x"] + x, :3] = pal[ci]
                 out[m["y"] + y, m["x"] + x, 3] = 255
     return out
+
+
+def solve_signal_overrides(pairs: list[tuple[str, str, bool]], palette: np.ndarray, match: str,
+                           colours: list[str]) -> tuple[dict[str, int], list[tuple[str, str]]]:
+    """C1 signal-preserving quantiser. pairs: (hex a, hex b, has_shape_cue) — colours that must stay distinguishable.
+    Starts from the nearest-colour mapping of `colours` and greedily moves single colours to another palette entry
+    (cheapest perceptual error first) while that strictly reduces the number of collapsed pairs without a shape cue.
+    Returns (overrides hex -> palette index, pairs still collapsed)."""
+    from forge.retro.colour import hex_rgb
+
+    arr = np.array([hex_rgb(h) for h in colours], dtype=np.uint8)
+    base = dict(zip(colours, nearest(arr, palette, match).tolist()))
+    pl = srgb_to_lab(palette)
+    lo, hi = pl[:, 0].min(), pl[:, 0].max()
+
+    def err(h: str, k: int) -> float:
+        lab = srgb_to_lab(np.array(hex_rgb(h), dtype=np.uint8))
+        if match == "lightness":
+            return float(abs(lo + lab[0] / 100.0 * (hi - lo) - pl[k, 0]))
+        return float(np.linalg.norm(lab - pl[k]))
+
+    def fails(m: dict[str, int]) -> list[tuple[str, str]]:
+        return sorted({(a, b) for a, b, cue in pairs if not cue and m[a] == m[b]})
+
+    m = dict(base)
+    over: dict[str, int] = {}
+    for _ in range(32):
+        f = fails(m)
+        if not f:
+            break
+        a, b = f[0]
+        best = None
+        for h in sorted((a, b)):
+            for k in range(len(palette)):
+                if k == m[h]:
+                    continue
+                m2 = dict(m)
+                m2[h] = k
+                if len(fails(m2)) < len(f):
+                    cost = err(h, k)
+                    if best is None or cost < best[0]:
+                        best = (cost, h, k)
+        if best is None:
+            break
+        m[best[1]] = best[2]
+        over[best[1]] = best[2]
+    return over, fails(m)

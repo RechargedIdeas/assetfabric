@@ -1,0 +1,8 @@
+# F8 brief — R1 Retro Render Compiler data: per-profile palette LUTs + the game's retro profile table
+# (content/retro/profiles.yaml → assets/generated/retro/). ROMs are built on demand (`forge retro rom`), not here.
+briefs:
+  - id: retro_profiles
+    kind: retro
+    export_dir: retro
+    max_ms: 20000
+    tags: [retro, f8]

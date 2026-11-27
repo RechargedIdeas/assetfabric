@@ -94,6 +94,21 @@ ops:
     probe_brief: world
     ladder:
       - {id: codegen-world, device: cpu, impl: real}
+  gen.retro:
+    kind: retro
+    budget_s_2core: 30
+    probe_brief: retro_profiles
+    note: F8 R1 data — CIELAB nearest-colour LUTs per console profile (NumPy, chunked; byte-identical at any core count).
+    ladder:
+      - {id: retro-lut-numpy, device: cpu, impl: real}
+  retro.rom:
+    budget_s_2core: 30
+    probe_brief: "runtime:retro-rom"
+    note: >-
+      F8 ForgeConsole — AssetTranscoder + C1 sub-palette solver + 6502 ROMBuilder (own assembler) → iNES NROM ROM of the
+      Game Zero field demo. Pure CPU, deterministic (the probe digest is the ROM's SHA-256).
+    ladder:
+      - {id: forgeconsole-cpu, device: cpu, impl: real}
   runtime.girt:
     budget_s_2core: 120
     probe_brief: "runtime:girt"

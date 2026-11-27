@@ -253,6 +253,15 @@ def _probe_runtime(root: Path, name: str) -> dict[str, Any]:
                 "backend": ",".join(b for b in backends if b), "policy_p95_us": girt.get("policy_p95_us"),
                 "policy_budget_us": girt.get("policy_budget_us"), "policy_fallbacks": girt.get("policy_fallbacks"),
                 "digest": hashlib.sha256(json.dumps(girt.get("registry", []), sort_keys=True).encode()).hexdigest()}
+    if name == "retro-rom":  # F8 ForgeConsole: transcode + C1 solve + assemble the NES field-demo ROM (pure CPU)
+        from forge.retro import profiles as rp, rom as rr
+
+        prof = next(p for p in rp.load(root).values() if p.rom)
+        rb = rr.build(root, prof)
+        wall = time.perf_counter() - t0
+        aff = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
+        return {"brief": "retro-rom", "ok": len(rb.rom) == 40976, "wall_s": round(wall, 3), "cores": aff, "device": "cpu",
+                "backend": "forgeconsole-cpu", "digest": rb.sha256}
     if name == "balance":    # a reduced G-BAL-01 matrix (12 matchups x 2 seeds) over the sharded headless workers
         from forge.balance import BalanceConfig, run
 
