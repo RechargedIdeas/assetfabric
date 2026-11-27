@@ -68,7 +68,7 @@
     },
     "S": {
      "arrive": "E",
-     "to": "tunnels"
+     "to": "hollow"
     }
    },
    "nodes": {
@@ -166,13 +166,158 @@
    ],
    "tilemap": "field_01"
   },
+  "hollow": {
+   "biome": "cave",
+   "id": "hollow",
+   "links": {
+    "E": {
+     "arrive": "S",
+     "to": "cave_deep"
+    },
+    "S": {
+     "arrive": "E",
+     "to": "tunnels"
+    }
+   },
+   "nodes": {
+    "G": "ember_ore"
+   },
+   "packs": [
+    {
+     "spawn": 0,
+     "units": [
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      },
+      {
+       "count": 1,
+       "ref": "emberling"
+      }
+     ]
+    },
+    {
+     "spawn": 1,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      }
+     ]
+    },
+    {
+     "requires": "stage:q_warden>=patrol",
+     "spawn": 2,
+     "units": [
+      {
+       "count": 2,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 1,
+       "ref": "emberling"
+      }
+     ],
+     "wave": "patrol"
+    },
+    {
+     "requires": "stage:q_warden>=patrol",
+     "spawn": 0,
+     "units": [
+      {
+       "count": 2,
+       "ref": "emberling"
+      },
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      }
+     ],
+     "wave": "patrol"
+    },
+    {
+     "requires": "stage:q_warden>=craft",
+     "spawn": 1,
+     "units": [
+      {
+       "count": 2,
+       "ref": "emberling"
+      },
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      }
+     ]
+    }
+   ],
+   "tilemap": "hollow_01"
+  },
+  "ridge": {
+   "biome": "field",
+   "id": "ridge",
+   "links": {
+    "E": {
+     "arrive": "E",
+     "to": "field"
+    },
+    "S": {
+     "arrive": "E",
+     "to": "warden_lair"
+    }
+   },
+   "nodes": {
+    "G": "flint"
+   },
+   "packs": [
+    {
+     "spawn": 0,
+     "units": [
+      {
+       "count": 3,
+       "ref": "emberling"
+      }
+     ]
+    },
+    {
+     "spawn": 1,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 2,
+       "ref": "emberling"
+      }
+     ]
+    },
+    {
+     "spawn": 2,
+     "units": [
+      {
+       "count": 2,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 2,
+       "ref": "cave_mite"
+      }
+     ]
+    }
+   ],
+   "tilemap": "ridge_01"
+  },
   "tunnels": {
    "biome": "cave",
    "id": "tunnels",
    "links": {
     "E": {
      "arrive": "S",
-     "to": "cave_deep"
+     "to": "hollow"
     },
     "S": {
      "arrive": "E",
@@ -208,6 +353,21 @@
        "ref": "emberling"
       }
      ]
+    },
+    {
+     "requires": "stage:q_warden>=patrol",
+     "spawn": 1,
+     "units": [
+      {
+       "count": 1,
+       "ref": "rock_brute"
+      },
+      {
+       "count": 2,
+       "ref": "emberling"
+      }
+     ],
+     "wave": "patrol"
     },
     {
      "requires": "stage:q_warden>=craft",
@@ -246,9 +406,9 @@
    "id": "warden_lair",
    "links": {
     "E": {
-     "arrive": "E",
+     "arrive": "S",
      "requires": "flag:warden_down",
-     "to": "field"
+     "to": "ridge"
     },
     "S": {
      "arrive": "E",
@@ -292,6 +452,21 @@
    "id": "coin",
    "kind": "currency",
    "name_key": "item.coin"
+  },
+  "ember_mail": {
+   "bonus": {
+    "def_flat": 0.75
+   },
+   "id": "ember_mail",
+   "kind": "gear",
+   "name_key": "item.ember_mail",
+   "slot": "shared"
+  },
+  "ember_ore": {
+   "id": "ember_ore",
+   "kind": "material",
+   "name_key": "item.ember_ore",
+   "sell": 2
   },
   "ember_shard": {
    "id": "ember_shard",
@@ -562,6 +737,30 @@
      }
     }
    },
+   "q_smith": {
+    "initial": "ore",
+    "states": {
+     "done": {
+      "final": true
+     },
+     "mail": {
+      "on": {
+       "craft": {
+        "guard": "flag:gear_ember_mail",
+        "target": "done"
+       }
+      }
+     },
+     "ore": {
+      "on": {
+       "gather": {
+        "guard": "have:ember_ore>=3",
+        "target": "mail"
+       }
+      }
+     }
+    }
+   },
    "q_warden": {
     "initial": "choose",
     "states": {
@@ -607,6 +806,11 @@
        }
       }
      },
+     "home": {
+      "on": {
+       "enter:field": "rest"
+      }
+     },
      "moss": {
       "on": {
        "gather": {
@@ -617,7 +821,12 @@
      },
      "open_world": {
       "on": {
-       "enter:field": "rest"
+       "enter:ridge": "ridge"
+      }
+     },
+     "patrol": {
+      "on": {
+       "cleared:hollow.patrol": "second_harvest"
       }
      },
      "plant": {
@@ -632,7 +841,7 @@
       "on": {
        "plant": {
         "guard": "total:planted>=6",
-        "target": "second_harvest"
+        "target": "patrol"
        }
       }
      },
@@ -644,6 +853,11 @@
      "return_farm": {
       "on": {
        "enter:field": "harvest"
+      }
+     },
+     "ridge": {
+      "on": {
+       "cleared:ridge": "home"
       }
      },
      "second_harvest": {
@@ -722,6 +936,13 @@
      "when": "plant"
     },
     {
+     "id": "patrol",
+     "reward": {
+      "xp": 20
+     },
+     "when": "cleared:hollow.patrol"
+    },
+    {
      "guard": "total:harvested>=12",
      "id": "second_harvest",
      "reward": {
@@ -744,6 +965,18 @@
     },
     {
      "id": "open_world",
+     "when": "enter:ridge"
+    },
+    {
+     "id": "ridge",
+     "reward": {
+      "coin": 10,
+      "xp": 30
+     },
+     "when": "cleared:ridge"
+    },
+    {
+     "id": "home",
      "when": "enter:field"
     },
     {
@@ -752,6 +985,28 @@
     }
    ],
    "title": "quest.q_warden.title"
+  },
+  {
+   "id": "q_smith",
+   "stages": [
+    {
+     "guard": "have:ember_ore>=3",
+     "id": "ore",
+     "reward": {
+      "xp": 10
+     },
+     "when": "gather"
+    },
+    {
+     "guard": "flag:gear_ember_mail",
+     "id": "mail",
+     "reward": {
+      "coin": 6
+     },
+     "when": "craft"
+    }
+   ],
+   "title": "quest.q_smith.title"
   },
   {
    "id": "q_forager",
@@ -772,6 +1027,16 @@
   }
  ],
  "recipes": {
+  "ember_mail": {
+   "id": "ember_mail",
+   "in": {
+    "ember_ore": 3,
+    "flint": 2
+   },
+   "out": {
+    "ember_mail": 1
+   }
+  },
   "ember_tonic": {
    "id": "ember_tonic",
    "in": {

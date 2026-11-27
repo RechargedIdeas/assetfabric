@@ -12,12 +12,14 @@ items:
   - {id: cave_moss, kind: material, sell: 1}
   - {id: ember_shard, kind: material, sell: 4}
   - {id: brute_hide, kind: material, sell: 6}
+  - {id: ember_ore, kind: material, sell: 2}                          # Q4: hollow ore nodes
   - {id: warden_core, kind: material}
   # crafted — consumables apply out of combat or at the next fight; gear is permanent
   - {id: moss_salve, kind: consumable, use: {heal_pct: 0.5}}          # whole party, out of combat
   - {id: ember_tonic, kind: consumable, use: {buff: {atk_pct: 0.15}}}  # shared buff, next encounter
   - {id: flint_edge, kind: gear, slot: shared, bonus: {atk_pct: 0.06}} # shared item: whole party
   - {id: warden_charm, kind: gear, slot: unique, bonus: {def_flat: 1.5}}  # character-unique: leader
+  - {id: ember_mail, kind: gear, slot: shared, bonus: {def_flat: 0.75}}   # Q4 side quest q_smith [INFERENCE C-91]
 crops:
   # growth in world ticks (60 Hz); the farm keeps growing while the party is away.
   # Q4 pacing [INFERENCE C-91]: 2 / 3 game-minutes (was 40 s / 60 s) so a crop cycle spans a cave run.
@@ -28,6 +30,7 @@ recipes:
   - {id: ember_tonic, out: {ember_tonic: 1}, in: {glowcap: 2, flint: 1}}
   - {id: flint_edge, out: {flint_edge: 1}, in: {flint: 2, ember_shard: 2}}
   - {id: warden_charm, out: {warden_charm: 1}, in: {warden_core: 1, glowcap: 1}}
+  - {id: ember_mail, out: {ember_mail: 1}, in: {ember_ore: 3, flint: 2}}
 shop:     # farm stall (bench tile): buy seeds with loot coins
   sunroot_seed: 3
   glowcap_spore: 4

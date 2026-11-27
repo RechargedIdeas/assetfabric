@@ -11,7 +11,8 @@ reading_wpm: 200        # casual reading speed for objective / message text
 min_read_s: 2.5         # floor per text shown (glance + parse), applied per objective change
 nav_factor: 1.6         # human path length / A* path length while exploring (detours, backtracking)
 combat_factor: 1.5      # human fight time / BT-autoplay fight time (manual leader, positioning, swaps)
-wait_factor: 1.0        # crop timers run in real time either way; counted once, never multiplied
+wait_factor: 1.0        # crop timers run in game time; each bot wait segment minus the slack a slower human already
+                        # spent since that crop was planted (forge/pace.py human_wait), never multiplied
 first_visit_s: 30       # look around a newly entered area (map reading, finding exits/nodes)
 overlay_s: 10           # read the time-freeze swap overlay and choose
 interact_s:             # per action, including walking the last tile and reading the result

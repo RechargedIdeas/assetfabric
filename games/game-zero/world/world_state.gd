@@ -314,6 +314,7 @@ func craft(recipe: String) -> bool:
 				gear["unique"][leader].append(k)
 			else:
 				gear["shared"].append(k)
+			flags["gear_" + k] = true     # gear is not in the bag: quests read it as flag:gear_<id> (Q4)
 		else:
 			add_item(k, int(r["out"][k]))
 	bump("crafted")

@@ -13,8 +13,10 @@ craft → Cave Warden → open world → save) plus:
 4. Static — Codegen-World gates (schema, cross-refs, quest-chart soft-lock analysis, economy
    solvability, loot tables, music rules) recorded in the registry; every locale key the slice uses exists.
 
-Slice length is reported against the GAME_SPEC §6.1 15–20 min target as a *soft* metric: the bot plays
-at maximum efficiency, so human length needs a GUI playtest (see docs/acceptance-tests/F6.md).
+Slice length (Q4, 0.7.12): GAME_SPEC §6.1 asks for 15–20 minutes. The QA bot plays at machine efficiency, so its
+game time is a floor and is reported as-is. The *gate* is the human-pace estimate (forge/pace.py,
+content/tune/pace.yaml, INFERENCE C-92) computed from what each run actually did: every one of the 12 selections
+must land inside 15–20 min. It is a model, not a measurement; a human GUI playtest replaces it (F6.md).
 """
 
 from __future__ import annotations
@@ -34,9 +36,10 @@ from forge.accept_f4 import _godot_argv
 LEADERS = ["kael", "nyra", "bram", "sola"]
 PETS = ["ember_fox", "stone_tortle", "lumen_wisp"]
 FAST_SELECTIONS = [("sola", "lumen_wisp"), ("bram", "stone_tortle")]
-QUIT_AT = 4            # checkpoint 4 = back in the tunnels after clearing the deep cave (mid-slice)
+QUIT_AT = 5            # checkpoint 5 = back in the tunnels after clearing the deep cave (mid-slice; Q4 added the hollow)
 PROBE = [("cave_mite", 1), ("emberling", 1), ("rock_brute", 2), ("cave_warden", 3), ("cave_mite", 1)]
 TARGET_MIN = (15.0, 20.0)
+TILEMAPS = ("field_01", "tunnels_01", "hollow_01", "cave_deep", "ridge_01")
 
 
 def fast_mode() -> bool:
@@ -54,7 +57,12 @@ def _slice(root: Path, save_dir: Path, *extra: str, timeout: int = 300) -> tuple
 
 
 def _summary(s: dict[str, Any]) -> dict[str, Any]:
+    from forge.pace import estimate_for
+    from forge.paths import find_repo_root
+
+    est = estimate_for(find_repo_root(), s) if s.get("ticks") else {}
     return {"completed": s.get("completed"), "ticks": s.get("ticks"), "game_minutes": s.get("game_minutes"),
+            "human_estimate_min": est.get("human_estimate_min"),
             "wipes": s.get("wipes"), "softlocks": len(s.get("softlocks", [])), "boss_attempt": (s.get("boss") or {}).get("attempt"),
             "boss_ticks": (s.get("boss") or {}).get("ticks"), "wall_ms": s.get("wall_ms")}
 
@@ -105,8 +113,11 @@ def f6_run(root: Path) -> tuple[int, dict[str, Any]]:
     try:
         code, res = _slice(root, tmp / "a")
         s = res.get("slice", {})
+        from forge.pace import estimate_for
+
         result: dict[str, Any] = {"slice": {k: v for k, v in s.items() if k not in ("final_state", "quest_trace")},
-                                  "script_errors": res["_script_errors"]}
+                                  "script_errors": res["_script_errors"],
+                                  "pace": estimate_for(root, s) if s.get("ticks") else {}}
         # 1. save / quit / reload in a new process
         cq, rq = _slice(root, tmp / "b", f"--quit-after-checkpoint={QUIT_AT}")
         cr, rr = _slice(root, tmp / "b", "--resume")
@@ -157,7 +168,7 @@ def f6_run(root: Path) -> tuple[int, dict[str, Any]]:
         result["world_gates"] = (rep["assets"].get("world") or {}).get("gates", {})
         result["world_meta"] = {k: v for k, v in (reg["assets"].get("world") or {}).get("meta", {}).items()
                                 if k in ("node_counts", "supply", "loot_ev", "quests")}
-        result["tilemaps"] = {a: (rep["assets"].get(a) or {}).get("gates", {}) for a in ("field_01", "tunnels_01", "cave_deep")}
+        result["tilemaps"] = {a: (rep["assets"].get(a) or {}).get("gates", {}) for a in TILEMAPS}
         result["locale"] = locale_report(root)
         return (code or cq or cr), result
     finally:
@@ -197,8 +208,13 @@ def f6_check(r: dict[str, Any]) -> list[str]:
     areas = [a["area"] for a in s.get("areas", [])]
     _need("cave_deep" in areas and s.get("stage_ticks", {}).get("q_warden.clear_cave") is not None, "cave not cleared", errs)
     _need(areas[-1:] == ["field"] and "warden_lair" in areas, f"open-world transition: {areas}", errs)
-    _need(all(g is True for t in r.get("tilemaps", {}).values() for g in t.values()) and len(r.get("tilemaps", {})) == 3,
+    _need(all(g is True for t in r.get("tilemaps", {}).values() for g in t.values()) and len(r.get("tilemaps", {})) == len(TILEMAPS),
           f"tilemap gates: {r.get('tilemaps')}", errs)
+    # §6.1 "15–20 minutes" — human-pace estimate for the main run and every selection (bot time reported as-is)
+    pace = r.get("pace", {})
+    ests = [pace.get("human_estimate_min")] + [x.get("human_estimate_min") for x in runs]
+    _need(all(e is not None and TARGET_MIN[0] <= e <= TARGET_MIN[1] for e in ests),
+          f"length: human-pace estimates {ests} min outside {TARGET_MIN}", errs)
     # (5) party combat with followers + pet
     ps = s.get("party_stats", {})
     _need(sum(1 for k, v in ps.items() if not v.get("pet") and v.get("damage", 0) + v.get("healing", 0) > 0) >= 4
@@ -233,9 +249,16 @@ def f6_perf(r: dict[str, Any]) -> dict[str, Any]:
     s = r.get("slice", {})
     gm = s.get("game_minutes") or 0
     runs = r.get("matrix", {}).get("runs", [])
+    pace = r.get("pace", {})
+    ests = [x.get("human_estimate_min") for x in runs if x.get("human_estimate_min") is not None]
     return {"slice_ticks": s.get("ticks"), "slice_game_minutes": gm, "slice_wall_ms": s.get("wall_ms"),
-            "target_minutes": list(TARGET_MIN), "length_within_target": TARGET_MIN[0] <= gm <= TARGET_MIN[1],
-            "length_note": "QA autopilot plays at max efficiency (no exploration, reading, or menu time); human length needs a GUI playtest",
+            "target_minutes": list(TARGET_MIN), "bot_length_within_target": TARGET_MIN[0] <= gm <= TARGET_MIN[1],
+            "human_estimate_min": pace.get("human_estimate_min"), "human_estimate_components_s": pace.get("components_s"),
+            "human_wait_slack_s": pace.get("wait_slack_s"),
+            "matrix_human_estimate_min": [min(ests), max(ests)] if ests else None,
+            "length_within_target": bool(pace.get("within_target")) and all(TARGET_MIN[0] <= e <= TARGET_MIN[1] for e in ests),
+            "length_note": "gate = human-pace estimate (forge/pace.py, INFERENCE C-92; a model, not a playtest); "
+                           "bot game time is the machine-efficiency floor, reported as-is; a human GUI playtest replaces the model",
             "matrix_game_minutes": [x.get("game_minutes") for x in runs],
             "matrix_wipes": sum(x.get("wipes") or 0 for x in runs),
             "swap_wall_ms": [x.get("wall_ms") for x in s.get("swaps", [])]}

@@ -87,6 +87,10 @@ static func decide(s) -> Dictionary:
 			var buy := cheapest_seed(ws)
 			if buy != "":
 				return _go(here, bench[0], "buy", buy)
+		# side quest q_smith: forge the Ember Mail as soon as the ore + flint are in the bag
+		if not bench.is_empty() and not ws.owns_gear("ember_mail") and ws.can_craft("ember_mail") \
+				and ws.count("flint") >= 2 + _flint_reserved(ws):
+			return _go(here, bench[0], "craft", "ember_mail")
 		if ws.stage_at_least("q_warden", "craft") and not bench.is_empty():
 			for p in CRAFT_PLAN:
 				if not crafted or p[0] == "flint_edge":
@@ -104,12 +108,13 @@ static func decide(s) -> Dictionary:
 		if ws.quests.stage("q_warden") == "rest" and not bench.is_empty():
 			return _go(here, bench[0], "save", null)
 		return _link(s, here, "E")
-	if area == "tunnels":
-		if not nodes.is_empty() and not ws.stage_at_least("q_warden", "return_farm"):
+	if area == "tunnels" or area == "hollow":
+		if not nodes.is_empty() and (area == "hollow" or not ws.stage_at_least("q_warden", "return_farm")):
 			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])
 		if s.hostiles_left() > 0:
 			return {"kind": "fight"}
-		return _link(s, here, "S" if ws.quests.stage("q_warden") == "return_farm" else "E")
+		# back to the farm after the first cave run, and after the patrol (second crop cycle)
+		return _link(s, here, "S" if ["return_farm", "second_harvest"].has(ws.quests.stage("q_warden")) else "E")
 	if area == "cave_deep":
 		if not nodes.is_empty() and not ws.stage_at_least("q_warden", "return_farm"):
 			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])
@@ -120,8 +125,24 @@ static func decide(s) -> Dictionary:
 				return {"kind": "do", "act": "use", "arg": "ember_tonic"}
 			return _link(s, here, "E")
 		return _link(s, here, "S")
+	if area == "ridge":       # open world after the boss: forage, clear the warband, walk home (Q4)
+		if not nodes.is_empty():
+			return _go(here, _nearest(nodes, here), "gather", a["nodes"]["G"])
+		if s.hostiles_left() > 0:
+			return {"kind": "fight"}
+		return _link(s, here, "E")
 	# boss lair, warden down: walk out to the open world
 	return _link(s, here, "E")
+
+
+## Flint the main quest still needs (ember tonic + flint edge) — the side-quest mail never takes it.
+static func _flint_reserved(ws) -> int:
+	var n := 0
+	if not ws.stage_at_least("q_warden", "warden"):
+		n += int(ws.world["recipes"]["ember_tonic"]["in"].get("flint", 0))
+	if not ws.owns_gear("flint_edge"):
+		n += int(ws.world["recipes"]["flint_edge"]["in"].get("flint", 0))
+	return n
 
 
 static func cheapest_seed(ws) -> String:

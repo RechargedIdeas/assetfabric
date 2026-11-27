@@ -129,8 +129,12 @@ def generate(brief: dict[str, Any], ctx: Any) -> GeneratorOutput:
                 qid, _, sid = req[6:].partition(">=")
                 if not any(q["id"] == qid and any(st["id"] == sid for st in q["stages"]) for q in world["quests"]):
                     miss.append(f"area {a['id']}→pack requires unknown stage {req}")
+    waves = {f"{a['id']}.{p['wave']}" for a in world["areas"].values() for p in a.get("packs", []) if p.get("wave")}
     for q in world["quests"]:
         for st in q["stages"]:
+            ev = str(st.get("when", ""))
+            if ev.startswith("cleared:") and "." in ev[8:] and ev[8:] not in waves:   # Q4 named pack waves
+                miss.append(f"quest {q['id']}.{st['id']}→unknown wave {ev[8:]}")
             r = st.get("reward", {})
             if r.get("unlock") and (r["unlock"] not in fighters or fighters[r["unlock"]].get("base")):
                 miss.append(f"quest {q['id']}.{st['id']}→unlock:{r['unlock']}")

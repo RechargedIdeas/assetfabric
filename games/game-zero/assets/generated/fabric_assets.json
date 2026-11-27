@@ -238,6 +238,36 @@
         "starter"
       ]
     },
+    "hollow_01": {
+      "files": {
+        "hollow_01.json": {
+          "res": "res://assets/generated/tilemap/hollow_01.json",
+          "sha256": "f4ccc73050331cedff68823714d131f0e76524ae145127579c0befbbdf84c06f"
+        },
+        "hollow_01_tiles.png": {
+          "res": "res://assets/generated/tilemap/hollow_01_tiles.png",
+          "sha256": "f4b10e3f5c9035e847a3291f278fe0326d11024b4ea1a0556c50d92d17bf7b8b"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 79,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:cave",
+        "slice"
+      ]
+    },
     "mat_cave_stone": {
       "files": {
         "mat_cave_stone_albedo.png": {
@@ -387,6 +417,36 @@
       "tags": [
         "ai",
         "policy"
+      ]
+    },
+    "ridge_01": {
+      "files": {
+        "ridge_01.json": {
+          "res": "res://assets/generated/tilemap/ridge_01.json",
+          "sha256": "bce6b9d054db33b0aed41b9f6d250229a50f979d9d428e0771628e6975810c6a"
+        },
+        "ridge_01_tiles.png": {
+          "res": "res://assets/generated/tilemap/ridge_01_tiles.png",
+          "sha256": "3e2845e3e3e8dca716735163e25899be44cedebfb58bd9d20034d3dad070c20b"
+        }
+      },
+      "kind": "tilemap",
+      "meta": {
+        "kind": "tilemap",
+        "model_id": "G1-Tile",
+        "model_version": "ca-1",
+        "path_len": 78,
+        "tile_size": 16,
+        "tiles": [
+          "#",
+          ".",
+          "S",
+          "E"
+        ]
+      },
+      "tags": [
+        "biome:field",
+        "slice"
       ]
     },
     "roster": {
@@ -1011,7 +1071,7 @@
       "files": {
         "world.json": {
           "res": "res://data/generated/world.json",
-          "sha256": "80c01036deea1f2614c27d30c7426f28a2ad2e9d6af08dad3577acbf1ca50f74"
+          "sha256": "9bd91a33a5f37195e4e59adf2672e7440699c9422797add389e4d7e2bbc6a022"
         }
       },
       "kind": "world",
@@ -1041,17 +1101,21 @@
         "model_version": "1",
         "node_counts": {
           "cave_moss": 4,
-          "flint": 7
+          "ember_ore": 4,
+          "flint": 11
         },
         "quests": [
           "q_warden",
+          "q_smith",
           "q_forager"
         ],
         "supply": {
           "cave_moss": 4,
-          "coin": 42.0,
+          "coin": 58.0,
+          "ember_mail": 1,
+          "ember_ore": 4,
           "ember_tonic": 3.0,
-          "flint": 7,
+          "flint": 11,
           "flint_edge": 0,
           "glowcap": 6.0,
           "glowcap_spore": 3.0,

@@ -21,11 +21,22 @@ quests:
       # (deterministic coin: start kit + forage reward) before the boss prep — real farming loop, not a slower bot.
       - {id: harvest, when: harvest, guard: "total:harvested>=8", reward: {xp: 10}}
       - {id: replant, when: plant, guard: "total:planted>=6"}
+      - {id: patrol, when: "cleared:hollow.patrol", reward: {xp: 20}}     # active beat while the crops grow
       - {id: second_harvest, when: harvest, guard: "total:harvested>=12", reward: {coin: 4}}
       - {id: craft, when: craft, guard: "have:ember_tonic>=1&have:moss_salve>=1"}
       - {id: warden, when: "defeated:cave_warden", reward: {unlock: vex, flag: warden_down}}
-      - {id: open_world, when: "enter:field"}
+      # open-world transition (GAME_SPEC §6.1 item 4): out through the lair onto the ridge, clear it, walk home
+      - {id: open_world, when: "enter:ridge"}
+      - {id: ridge, when: "cleared:ridge", reward: {xp: 30, coin: 10}}
+      - {id: home, when: "enter:field"}
       - {id: rest, when: save}
+  # Q4 [INFERENCE C-91]: side quest — ore from the hollow + flint → Ember Mail (shared gear, party defence).
+  # Gear goes to the gear slots, not the bag, so crafting it sets `flag:gear_<id>`.
+  - id: q_smith
+    title: quest.q_smith.title
+    stages:
+      - {id: ore, when: gather, guard: "have:ember_ore>=3", reward: {xp: 10}}
+      - {id: mail, when: craft, guard: "flag:gear_ember_mail", reward: {coin: 6}}
   - id: q_forager
     title: quest.q_forager.title
     stages:

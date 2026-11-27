@@ -87,7 +87,7 @@ def test_save_v4_migration_adds_world_state() -> None:
         assert steps[-1] == 3
 
 
-@pytest.mark.parametrize("name", ["field_01", "tunnels_01", "cave_deep"])
+@pytest.mark.parametrize("name", ["field_01", "tunnels_01", "hollow_01", "cave_deep", "ridge_01"])
 def test_slice_tilemaps_have_features_and_route(name: str) -> None:
     lay = json.loads((GAME / "assets" / "generated" / "tilemap" / f"{name}.json").read_text())
     rows = "".join(lay["rows"])
@@ -103,3 +103,63 @@ def test_areas_link_both_ways(world: dict) -> None:
         for glyph, link in a["links"].items():
             back = areas[link["to"]]["links"]
             assert any(l["to"] == aid for l in back.values()) or link["to"] == "field", (aid, glyph)
+
+
+# --------------------------------------------------------------------- Q4 (0.7.12): slice length content + pace model
+
+def test_q4_waves_and_open_world_chain(world: dict) -> None:
+    areas = world["areas"]
+    assert areas["warden_lair"]["links"]["E"]["to"] == "ridge" and areas["ridge"]["links"]["E"]["to"] == "field"
+    assert areas["tunnels"]["links"]["E"]["to"] == "hollow" and areas["hollow"]["links"]["E"]["to"] == "cave_deep"
+    waves = {f"{a}.{p['wave']}" for a, d in areas.items() for p in d.get("packs", []) if p.get("wave")}
+    stages = {s["id"]: s for s in next(q for q in world["quests"] if q["id"] == "q_warden")["stages"]}
+    assert stages["patrol"]["when"] == "cleared:hollow.patrol" and "hollow.patrol" in waves
+    assert stages["open_world"]["when"] == "enter:ridge"
+    order = list(stages)
+    assert order.index("replant") < order.index("patrol") < order.index("second_harvest")
+
+
+def test_q4_unknown_wave_is_a_cross_ref_error(root: Path) -> None:
+    from forge.generators import world as gw
+
+    raw = gw.load_world_sources(root)
+    for q in raw["quests"]["quests"]:
+        for st in q["stages"]:
+            if st["id"] == "patrol":
+                st["when"] = "cleared:hollow.nope"
+    orig = gw.load_world_sources
+    gw.load_world_sources = lambda *_a, **_k: raw
+    try:
+        out = gw.generate({"source": "content/world"}, type("C", (), {"root": root})())
+    finally:
+        gw.load_world_sources = orig
+    cr = next(g for g in out.gates if g.gate == "cross_refs")
+    assert not cr.ok and any("unknown wave hollow.nope" in m for m in cr.detail["missing"])
+
+
+def _pace_report(segs):
+    return {"ticks": 36000, "wait_ticks": sum(g["ticks"] for g in segs), "wait_segments": segs, "fights": [],
+            "farming": {}, "stage_ticks": {}, "areas": [], "swaps": []}
+
+
+def test_pace_human_wait_absorbs_slack_and_never_goes_negative(root: Path) -> None:
+    from forge.pace import human_wait, load_pace
+
+    pace = load_pace(root)
+    comp = {"select": 45.0, "travel": 160.0, "combat": 0.0, "explore_new_areas": 0.0, "interactions": 0.0,
+            "reading": 0.0, "swap_overlays": 0.0}
+    # f = 160 s human / 100 s bot = 1.6; crop planted at 0, bot active 100 s (6000 ticks), then waits 30 s
+    hw, slack = human_wait(_pace_report([{"start": 6000, "ticks": 1800, "planted": 0}]), comp, 6000, pace)
+    assert hw == 0.0 and slack == 30.0                    # 0.6 × 100 s = 60 s of slack ≥ the 30 s wait
+    hw, slack = human_wait(_pace_report([{"start": 600, "ticks": 3600, "planted": 0}]), comp, 6000, pace)
+    assert hw == 54.0 and slack == 6.0                    # planted right before: only 0.6 × 10 s absorbed
+    hw, _ = human_wait({"wait_ticks": 600}, comp, 6000, pace)   # pre-Q4 report: raw bot wait
+    assert hw == 10.0
+
+
+def test_pace_constants_are_the_documented_heuristics(root: Path) -> None:
+    from forge.pace import load_pace
+
+    p = load_pace(root)   # changing any of these needs a DECISIONS entry (pace.yaml header)
+    assert (p["nav_factor"], p["combat_factor"], p["wait_factor"], p["first_visit_s"], p["select_s"]) == (1.6, 1.5, 1.0, 30, 45)
+    assert p["target_min"] == [15.0, 20.0]

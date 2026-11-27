@@ -41,7 +41,7 @@ var _boss_engaged := false
 var _msg := ""
 var _boss_built := false
 var _transitions := 0             # bumped on every area change: a transition ends the tick (resume parity)
-var rep := {"wait_ticks": 0, "areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
+var rep := {"wait_ticks": 0, "wait_segments": [], "areas": [], "fights": [], "swaps": [], "overlay": [], "swap_parity": [], "salves": [], "softlocks": [],
 	"party_stats": {}, "boss": {}, "buff_at_boss": {}, "music_stems_loaded": {}, "checkpoints": []}
 
 
@@ -316,12 +316,27 @@ func _process_kills() -> void:
 					ws.packs_cleared[ws.area] = []
 				ws.packs_cleared[ws.area].append(pk)
 				ws.note("pack_cleared", {"area": ws.area, "pack": pk})
+				var wave := str(area_def.get("packs", [])[pk].get("wave", "")) if pk < area_def.get("packs", []).size() else ""
+				if wave != "" and _wave_cleared(wave) and not ws.cleared.has(ws.area + "." + wave):
+					ws.cleared.append(ws.area + "." + wave)     # persistent fact cleared:<area>.<wave> (Q4)
+					ws.encounters_won += 1
+					ws.emit("cleared:" + ws.area + "." + wave)
 				if _active_packs_cleared() and not ws.cleared.has(ws.area):
 					ws.cleared.append(ws.area)
 					ws.encounters_won += 1
 		ws.emit("defeated:" + ref)
 		if ws.cleared.has(ws.area):
 			ws.emit("cleared:" + ws.area)
+
+
+## Every pack of `wave` in this area is cleared (Q4 named waves, e.g. the tunnels patrol).
+func _wave_cleared(wave: String) -> bool:
+	var done: Array = ws.packs_cleared.get(ws.area, [])
+	var packs: Array = area_def.get("packs", [])
+	for i in packs.size():
+		if str(packs[i].get("wave", "")) == wave and not done.has(i):
+			return false
+	return true
 
 
 ## Every pack that is live in this area right now (Q4: packs may carry a `requires` gate — the route
@@ -471,6 +486,18 @@ func _try_link(glyph: String) -> bool:
 	return true
 
 
+func _awaited_plant_tick() -> int:
+	var best := -1
+	var ready_at := 1 << 40
+	for p in ws.plots:
+		if str(p["crop"]) != "":
+			var r := int(p["planted"]) + int(world["crops"][p["crop"]]["grow_ticks"])
+			if r < ready_at:
+				ready_at = r
+				best = int(p["planted"])
+	return best
+
+
 func _autopilot_input() -> Dictionary:
 	var a: Dictionary = Autopilot.decide(self)
 	match a["kind"]:
@@ -496,6 +523,12 @@ func _autopilot_input() -> Dictionary:
 		if a["act"] == "wait":
 			_goal_ticks = 0     # waiting by a growing crop is a timer, not a soft-lock (Q4 crop cycle)
 			rep["wait_ticks"] += 1
+			# wait segments for the human-pace model (forge/pace.py): when it started, how long, and when the
+			# crop being waited on (the soonest-ready growing plot) was planted
+			var segs: Array = rep["wait_segments"]
+			if segs.is_empty() or int(segs[-1]["start"]) + int(segs[-1]["ticks"]) != ws.tick:
+				segs.append({"start": ws.tick, "ticks": 0, "planted": _awaited_plant_tick()})
+			segs[-1]["ticks"] = int(segs[-1]["ticks"]) + 1
 		perform(a["act"], a["arg"])
 		return {"move": Vector2.ZERO}
 	var l = sim.leader()
@@ -592,7 +625,7 @@ func _slice_report(final: Dictionary, wall_ms: float) -> Dictionary:
 		"swaps": rep["swaps"], "swap_parity": rep["swap_parity"], "overlay": rep["overlay"],
 		"boss": rep["boss"], "buff_at_boss": rep["buff_at_boss"],
 		"music": {"trace": director.trace, "stems_loaded": rep["music_stems_loaded"]},
-		"wait_ticks": int(rep["wait_ticks"]), "buys": ws.log_.filter(func(n): return n["kind"] == "buy").size(),
+		"wait_ticks": int(rep["wait_ticks"]), "wait_segments": rep["wait_segments"], "buys": ws.log_.filter(func(n): return n["kind"] == "buy").size(),
 		"callouts_total": callout_log.size(), "intents": intents_handled.size(),
 		"softlocks": rep["softlocks"], "checkpoints": rep["checkpoints"],
 		"resumed_from": rep.get("resumed_from", {}),

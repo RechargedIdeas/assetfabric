@@ -55,6 +55,38 @@ briefs:
       spawn_at: [0.3, 0.58, 0.85]
       nodes: 4            # cave moss
     tags: [biome:cave, slice]
+  - id: hollow_01
+    kind: tilemap
+    seed: 79
+    tile_size: 16
+    constraints:          # Q4 [INFERENCE C-91]: ore chamber between the tunnels and the deep cave
+      width: 54
+      height: 28
+      density: 0.44
+      smoothing: 5
+      min_path: 50
+      enemies: 3
+      spawn_at: [0.3, 0.6, 0.85]
+      nodes: 4            # ember ore
+    tags: [biome:cave, slice]
+  - id: ridge_01
+    kind: tilemap
+    seed: 83
+    tile_size: 16
+    wall_palette: cave_stone
+    floor_palette: cave_moss
+    marker_palette: hero_amber
+    constraints:          # Q4 [INFERENCE C-91]: open ridge between the Warden's lair back exit and the farm
+      width: 58
+      height: 30
+      density: 0.30
+      smoothing: 4
+      min_path: 52
+      floor_ratio: [0.55, 0.95]
+      enemies: 3
+      spawn_at: [0.3, 0.6, 0.86]
+      nodes: 4            # flint
+    tags: [biome:field, slice]
   - id: music_field
     kind: audio
     bpm: 112

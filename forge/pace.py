@@ -52,12 +52,13 @@ def estimate(s: dict[str, Any], pace: dict[str, Any], locale: dict[str, str]) ->
         "select": float(pace["select_s"]),
         "travel": travel / TICK_HZ * float(pace["nav_factor"]),
         "combat": combat / TICK_HZ * float(pace["combat_factor"]),
-        "crop_wait": wait / TICK_HZ * float(pace["wait_factor"]),
+        "crop_wait": 0.0,
         "explore_new_areas": first_visits * float(pace["first_visit_s"]),
         "interactions": sum(counts[k] * float(pace["interact_s"].get(k, 0)) for k in counts),
         "reading": read_s,
         "swap_overlays": len(s.get("swaps", [])) * float(pace["overlay_s"]),
     }
+    comp["crop_wait"], slack = human_wait(s, comp, travel + combat, pace)
     total = sum(comp.values()) / 60.0
     lo, hi = (float(x) for x in pace["target_min"])
     return {
@@ -68,8 +69,38 @@ def estimate(s: dict[str, Any], pace: dict[str, Any], locale: dict[str, str]) ->
         "bot": {"game_min": round(ticks / TICK_HZ / 60.0, 2), "travel_s": round(travel / TICK_HZ, 1),
                 "combat_s": round(combat / TICK_HZ, 1), "crop_wait_s": round(wait / TICK_HZ, 1),
                 "first_visits": first_visits, "interactions": counts, "objectives_shown": len(shown)},
+        "wait_slack_s": slack,
         "model": "content/tune/pace.yaml (INFERENCE C-92; not a playtest)",
     }
+
+
+def human_wait(s: dict[str, Any], comp: dict[str, float], bot_active_ticks: int, pace: dict[str, Any]) -> tuple[float, float]:
+    """Crop wait a human would actually sit through (seconds) and the slack that absorbed the rest.
+
+    Crops grow in game time. A human is slower than the bot at everything between planting and the wait
+    (factor f = human active seconds / bot active seconds), so part of each bot wait is already spent
+    playing: human_wait = max(0, W - (f - 1) * active_between_plant_and_wait). Runs without
+    ``wait_segments`` (pre-Q4 reports) fall back to the raw bot wait (conservative in the other direction).
+    """
+    segs = s.get("wait_segments")
+    wf = float(pace["wait_factor"])
+    if not segs:
+        return round(int(s.get("wait_ticks") or 0) / TICK_HZ * wf, 1), 0.0
+    human_active = sum(v for k, v in comp.items() if k not in ("select", "crop_wait"))
+    f = human_active / max(1e-9, bot_active_ticks / TICK_HZ)
+    total = slack = 0.0
+    for i, g in enumerate(segs):
+        start, ticks, planted = int(g["start"]), int(g["ticks"]), int(g.get("planted", -1))
+        if planted < 0:
+            total += ticks / TICK_HZ * wf
+            continue
+        waited_before = sum(int(h["ticks"]) for h in segs[:i] if int(h["start"]) >= planted)
+        active = max(0, start - planted - waited_before) / TICK_HZ
+        w = ticks / TICK_HZ * wf
+        hw = max(0.0, w - max(0.0, f - 1.0) * active)
+        slack += w - hw
+        total += hw
+    return round(total, 1), round(slack, 1)
 
 
 def estimate_for(root: Path, s: dict[str, Any]) -> dict[str, Any]:

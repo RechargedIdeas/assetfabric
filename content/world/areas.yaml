@@ -14,19 +14,34 @@ areas:
   - id: tunnels                 # GAME_SPEC §4.4 biomes: caves, tunnels, open world
     tilemap: tunnels_01
     biome: cave
-    links: {S: {to: field, arrive: E}, E: {to: cave_deep, arrive: S}}
+    links: {S: {to: field, arrive: E}, E: {to: hollow, arrive: S}}
     nodes: {G: flint}
     packs:
       - {spawn: 0, units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 1}]}
       - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 1}]}
-      # Q4 pacing [INFERENCE C-91]: the route repopulates once the party is crafting its boss prep, so the
-      # trip to the Warden is a fight, not an empty walk (packs carry a `requires` gate, same syntax as links).
+      # Q4 pacing [INFERENCE C-91]: packs may carry a `requires` gate (same syntax as links) and a `wave` name.
+      # Clearing every pack of a wave is the persistent fact `cleared:<area>.<wave>` (quest event).
+      # "patrol": while the second crop cycle grows, brutes stir in the tunnels and the hollow — the party drives
+      # them out and brings back hide/shards for gear (active play during the growth window, not a wait).
+      - {spawn: 1, wave: patrol, requires: "stage:q_warden>=patrol", units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 2}]}
+      # the route repopulates again for the boss trip, so the way to the Warden is a fight, not an empty walk
       - {spawn: 0, requires: "stage:q_warden>=craft", units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 2}]}
       - {spawn: 1, requires: "stage:q_warden>=craft", units: [{ref: rock_brute, count: 1}, {ref: cave_mite, count: 1}]}
+  - id: hollow                  # Q4 [INFERENCE C-91]: ore chamber of the same cave system, between tunnels and deep cave
+    tilemap: hollow_01
+    biome: cave
+    links: {S: {to: tunnels, arrive: E}, E: {to: cave_deep, arrive: S}}
+    nodes: {G: ember_ore}
+    packs:
+      - {spawn: 0, units: [{ref: cave_mite, count: 2}, {ref: emberling, count: 1}]}
+      - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: cave_mite, count: 2}]}
+      - {spawn: 2, wave: patrol, requires: "stage:q_warden>=patrol", units: [{ref: rock_brute, count: 2}, {ref: emberling, count: 1}]}
+      - {spawn: 0, wave: patrol, requires: "stage:q_warden>=patrol", units: [{ref: emberling, count: 2}, {ref: cave_mite, count: 2}]}
+      - {spawn: 1, requires: "stage:q_warden>=craft", units: [{ref: emberling, count: 2}, {ref: rock_brute, count: 1}]}
   - id: cave_deep
     tilemap: cave_deep
     biome: cave
-    links: {S: {to: tunnels, arrive: E}, E: {to: warden_lair, arrive: S, requires: "stage:q_warden>=warden"}}
+    links: {S: {to: hollow, arrive: E}, E: {to: warden_lair, arrive: S, requires: "stage:q_warden>=warden"}}
     nodes: {G: cave_moss}
     packs:
       - {spawn: 0, units: [{ref: cave_mite, count: 3}]}
@@ -38,4 +53,13 @@ areas:
     tilemap: cave_boss
     biome: cave
     encounter: boss_warden      # F5 boss encounter (Cave Warden + adds) reused as-is
-    links: {S: {to: cave_deep, arrive: E}, E: {to: field, arrive: E, requires: "flag:warden_down"}}
+    links: {S: {to: cave_deep, arrive: E}, E: {to: ridge, arrive: S, requires: "flag:warden_down"}}
+  - id: ridge                   # GAME_SPEC §5 "one open-world transition": the lair's back exit opens onto the
+    tilemap: ridge_01           # open ridge above the farm; Q4 [INFERENCE C-91] — packs + forage on the way home
+    biome: field
+    links: {S: {to: warden_lair, arrive: E}, E: {to: field, arrive: E}}
+    nodes: {G: flint}
+    packs:
+      - {spawn: 0, units: [{ref: emberling, count: 3}]}
+      - {spawn: 1, units: [{ref: rock_brute, count: 1}, {ref: emberling, count: 2}]}
+      - {spawn: 2, units: [{ref: rock_brute, count: 2}, {ref: cave_mite, count: 2}]}    # ridge warband (tier-2 elite group)
